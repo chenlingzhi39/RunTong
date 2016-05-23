@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/popo_window_bg"
+    android:orientation="vertical" >
+    
+	<LinearLayout
+	    android:id="@+id/ll_calllog"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:gravity="center_vertical"
+	    android:padding="5dp" >
+		
+	    <ImageView
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:src="@drawable/imgcallall" />
+	    <TextView
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:layout_marginLeft="8dp"
+	    	android:textColor="@color/black_5f"
+	    	android:textSize="18sp"
+	    	android:text="@string/dail_calllog" />
+	</LinearLayout>
+	
+	<View
+	    android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:background="#DCDCDC" />
+	
+	<LinearLayout
+	    android:id="@+id/ll_youhui"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center_vertical"
+	    android:padding="5dp" >
+		
+	    <ImageView
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:src="@drawable/imgcallall" />
+	    <TextView
+	        android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:layout_marginLeft="8dp"
+	    	android:textColor="@color/black_5f"
+	    	android:textSize="18sp"
+	    	android:text="@string/dail_youhui" />
+	</LinearLayout>
+</LinearLayout>

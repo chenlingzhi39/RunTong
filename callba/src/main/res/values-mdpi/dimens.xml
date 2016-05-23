@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="title_text">20sp</dimen>
+    <dimen name="mydialog_height">140dp</dimen>
+    <dimen name="mydialog_minwidth">205dp</dimen>
+</resources>

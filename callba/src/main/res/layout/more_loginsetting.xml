@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_d8"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dailtop" >
+
+        <Button
+            android:id="@+id/bn_loginsetting_back"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/login_back"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/loginset_title"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_text" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/shape_square_bg"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/ll_auto"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:padding="3dp" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="8dp"
+                android:textColor="@color/black_3f"
+                android:text="@string/loginset_zddl"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/iv_auto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                 android:visibility="gone"
+                android:src="@drawable/ggou" />
+        </LinearLayout>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray_d8" />
+        <LinearLayout
+            android:id="@+id/ll_manual"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:padding="3dp" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="8dp"
+                android:text="@string/loginset_sddl"
+                android:textColor="@color/black_3f"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/iv_manual"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:visibility="gone"
+                android:src="@drawable/ggou" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

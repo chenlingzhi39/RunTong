@@ -1,0 +1,604 @@
+<resources>
+    <string name="telephone">电话&#160;&#160;&#160;</string>
+    <string name="add_contact">新建联系人</string>
+    <string name="send_message">发送短信</string>
+    <string name="save_contact">保存到已有联系人</string>
+    <string name="list">通讯录</string>
+    <string name="home">主页</string>
+    <string name="recharge">话费充值</string>
+    <string name="recharge2">立即充值</string>
+    <string name="input_card">请输入充值卡号</string>
+    <string name="input_number">请输入手机号码</string>
+    <string name="bind_number">账户绑定号码</string>
+    <string name="on_recharge">正在充值</string>
+    <string name="recharge_failure">充值失败</string>
+    <string name="recharge_success">充值成功</string>
+    <string name="recharge1">充值</string>
+    <string name="exchange">金币兑换</string>
+    <string name="search_yue">查询余额</string>
+    <string name="user">帐号</string>
+    <string name="yue">余额</string>
+    <string name="gold">金币</string>
+    <string name="time">到期时间</string>
+    <string name="friend">左邻右舍</string>
+    <string name="location">我的位置:</string>
+    <string name="mall">精品商城</string>
+    <string name="finance">我的金融</string>
+    <string name="community">我的圈子</string>
+    <string name="game">我的游戏</string>
+    <string name="sign_in">我的签到</string>
+    <string name="message">信息</string>
+    <string name="search">搜索</string>
+    <string name="edit">编辑</string>
+    <string name="center">个人中心</string>
+    <string name="settings">设置</string>
+    <string name="my_number">我的账号</string>
+    <string name="change">修改资料</string>
+    <string name="head">头像</string>
+    <string name="nick_name">昵称</string>
+    <string name="signature">个性签名</string>
+    <string name="change_password">修改密码</string>
+    <string name="find_password">找回密码</string>
+    <string name="about_us">关于我们</string>
+    <string name="help">帮助中心</string>
+    <string name="logout">退出登录</string>
+    <string name="add">添加</string>
+    <string name="register">注册</string>
+    <string name="app_name">Call吧</string>
+	<string name="dialog_title">温馨提示</string>
+	<string name="dialog_ok">确  定</string>
+	<string name="dialog_cancel">取  消</string>
+	<string name="exit">退出</string>
+	<string name="unknown">未知</string>
+	<string name="money">元</string>
+	<string name="cancel">取消</string>
+	<string name="setup">设置</string>
+	<string name="ok">确定</string>
+	<string name="modify">修改</string>
+	<string name="loading">正在加载…</string>
+	<string name="rmb">￥</string>
+	<string name="cut">剪切</string>
+	<string name="copy">复制</string>
+	<string name="paste">粘贴</string>
+	<string name="setup_success">设置成功</string>
+	
+	
+	<string name="result_data_error">数据异常！</string>
+	<string name="login_timeout">登录超时！</string>
+	<string name="login_exception">登录异常！</string>
+	
+	<string name="getdata_fail">获取数据失败</string>
+	<string name="network_error">无网络连接</string>
+	<string name="conn_failed">无法连接到网络</string>
+	
+	<string name="net_error_getdata_fail">网络连接超时，获取版本失败。</string>
+	<string name="switch_net_retry">切换网络</string>
+	
+	<!-- welcome -->
+	<string name="getversionfailed">获取版本信息失败!</string>
+	<string name="jxbbsb">解析版本信息失败!</string>
+	<string name="sjts">升级提示</string>
+	<string name="sjtsxx">您目前的版本已停止使用，必须升级新版本才能继续使用！</string>
+	<string name="upgrade">升级</string>
+	<string name="upgrade_findnewversion">发现新版本，是否现在升级？</string>
+	<string name="upgrade_openfailed">无法打开浏览器，请到闰通官网下载最新版本。</string>
+	<string name="networksetup">网络设置</string>
+	<string name="networksetupinfo">未检测到网络连接，是否设置？</string>
+	
+	<!-- contact -->
+	<string name="contactempty">联系人为空</string>
+	<string name="contact">联系人</string>
+	<string name="loadingcontact">正在载入联系人…</string>
+	
+	<!-- contact backup -->
+	<string name="backup_success">备份成功!</string>
+	<string name="backup_failed">备份失败!</string>
+	<string name="download_remote_failed">下载闰通通讯录失败！</string>
+	<string name="restore_failed_empty">未备份联系人数据，无法恢复！</string>
+	<string name="backup_info">是否将手机上的联系人备份到闰通服务器，永久保存？</string>
+	<string name="download_contact_tip">将服务器上的联系人保存到本地通讯录，是否继续？</string>
+	<string name="gettingremotedata">正在获取云端数据</string>
+	<string name="backcallingcontact">正在还原联系人</string>
+	<string name="zzbflxr">正在备份联系人</string>
+	<string name="backup_title">通讯录同步</string>
+	<string name="dqzz">当前账户：</string>
+	<string name="bdlxr">本地联系人：</string>
+	<string name="ydlxr">云端联系人：</string>
+	<string name="bfsjtxl">备份手机通讯录</string>
+	<string name="ckkdtxl">查看闰通通讯录</string>
+	<string name="ckfwqlxr">查看服务器上的联系人备份数据及添加超级回拨</string>
+	<string name="xzkdtxl">下载闰通通讯录</string>
+	<string name="xzlxrdsj">从服务器下载联系人保存到手机</string>
+	
+	<!-- ContactDetail -->
+	<string name="lxrxq">联系人详情</string>
+	
+	<!-- ContactChooseActivity -->
+	<string name="cca_checkall">全选</string>
+	<string name="cca_uncheckall">取消全选</string>
+	<string name="cca_getcontact_fail">获取联系人数据失败！</string>
+	<string name="cca_contactcount">共有联系人%1$d个</string>
+	
+	
+	<!-- guide -->
+	<string name="guide_manual">手动注册</string>
+	<string name="guide_auto">一键注册</string>
+	<string name="guide_login">直接登录</string>
+	
+	<!-- Login -->
+	<string name="login">登录</string>
+	<string name="login_back">返回</string>
+	<string name="login_account">中国+86</string>
+	<string name="login_phone">手机号：</string>
+	<string name="login_card">卡密：</string>
+	<string name="login_card_hint">请输入充值卡帐号</string>
+	<string name="login_password">登录密码</string>
+    <string name="confirm_password">确认密码</string>
+	<string name="login_register">注册账号</string>
+	<string name="login_login">登录账号</string>
+	<string name="login_name_hint">请输入手机号码</string>
+	<string name="login_pass_hint">请输入密码</string>
+	<string name="register_success">注册成功！</string>
+    <string name="register_fail">注册失败</string>
+	<string name="input_username">请先输入用户名！</string>
+	<string name="input_password">密码不能为空！</string>
+	<string name="key_exception">获取版本信息错误,登录异常！</string>
+	
+	<string name="retrieve_pwd">找回密码</string>
+	<string name="forget_password">忘记密码？</string>
+	<!-- manual register -->
+	<string name="manregedit">手动注册</string>
+	<string name="manregedit_yijian">一键注册</string>
+	<string name="manregedit_acc_hint">请输入真实手机号码注册</string>
+	<string name="manregedit_get_yzm">获取验证码</string>
+	<string name="manregedit_yzm">验证码</string>
+	<string name="manregedit_yzm_hint">请输入验证码</string>
+	<string name="manregedit_pass_hint">请设置6–16位数字/字母</string>
+	<string name="send_yzm">发送验证码</string>
+	<string name="registering">正在注册</string>
+	<string name="input_phonenum">请先输入手机号！</string>
+	<string name="wrong_phonenum">手机号码不符合规则！</string>
+	<string name="getting_code">正在获取验证码</string>
+	<string name="input_pwd">请输入密码！</string>
+	<string name="input_yzm">请输入充值卡账号！</string>
+	<string name="pwd_type">密码必须是 6~16位的字母、数字或下划线！</string>
+	<string name="getyzm_failed">获取验证码失败！</string>
+	<string name="register_failed">注册失败！</string>
+	<string name="receive_yzm">验证码已发送，请查收短信！</string>
+	
+	<!-- one key register -->
+	<string name="onekey_register_info">无需输入手机号短信一键注册</string>
+	<string name="onekey_registering">正在一键注册</string>
+	<string name="onekey_verifynumber">验证当前号码</string>
+	<string name="onekey_reg_faild">获取服务端数据异常,注册失败！</string>
+	<string name="onekey_reg_checkuser_autologin">该号码已注册，正在登陆</string>
+	<string name="onekey_reg_checkuser_manuallogin">该号码已注册，请直接登陆</string>
+	
+	
+	<!-- dail -->
+	<string name="dail_calllog">通话记录</string>
+	<string name="dail_youhui">优惠信息</string>
+	<string name="dail_yue">当前余额\n%1$s元</string>
+	<string name="no_dail_calllog">没有通话记录</string>
+	
+	<!-- MainCall -->
+	<string name="calllog">通话记录</string>
+	<string name="youhuixx">优惠信息</string>
+	<string name="zzhuibo">正在回拨…</string>
+	<string name="server_error">服务端数据异常</string>
+	<string name="unknownerror">未知异常！</string>
+	<string name="getkey_error">网络不稳定,获取版本信息失败,请重新启动！</string>
+	<string name="castkey_error">获取版本信息错误,登录异常！</string>
+	<string name="logining">正在登陆</string>
+	<string name="second">秒</string>
+	<string name="minute">分</string>
+	<string name="unconnected">未接通</string>
+	<string name="call">呼叫</string>
+	<string name="callover">挂断</string>
+	<string name="current_balance">当前余额</string>
+	<string name="directcall">WiFi直拨</string>
+	<string name="directcallmore">通话效果取决于手机网速，高速WIFI下用</string>
+	<string name="callback">1KB回拨</string>
+	<string name="callbackmore">通话效果取决于手机信号，整通电话流量1KB</string>
+	<string name="searchingcontact">正在查询联系人…</string>
+	<string name="wrong_number_format">错误的电话号码格式</string>
+	<string name="keyboard_tone_on">开启键盘音</string>
+	<string name="keyboard_tone_off">关闭键盘音</string>
+	
+	<!-- RemoteContact -->
+	<string name="getting_data">正在获取数据</string>
+	<string name="parseremotedatafaild">解析服务端数据失败！</string>
+	<string name="getremotecount">获取云端联系人个数失败！</string>
+	
+	<!-- baseActivity -->
+	<string name="exit_confirm">确定要退出程序吗？</string>
+	<string name="backrun">闰通已转至后台运行…</string>
+	<string name="contenttitle">Call吧</string>
+	<string name="contenttext">长途电话，尽情拨打</string>
+	<string name="contactcount">共有联系人%1$d个</string>
+	<string name="makecall">打电话</string>
+	<string name="sendsms">发短信</string>
+	<string name="addsuperbackcall">添加超级回拨</string>
+	<string name="remotecontact_title">闰通云端通讯录</string>
+	<string name="remotecontact_refresh">刷新</string>
+	
+	<!-- sendcall -->
+	<string name="emptycallnum">号码为空，呼叫失败！</string>
+	<string name="backcalling">正在回拨…</string>
+	<string name="name">姓名</string>
+	<string name="waitforcall">正在呼叫,请稍候…</string>
+	
+	<string name="alc_tieshi">　　　联系人备份到服务器或从服务器下载到新手机。丢换手机从此无忧~_~</string>
+	
+	<string name="share_title">闰通网络电话</string>
+	<string name="share_content">我最近用闰通网络电话，话费省了不少呀，注册就能免费打电话哦，你也去下载一个吧。http://wap.callda.com/</string>
+	
+	<string name="remote_call_failed">调用远程服务失败</string>
+    <string name="confirm_install_hint">"安装提示"</string>
+    <string name="confirm_install">"为保证您的交易安全，需要您安装移动快捷支付，才能进行付款。\n\n点击确定，立即安装。"</string>
+    <string name="check_sign_failed">您的订单信息已被非法篡改。</string>
+    
+    <string name="callout_timeout">呼出超时，自动挂断</string>
+    <string name="calltelling">通话中：   </string>
+    <string name="call_declined">对方拒绝</string>
+    <string name="busy_here">对方忙</string>
+    <string name="not_found">号码不在线或不存在</string>
+    <string name="temporarily_unavailable">服务不可用，请重新登录或者使用回拨</string>
+    <string name="outgoingearlymedia">对方振铃…</string>
+    <string name="call_declined_">对方已挂机…</string>
+    <string name="call_end">通话结束…</string>
+    <string name="sipcall_unavailable">呼叫失败，请稍后再试。</string>
+    <string name="sipcall_illegal">呼叫错误</string>
+    <string name="hang_up_phone">挂断电话</string>
+    
+    <!-- about us -->
+    <string name="abus_title">关于我们</string>
+    <string name="abus_hotline">客服热线：</string>
+    <string name="abus_email">客服邮箱：</string>
+    
+    <!-- accountSetting -->
+    <string name="switch_account_ok">账号切换成功！</string>
+    <string name="switching_account">正在切换登录账号</string>
+    <string name="keywrong_failed">切换账号失败！</string>
+    <string name="account_setting">账号设置</string>
+    <string name="accset_info">请输入您要登录的闰通账号和密码</string>
+    <string name="switch_account">切换登录账号</string>
+    
+    <!-- addSubAccount -->
+    <string name="getserverdata_failed">获取服务器数据失败！</string>
+    <string name="getserverdata_exception">服务器返回数据异常！</string>
+    <string name="input_telphonenum">请先输入固定电话号码！</string>
+    <string name="sending_yyyz">正在发送语音验证</string>
+    <string name="adding_subaccount">正在添加子账户</string>
+    <string name="tjzzh">添加子账户</string>
+    <string name="tjsjzzh">添加手机子账户：</string>
+    <string name="zzh">子账号：</string>
+    <string name="srsjhzz">请输入真实手机号码注册</string>
+    <string name="ttghzzh">添加固话子账户：</string>
+    <string name="srghhzz">请输入真实带区号的固定电话号码注册</string>
+    <string name="fsyyyz">发送语音验证</string>
+    <string name="jtyyyz">接听语音验证后按1键注册</string>
+    
+    <!-- AutoAnswer -->
+    <string name="auto_answer">自动接听</string>
+    
+    <!-- Call setting -->
+    <string name="call_setting">拨打设置</string>
+    <string name="znbd">智能拨打</string>
+    <string name="znbd_info">WiFi下，智能直拨呼叫，非WiFi下自动转成回拨</string>
+    <string name="sdzbhb">手动选择直拨回拨</string>
+    <string name="sdzbhb_info">每次呼叫都提示使用直拨还是使用回拨呼叫</string>
+    <string name="mrzb">默认直拨</string>
+    <string name="mrzb_info">国内直拨资费不显号0.05元/分钟 显号0.07元/分钟</string>
+    <string name="mrhb">默认回拨</string>
+    <string name="mrhb_info">国内回拨资费不显号0.08元/分钟 显号0.1元/分钟</string>
+    <string name="wwhb">无网回拨</string>
+    <string name="wwhb_info">国内回拨资费不显号0.08元/分钟 显号0.1元/分钟</string>
+    <string name="callseting_tip">温馨提示：\n非WiFi下直拨消耗流量约4K/秒，建议您选择智能拨打，根据网络环境为您选择最佳拨打方式。</string>
+    <string name="title_sdzbhb">请选择拨打方式</string>
+    <!-- change pwd -->
+    <string name="input_jmm">请先输入旧密码！</string>
+    <string name="input_xmm">请输入新密码！</string>
+    <string name="mmbyz">两次输入的密码不一致！</string>
+    <string name="zzxg">正在修改</string>
+    <string name="modify_pwd">修改密码</string>
+    <string name="xgdzh">您要修改的账号是：</string>
+    <string name="jmm">您的旧密码：</string>
+    <string name="xmm">您的新密码：</string>
+    <string name="qrxmm">确认新密码：</string>
+    
+    <!-- exit activity -->
+    <string name="logout_exit">注销退出</string>
+    
+    <!-- fee query -->
+    <string name="fee_query_fail">查询费率失败</string>
+    <string name="fee_money">￥%1$s元/分钟</string>
+    <string name="fee_querying">正在查询</string>
+    <string name="fee_cxfl">查询费率</string>
+    <string name="fee_flcx">费率查询</string>
+    <string name="fee_cx">查询</string>
+    <string name="fee_flcxsm">费率查询说明</string>
+    <string name="fee_cxinfo">1.按照 00+国家代码+区号+固定电话号码或 00+国家代码+手机号码的规范查询。\n 2.按照国家名称查询，直接输入名称，如美国。</string>
+    <string name="fee_cyfl">常用费率</string>
+    <string name="fee_zgdl_zbbxh">中国大陆(直拨不显号)</string>
+    <string name="fee_1">￥0.05元/分钟</string>
+    <string name="fee_dl_zbxh">中国大陆(直拨显号)</string>
+    <string name="fee_2">￥0.07元/分钟</string>
+    <string name="fee_dl_hbbxh">中国大陆(回拨不显号)</string>
+    <string name="fee_3">￥0.08元/分钟</string>
+    <string name="fee_dl_hbxh">中国大陆(回拨显号)</string>
+    <string name="fee_4">￥0.10元/分钟</string>
+    <string name="fee_xjp">新加坡</string>
+    <string name="fee_5">￥0.11元/分钟</string>
+    <string name="fee_yggh">英国(固话)</string>
+    <string name="fee_6">￥0.10元/分钟</string>
+    <string name="fee_mgjnd">美国/加拿大</string>
+    <string name="fee_7">￥0.10元/分钟</string>
+    <string name="fee_xby">西班牙(固话)</string>
+    <string name="fee_8">￥0.19元/分钟</string>
+    <string name="fee_adly">澳大利亚(固话)</string>
+    <string name="fee_9">￥0.10元/分钟</string>
+    
+    <!-- help center -->
+    <string name="help_title">系统帮助及资费说明</string>
+    
+    <!-- invite Activity -->
+    <string name="invite_qxxzlxr">请先选择联系人！</string>
+    <string name="invite_title">短信邀请</string>
+    <string name="invite_yqhyzhf">邀请好友注册闰通赚话费</string>
+    <string name="invite_ljyq">立即邀请</string>
+    <string name="invite_jl1">1.好友注册成功后，您将获得1元/人奖励</string>
+    <string name="invite_jl2">2.好友成功充值，您将获得充值话费10%作为充值奖励，永久累计！</string>
+    <string name="invite_jl3">注：对方需要通过分享地址注册后方算注册成功</string>
+    
+    <!-- login setting -->
+    <string name="loginset_title">登录设置</string>
+    <string name="loginset_zddl">自动登录</string>
+    <string name="loginset_sddl">手动登录</string>
+    
+    <!-- more info -->
+    <string name="more_title">更多选择与设置</string>
+    <string name="more_fwrx">服务热线</string>
+    <string name="more_zh">账户</string>
+    <string name="more_zhf">赚话费</string>
+    <string name="more_cx">查询</string>
+    <string name="more_sz">设置</string>
+    <string name="more_bz">帮助</string>
+    <string name="more_zhsz">账号设置</string>
+    <string name="more_xgmm">修改密码</string>
+    <string name="more_zhmm">找回密码</string>
+    <string name="more_txltb">通讯录同步</string>
+    <string name="more_zzhgl">子账户管理</string>
+    <string name="more_fxyl">分享有礼</string>
+    <string name="more_dxyq">短信邀请</string>
+    <string name="more_mrqd">每日签到</string>
+    <string name="more_cxye">查询余额</string>
+    <string name="more_cxhd">查询话单</string>
+    <string name="more_cxfl">查询费率</string>
+    <string name="more_ggyh">公告及优惠</string>
+    <string name="more_bdsz">拨打设置</string>
+    <string name="more_xhsz">显号设置</string>
+    <string name="more_qhsz">区号设置</string>
+    <string name="more_dlsz">登录设置</string>
+    <string name="more_zdjt">自动接听</string>
+    <string name="more_jpysz">键盘音设置</string>
+    <string name="more_xtbhp">整合系统拨号盘</string>
+    <string name="more_zxtc">注销退出</string>
+    <string name="more_xtbzzf">系统帮助及资费说明</string>
+    <string name="more_rjsj">软件升级</string>
+    <string name="more_gywm">关于我们</string>
+    <string name="more_bug">BUG提交及意见反馈</string>
+    <string name="more_zzhjkf">正在呼叫客服…</string>
+    <string name="more_zxbbsj">您目前已经是最新版，无需更新！</string>
+    <string name="more_zxbbsjnum">当前版本号为：</string>
+    <string name="more_xbbgx">存在新版本，是否现在更新？</string>
+    
+    <!-- preferential -->
+    <string name="ptl_ggyh">获取公告和优惠信息</string>
+    
+    <!-- query calllog -->
+    <string name="qclog_cxthjl">查询通话记录</string>
+    <string name="qclog_cxnf">请输入要查询的年份！</string>
+    <string name="qclog_cxyf">请输入要查询的月份！</string>
+    <string name="qclog_rqbhxs">日期不允许包含小数！</string>
+    <string name="qclog_srnf">请输入正确的年份！</string>
+    <string name="qclog_sryf">请输入正确的月份！</string>
+    <string name="qclog_srzqgs">请输入正确日期格式！</string>
+    <string name="qclog_cxnf1">查询年份</string>
+    <string name="qclog_cxyf1">查询月份</string>
+    <string name="qclog_cxzbth">    查询直拨通话    </string>
+    <string name="qclog_cxhbth">    查询回拨通话    </string>
+    
+    <!-- query meal -->
+    <string name="qm_cxtc">正在查询套餐</string>
+    <string name="qm_cxye">查询余额</string>
+    <string name="qm_ndyew">您的余额为：</string>
+    
+    <!-- quhao -->
+    <string name="qhao_qh">区号：</string>
+    <string name="qhao_szqh">请输入要设置的区号</string>
+    <string name="qhao_szqh_info">您可以在此设置默认区号，在呼叫固话时未加区号的号码会默认自动为您加拨此区号。</string>
+    
+    <!-- retrieve pwd -->
+    <string name="rpwd_hqdxmsb">获取短信码失败！</string>
+    <string name="rpwd_zhmmsb">找回密码失败！</string>
+    <string name="rpwd_zzzhmm">正在找回密码</string>
+    <string name="rpwd_tgsjdxzh">通过手机短信找回密码</string>
+    <string name="rpwd_sjh">手机号：</string>
+    
+    <!-- share -->
+    <string name="share_wxpyq">微信朋友圈</string>
+    <string name="share_wxhy">微信好友</string>
+    <string name="share_fxgd">更多分享</string>
+    <string name="share_xlwb">新浪微博</string>
+    <string name="share_txwb">腾讯微博</string>
+    <string name="share_renren">人人网</string>
+    <string name="share_info1">通过以上方式分享闰通,对方成功注册后，您将获得1元/人注册奖励！</string>
+    <string name="share_info2">对方若成功充值，您将获得充值话费10%作为充值奖励，永久累计！</string>
+    <string name="share_info3">注：对方需要通过分享地址注册后方算注册成功</string>
+    <string name="share_success">分享成功</string>
+    <string name="share_failed">分享失败</string>
+    
+    
+    <!-- show number -->
+    <string name="snum_cxxh">正在查询显号设置</string>
+    <string name="snum_ggsz">正在更改设置</string>
+    <string name="snum_cxsb">查询失败！</string>
+    <string name="snum_qqsb">请求失败！</string>
+    <string name="snum_zbldxs">直拨来电显示</string>
+    <string name="snum_hbldxs">回拨来电显示</string>
+    <string name="snum_info">说明：拨打电话时对方立即能辨识您的来电。关闭时显示陌生号码。</string>
+    <string name="snum_fl">费率：</string>
+    
+    <!-- sign in -->
+    <string name="sin_hqsjsb">获取数据失败！</string>
+    <string name="sin_zzqd">正在签到</string>
+    <string name="sin_qdjx">每日签到有惊喜</string>
+    <string name="sin_sjlqsj">随机领取1–10分钟通话时间！</string>
+    <string name="sin_ssb">现在就试试吧！</string>
+    <string name="sin_qd">签  到</string>
+    
+    <!-- SubAccout -->
+    <string name="sacc_zzhk">子账户为空！</string>
+    <string name="sacc_zzh">总账户：</string>
+    <string name="sacc_zzhsl">子账户数量：</string>
+    <string name="sacc_tjzzh">添加子账户</string>
+    <string name="sacc_mm">\n密码:</string>
+    <string name="sacc_tip">提示</string>
+    <string name="sacc_sfsczh">是否删除该子账号？</string>
+    <string name="sacc_delete">删除</string>
+    <string name="sacc_zzsc">正在删除…</string>
+    <string name="sacc_xmmbnk">新密码不能为空！</string>
+    <string name="sacc_zzxgmm">正在修改密码</string>
+    
+    <!-- recharge -->
+    <string name="rech_zfbwy">支付宝网页支付</string>
+    <string name="rech_zfbkhd">支付宝客户端支付</string>
+    <string name="rech_ydk">移动充值卡支付</string>
+    <string name="rech_ltk">联通充值卡支付</string>
+    <string name="rech_dxk">电信充值卡支付</string>
+    <string name="rech_hqddh">获取订单号</string>
+    <string name="rech_hqddsb">获取订单号失败！</string>
+    <string name="rech_czxhbmf">充值即享当月1–7点国内回拨免费</string>
+    <string name="rech_cztc">充值套餐</string>
+    
+    <!-- recharge callda -->
+    <string name="recallda_xsrkm">请先输入充值卡卡密！</string>
+    <string name="recallda_kdczk">闰通充值卡</string>
+    <string name="recallda_kdkm">请输入手机号码和闰通卡卡密：</string>
+    <string name="recallda_cz">充 值</string>
+    <string name="recallda_km">卡密：</string>
+	<string name="recallda_error">手机号码错误，请重新输入！</string>
+	<string name="balance_recharge">是否确定是用余额充值？</string>
+
+    <!-- recharge card -->
+    <string name="reccard_yd">移动</string>
+    <string name="reccard_lt">联通</string>
+    <string name="reccard_dx">电信</string>
+    <string name="reccard_srczkkm">请先输入充值卡卡号！</string>
+    <string name="reccard_srczkmm">请输入充值卡密码！</string>
+    <string name="reccard_title">%1$s充值卡</string>
+    <string name="reccard_info">请输入%1$s充值卡账号和密码</string>
+    <string name="reccard_qdcz">确定充值</string>
+    <string name="reccard_error">卡号或密码错误！</string>
+    
+    <!-- recharge meal -->
+    <string name="recmeal_hqtcsb">获取套餐失败！</string>
+    <string name="recmeal_tccz">套餐充值</string>
+    <string name="recmeal_jztc">正在加载套餐…</string>
+    <string name="recmeal_money">￥%1$s元  折合%2$s</string>
+    
+    <!-- recharge meal way -->
+    <string name="recmeal_zfbwy">支付宝网页</string>
+    <string name="recmeal_zfbkhd">支付宝客户端</string>
+    <string name="recmeal_kdye">闰通账号余额</string>
+    <string name="recmeal_czfs">套餐充值方式</string>
+    <string name="recmeal_cazh">闰通账号：</string>
+    <string name="recmeal_cztc">充值套餐：</string>
+    
+    <string name="rechway_ydk">移动充值卡</string>
+    <string name="rechway_ltk">联通充值卡</string>
+    <string name="rechway_dxk">电信充值卡</string>
+    <string name="rechway_czfs">充值方式</string>
+    <string name="rechway_xzczfs">请选择充值方式</string>
+    <string name="rechway_gnbzzf">国内通话标准资费</string>
+    <string name="rechway_hb">回拨：显号0.10元/分钟   不显号0.08元/分钟</string>
+    <string name="rechway_zb">直拨：显号0.07元/分钟   不显号0.05元/分钟</string>
+    <string name="rechway_more">更多国家资费…</string>
+    
+    <!-- new sms -->
+    <string name="sms_wdxnr">无短信内容！</string>
+    <string name="sms_dxjrfs">短信已进入发送队列…</string>
+    <string name="sms_wbjwc">短信内容未编辑完成，是否退出？</string>
+    <string name="sms_xxdx">写新短信</string>
+    <string name="sms_send">发送</string>
+    <string name="sms_hm">号码:</string>
+    <string name="sms_nr">内容:</string>
+    <string name="sms_zs">字数</string>
+    <string name="sms_dxts">/短信条数</string>
+
+    <!-- sms -->
+    <string name="sms1_xj">新建</string>
+    <string name="sms1_dx">短信</string>
+    <string name="sms1_xjdx">新建短信</string>
+    <string name="sms1_yfdx">已发短信</string>
+    
+    <string name="send_failed">发送失败！</string>
+    
+    <!-- Youhui list -->
+    <string name="yllist_info1">闰通网络电话\n国内长途超低资费更省钱！\n国际长途节省高达98%！\n充话费送话费！充值大优惠！</string>
+    <string name="yllist_info2">闰通网络电话\n零月租，无漫游，低资费！\n无隐藏费用，话费永久有效\n查看更多优惠信息</string>
+    <string name="yllist_info3">闰通网络电话\n推荐赠话费，永久有效！\n每1人注册=返1元注册返利\n每1人充值=返10%充值返利</string>
+    <string name="ylist_djck">点击查看</string>
+    
+    <string name="get_ersion_fail">获取版本失败</string>
+     <string name="send_successful">短信发送成功</string>
+     <string name="send_successful_access">对方接收成功</string>
+     <string name="contacts">通讯录</string>
+     <string name="dialpad">拨号键盘</string>
+     <string name="mute">静音</string>
+     <string name="handsfree">免提</string>
+     <string name="ending_call">结束通话</string>
+     <string name="hide_dialpad">隐藏拨号键盘</string>
+     
+     <string name="callback_tip">ps: 您可到更多中的拨打设置中修改拨打方式！</string>
+     <string name="callback_tip_callway">拨打方式为：</string>
+     <string name="callback_tip_huibo">默认回拨</string>
+     <string name="callback_tip_zhibo">默认直拨</string>
+     <string name="callback_tip_zhineng">智能拨打</string>
+     <string name="callback_tip_shoudong">手动选择直拨回拨</string>
+     <string name="service_call">客服电话</string>
+     <string name="service_callnum">4001122800</string>
+     <string name="service_email">cs@callda.com</string>
+     <string name="delete_thisone">删除该条通话记录</string>
+     <string name="delete_all">清空所有通话记录</string>
+     <string name="close">关闭</string>
+
+
+     <!-- 呼叫选择界面 -->
+    <string name="call_choose_title">请选择呼叫方式</string>
+    <string name="call_choose_callda">闰通电话拨打</string>
+    <string name="call_choose_phone">手机拨号拨打</string>
+    <string name="call_choose_num_null">号码为空，呼叫失败</string>
+
+    
+    <string name="callin">呼入</string>
+    <string name="callout">呼出</string>
+    <string name="callmiss">未接</string>
+    
+    <string name="rechargeend">元闰通充值卡</string>
+    <string name="rechargesuccess">支付成功。交易状态码：</string>
+    <string name="rechargefailed">支付失败。交易状态码：</string>
+    <string name="recharging">正在支付</string>
+    
+    <!-- 回拨 -->
+    <string name="callback_timeout">呼叫超时</string>
+    <string name="remaintime">当月剩余分钟：</string>
+    <string name="endtime">结束时间：</string>
+    <string name="zhibo_taocan">直拨套餐</string>
+    <string name="callback_taocan">回拨套餐</string>
+    
+    <string name="unknown_location">未知</string>
+    <string name="simulator">模拟器</string>
+    <string name="local">本地</string>
+</resources>

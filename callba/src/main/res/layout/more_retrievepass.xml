@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+	android:fitsSystemWindows="true"
+	>
+    
+	<RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dailtop"
+		android:visibility="gone">
+
+        <Button
+            android:id="@+id/bn_retrpass_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="60dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/ok"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/bn_retrpass_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="60dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/login_back"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/retrieve_pwd"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_text"
+			/>
+    </RelativeLayout>
+
+	<include layout="@layout/toolbar"/>
+	<EditText
+		android:id="@+id/et_retrpass_phone"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@android:color/transparent"
+		android:hint="@string/input_number"
+		android:padding="20dp" />
+	<View
+		android:layout_width="fill_parent"
+		android:layout_height="2dp"
+		android:background="@drawable/shape_line" />
+	<Button
+		android:id="@+id/bn_retrieve_pass"
+		android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:layout_marginLeft="20dp"
+		android:layout_marginRight="20dp"
+		android:layout_marginTop="60dp"
+		android:background="?attr/colorAccent"
+		android:text="@string/find_password"
+		android:textColor="@color/white"
+		android:textSize="18sp"/>
+</LinearLayout>

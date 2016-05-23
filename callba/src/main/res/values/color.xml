@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="fulltransparent">#00ffffff</color>
+    <color name="transparent">#ffffffff</color>
+    <color name="midtransparent">#88ffffff</color>
+    
+    <color name="white">#FFFFFF</color>
+    <color name="white_f9">#F9F9F9</color>
+    <color name="white_gray">#7E7E80</color>
+    
+    <color name="black">#000000</color>
+    <color name="black_2f">#2F2F2F</color>
+    <color name="black_3f">#3F3F3F</color>
+    <color name="black_4f">#4F4F4F</color>
+    <color name="black_5f">#5F5F5F</color>
+    <color name="black_6f">#6F6F6F</color>
+    <color name="black_7f">#7F7F7F</color>
+
+    <color name="gray_cb">#cbcbcb</color>
+    
+    <color name="light_black">#88aFaFaF</color>
+    <color name="half_black">#88000000</color>
+    <color name="gray_d8">#F0EFF5</color>
+    <color name="gray_d8a">#D8D8D8</color>
+    <color name="gray_ea">#EAEAEA</color>
+    <color name="gray_bg">#F0EFF5</color>
+    
+    <color name="background">#FAFAFA</color>
+    <color name="blue">#CCFFFF</color>
+    <color name="callback_blue">#1782d5</color>
+    <color name="orange">#ff7e00</color>
+    <color name="gray_status">#757575</color>
+    <!-- 选择呼叫方式弹出框button背景 -->
+    <color name="bn_press_nor">#282828</color>
+    <color name="bn_press_pre">#1B1B1B</color>
+</resources>

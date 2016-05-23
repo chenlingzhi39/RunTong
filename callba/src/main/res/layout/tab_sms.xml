@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_d8"
+    android:layout_marginBottom="51dp"
+    android:orientation="vertical" >
+    
+	<RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dailtop" >
+
+        <Button
+            android:id="@+id/bn_sms_new"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/sms1_xj"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/sms1_dx"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_text" />
+    </RelativeLayout>
+    
+	<LinearLayout
+	    android:id="@+id/ll_sms_new"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:clickable="true"
+	    android:background="@drawable/listitem_bk"
+	    android:padding="12dp" >
+	    <TextView
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	    	android:layout_weight="1"
+	        android:textSize="17sp"
+	        android:textColor="@color/black_2f"
+	        android:text="@string/sms1_xjdx" />
+	    <ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	    	android:src="@drawable/imgright" />
+	</LinearLayout>
+	
+	<LinearLayout
+	    android:id="@+id/ll_sms_his"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="1dp"
+	    android:clickable="true"
+	    android:background="@drawable/listitem_bk"
+	    android:padding="12dp" >
+	    <TextView
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	    	android:layout_weight="1"
+	        android:textSize="17sp"
+	        android:textColor="@color/black_2f"
+	        android:text="@string/sms1_yfdx" />
+	    <ImageView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	    	android:src="@drawable/imgright" />
+	</LinearLayout>
+</LinearLayout>

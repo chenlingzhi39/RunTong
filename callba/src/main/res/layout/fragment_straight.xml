@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorPrimary">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:id="@+id/change_number"
+            android:clickable="true">
+
+            <TextView
+                android:id="@+id/number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="156-5698-8945"
+                android:textSize="20sp"
+                android:background="@android:color/transparent"
+                android:hint="@string/input_number"/>
+
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="账户绑定号码(江苏移动)"
+                />
+        </LinearLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/contacts"
+            android:layout_centerVertical="true"
+            />
+    </RelativeLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/shape_line" />
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20sp">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:button="@null"
+            android:background="@drawable/price_selector"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:id="@+id/price1"
+            android:checked="true"
+            android:textColor="@drawable/price_text_selector"
+            android:gravity="center"
+         />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:button="@null"
+            android:background="@drawable/price_selector"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:id="@+id/price2"
+            android:textColor="@drawable/price_text_selector"
+            android:gravity="center"
+            />
+    </RadioGroup>
+    <Button
+        android:id="@+id/recharge"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="60dp"
+        android:background="?attr/colorAccent"
+        android:text="@string/recharge2"
+        android:textColor="@color/white"
+        android:textSize="18sp"/>
+</LinearLayout>

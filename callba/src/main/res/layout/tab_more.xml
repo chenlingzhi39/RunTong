@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_bg"
+    android:layout_marginBottom="51dp"
+    android:orientation="vertical" >
+
+    <!-- title -->
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dailtop" >
+
+        <Button
+            android:id="@+id/bn_more_callservice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/more_fwrx"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/more_title"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_text" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:fadingEdge="none"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+             >
+            <TextView
+                style="@style/more_list_title_text"
+                android:text="@string/more_cx" />
+
+            <com.callba.phone.view.CornerListView
+                android:id="@+id/more_list_query"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/shape_square_bg"
+                android:cacheColorHint="@null"
+                android:divider="@drawable/aa"
+                android:listSelector="@android:color/transparent" >
+            </com.callba.phone.view.CornerListView>
+            <View 
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                />
+            <Button 
+                android:id="@+id/btn_exit"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="@string/exit"
+                android:background="@drawable/t_b_1"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:visibility="gone"
+                />
+
+        </LinearLayout>
+    </ScrollView>
+<TextView 
+    android:layout_width="match_parent"
+    android:layout_height="5dp"/>
+</LinearLayout>

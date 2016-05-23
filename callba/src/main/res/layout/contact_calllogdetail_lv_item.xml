@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_square_bg"
+    android:orientation="vertical"
+    android:padding="8dp" 
+    android:id="@+id/contactdetail_log_item">
+
+    <TextView
+        android:id="@+id/tv_phonelist_calltime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="9dp"
+        android:text="5月10日 09:33"
+        android:textColor="@color/black_3f"
+        android:textSize="21sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tv_phonelist_num"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="13255100000"
+            android:textColor="@color/black_3f"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_phonelist_type"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0.3"
+            android:gravity="center_vertical"
+            android:text="呼出"
+            android:textColor="@color/black_3f"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</LinearLayout>

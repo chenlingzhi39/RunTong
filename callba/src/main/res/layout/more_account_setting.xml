@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_d8"
+    android:orientation="vertical" >
+    
+	<RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dailtop" >
+
+        <Button
+            android:id="@+id/bn_account_ok"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="60dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/ok"
+            android:textColor="@color/white" />
+        
+        <Button
+            android:id="@+id/bn_account_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="60dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/login_back"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/account_setting"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_text" />
+    </RelativeLayout>
+    
+	<TextView
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="15dp"
+	    android:textSize="15sp"
+	    android:text="@string/accset_info"
+	    android:textColor="#767D8B" />
+	
+	<LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/shape_square_bg"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="5dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="@string/login_account"
+                android:textColor="#95C3F4"
+                android:textSize="16sp" />
+
+            <com.callba.phone.view.CleanableEditText
+                android:id="@+id/et_account_name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/login_name_hint"
+                android:padding="5dp"
+                android:inputType="number"
+                android:drawableRight="@drawable/clear"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/shape_line" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="5dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:textColor="#95C3F4"
+                android:text="@string/login_password"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/et_account_password"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/login_pass_hint"
+                android:inputType="textPassword"
+                android:padding="5dp"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+    
+	 <Button
+	     android:id="@+id/bn_account_switch"
+	     android:layout_width="wrap_content"
+	     android:layout_height="wrap_content"
+	     android:layout_margin="15dp"
+	     android:layout_gravity="right"
+	     android:text="@string/switch_account"
+	     android:textColor="@color/black_3f"
+	     android:background="@drawable/bn_white_bg_selector" />
+</LinearLayout>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    >
+   <include layout="@layout/toolbar"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background"
+            android:orientation="vertical">
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/login_logo"
+        android:layout_marginTop="30dp"
+        />
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dailtop"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/bn_login_back"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:visibility="gone"
+            android:text="@string/login_back"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/login"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_text" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/shape_square_bg"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="5dp" >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/user_login"
+                android:layout_marginLeft="8dp"/>
+
+
+            <com.callba.phone.view.CleanableEditText
+                android:id="@+id/et_login_name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/login_name_hint"
+                android:inputType="number"
+                android:padding="10dp"
+                android:drawableRight="@drawable/clear"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/shape_line" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="5dp" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/password_login"
+                android:layout_marginLeft="8dp"/>
+            <EditText
+                android:id="@+id/et_login_password"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginLeft="20dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/login_pass_hint"
+                android:inputType="textPassword"
+                android:padding="10dp"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/bn_login_login"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/login"
+            android:textColor="@color/white"
+            android:background="?attr/colorAccent"
+            android:textSize="18sp"/>
+        <Button
+            android:id="@+id/bn_login_retrievePass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:textColor="#d38b56"
+            android:textSize="15sp"
+            android:text="@string/forget_password"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"/>
+    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

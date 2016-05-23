@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    
+   <!--  <item android:state_pressed="true" android:drawable="@drawable/contact_list_scroll_pressed" />
+	<item android:state_focused="true" android:state_enabled="true"
+		android:drawable="@drawable/contact_list_scroll_pressed" />
+	<item android:state_enabled="true" android:drawable="@drawable/contact_list_scroll_normal" />
+    -->
+    
+    <item android:drawable="@android:color/darker_gray" android:state_pressed="true"/>
+    <item android:drawable="@android:color/darker_gray" android:state_enabled="true" android:state_focused="true"/>
+    <item android:drawable="@color/light_black" android:state_enabled="true"/>
+
+</selector>

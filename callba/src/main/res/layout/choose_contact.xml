@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_bg"
+     >
+
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dailtop" >
+
+        <Button
+            android:id="@+id/bn_choose_back"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/login_back"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/bn_choose_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/bn_bg_selector"
+            android:minWidth="85dp"
+            android:text="@string/cca_checkall"
+            android:textColor="@color/white" />
+        
+        <Button
+            android:id="@+id/bn_choose_ok"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/ok"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_search"
+        android:layout_width="fill_parent"
+        android:layout_height="35dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:layout_below="@id/rl_title"
+        android:background="@drawable/contact_search_bg" >
+        
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search_icon" />
+        <EditText
+            android:id="@+id/et_search"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:background="@android:color/transparent" />
+        <Button
+            android:id="@+id/bn_search_del"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:background="@drawable/bn_close_bg_selector" />
+    </LinearLayout>
+
+    <ListView
+           android:layout_below="@id/ll_search"
+           android:id="@+id/lv_choose_contacts"
+           android:layout_width="fill_parent"
+           android:layout_height="wrap_content"
+           android:divider="@drawable/line"
+           android:dividerHeight="1.0px"
+           android:drawSelectorOnTop="false"
+           android:fadingEdge="none"
+           android:fastScrollEnabled="false"
+           android:listSelector="@android:color/transparent"
+           android:scrollbars="none" 
+           android:cacheColorHint="@android:color/transparent"/>
+    
+    <com.callba.phone.view.QuickSearchBar
+         android:id="@+id/qsb_choose_contact"
+         android:layout_below="@id/rl_title"
+         android:layout_width="fill_parent"
+         android:layout_height="fill_parent">
+  	</com.callba.phone.view.QuickSearchBar>
+</RelativeLayout>

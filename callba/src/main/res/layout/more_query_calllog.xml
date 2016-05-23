@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dailtop" >
+
+        <Button
+            android:id="@+id/bn_calllog_back"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/login_back"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/more_cxhd"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_text" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/qclog_cxnf1"
+            android:textColor="@color/black_4f"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/et_calllog_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/shape_square_bg"
+            android:gravity="center"
+            android:inputType="number"
+            android:minHeight="30dp"
+            android:minWidth="65dp"
+            android:padding="3dp"
+            android:textSize="15sp"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/sp_calllog_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/shape_square_bg"
+            android:gravity="center"
+            android:minHeight="30dp"
+            android:minWidth="65dp"
+            android:padding="3dp"
+            android:textSize="15sp" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/qclog_cxyf1"
+            android:textColor="@color/black_4f"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/et_calllog_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/shape_square_bg"
+            android:gravity="center"
+            android:inputType="number"
+            android:minHeight="30dp"
+            android:minWidth="65dp"
+            android:padding="3dp"
+            android:textSize="15sp"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/sp_calllog_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/shape_square_bg"
+            android:entries="@array/month"
+            android:gravity="center"
+            android:minHeight="30dp"
+            android:minWidth="65dp"
+            android:padding="3dp"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/bn_calllog_zhibo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/qclog_cxzbth"
+            android:textColor="@color/white" />
+        <!-- android:visibility="invisible" -->
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/bn_calllog_huibo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/qclog_cxhbth"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <ListView
+            android:id="@+id/lv_calllog"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="8dp"
+            android:cacheColorHint="@null"
+            android:divider="@null"
+            android:fadingEdge="@null"
+            android:listSelector="@null"
+            android:transcriptMode="disabled" >
+        </ListView>
+
+        <LinearLayout
+            android:id="@+id/ll_load_more"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="#88000000"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:visibility="gone" >
+
+            <ProgressBar
+                android:id="@+id/progressBar1"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateDrawable="@drawable/my_progressbar1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="@string/loading"
+                android:textColor="@color/gray_ea" />
+        </LinearLayout>
+    </FrameLayout>
+
+</LinearLayout>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical" >
+    
+	<RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dailtop" >
+
+        <Button
+            android:id="@+id/bn_onekey_back"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/login_back"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/guide_auto"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_text" />
+        
+        <Button
+            android:id="@+id/bn_onekey_soudong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:textColor="@color/white"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/manregedit" />
+    </RelativeLayout>
+    
+	<TextView
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="15dp"
+	    android:padding="20dp"
+	    android:gravity="center"
+	    android:textSize="16sp"
+	    android:textColor="@color/black_5f"
+	    android:text="@string/onekey_register_info" />
+	<LinearLayout 
+	    android:orientation="horizontal"
+	     android:id="@+id/bn_onekey_register"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:minHeight="38dp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginRight="10dp"
+	     android:background="@drawable/bn_bg_selector"
+	     android:gravity="center"
+	    >
+	<TextView
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textColor="@color/white"
+	    android:textSize="16sp"
+	    android:text="@string/manregedit_yijian" 
+	    />
+	<TextView 
+	    android:id="@+id/tv_countdown"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="10dp"
+	    android:textColor="@color/white"
+	    android:visibility="gone"
+	    android:textSize="15sp"
+	    />
+	
+	</LinearLayout>
+</LinearLayout>

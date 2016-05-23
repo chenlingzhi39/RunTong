@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_d8"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dailtop" >
+
+        <Button
+            android:id="@+id/bn_sign_back"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/login_back"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/more_mrqd"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_text" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:gravity="center_horizontal"
+        android:text="@string/sin_qdjx"
+        android:textColor="@color/black_3f"
+        android:textSize="26sp" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:text="@string/sin_sjlqsj"
+        android:textColor="@color/black_3f"
+        android:textSize="16sp" />
+    
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:text="@string/sin_ssb"
+        android:textColor="@color/black_3f"
+        android:textSize="16sp" />
+    
+    <Button
+        android:id="@+id/bn_sign_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="160dp"
+        android:minHeight="50dp"
+        android:text="@string/sin_qd"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center"
+        android:textColor="@color/black_3f"
+        android:background="@drawable/btn_reg_selector"
+        android:textSize="28sp" />
+</LinearLayout>

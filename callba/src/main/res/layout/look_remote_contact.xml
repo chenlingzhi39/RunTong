@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_d8" >
+
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dailtop" >
+
+        <Button
+            android:id="@+id/bn_remotecontact_back"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/login_back"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:minWidth="85dp"
+            android:text="@string/remotecontact_title"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_text" />
+
+        <Button
+            android:id="@+id/bn_remotecontact_refresh"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/remotecontact_refresh"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_search"
+        android:layout_width="fill_parent"
+        android:layout_height="35dp"
+        android:layout_below="@id/rl_title"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/contact_search_bg"
+        android:gravity="center_vertical" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search_icon" />
+
+        <EditText
+            android:id="@+id/et_search"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/bn_search_del"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bn_close_bg_selector"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+
+   <ListView
+       android:id="@+id/lv_remotecontact_contact"
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:layout_below="@id/ll_search"
+       android:divider="@drawable/line"
+       android:dividerHeight="1.0px"
+       android:drawSelectorOnTop="false"
+       android:fadingEdge="none"
+       android:fastScrollEnabled="false"
+       android:listSelector="@android:color/transparent"
+       android:scrollbars="none" />
+
+	<com.callba.phone.view.QuickSearchBar
+         android:id="@+id/qsb_remote_contact"
+         android:layout_below="@id/rl_title"
+         android:layout_width="fill_parent"
+         android:layout_height="fill_parent">
+  	</com.callba.phone.view.QuickSearchBar>
+</RelativeLayout>

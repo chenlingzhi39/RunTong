@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.AppBarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/mToolbarContainer"
+    android:fitsSystemWindows="true"
+    >
+<android.support.v7.widget.Toolbar
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorPrimary"
+    android:minHeight="?attr/actionBarSize"
+    android:id="@+id/toolbar"
+    app:theme="@style/ToolBarStyle"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    android:paddingTop="@dimen/status_bar_height1"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="@color/black"
+        android:id="@+id/title"
+        android:textSize="20sp"
+        />
+    <LinearLayout
+        android:id="@id/show_title_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?colorPrimary"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/et_dial_phonenum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:ellipsize="start"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="center_horizontal|left"
+            android:maxLength="21"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="34.0sp"
+            android:layout_weight="3"/>
+
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:singleLine="true"
+            android:textColor="@color/black_3f"
+            android:textSize="14sp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_textoperate"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/bn_textoperate_1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#862498C4"
+            android:minHeight="40dp"
+            android:textColor="@color/black_3f" />
+
+        <View
+            android:layout_width="1px"
+            android:layout_height="fill_parent"
+            android:background="@android:color/white" />
+
+        <Button
+            android:id="@+id/bn_textoperate_2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#862498C4"
+            android:minHeight="40dp"
+            android:textColor="@color/black_3f" />
+
+        <View
+            android:layout_width="1px"
+            android:layout_height="fill_parent"
+            android:background="@android:color/white" />
+
+        <Button
+            android:id="@+id/bn_textoperate_3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#862498C4"
+            android:minHeight="40dp"
+            android:textColor="@color/black_3f"
+            android:visibility="gone" />
+    </LinearLayout>
+    </RelativeLayout>
+</android.support.v7.widget.Toolbar>
+
+
+</android.support.design.widget.AppBarLayout>

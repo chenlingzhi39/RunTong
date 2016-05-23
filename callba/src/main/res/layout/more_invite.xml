@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_d8"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dailtop" >
+
+        <Button
+            android:id="@+id/bn_invite_back"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/bn_bg_selector"
+            android:text="@string/login_back"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/invite_title"
+            android:textColor="@color/white"
+            android:textSize="@dimen/title_text" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="5" />
+    
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/invite_yqhyzhf"
+        android:textColor="@color/black_3f"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/bn_invite_submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="160dp"
+        android:minHeight="50dp"
+        android:text="@string/invite_ljyq"
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center"
+        android:textColor="@color/black_3f"
+        android:background="@drawable/btn_reg_selector"
+        android:textSize="21sp" />
+    
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="4" />
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="15dp"
+        android:orientation="vertical"
+        android:layout_gravity="bottom" >
+        
+        <TextView 
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="@string/invite_jl1"
+            android:textSize="15sp"
+            android:textColor="@color/black_5f" />
+        <TextView 
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="5dp"
+            android:textSize="15sp"
+            android:text="@string/invite_jl2"
+            android:textColor="@color/black_5f" />
+        <TextView 
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="15sp"
+            android:text="@string/invite_jl3"
+            android:textColor="@color/black_5f" />
+    </LinearLayout>
+</LinearLayout>

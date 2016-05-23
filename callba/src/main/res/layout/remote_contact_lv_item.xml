@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="7dp"
+    android:background="@drawable/listitem_bk"
+    android:gravity="center_vertical"
+    android:orientation="horizontal" >
+    
+	<LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
+	    android:layout_marginLeft="3dp"
+	    android:orientation="vertical" >
+	    
+	    <TextView
+	        android:id="@+id/tv_remote_name"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textSize="17sp"
+		    android:textColor="@color/black_3f"
+		     />
+		<TextView
+		    android:id="@+id/tv_remote_phone"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textSize="14sp"
+		    android:layout_marginTop="3dp"
+		    android:textColor="@color/black_6f"
+		     />
+	</LinearLayout>
+	
+	<ImageView
+	    android:id="@+id/cb_remote_icon"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:src="@drawable/super_call"
+	    android:visibility="gone"
+	    android:layout_marginRight="50dp" />
+
+</LinearLayout>
