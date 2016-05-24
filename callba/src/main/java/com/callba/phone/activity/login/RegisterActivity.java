@@ -76,8 +76,14 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 			if (activity != null) {
 				// ...
 				switch (msg.what){
+					case Interfaces.GET_KEY_START:
+						activity.bn_register.setClickable(false);
+						break;
 					case Interfaces.GET_KEY_SUCCESS:
 						activity.key=(String)msg.obj;
+						break;
+					case Interfaces.GET_KEY_FAILURE:
+						activity.bn_register.setClickable(true);
 						break;
 					case Interfaces.GET_CODE_START:
 						activity.toast("发送验证码请求");
@@ -85,9 +91,11 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 					case Interfaces.GET_CODE_SUCCESS:
 						//activity.et_yzm.setText((String)msg.obj);
 						activity.toast((String)msg.obj);
+						activity.bn_register.setClickable(true);
 						break;
 					case Interfaces.GET_CODE_FAILURE:
 						activity.toast((String)msg.obj);
+						activity.bn_register.setClickable(true);
 					    break;
 
 				}

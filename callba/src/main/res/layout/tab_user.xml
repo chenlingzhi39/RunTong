@@ -96,7 +96,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:background="@color/white"
-            android:id="@+id/change">
+            android:id="@+id/change_info">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -118,7 +118,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:background="@color/white">
+            android:background="@color/white"
+            android:id="@+id/change_password">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -136,6 +137,7 @@
             android:layout_height="1px"
             android:background="@color/light_black"/>
         <RelativeLayout
+            android:id="@+id/retrieve"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"

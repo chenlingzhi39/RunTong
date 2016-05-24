@@ -2,10 +2,12 @@ package com.callba.phone.activity;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar.LayoutParams;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -34,6 +36,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.ViewUtils;
@@ -946,7 +949,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
      */
     private void showDeleteDialog(Context context, String name,
                                   final CalldaCalllogBean bean) {
-        final Dialog dialog = new Dialog(context, R.style.MyDialog);
+      /*  final Dialog dialog = new Dialog(context, R.style.MyDialog);
         View view = View.inflate(context, R.layout.calllog_delete_dialog_bg,
                 null);
         dialog.setContentView(view);
@@ -985,9 +988,58 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             }
         });
 
+        dialog.show();*/
+        final DialogHelper helper = new DialogHelper(name,bean);
+        Dialog dialog = new AlertDialog.Builder(this).setView(helper.getView()).create();
+        helper.setDialog(dialog);
         dialog.show();
     }
+    class DialogHelper implements DialogInterface.OnDismissListener,OnClickListener{
+        private Dialog mDialog;
+        private View view;
+        TextView tv_number;
+        Button single,multiple;
+        String number;
+        CalldaCalllogBean bean;
+        public DialogHelper(String number, CalldaCalllogBean bean) {
+            this.number=number;
+            this.bean=bean;
+            view=getLayoutInflater().inflate(R.layout.dialog_calllog,null);
+            tv_number=(TextView)view.findViewById(R.id.number);
+            single=(Button)view.findViewById(R.id.single);
+            multiple=(Button)view.findViewById(R.id.multiple);
+            single.setOnClickListener(this);
+            multiple.setOnClickListener(this);
+            tv_number.setText(number);
+        }
 
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.single:
+                    calllogService.deleteSingleCallLog(bean);
+                    mDialog.dismiss();
+                    break;
+                case R.id.multiple:
+                    calllogService.deleteAllCallLog();
+                    mDialog.dismiss();
+                    break;
+            }
+        }
+
+        public View getView() {
+            return view;
+        }
+
+        public void setDialog(Dialog dialog) {
+           mDialog = dialog;
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            mDialog=null;
+        }
+    }
     /**
      * 自动登录
      */

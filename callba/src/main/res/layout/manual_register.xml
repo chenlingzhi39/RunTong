@@ -216,12 +216,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal"
-        android:padding="20dp">
+
 
 
         <Button
@@ -231,8 +226,9 @@
             android:background="?attr/colorAccent"
             android:text="@string/login_register"
             android:textColor="@color/white"
-            android:textSize="18sp"/>
-    </LinearLayout>
+            android:textSize="18sp"
+            android:layout_margin="20dp"/>
+
     </LinearLayout>
     </ScrollView>
 </LinearLayout>

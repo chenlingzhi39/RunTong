@@ -53,11 +53,25 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 			if (activity != null) {
 				// ...
 				switch (msg.what){
+					case Interfaces.GET_KEY_START:
+						activity.bn_submit.setClickable(false);
+						break;
+					case Interfaces.GET_KEY_FAILURE:
+						activity.bn_submit.setClickable(true);
+						break;
+					case Interfaces.GET_KEY_SUCCESS:
+						activity.toast((String)msg.obj);
+						break;
+					case Interfaces.GET_CODE_START:
+						activity.toast("发送短信请求");
+						break;
 					case Interfaces.GET_CODE_FAILURE:
 						activity.toast((String)msg.obj);
+						activity.bn_submit.setClickable(true);
 						break;
 					case Interfaces.GET_CODE_SUCCESS:
 						activity.toast((String)msg.obj);
+						activity.bn_submit.setClickable(true);
 						break;
 
 				}

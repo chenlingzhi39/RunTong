@@ -106,7 +106,6 @@ public class HomeActivity extends BaseActivity {
                 webSettings.setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
             }
 
-
             /**
              * 用WebView显示图片，可使用这个参数 设置网页布局类型： 1、LayoutAlgorithm.NARROW_COLUMNS ：
              * 适应内容大小 2、LayoutAlgorithm.SINGLE_COLUMN:适应屏幕，内容将自动缩放
@@ -161,8 +160,8 @@ public class HomeActivity extends BaseActivity {
     }
     @OnClick(R.id.sign_in)
     public void sign_in() {
-     /*   Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
-        startActivity(intent);*/
+       Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
+        startActivity(intent);
     }
 
     @Override

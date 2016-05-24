@@ -173,6 +173,8 @@ public interface Interfaces {
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;
-	int GET_CODE_SUCCESS=3;
+	int GET_KEY_START=3;
+	int GET_KEY_FAILURE=4;
+	int GET_CODE_SUCCESS=5;
 
 }

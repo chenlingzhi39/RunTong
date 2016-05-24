@@ -10,6 +10,7 @@ import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.MyApplication;
 import com.callba.phone.activity.login.LoginActivity;
+import com.callba.phone.activity.more.RetrievePasswordActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
@@ -30,10 +31,13 @@ import butterknife.OnClick;
 public class UserActivity extends BaseActivity {
     @InjectView(R.id.logout)
     RelativeLayout logout;
-    @InjectView(R.id.change)
-    RelativeLayout change;
+    @InjectView(R.id.change_info)
+    RelativeLayout change_info;
     @InjectView(R.id.number)
     TextView number;
+    @InjectView(R.id.retrieve)
+    RelativeLayout retrieve;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,9 +51,9 @@ public class UserActivity extends BaseActivity {
         CalldaGlobalConfig.getInstance().setPassword("");
         CalldaGlobalConfig.getInstance().setIvPath("");
         LoginController.getInstance().setUserLoginState(false);
-        SharedPreferenceUtil.getInstance(this).putString(Constant.LOGIN_PASSWORD, "",true);
-        Intent intent0=new Intent("location");
-        intent0.putExtra("action","logout");
+        SharedPreferenceUtil.getInstance(this).putString(Constant.LOGIN_PASSWORD, "", true);
+        Intent intent0 = new Intent("location");
+        intent0.putExtra("action", "logout");
         sendBroadcast(intent0);
         Intent intent = new Intent();
         intent.setClass(this, LoginActivity.class);
@@ -58,9 +62,21 @@ public class UserActivity extends BaseActivity {
         }
         startActivity(intent);
     }
-    @OnClick(R.id.change)
-    public void change(){
-        Intent intent=new Intent(UserActivity.this,ChangeActivity.class);
+
+    @OnClick(R.id.change_info)
+    public void change_info() {
+        Intent intent = new Intent(UserActivity.this, ChangeInfoActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.change_password)
+    public void change_password() {
+        Intent intent = new Intent(UserActivity.this, ChangePasswordActivity.class);
+        startActivity(intent);
+    }
+    @OnClick(R.id.retrieve)
+    public void retrieve(){
+        Intent intent = new Intent(UserActivity.this, RetrievePasswordActivity.class);
         startActivity(intent);
     }
     @Override

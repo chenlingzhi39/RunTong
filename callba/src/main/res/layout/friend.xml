@@ -2,8 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:background="@color/background">
 
     <include layout="@layout/toolbar" />
 
@@ -41,4 +43,11 @@
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"  />
     </LinearLayout>
+    <com.callba.phone.widget.refreshlayout.EasyRecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/list"
+        app:layout_empty="@layout/view_empty"
+        app:layout_error="@layout/view_error"
+        app:layout_progress="@layout/view_progress"/>
 </LinearLayout>

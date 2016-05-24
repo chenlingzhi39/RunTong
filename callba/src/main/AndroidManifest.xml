@@ -21,21 +21,9 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <!-- 设置环信应用的AppKey -->
-        <meta-data android:name="EASEMOB_APPKEY"  android:value="boboit#callba" />
-        <!-- 声明SDK所需的service SDK核心功能-->
-        <service android:name="com.hyphenate.chat.EMChatService" android:exported="true"/>
-        <!-- 声明SDK所需的receiver -->
-        <receiver android:name="com.hyphenate.chat.EMMonitorReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
-                <data android:scheme="package"/>
-            </intent-filter>
-            <!-- 可选filter -->
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.USER_PRESENT" />
-            </intent-filter>
-        </receiver>
+        <!--<meta-data android:name="EASEMOB_APPKEY"  android:value="boboit#callba" />-->
+
+
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="b4a6afcc1d6426ef0ccd1985898e6ba4" />
@@ -68,6 +56,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".phone.activity.SignInActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            />
+        <activity android:name=".phone.activity.ChangePasswordActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            />
         <activity android:name="com.callba.phone.activity.FriendActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -78,7 +77,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             />-->
-        <activity android:name="com.callba.phone.activity.ChangeActivity"
+        <activity android:name=".phone.activity.ChangeInfoActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"

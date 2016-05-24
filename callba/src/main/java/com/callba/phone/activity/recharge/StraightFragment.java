@@ -1,7 +1,10 @@
 package com.callba.phone.activity.recharge;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -13,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseFragment;
@@ -21,8 +25,15 @@ import com.callba.phone.bean.Task;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.pay.alipay.AlipayClient;
 import com.callba.phone.service.MainService;
+import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.HttpUtils;
+import com.callba.phone.util.Interfaces;
+import com.callba.phone.util.Logger;
 import com.callba.phone.util.NumberAddressService;
+import com.callba.phone.view.CalldaToast;
+import com.callba.phone.view.MyProgressDialog;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -168,5 +179,83 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         helper.setDialog(dialog);
         dialog.show();
     }
+    /**
+     * 调用支付宝客户端支付
+     */
+    private void rechargeAlipayClient(final String payMoney) {
+        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(),null, getString(R.string.rech_hqddh));
+        final Handler mHanlder = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (progressDialog!=null&&progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
 
+                if (msg.what == 0) {
+                    String orderNo = (String) msg.obj;
+
+                    new AlipayClient(getActivity(), orderNo,
+                            payMoney).prepared2Pay();
+                } else if (msg.what == -1) {
+                    String errorMsg = (String) msg.obj;
+                    Toast.makeText(getActivity(),errorMsg,Toast.LENGTH_SHORT).show();
+               /*     CalldaToast calldaToast = new CalldaToast();
+                    calldaToast.showToast(context, errorMsg);*/
+                }
+            }
+        };
+
+        new Thread() {
+            public void run() {
+                ActivityUtil activityUtil=new ActivityUtil();
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("loginName", CalldaGlobalConfig.getInstance().getUsername());
+                params.put("loginPwd", CalldaGlobalConfig.getInstance().getPassword());
+                params.put("softType", "android");
+                params.put("payMoney", payMoney);
+                params.put("payMethod", "0");
+              /*  params.put("suiteName", suiteName);
+                params.put("lan", lan);*/
+
+                String result = null;
+                Message msg = mHanlder.obtainMessage();
+                try {
+                    Logger.i("套餐客户端充值", Interfaces.GET_RECHARGE_TRADENO
+                            + params);
+                    result = HttpUtils.getDataFromHttpPost(
+                            Interfaces.GET_RECHARGE_TRADENO, params);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                    msg.what = -1;
+                    msg.obj = getString(R.string.getserverdata_exception);
+                    mHanlder.sendMessage(msg);
+
+                    return;
+                }
+
+                try {
+                    String content[] = result.trim().split("\\|");
+                    if ("0".equals(content[0])) {
+                        String orderNo = content[1];
+
+                        msg.what = 0;
+                        msg.obj = orderNo;
+                    } else if ("1".equals(content[0])) {
+                        msg.what = -1;
+                        msg.obj = content[1];
+                    } else {
+                        msg.what = -1;
+                        msg.obj = getString(R.string.rech_hqddsb);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    msg.what = -1;
+                    msg.obj = getString(R.string.getserverdata_exception);
+                } finally {
+                    mHanlder.sendMessage(msg);
+                }
+            }
+        }.start();
+    }
 }
