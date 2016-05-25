@@ -163,7 +163,11 @@ public class HomeActivity extends BaseActivity {
        Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
         startActivity(intent);
     }
-
+    @OnClick(R.id.community)
+    public void community(){
+        Intent intent = new Intent(HomeActivity.this, CommunityActivity.class);
+        startActivity(intent);
+    }
     @Override
     public void init() {
 

@@ -11,6 +11,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
@@ -39,6 +40,9 @@ import com.callba.phone.util.NumberAddressService;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CalldaToast;
 import com.callba.phone.view.MyProgressDialog;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 import com.umeng.socialize.utils.Log;
 
 
@@ -63,11 +67,13 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 	String[] results;
 	UserDao userDao;
 	String key;
+
 	private static class MyHandler extends Handler {
 		private final WeakReference<RegisterActivity> mActivity;
-
+		static TimeCount time;
 		public MyHandler(RegisterActivity activity) {
 			mActivity = new WeakReference<RegisterActivity>(activity);
+
 		}
 
 		@Override
@@ -91,6 +97,8 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 					case Interfaces.GET_CODE_SUCCESS:
 						//activity.et_yzm.setText((String)msg.obj);
 						activity.toast((String)msg.obj);
+						time =new TimeCount(60000, 1000);
+						time.start();
 						activity.bn_register.setClickable(true);
 						break;
 					case Interfaces.GET_CODE_FAILURE:
@@ -101,29 +109,37 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 				}
 			}
 		}
-	}
-
-	private final MyHandler mHandler = new MyHandler(this);
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-		userDao=new UserDao(this,mHandler);
-		TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-		String localNumber = telephonyManager.getLine1Number();
-		if(localNumber != null) {
-			if(localNumber.startsWith("+86")) {
-				localNumber = localNumber.substring(3);
+		class TimeCount extends CountDownTimer {
+			RegisterActivity activity;
+			public TimeCount(long millisInFuture, long countDownInterval) {
+				super(millisInFuture, countDownInterval);
+				activity = mActivity.get();
 			}
-			if(et_account != null) {
-				et_account.setText(localNumber);
+
+			@Override
+			public void onFinish() {// 计时完毕
+				activity.send_yzm.setTextColor(activity.getResources().getColor(R.color.orange));
+				activity.send_yzm.setText(activity.getString(R.string.send_yzm));
+				activity.send_yzm.setClickable(true);
+			}
+
+			@Override
+			public void onTick(long millisUntilFinished) {// 计时过程
+				activity.send_yzm.setClickable(false);//防止重复点击
+				activity.send_yzm.setTextColor(activity.getResources().getColor(R.color.light_black));
+				activity.send_yzm.setText(millisUntilFinished / 1000 + "秒后重新发送");
 			}
 		}
 	}
-	
+
+
+
+	private final MyHandler mHandler = new MyHandler(this);
+
+
 	@Override
 	public void init() {
+		userDao=new UserDao(this,mHandler);
 		preferenceUtil=SharedPreferenceUtil.getInstance(this);
 		Locale locale = getResources().getConfiguration().locale;
 		 language = locale.getCountry();
@@ -415,6 +431,16 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 					LoginController.getInstance().setUserLoginState(false);
 					CalldaGlobalConfig.getInstance().setAutoLogin(true);
 					intent.putExtra("isLogin", false);
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							try{
+								EMClient.getInstance().createAccount(username,password); }catch(HyphenateException e){
+								e.printStackTrace();
+							}
+						}
+					}).start();
+
 					startActivity(intent);
 				}else {
 					/*CalldaToast calldaToast = new CalldaToast();

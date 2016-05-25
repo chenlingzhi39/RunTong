@@ -15,7 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:id="@+id/change_head">
 
         <TextView
             android:layout_width="wrap_content"
@@ -34,13 +35,12 @@
             android:layout_centerVertical="true"
             android:src="@drawable/more" />
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/head"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/more1"
-            android:clickable="true"
             android:src="@drawable/head"
             android:layout_marginRight="10dp"/>
     </RelativeLayout>
@@ -52,7 +52,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:id="@+id/change_nickname">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,7 +87,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:id="@+id/change_signature">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -94,7 +96,8 @@
         android:text="@string/signature"
         android:textSize="20sp"
         android:layout_marginLeft="10dp"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black"
+       />
         <ImageView
             android:id="@+id/more3"
             android:layout_width="wrap_content"

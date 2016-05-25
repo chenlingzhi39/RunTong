@@ -4,26 +4,26 @@ package com.callba.phone.bean;
  * Created by Administrator on 2016/5/21.
  */
 public class NearByUser {
-    private int userId;
-    private String nickName;
+    private String userID;
+    private String nickname;
     private String phoneNumber;
     private String url_head;
-    private double distance;
+    private String distance;
 
-    public double getDistance() {
+    public String getDistance() {
         return distance;
     }
 
-    public void setDistance(double distance) {
+    public void setDistance(String distance) {
         this.distance = distance;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setNickname(String nickName) {
+        this.nickname = nickName;
     }
 
     public String getPhoneNumber() {
@@ -34,12 +34,12 @@ public class NearByUser {
         this.phoneNumber = phoneNumber;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getUserID() {
+        return userID;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     public String getUrl_head() {

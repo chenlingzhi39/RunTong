@@ -38,6 +38,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.bitmap.BitmapCommonUtils;
@@ -1104,6 +1107,29 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                             progressDialog.dismiss();
 
                         }
+
+                        EMClient.getInstance().login(username,password,new EMCallBack() {//回调
+                            @Override
+                            public void onSuccess() {
+                                runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        EMClient.getInstance().groupManager().loadAllGroups();
+                                        EMClient.getInstance().chatManager().loadAllConversations();
+                                        Log.d("main", "登录聊天服务器成功！");
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onProgress(int progress, String status) {
+
+                            }
+
+                            @Override
+                            public void onError(int code, String message) {
+                                Log.d("main", "登录聊天服务器失败！");
+                            }
+                        });
 
                         // 处理登录成功返回信息
                         LoginController.parseLoginSuccessResult(

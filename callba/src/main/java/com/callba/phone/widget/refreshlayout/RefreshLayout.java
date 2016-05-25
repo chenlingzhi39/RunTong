@@ -79,8 +79,8 @@ public class RefreshLayout extends ViewGroup {
     private static final int INVALID_POINTER = -1;
     private static final float DRAG_RATE = .5f;
 
-    // Max amount of circle that can be filled by progress during swipe gesture,
-    // where 1.0 is a full circle
+    // Max amount of community that can be filled by progress during swipe gesture,
+    // where 1.0 is a full community
     private static final float MAX_PROGRESS_ANGLE = .8f;
 
     private static final int SCALE_DOWN_DURATION = 150;
@@ -170,7 +170,7 @@ public class RefreshLayout extends ViewGroup {
                 mProgress.stop();
                 mCircleView.setVisibility(View.GONE);
                 setColorViewAlpha(MAX_ALPHA);
-                // Return the circle to its start position
+                // Return the community to its start position
                 if (mHeaderScale) {
                     setAnimationProgress(0 /* animation complete and view is hidden */);
                 } else {
@@ -341,7 +341,7 @@ public class RefreshLayout extends ViewGroup {
         } else {
             mCircleHeight = mCircleWidth = (int) (CIRCLE_DIAMETER * metrics.density);
         }
-        // force the bounds of the progress circle inside the circle view to
+        // force the bounds of the progress community inside the community view to
         // update by setting it to null before updating its size and then
         // re-setting it
         mCircleView.setImageDrawable(null);
@@ -385,7 +385,7 @@ public class RefreshLayout extends ViewGroup {
 
         createProgressView();
         ViewCompat.setChildrenDrawingOrderEnabled(this, true);
-        // the absolute offset has to take into account that the circle starts at an offset
+        // the absolute offset has to take into account that the community starts at an offset
         mSpinnerFinalOffset = DEFAULT_CIRCLE_TARGET * metrics.density;
         mHeaderTotalDragDistance = mSpinnerFinalOffset;
 
@@ -441,7 +441,7 @@ public class RefreshLayout extends ViewGroup {
     }
 
     /**
-     * Pre API 11, alpha is used to make the progress circle appear instead of scale.
+     * Pre API 11, alpha is used to make the progress community appear instead of scale.
      */
     private boolean isAlphaUsedForScale() {
         return android.os.Build.VERSION.SDK_INT < 11;
@@ -523,7 +523,7 @@ public class RefreshLayout extends ViewGroup {
         mCircleView.setVisibility(View.VISIBLE);
         if (android.os.Build.VERSION.SDK_INT >= 11) {
             // Pre API 11, alpha is used in place of scale up to show the
-            // progress circle appearing.
+            // progress community appearing.
             // Don't adjust the alpha during appearance otherwise.
             mProgress.setAlpha(MAX_ALPHA);
         }
@@ -789,11 +789,11 @@ public class RefreshLayout extends ViewGroup {
     }
 
     /**
-     * Get the diameter of the progress circle that is displayed as part of the
+     * Get the diameter of the progress community that is displayed as part of the
      * swipe to refresh layout. This is not valid until a measure pass has
      * completed.
      *
-     * @return Diameter in pixels of the progress circle view.
+     * @return Diameter in pixels of the progress community view.
      */
     public int getProgressCircleDiameter() {
         return mCircleView != null ?mCircleView.getMeasuredHeight() : 0;
@@ -1036,7 +1036,7 @@ public class RefreshLayout extends ViewGroup {
 
                     int targetY = mHeaderOriginalOffsetTop
                             + (int) ((slingshotDist * dragPercent) + extraMove);
-                    // where 1.0f is a full circle
+                    // where 1.0f is a full community
                     if (mCircleView.getVisibility() != View.VISIBLE) {
                         mCircleView.setVisibility(View.VISIBLE);
                     }

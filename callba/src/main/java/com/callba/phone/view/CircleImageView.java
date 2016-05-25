@@ -109,7 +109,7 @@ class CircleImageView extends ImageView {
     }
 
     /**
-     * Update the background color of the circle image view.
+     * Update the background color of the community image view.
      *
      * @param colorRes Id of a color resource.
      */

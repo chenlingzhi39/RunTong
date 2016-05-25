@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
@@ -42,6 +43,7 @@ public class CircleTextView extends TextView{
         canvas.drawCircle(getWidth()/2, getHeight()/2, Math.max(getWidth(), getHeight())/2-12, paint2);
         canvas.drawCircle(getWidth()/2, getHeight()/2, Math.max(getWidth(), getHeight())/2-24, paint3);
         canvas.drawLine(36,getHeight()/2,getWidth()-36,getHeight()/2,paint3);
+        Rect targetRect = new Rect(getMeasuredWidth()*((int)Math.sqrt((double)2)-1)/2, getMeasuredHeight()*((int)Math.sqrt((double)2)-1)/2, getMeasuredWidth()*((int)Math.sqrt((double)2)+1)/2, getMeasuredHeight()*((int)Math.sqrt((double)2)+1)/2);
         super.draw(canvas);
     }
 }

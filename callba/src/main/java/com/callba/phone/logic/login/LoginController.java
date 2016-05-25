@@ -139,15 +139,18 @@ public class LoginController {
 			CalldaGlobalConfig.getInstance().setLoginToken(resultInfo[2]);
 			CalldaGlobalConfig.getInstance().setUsername(username);
 			CalldaGlobalConfig.getInstance().setSipIP(resultInfo[4]);
-//			Logger.v("处理登录成功信息", "当前SIP"+CalldaGlobalConfig.getInstance().getSipIP());
+			CalldaGlobalConfig.getInstance().setNickname(resultInfo[5]);
+			CalldaGlobalConfig.getInstance().setUserhead(resultInfo[6]);
+    		Logger.v("处理登录成功信息", "当前SIP"+CalldaGlobalConfig.getInstance().getSipIP());
 			try {
 				String encryptPwd = DesUtil.encrypt(password,
 						CalldaGlobalConfig.getInstance().getLoginToken());
 				CalldaGlobalConfig.getInstance().setPassword(encryptPwd);
 			} catch (Exception e) {
 				e.printStackTrace();
-				CalldaToast calldaToast = new CalldaToast();
-				calldaToast.showToast(context, R.string.result_data_error);
+				Toast.makeText(context,context.getString(R.string.result_data_error),Toast.LENGTH_SHORT).show();
+			/*	CalldaToast calldaToast = new CalldaToast();
+				calldaToast.showToast(context, R.string.result_data_error);*/
 			}
 			
 			SharedPreferenceUtil mPreferenceUtil = SharedPreferenceUtil.getInstance(context);
@@ -210,12 +213,12 @@ public class LoginController {
 			switch (taskResultCode) {
 			case Task.TASK_SUCCESS:
 				try {
-					String[] result = ((String)msg.obj).split("\\|");
+					String[] result = ((String)msg.obj).split("\\|",7);
+					Log.i("resultsize",result.length+"");
 					if("0".equals(result[0])) {
 						loginState = true;
 						loginListener.loginSuccess(result);
 					} else {
-						Log.i("login_fail",result[1]);
 						loginState = false;
 						loginListener.serverLoginFailed(result[1]);
 					}
@@ -293,7 +296,6 @@ public class LoginController {
 		try {
 			String content = HttpUtils.getDatafFromPostConnClose(
 					Interfaces.Login, params);
-			Log.i("login_success",content);
 			Logger.v(TAG, Interfaces.Login+ params);
 			results = content.replace("\n", "").replace("\r", "");
 

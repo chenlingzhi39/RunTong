@@ -46,6 +46,24 @@ public class CalldaGlobalConfig {
 	private double longitude;
 	private String address;
 	private long interval=600000;
+	private String userhead;
+    private String nickname;
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public String getUserhead() {
+		return userhead;
+	}
+
+	public void setUserhead(String userhead) {
+		this.userhead = userhead;
+	}
+
 	public long getInterval() {
 		return interval;
 	}

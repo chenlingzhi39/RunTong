@@ -1,4 +1,7 @@
 package com.callba.phone.cfg;
+
+import android.os.Environment;
+
 /**
  * 保存系统配置的全局常量
  * @author Administrator
@@ -166,4 +169,9 @@ public class Constant {
 	 * 数据库位置
 	 */
 	public static String DB_PATH_ = "db_path";
+	// 手机SD卡的路径
+	public static final String SDCARD = Environment
+			.getExternalStorageDirectory().getPath();
+
+	public static final String PHOTO_PATH=SDCARD + "/callba/";
 }

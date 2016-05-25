@@ -22,6 +22,9 @@ import com.callba.phone.widget.refreshlayout.EasyRecyclerView;
 import com.callba.phone.widget.refreshlayout.RefreshLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.umeng.socialize.utils.Log;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,11 +116,12 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         if(result[0].equals("0"))
         { list = new ArrayList<>();
         try {
-            list = gson.fromJson(msg, new TypeToken<List<NearByUser>>() {
+            list = gson.fromJson(result[1], new TypeToken<List<NearByUser>>() {
             }.getType());
         } catch (Exception e) {
 
         }
+            Log.i("size",list.size()+"");
             if(list.size()==0)
         userList.showEmpty();
         else{ nearByUserAdapter=new NearByUserAdapter(this);

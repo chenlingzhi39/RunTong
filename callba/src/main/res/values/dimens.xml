@@ -9,4 +9,5 @@
     <dimen name="top_menu_bar_height">50dp</dimen>
     <dimen name="status_bar_height">0dp</dimen>
     <dimen name="status_bar_height1">0dp</dimen>
+    <dimen name="historyscore_tb">10dp</dimen>
 </resources>

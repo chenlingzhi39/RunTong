@@ -7,6 +7,7 @@ import java.util.Map;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -42,7 +43,7 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 	private final MyHandler mHandler = new MyHandler(this);
 	private static class MyHandler extends Handler {
 		private final WeakReference<RetrievePasswordActivity> mActivity;
-
+        private TimeCount time;
 		public MyHandler(RetrievePasswordActivity activity) {
 			mActivity = new WeakReference<RetrievePasswordActivity>(activity);
 		}
@@ -71,11 +72,35 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 						break;
 					case Interfaces.GET_CODE_SUCCESS:
 						activity.toast((String)msg.obj);
-						activity.bn_submit.setClickable(true);
+						time =new TimeCount(60000, 1000);
+						time.start();
 						break;
 
 				}
-			}}}
+			}}
+		class TimeCount extends CountDownTimer {
+			RetrievePasswordActivity activity;
+			public TimeCount(long millisInFuture, long countDownInterval) {
+				super(millisInFuture, countDownInterval);
+				activity = mActivity.get();
+			}
+
+			@Override
+			public void onFinish() {// 计时完毕
+				activity.bn_submit.setBackgroundColor(activity.getResources().getColor(R.color.orange));
+				activity.bn_submit.setText(activity.getString(R.string.send_yzm));
+				activity.bn_submit.setClickable(true);
+			}
+
+			@Override
+			public void onTick(long millisUntilFinished) {// 计时过程
+				activity.bn_submit.setClickable(false);//防止重复点击
+				activity.bn_submit.setBackgroundColor(activity.getResources().getColor(R.color.light_black));
+				activity.bn_submit.setText(millisUntilFinished / 1000 + "秒后重新发送");
+			}
+		}
+
+	}
 	@Override
 	public void init() {
 		Locale locale = getResources().getConfiguration().locale;

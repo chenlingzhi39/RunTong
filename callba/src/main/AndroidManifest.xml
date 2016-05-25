@@ -21,7 +21,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <!-- 设置环信应用的AppKey -->
-        <!--<meta-data android:name="EASEMOB_APPKEY"  android:value="boboit#callba" />-->
+       <meta-data android:name="EASEMOB_APPKEY"  android:value="boboit#callba" />
 
 
         <meta-data
@@ -44,7 +44,9 @@
             android:name="UMENG_MESSAGE_SECRET"
             android:value="c2c0420b2f48ef7fa0e69e8d1d0cc17f" >
         </meta-data>-->
-
+        <activity
+            android:name=".phone.activity.SelectPicPopupWindow"
+            android:theme="@style/MyDialogStyleBottom" />
         <activity
             android:name="com.callba.phone.activity.WelcomeActivity"
             android:label="@string/app_name"
@@ -56,6 +58,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".phone.activity.PostActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            />
+        <activity android:name=".phone.activity.CommunityActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            />
         <activity android:name=".phone.activity.SignInActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

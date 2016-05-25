@@ -193,7 +193,7 @@ class MaterialProgressDrawable extends Drawable implements Animatable {
     }
 
     /**
-     * Update the background color of the circle image view.
+     * Update the background color of the community image view.
      */
     public void setBackgroundColor(int color) {
         mRing.setBackgroundColor(color);
@@ -478,7 +478,7 @@ class MaterialProgressDrawable extends Drawable implements Animatable {
 
         private int[] mColors;
         // mColorIndex represents the offset into the available mColors that the
-        // progress circle should currently display. As the progress circle is
+        // progress community should currently display. As the progress community is
         // animating, the mColorIndex moves by one to the next available color.
         private int mColorIndex;
         private float mStartingStartTrim;
@@ -724,7 +724,7 @@ class MaterialProgressDrawable extends Drawable implements Animatable {
         }
 
         /**
-         * @param centerRadius Inner radius in px of the circle the progress
+         * @param centerRadius Inner radius in px of the community the progress
          *            spinner arc traces.
          */
         public void setCenterRadius(double centerRadius) {

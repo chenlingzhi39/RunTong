@@ -18,6 +18,7 @@ import com.lidroid.xutils.http.client.HttpRequest;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class UserDao {
     private Message message;
     private String[] result;
     private PostListener postListener;
-
+    private UploadListener uploadListener;
     public interface PostListener {
         void start();
 
@@ -41,10 +42,19 @@ public class UserDao {
 
         void failure(String msg);
     }
+    public interface UploadListener{
+        void start();
 
+        void success(String msg);
+
+        void failure(String msg);
+
+        void loading(long total, long current, boolean isUploading);
+    }
     public UserDao() {
         httpUtils = new HttpUtils(6 * 1000);
         httpUtils.configRequestRetryCount(3);
+        Log.i("userdao","无参");
     }
 
     public UserDao(Context context, Handler handler) {
@@ -61,6 +71,12 @@ public class UserDao {
         httpUtils.configRequestRetryCount(3);
     }
 
+    public UserDao(Context context, UploadListener uploadListener) {
+        this.context = context;
+        this.uploadListener = uploadListener;
+        httpUtils = new HttpUtils(6 * 1000);
+        httpUtils.configRequestRetryCount(3);
+    }
 
     public void getMessage(int code) {
         message = handler.obtainMessage();
@@ -264,7 +280,6 @@ public class UserDao {
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-
                 Log.i("getNearby_success", responseInfo.result);
                     postListener.success(responseInfo.result);
             }
@@ -284,10 +299,10 @@ public class UserDao {
         params.addBodyParameter("loginPwd", password);
         params.addBodyParameter("latitude", latitude + "");
         params.addBodyParameter("longitude", longitude + "");
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_NEARBY, params, new RequestCallBack<String>() {
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.SAVE_LOCATION, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i("save", "success");
+                Log.i("save_success", responseInfo.result);
             }
 
             @Override
@@ -324,7 +339,7 @@ public class UserDao {
         params.addBodyParameter("oldPwd",oldPassword);
         params.addBodyParameter("newPwd",newPassword);
         params.addBodyParameter("softType", "android");
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.Change_Pass, params, new RequestCallBack<String>() {
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.CHANGE_HEAD, params, new RequestCallBack<String>() {
             @Override
             public void onStart() {
                 Log.i("url",Interfaces.Change_Pass);
@@ -343,6 +358,37 @@ public class UserDao {
             @Override
             public void onFailure(HttpException error, String msg) {
               postListener.failure(context.getString(R.string.network_error));
+            }
+        });
+    }
+    public void changeHead(String loginName,String password,File file){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("file",file);
+        Log.i("file",file.getPath());
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.CHANGE_HEAD, params, new RequestCallBack<String>(){
+            @Override
+            public void onStart() {
+                uploadListener.start();
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                result=responseInfo.result.split("\\|");
+                if(result[0].equals("0"))
+                    uploadListener.success(result[1]);
+                else uploadListener.failure(result[1]);
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+            uploadListener.failure(context.getString(R.string.network_error));
+            }
+
+            @Override
+            public void onLoading(long total, long current, boolean isUploading) {
+
             }
         });
     }

@@ -26,6 +26,8 @@
     <string name="mall">精品商城</string>
     <string name="finance">我的金融</string>
     <string name="community">我的圈子</string>
+    <string name="camera">拍照</string>
+    <string name="post">发送</string>
     <string name="game">我的游戏</string>
     <string name="sign_in">我的签到</string>
     <string name="message">信息</string>
@@ -35,6 +37,7 @@
     <string name="settings">设置</string>
     <string name="my_number">我的账号</string>
     <string name="change">修改资料</string>
+    <string name="save">保存</string>
     <string name="head">头像</string>
     <string name="nick_name">昵称</string>
     <string name="signature">个性签名</string>

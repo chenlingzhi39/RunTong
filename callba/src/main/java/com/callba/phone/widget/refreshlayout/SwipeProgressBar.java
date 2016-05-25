@@ -167,7 +167,7 @@ final class SwipeProgressBar {
                 long finishElapsed = (now - mFinishTime) % FINISH_ANIMATION_DURATION_MS;
                 float finishProgress = (finishElapsed / (FINISH_ANIMATION_DURATION_MS / 100f));
                 float pct = (finishProgress / 100f);
-                // Radius of the circle is half of the screen.
+                // Radius of the community is half of the screen.
                 float clearRadius = width / 2 * INTERPOLATOR.getInterpolation(pct);
                 mClipRect.set(cx - clearRadius, 0, cx + clearRadius, height);
                 canvas.saveLayerAlpha(mClipRect, 0, 0);
@@ -247,13 +247,13 @@ final class SwipeProgressBar {
     }
 
     /**
-     * Draws a circle centered in the view.
+     * Draws a community centered in the view.
      *
      * @param canvas the canvas to draw on
      * @param cx the center x coordinate
      * @param cy the center y coordinate
      * @param color the color to draw
-     * @param pct the percentage of the view that the circle should cover
+     * @param pct the percentage of the view that the community should cover
      */
     private void drawCircle(Canvas canvas, float cx, float cy, int color, float pct) {
         mPaint.setColor(color);

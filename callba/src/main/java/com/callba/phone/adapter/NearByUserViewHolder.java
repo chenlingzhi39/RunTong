@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.bean.NearByUser;
 
+import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -23,11 +24,12 @@ public class NearByUserViewHolder extends BaseViewHolder<NearByUser> {
 
     public NearByUserViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_nearby_user);
+        ButterKnife.inject(this,itemView);
     }
 
     @Override
     public void setData(NearByUser data) {
-       userName.setText(data.getNickName());
+       userName.setText(data.getNickname());
         Glide.with(getContext()).load(data.getUrl_head()).into(userHead);
         distance.setHint(data.getDistance()+"米以内");
     }

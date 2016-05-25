@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -69,6 +70,7 @@ public class WelcomeActivity extends BaseActivity {
 			@Override
 			public void run() {
 				startZip();
+
 				// mPushAgent = PushAgent.getInstance(WelcomeActivity.this);
 				// mPushAgent.onAppStart();
 				// mPushAgent.enable();

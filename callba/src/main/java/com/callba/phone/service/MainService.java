@@ -1432,11 +1432,12 @@ public class MainService extends Service implements Runnable{
 			StringBuilder sb = new StringBuilder();
 			if (aMapLocation.getErrorCode() == 0) {
 				Log.i("address", aMapLocation.getAddress());
+				Log.i("latitude",aMapLocation.getLatitude()+"");
+				Log.i("longitude",aMapLocation.getLongitude()+"");
 				CalldaGlobalConfig.getInstance().setAddress(aMapLocation.getAddress());
 				CalldaGlobalConfig.getInstance().setLatitude(aMapLocation.getLatitude());
 				CalldaGlobalConfig.getInstance().setLongitude(aMapLocation.getLongitude());
-				if(!CalldaGlobalConfig.getInstance().getUsername().equals("")&&!CalldaGlobalConfig.getInstance().getPassword().equals(""))
-					userDao.saveLocation(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),aMapLocation.getLatitude(),aMapLocation.getLongitude());
+				userDao.saveLocation(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),aMapLocation.getLatitude(),aMapLocation.getLongitude());
 			} else {
 				//定位失败
 				sb.append("定位失败" + "\n");

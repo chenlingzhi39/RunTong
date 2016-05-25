@@ -170,6 +170,8 @@ public interface Interfaces {
 	 * 附近的人
 	 */
 	String GET_NEARBY="http://bointer.aihuzhongchou.com/inter/nearby/nearby.jsp";
+	String SAVE_LOCATION="http://bointer.aihuzhongchou.com/inter/savelocation/savelocation.jsp";
+	String CHANGE_HEAD=BASIC_URL+"/user_head.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;
