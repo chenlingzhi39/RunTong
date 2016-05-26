@@ -75,14 +75,14 @@ public class HomeActivity extends BaseActivity {
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webSettings.setSupportZoom(true);
         webSettings.setUseWideViewPort(true);
-        String[] urls=CalldaGlobalConfig.getInstance().getAdvertisements();
-        if(urls!=null) {
+        String[] urls = CalldaGlobalConfig.getInstance().getAdvertisements();
+        if (urls != null) {
             webSettings.setJavaScriptEnabled(true);
             webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
             webSettings.setUseWideViewPort(true);//关键点
             webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-            if(Build.VERSION.SDK_INT>=11)
-            webSettings.setDisplayZoomControls(false);
+            if (Build.VERSION.SDK_INT >= 11)
+                webSettings.setDisplayZoomControls(false);
             webSettings.setJavaScriptEnabled(true); // 设置支持javascript脚本
             webSettings.setAllowFileAccess(true); // 允许访问文件
             webSettings.setBuiltInZoomControls(true); // 设置显示缩放按钮
@@ -96,13 +96,13 @@ public class HomeActivity extends BaseActivity {
                 webSettings.setDefaultZoom(WebSettings.ZoomDensity.FAR);
             } else if (mDensity == 160) {
                 webSettings.setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
-            } else if(mDensity == 120) {
+            } else if (mDensity == 120) {
                 webSettings.setDefaultZoom(WebSettings.ZoomDensity.CLOSE);
-            }else if(mDensity == DisplayMetrics.DENSITY_XHIGH){
+            } else if (mDensity == DisplayMetrics.DENSITY_XHIGH) {
                 webSettings.setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
-            }else if (mDensity == DisplayMetrics.DENSITY_TV){
+            } else if (mDensity == DisplayMetrics.DENSITY_TV) {
                 webSettings.setDefaultZoom(WebSettings.ZoomDensity.FAR);
-            }else{
+            } else {
                 webSettings.setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
             }
 
@@ -142,32 +142,6 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.search)
-    public void search() {
-        Log.i("home", "search_yue");
-        showYueDialog();
-    }
-
-    @OnClick(R.id.recharge)
-    public void recharge() {
-        Intent intent = new Intent(HomeActivity.this, RechargeActivity2.class);
-        startActivity(intent);
-    }
-    @OnClick(R.id.friend)
-    public void friend(){
-        Intent intent = new Intent(HomeActivity.this, FriendActivity.class);
-        startActivity(intent);
-    }
-    @OnClick(R.id.sign_in)
-    public void sign_in() {
-       Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
-        startActivity(intent);
-    }
-    @OnClick(R.id.community)
-    public void community(){
-        Intent intent = new Intent(HomeActivity.this, CommunityActivity.class);
-        startActivity(intent);
-    }
     @Override
     public void init() {
 
@@ -199,6 +173,38 @@ public class HomeActivity extends BaseActivity {
             }
 
 
+        }
+    }
+
+    @OnClick({R.id.recharge, R.id.search, R.id.friend, R.id.mall, R.id.finance, R.id.community, R.id.game, R.id.sign_in})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.recharge:
+                Intent intent = new Intent(HomeActivity.this, RechargeActivity2.class);
+                startActivity(intent);
+                break;
+            case R.id.search:
+                Log.i("home", "search_yue");
+                showYueDialog();
+                break;
+            case R.id.friend:
+                Intent intent1 = new Intent(HomeActivity.this, FriendActivity.class);
+                startActivity(intent1);
+                break;
+            case R.id.mall:
+                break;
+            case R.id.finance:
+                break;
+            case R.id.community:
+                Intent intent0 = new Intent(HomeActivity.this, CommunityActivity.class);
+                startActivity(intent0);
+                break;
+            case R.id.game:
+                break;
+            case R.id.sign_in:
+                Intent intent2 = new Intent(HomeActivity.this, SignInActivity.class);
+                startActivity(intent2);
+                break;
         }
     }
 

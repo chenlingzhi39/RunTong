@@ -39,6 +39,7 @@ import android.widget.TextView;
 
 
 import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMChatManager;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.lidroid.xutils.BitmapUtils;
@@ -1107,7 +1108,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                             progressDialog.dismiss();
 
                         }
-
                         EMClient.getInstance().login(username,password,new EMCallBack() {//回调
                             @Override
                             public void onSuccess() {

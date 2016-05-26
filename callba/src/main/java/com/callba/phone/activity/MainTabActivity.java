@@ -1,13 +1,21 @@
 package com.callba.phone.activity;
 
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.TabActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -25,6 +33,14 @@ import com.callba.phone.activity.contact.ContactActivity;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.ActivityUtil;
+import com.hyphenate.EMMessageListener;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
+import com.hyphenate.chat.EMTextMessageBody;
+
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 主界面
@@ -45,7 +61,7 @@ public class MainTabActivity extends TabActivity {
 	private int[] mTabImageArray = {R.drawable.menu1_selector,
 			R.drawable.menu2_selector, R.drawable.menu3_selector,
 			R.drawable.menu4_selector, R.drawable.menu5_selector};
-
+	EMMessageListener msgListener;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -139,6 +155,39 @@ public class MainTabActivity extends TabActivity {
 				}
 			} catch (Exception e) {}
 		}
+		msgListener = new EMMessageListener() {
+
+			@Override
+			public void onMessageReceived(List<EMMessage> messages) {
+				//收到消息
+				for (EMMessage message :messages) {
+					Log.i("get_message",message.getBody().toString());
+					EMTextMessageBody txtBody = (EMTextMessageBody) message.getBody();
+					sendNotification1(MainTabActivity.class,"你有一条新消息",message.getFrom().toString()+":"+txtBody.getMessage());
+
+				}
+			}
+
+			@Override
+			public void onCmdMessageReceived(List<EMMessage> messages) {
+				//收到透传消息
+			}
+
+			@Override
+			public void onMessageReadAckReceived(List<EMMessage> messages) {
+				//收到已读回执
+			}
+
+			@Override
+			public void onMessageDeliveryAckReceived(List<EMMessage> message) {
+				//收到已送达回执
+			}
+
+			@Override
+			public void onMessageChanged(EMMessage message, Object change) {
+				//消息状态变动
+			}
+		};
 	}
 	
 	private View getTabItemView(int index) {
@@ -177,12 +226,49 @@ public class MainTabActivity extends TabActivity {
 				sendBroadcast(intent);
 			}
 		}, 300);
+		EMClient.getInstance().chatManager().addMessageListener(msgListener);
 	}
-	
+	@Override
+	protected void onStop() {
+
+
+		super.onStop();
+	}
 	@Override
 	protected void onDestroy() {
 		MyApplication.activities.remove(this);
+		EMClient.getInstance().chatManager().removeMessageListener(msgListener);
+		EMClient.getInstance().logout(true);
 		super.onDestroy();
 	}
+	private void sendNotification1(Class<?> clazz,String title,String content) {
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+				getApplicationContext())
+				.setSmallIcon(R.drawable.logo_notification)
+				.setLargeIcon(
+						BitmapFactory.decodeResource(getResources(),
+								R.drawable.logo))
+				.setContentTitle(title)
+				.setContentText(content);
 
+		Intent notificationIntent = new Intent(getApplicationContext(), clazz);
+
+		// TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		// stackBuilder.addParentStack(clazz);
+		// stackBuilder.addNextIntent(notificationIntent);
+		// PendingIntent resultPendingIntent =
+		// stackBuilder.getPendingIntent(
+		// 0,
+		// PendingIntent.FLAG_UPDATE_CURRENT
+		// );
+		PendingIntent contentIntent = PendingIntent.getActivity(
+				getApplicationContext(), 0, notificationIntent, 0);
+		mBuilder.setContentIntent(contentIntent);
+		mBuilder.setFullScreenIntent(contentIntent,true);
+		Notification notification = mBuilder.build();
+		notification.flags = Notification.FLAG_AUTO_CANCEL|Notification.FLAG_SHOW_LIGHTS;
+		notification.sound= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.notify(10, notification);
+	}
 }

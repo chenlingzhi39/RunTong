@@ -31,8 +31,11 @@
     <string name="game">我的游戏</string>
     <string name="sign_in">我的签到</string>
     <string name="message">信息</string>
+    <string name="post_message">发送信息</string>
     <string name="search">搜索</string>
     <string name="edit">编辑</string>
+    <string name="receiver">收件人</string>
+    <string name="input_text">添加文本</string>
     <string name="center">个人中心</string>
     <string name="settings">设置</string>
     <string name="my_number">我的账号</string>

@@ -2,21 +2,27 @@ package com.callba.phone.service;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
@@ -25,6 +31,7 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.callba.R;
 import com.callba.phone.activity.HomeActivity;
+import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.activity.WelcomeActivity;
 import com.callba.phone.activity.contact.ContactBackupActivity;
 import com.callba.phone.activity.contact.RemoteContactsActvity;
@@ -54,6 +61,10 @@ import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.view.CalldaToast;
+import com.hyphenate.EMMessageListener;
+import com.hyphenate.chat.EMChatManager;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
 
 /**
  * 程序主服务，处理后台任务
@@ -76,6 +87,7 @@ public class MainService extends Service implements Runnable{
 	private AMapLocationClientOption locationOption = null;
 	UserDao userDao;
 	LocationReceiver receiver;
+
 	/**
 	 * 新建任务
 	 * 
@@ -101,8 +113,9 @@ public class MainService extends Service implements Runnable{
 				"com.runtong.location");
 		receiver = new LocationReceiver();
 		registerReceiver(receiver, filter);
-	}
 
+
+	}
 
 	@SuppressLint("HandlerLeak")
 	Handler mHandler = new Handler() {

@@ -16,6 +16,7 @@ import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.SharedPreferenceUtil;
+import com.hyphenate.chat.EMClient;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;

@@ -33,4 +33,6 @@
     <!-- 选择呼叫方式弹出框button背景 -->
     <color name="bn_press_nor">#282828</color>
     <color name="bn_press_pre">#1B1B1B</color>
+    <color name="list_itease_secondary_color">#888888</color>
+    <color name="list_itease_primary_color">#000</color>
 </resources>

@@ -34,7 +34,7 @@ import com.callba.phone.view.MyProgressDialog;
 )
 public class RetrievePasswordActivity extends BaseActivity implements OnClickListener {
 
-	private Button bn_back, bn_ok, bn_submit;
+	private Button  bn_submit;
 	private EditText et_phoneNum;
 	
 	private MyProgressDialog progressDialog;
@@ -105,11 +105,7 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 	public void init() {
 		Locale locale = getResources().getConfiguration().locale;
 		 language = locale.getCountry();
-		bn_back = (Button) this.findViewById(R.id.bn_retrpass_back);
-		bn_ok = (Button) this.findViewById(R.id.bn_retrpass_ok);
 		bn_submit = (Button) this.findViewById(R.id.bn_retrieve_pass);
-		bn_back.setOnClickListener(this);
-		bn_ok.setOnClickListener(this);
 		bn_submit.setOnClickListener(this);
 		
 		et_phoneNum = (EditText) this.findViewById(R.id.et_retrpass_phone);
@@ -200,15 +196,10 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.bn_retrpass_back:
-			this.finish();
-			break;
-
-		case R.id.bn_retrpass_ok:
 		case R.id.bn_retrieve_pass:
 			InputMethodManager imm = (InputMethodManager) this
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(bn_ok.getWindowToken(), 0);
+			imm.hideSoftInputFromWindow(bn_submit.getWindowToken(), 0);
 			String num=et_phoneNum.getText().toString().trim();
 			if (num.equals("")) {
 				toast( "手机号不能为空!");
