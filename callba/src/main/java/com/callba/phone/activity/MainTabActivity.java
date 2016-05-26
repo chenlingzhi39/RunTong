@@ -164,7 +164,8 @@ public class MainTabActivity extends TabActivity {
 					Log.i("get_message",message.getBody().toString());
 					EMTextMessageBody txtBody = (EMTextMessageBody) message.getBody();
 					sendNotification1(MainTabActivity.class,"你有一条新消息",message.getFrom().toString()+":"+txtBody.getMessage());
-
+                    Intent intent=new Intent("com.callba.chat");
+					sendBroadcast(intent);
 				}
 			}
 

@@ -1,6 +1,9 @@
 package com.callba.phone.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +13,7 @@ import android.view.MenuItem;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.adapter.ConversationAdapter;
+import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
@@ -39,7 +43,7 @@ public class MessageActivity extends BaseActivity {
     //EaseConversationList conversationListView;
     protected List<EMConversation> conversationList = new ArrayList<>();
     private ConversationAdapter adapter;
-
+    private ChatReceiver chatReceiver;
     public interface EaseConversationListItemClickListener {
         /**
          * 会话listview item点击事件
@@ -82,7 +86,17 @@ public class MessageActivity extends BaseActivity {
         conversationListview.setLayoutManager(new LinearLayoutManager(this));
         adapter=new ConversationAdapter(this);
         adapter.addAll(conversationList);
+        adapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+
+            }
+        });
         conversationListview.setAdapter(adapter);
+        IntentFilter filter = new IntentFilter(
+                "com.callba.chat");
+        chatReceiver=new ChatReceiver();
+        registerReceiver(chatReceiver,filter);
     }
 
     @Override
@@ -135,6 +149,12 @@ public class MessageActivity extends BaseActivity {
         return list;
     }
 
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(chatReceiver);
+        super.onDestroy();
+    }
+
     /**
      * 根据最后一条消息的时间排序
      *
@@ -156,4 +176,12 @@ public class MessageActivity extends BaseActivity {
 
         });
     }
+    class ChatReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            adapter.clear();
+            adapter.addAll(loadConversationList());
+        }
+    }
+
 }
