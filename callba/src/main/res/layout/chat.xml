@@ -4,20 +4,12 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 <include layout="@layout/toolbar"/>
-    <EditText
-        android:id="@+id/number"
+    <com.callba.phone.widget.refreshlayout.EasyRecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:hint="@string/receiver"
-        android:padding="20dp"
-        android:layout_below="@+id/mToolbarContainer" />
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/shape_line"
-        android:layout_below="@+id/number"/>
-
+        android:layout_height="match_parent"
+        android:layout_below="@+id/mToolbarContainer"
+        android:layout_above="@+id/input_menu"
+        android:id="@+id/messages"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -46,6 +38,7 @@
             android:textColor="?attr/colorAccent"
             android:textSize="16sp"
             android:background="?attr/selectableItemBackground"
-           />
+            />
     </LinearLayout>
+
 </RelativeLayout>

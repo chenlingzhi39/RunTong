@@ -60,7 +60,9 @@ import com.callba.phone.util.HttpUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
+import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CalldaToast;
+import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMChatManager;
 import com.hyphenate.chat.EMClient;
@@ -110,7 +112,7 @@ public class MainService extends Service implements Runnable{
 		userDao=new UserDao();
 		Log.i("service","oncreate");
 		IntentFilter filter = new IntentFilter(
-				"com.runtong.location");
+				"com.callba.location");
 		receiver = new LocationReceiver();
 		registerReceiver(receiver, filter);
 
@@ -1401,6 +1403,27 @@ public class MainService extends Service implements Runnable{
 		public void onReceive(Context context, Intent intent) {
 			Log.i("location",intent.getStringExtra("action"));
 			if(intent.getStringExtra("action").equals("login")){
+				EMClient.getInstance().login(SharedPreferenceUtil.getInstance(context).getString(Constant.LOGIN_USERNAME),SharedPreferenceUtil.getInstance(context).getString(Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
+					@Override
+					public void onSuccess() {
+
+						EMClient.getInstance().groupManager().loadAllGroups();
+						EMClient.getInstance().chatManager().loadAllConversations();
+						Log.d("main", "登录聊天服务器成功！");
+
+
+					}
+
+					@Override
+					public void onProgress(int progress, String status) {
+
+					}
+
+					@Override
+					public void onError(int code, String message) {
+						Log.d("main", "登录聊天服务器失败！");
+					}
+				});
 				locationClient = new AMapLocationClient(context);
 				locationOption = new AMapLocationClientOption();
 				// 设置是否需要显示地址信息
@@ -1428,6 +1451,26 @@ public class MainService extends Service implements Runnable{
 				});
 
 			}else{
+				EMClient.getInstance().logout(false, new EMCallBack() {
+
+					@Override
+					public void onSuccess() {
+						// TODO Auto-generated method stub
+						Log.d("main", "退出聊天服务器成功！");
+					}
+
+					@Override
+					public void onProgress(int progress, String status) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onError(int code, String message) {
+						// TODO Auto-generated method stub
+						Log.d("main", "退出聊天服务器失败！");
+					}
+				});
 				if (null != locationClient) {
 					/**
 					 * 如果AMapLocationClient是在当前Activity实例化的，

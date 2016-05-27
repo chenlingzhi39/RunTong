@@ -10,6 +10,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.AbsoluteSizeSpan;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,7 +64,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     LinearLayout change;
     private UserDao userDao;
     private String address;
-
+    private int size;
     public static StraightFragment newInstance() {
         StraightFragment straightFragment = new StraightFragment();
         return straightFragment;
@@ -71,13 +72,36 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int mDensity = metrics.densityDpi;
+        switch (mDensity){
+            case 120:
+                size=15;
+                break;
+            case 160:
+                size=20;
+                break;
+            case 240:
+                size=30;
+                break;
+            case 320:
+                size=40;
+                break;
+            case 480:
+                size=60;
+                break;
+            case 640:
+                size=80;
+                break;
+        }
         Spannable spannable = new SpannableString("38元\n\n原价50元");
-        spannable.setSpan(new AbsoluteSizeSpan(60), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable.setSpan(new AbsoluteSizeSpan(30), spannable.toString().lastIndexOf("\n"), spannable.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new AbsoluteSizeSpan(size), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new AbsoluteSizeSpan(size/2), spannable.toString().lastIndexOf("\n"), spannable.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         price1.setText(spannable);
         Spannable spannable1 = new SpannableString("398元\n\n原价500元");
-        spannable1.setSpan(new AbsoluteSizeSpan(60), 0, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable1.setSpan(new AbsoluteSizeSpan(30), spannable.toString().lastIndexOf("\n"), spannable1.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannable1.setSpan(new AbsoluteSizeSpan(size), 0, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannable1.setSpan(new AbsoluteSizeSpan(size/2), spannable.toString().lastIndexOf("\n"), spannable1.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         price2.setText(spannable1);
         number.setText(CalldaGlobalConfig.getInstance().getUsername());
         String address = NumberAddressService.getAddress(

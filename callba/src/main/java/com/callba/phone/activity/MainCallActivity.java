@@ -223,9 +223,8 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.ACTION_TAB_ONRESUME);
         registerReceiver(mainTabOnResumeReceiver, filter);
-        Intent intent=new Intent("com.runtong.location");
-        intent.putExtra("action","login");
-        sendBroadcast(intent);
+
+
     }
 
     private void loadADImage() {
@@ -1108,28 +1107,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                             progressDialog.dismiss();
 
                         }
-                        EMClient.getInstance().login(username,password,new EMCallBack() {//回调
-                            @Override
-                            public void onSuccess() {
-                                runOnUiThread(new Runnable() {
-                                    public void run() {
-                                        EMClient.getInstance().groupManager().loadAllGroups();
-                                        EMClient.getInstance().chatManager().loadAllConversations();
-                                        Log.d("main", "登录聊天服务器成功！");
-                                    }
-                                });
-                            }
 
-                            @Override
-                            public void onProgress(int progress, String status) {
-
-                            }
-
-                            @Override
-                            public void onError(int code, String message) {
-                                Log.d("main", "登录聊天服务器失败！");
-                            }
-                        });
 
                         // 处理登录成功返回信息
                         LoginController.parseLoginSuccessResult(
@@ -1138,6 +1116,9 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
                         // 检测是否需要自动拨号
                         checkMakePhoneCall();
+
+
+
 
                         // 查询余额
                         //queryUserBalance();
@@ -1156,6 +1137,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                         switchManualLogin();
                     }
                 });
+
     }
 
     /**

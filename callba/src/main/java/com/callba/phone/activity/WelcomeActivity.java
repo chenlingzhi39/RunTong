@@ -42,6 +42,8 @@ import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.ZipUtil;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.socialize.utils.Log;
+
 @ActivityFragmentInject(
 		contentViewId = R.layout.welcome_page
 )
@@ -394,6 +396,7 @@ public class WelcomeActivity extends BaseActivity {
 		// 判断是不是第一次使用
 		boolean isFirstStart = mSharedPreferenceUtil.getBoolean(
 				Constant.ISFRISTSTART, true);
+		Log.i("autologin",CalldaGlobalConfig.getInstance().isAutoLogin()+"");
 		if (isFirstStart) {
 			// 第一次启动，跳转到新功能介绍页面
 			Intent intent = new Intent(WelcomeActivity.this,

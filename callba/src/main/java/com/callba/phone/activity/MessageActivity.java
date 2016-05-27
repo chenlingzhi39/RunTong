@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
@@ -17,6 +18,7 @@ import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
+import com.hyphenate.chat.EMMessage;
 import com.umeng.socialize.utils.Log;
 
 import java.util.ArrayList;
@@ -89,7 +91,12 @@ public class MessageActivity extends BaseActivity {
         adapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-
+             adapter.getData().get(position).markAllMessagesAsRead();
+             Intent intent=new Intent(MessageActivity.this,ChatActivity.class);
+                Bundle bundle=new Bundle();
+                intent.putParcelableArrayListExtra("messages",(ArrayList<EMMessage>) conversationList.get(position).getAllMessages());
+                startActivity(intent);
+                adapter.notifyItemChanged(position);
             }
         });
         conversationListview.setAdapter(adapter);

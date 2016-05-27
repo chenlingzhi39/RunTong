@@ -3,6 +3,7 @@ package com.callba.phone.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.SharedPreferenceUtil;
+import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 
 import butterknife.ButterKnife;
@@ -48,12 +50,33 @@ public class UserActivity extends BaseActivity {
 
     @OnClick(R.id.logout)
     public void logout() {
+        EMClient.getInstance().login(SharedPreferenceUtil.getInstance(this).getString(Constant.LOGIN_USERNAME),SharedPreferenceUtil.getInstance(this).getString(Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
+            @Override
+            public void onSuccess() {
+
+                EMClient.getInstance().groupManager().loadAllGroups();
+                EMClient.getInstance().chatManager().loadAllConversations();
+                Log.d("main", "登录聊天服务器成功！");
+
+
+            }
+
+            @Override
+            public void onProgress(int progress, String status) {
+
+            }
+
+            @Override
+            public void onError(int code, String message) {
+                Log.d("main", "登录聊天服务器失败！");
+            }
+        });
         CalldaGlobalConfig.getInstance().setUsername("");
         CalldaGlobalConfig.getInstance().setPassword("");
         CalldaGlobalConfig.getInstance().setIvPath("");
         LoginController.getInstance().setUserLoginState(false);
         SharedPreferenceUtil.getInstance(this).putString(Constant.LOGIN_PASSWORD, "", true);
-        Intent intent0 = new Intent("location");
+        Intent intent0 = new Intent("com.callba.location");
         intent0.putExtra("action", "logout");
         sendBroadcast(intent0);
         Intent intent = new Intent();

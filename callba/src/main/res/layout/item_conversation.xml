@@ -4,8 +4,12 @@
         android:layout_height="59dp"
         android:id="@+id/list_itease_layout"
         android:background="#fff"
-        android:gravity="center_vertical" >
-
+        android:gravity="center_vertical"
+    >
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/selectableItemBackground">
         <RelativeLayout
             android:id="@+id/avatar_container"
             android:layout_width="59dp"
@@ -77,4 +81,5 @@
             android:padding="7dp"
             android:textColor="@color/list_itease_secondary_color"
             android:textSize="14sp" />
+</RelativeLayout>
 </RelativeLayout>

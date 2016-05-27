@@ -1134,6 +1134,7 @@ public class RefreshLayout extends ViewGroup {
         removeCallbacks(mCancel);
         mReturnToStartPosition.run();
         setFooterRefreshing(true);
+        if(mListener!=null)
         mListener.onFooterRefresh();
     }
 
@@ -1204,6 +1205,7 @@ public class RefreshLayout extends ViewGroup {
 
                 if (action == MotionEvent.ACTION_UP && -yDiff > mFooterDistanceToTriggerSync) {
                     // User movement passed distance; trigger a refresh
+                    if(mListener!=null)
                     startFooterRefresh();
 
                 } else {

@@ -174,4 +174,6 @@ public class Constant {
 			.getExternalStorageDirectory().getPath();
 
 	public static final String PHOTO_PATH=SDCARD + "/callba/";
+	public static final String ACCOUNT_REMOVED = "account_removed";
+	public static final String ACCOUNT_CONFLICT = "conflict";
 }

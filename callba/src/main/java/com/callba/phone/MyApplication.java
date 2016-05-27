@@ -17,12 +17,18 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
+import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.activity.WelcomeActivity;
+import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.StorageUtils;
+import com.hyphenate.EMConnectionListener;
+import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
+import com.hyphenate.util.NetUtils;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.socialize.utils.Log;
 
 public class MyApplication extends Application {
     /**
@@ -32,18 +38,37 @@ public class MyApplication extends Application {
 //	private PushAgent mPushAgent;
 
     private long lastRestartTimeMillis = System.currentTimeMillis();
+    //实现ConnectionListener接口
+    private class MyConnectionListener implements EMConnectionListener {
+        @Override
+        public void onConnected() {
+        }
+        @Override
+        public void onDisconnected(final int error) {
 
+            if (error == EMError.USER_REMOVED) {
+                Log.i("user","removed");
+                onCurrentAccountRemoved();
+            }else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
+                Log.i("user","another");
+                onConnectionConflict();
+            }
+        }}
     @Override
     public void onCreate() {
         super.onCreate();
         EMOptions options = new EMOptions();
 // 默认添加好友时，是不需要验证的，改成需要验证
         options.setAcceptInvitationAlways(false);
-
+        options.setAutoLogin(false);
 //初始化
         EMClient.getInstance().init(this, options);
 //在做打包混淆时，关闭debug模式，避免消耗不必要的资源
         EMClient.getInstance().setDebugMode(true);
+//注册一个监听连接状态的listener
+        EMClient.getInstance().addConnectionListener(new MyConnectionListener());
+
+
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable ex) {
@@ -73,7 +98,8 @@ public class MyApplication extends Application {
  * debugMode == true 时为打开，SDK会在log里输入调试信息
  * @param debugMode
  * 在做代码混淆的时候需要设置成false
- *//*
+ */
+        /*
         EMChat.getInstance().setDebugMode(true);*/
         GlideBuilder builder = new GlideBuilder(this);
         builder.setMemoryCache(new LruResourceCache(5 * 1024 * 1024));
@@ -144,5 +170,23 @@ public class MyApplication extends Application {
         //设置时间间隔为5分钟
         MobclickAgent.setSessionContinueMillis(5 * 60 * 1000);
     }
+    /**
+     * 账号在别的设备登录
+     */
+    protected void onConnectionConflict(){
+        Intent intent = new Intent(getApplicationContext(), MainTabActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Constant.ACCOUNT_CONFLICT, true);
+        getApplicationContext().startActivity(intent);
+    }
 
+    /**
+     * 账号被移除
+     */
+    protected void onCurrentAccountRemoved(){
+        Intent intent = new Intent(getApplicationContext(), MainTabActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Constant.ACCOUNT_REMOVED, true);
+        getApplicationContext().startActivity(intent);
+    }
 }

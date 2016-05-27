@@ -8,6 +8,7 @@ import org.apache.http.conn.ConnectTimeoutException;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -158,6 +159,9 @@ public class LoginController {
 			mPreferenceUtil.putString(Constant.LOGIN_PASSWORD, password);
 			mPreferenceUtil.putString(Constant.LOGIN_ENCODED_PASSWORD, CalldaGlobalConfig.getInstance().getPassword());
 			mPreferenceUtil.commit();
+			Intent intent=new Intent("com.callba.location");
+			intent.putExtra("action","login");
+			context.sendBroadcast(intent);
 		}
 		
 		String callSetting = CalldaGlobalConfig.getInstance().getCallSetting();

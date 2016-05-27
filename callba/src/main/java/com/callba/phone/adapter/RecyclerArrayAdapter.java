@@ -445,7 +445,7 @@ abstract public class RecyclerArrayAdapter<T> extends RecyclerView.Adapter<BaseV
 
 
     @Override
-    public final int getItemViewType(int position) {
+    public  int getItemViewType(int position) {
         if (headers.size()!=0){
             if (position<headers.size())return headers.get(position).hashCode();
         }
