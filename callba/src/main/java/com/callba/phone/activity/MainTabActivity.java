@@ -16,10 +16,13 @@ import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -42,12 +45,16 @@ import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
+import com.hyphenate.chat.EMChatManager;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.util.EMLog;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -175,8 +182,9 @@ public class MainTabActivity extends TabActivity {
                 for (EMMessage message : messages) {
                     Log.i("get_message", message.getBody().toString());
                     EMTextMessageBody txtBody = (EMTextMessageBody) message.getBody();
-                    sendNotification1(MainTabActivity.class, "你有一条新消息", message.getFrom().toString() + ":" + txtBody.getMessage());
+                    sendNotification1(ChatActivity.class, "你有一条新消息", message.getFrom().toString() + ":" + txtBody.getMessage(),EMClient.getInstance().chatManager().getConversation(message.getFrom()));
                     Intent intent = new Intent("com.callba.chat");
+                    intent.putExtra("username",message.getFrom());
                     sendBroadcast(intent);
                 }
             }
@@ -273,7 +281,7 @@ public class MainTabActivity extends TabActivity {
         super.onDestroy();
     }
 
-    private void sendNotification1(Class<?> clazz, String title, String content) {
+    private void sendNotification1(Class<?> clazz, String title, String content,EMConversation conversation) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                 getApplicationContext())
                 .setSmallIcon(R.drawable.logo_notification)
@@ -284,7 +292,7 @@ public class MainTabActivity extends TabActivity {
                 .setContentText(content);
 
         Intent notificationIntent = new Intent(getApplicationContext(), clazz);
-
+        notificationIntent.putParcelableArrayListExtra("messages",(ArrayList<EMMessage>) conversation.getAllMessages());
         // TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         // stackBuilder.addParentStack(clazz);
         // stackBuilder.addNextIntent(notificationIntent);
@@ -296,7 +304,8 @@ public class MainTabActivity extends TabActivity {
         PendingIntent contentIntent = PendingIntent.getActivity(
                 getApplicationContext(), 0, notificationIntent, 0);
         mBuilder.setContentIntent(contentIntent);
-        mBuilder.setFullScreenIntent(contentIntent, true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            mBuilder.setFullScreenIntent(contentIntent, true);
         Notification notification = mBuilder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
         notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -387,4 +396,7 @@ public class MainTabActivity extends TabActivity {
             }
         });
     }
+
+
+
 }

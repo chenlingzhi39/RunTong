@@ -16,6 +16,7 @@ import com.callba.phone.BaseActivity;
 import com.callba.phone.adapter.ConversationAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.widget.DividerItemDecoration;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
@@ -84,6 +85,8 @@ public class MessageActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         conversationList.addAll(loadConversationList());
+        conversationListview.addItemDecoration(new DividerItemDecoration(
+                this, DividerItemDecoration.VERTICAL_LIST));
         Log.i("size",conversationList.size()+"");
         conversationListview.setLayoutManager(new LinearLayoutManager(this));
         adapter=new ConversationAdapter(this);
@@ -93,8 +96,8 @@ public class MessageActivity extends BaseActivity {
             public void onItemClick(int position) {
              adapter.getData().get(position).markAllMessagesAsRead();
              Intent intent=new Intent(MessageActivity.this,ChatActivity.class);
-                Bundle bundle=new Bundle();
                 intent.putParcelableArrayListExtra("messages",(ArrayList<EMMessage>) conversationList.get(position).getAllMessages());
+                intent.putExtra("username",conversationList.get(position).getUserName());
                 startActivity(intent);
                 adapter.notifyItemChanged(position);
             }
