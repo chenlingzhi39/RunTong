@@ -14,12 +14,6 @@
         <include layout="@layout/toolbar_call" />
 
 
-        <View
-            android:id="@+id/v_presslistener"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_weight="1" />
-
         <!-- 复制、粘贴栏 -->
         <FrameLayout
             android:id="@+id/fl_ad"

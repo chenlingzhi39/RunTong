@@ -139,6 +139,7 @@ public class HttpUtils {
 			 result = new String(readInputStream(response.getEntity().getContent()),
 					 "utf-8");
 		} catch (Exception e) {
+			e.printStackTrace();
 			// TODO: handle exception
 		}
 		

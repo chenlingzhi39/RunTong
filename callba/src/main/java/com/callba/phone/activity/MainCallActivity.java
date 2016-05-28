@@ -149,8 +149,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     // private TimeFormatUtil timeFormatUtil;
     private KeyboardUtil keyboardUtil;
 
-    // 监听长按，弹出号码输入栏
-    private View vPressListener;
     // 文字操作工具栏
     private LinearLayout llTextOperateLayout;
     private Button bnTextOperate1;
@@ -329,7 +327,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
         et_number = (EditText) findViewById(R.id.et_dial_phonenum);
         et_number.addTextChangedListener(new PhoneNumTextWatcher(et_number));
-        et_number.setOnLongClickListener(this);
+        //et_number.setOnLongClickListener(this);
         ll_delete = (LinearLayout) findViewById(R.id.delete_layout);
         ll_delete.setOnClickListener(this);
         //dialnumdelete = (ImageView) this.findViewById(R.id.dialnumdelete);
@@ -371,12 +369,12 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
         num1.setOnLongClickListener(this);
 
-        vPressListener = findViewById(R.id.v_presslistener);
+
         llTextOperateLayout = (LinearLayout) findViewById(R.id.ll_textoperate);
         bnTextOperate1 = (Button) findViewById(R.id.bn_textoperate_1);
         bnTextOperate2 = (Button) findViewById(R.id.bn_textoperate_2);
         bnTextOperate3 = (Button) findViewById(R.id.bn_textoperate_3);
-        vPressListener.setOnLongClickListener(this);
+
         bnTextOperate1.setOnClickListener(this);
         bnTextOperate2.setOnClickListener(this);
         bnTextOperate3.setOnClickListener(this);
@@ -584,10 +582,10 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             case R.id.add_contact:
                 String number = et_number.getText().toString();
                 if (number.length() > 10) {
-                    String address = NumberAddressService.getAddress(
+                  /*  String address = NumberAddressService.getAddress(
                             number, Constant.DB_PATH,
                             this);
-                    if (!address.equals("")) {
+                    if (!address.equals("")) {*/
                         Intent intent = new Intent(Intent.ACTION_INSERT);
                         intent.setType("vnd.android.cursor.dir/person");
                         intent.setType("vnd.android.cursor.dir/contact");
@@ -598,10 +596,10 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                         } else {
                             startActivity(intent);
                         }
-                    } else {
+                  /*  } else {
                         toast("请输入正确的手机号!");
                         break;
-                    }
+                    }*/
                 } else {
                     toast("请输入正确的手机号!");
                     break;
@@ -612,17 +610,17 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             case R.id.send_message:
                 String number1 = et_number.getText().toString();
                 if (number1.length() > 10) {
-                    String address = NumberAddressService.getAddress(
+                   /* String address = NumberAddressService.getAddress(
                             number1, Constant.DB_PATH,
                             this);
-                    if (!address.equals("")) {
+                    if (!address.equals("")) {*/
                         Uri smsToUri = Uri.parse("smsto://" + number1);
                         Intent mIntent = new Intent(android.content.Intent.ACTION_SENDTO, smsToUri);
                         startActivity(mIntent);
-                    } else {
+                 /*   } else {
                         toast("请输入正确的手机号!");
                         break;
-                    }
+                    }*/
                 } else {
                     toast("请输入正确的手机号!");
                     break;
@@ -631,10 +629,10 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             case R.id.add_to_contact:
                 String number2 = et_number.getText().toString();
                 if (number2.length() > 10) {
-                    String address = NumberAddressService.getAddress(
+                 /*   String address = NumberAddressService.getAddress(
                             number2, Constant.DB_PATH,
                             this);
-                    if (!address.equals("")) {
+                    if (!address.equals("")) {*/
                         Intent intent1 = new Intent(Intent.ACTION_INSERT_OR_EDIT);
                         intent1.setType("vnd.android.cursor.item/person");
                         intent1.setType("vnd.android.cursor.item/contact");
@@ -647,10 +645,10 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                         } else {
                             startActivity(intent1);
                         }
-                    } else {
+                /*    } else {
                         toast("请输入正确的手机号!");
                         break;
-                    }
+                    }*/
                 } else {
                     toast("请输入正确的手机号!");
                     break;
@@ -1324,16 +1322,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     public boolean onLongClick(View v) {
 
         switch (v.getId()) {
-            case R.id.v_presslistener:
-
-                bnTextOperate3.setVisibility(View.GONE);
-                bnTextOperate1.setText(R.string.paste);
-                bnTextOperate2.setText(R.string.cancel);
-                ll_number.setVisibility(View.VISIBLE);
-                llTextOperateLayout.setVisibility(View.VISIBLE);
-
-                textLayoutType = TYPE_PASTE;
-                break;
 
             case R.id.et_dial_phonenum:
                 // 号码输入栏

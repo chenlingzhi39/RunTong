@@ -1,6 +1,7 @@
 package com.callba.phone.activity;
 
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.view.CircleTextView;
 import com.callba.phone.widget.signcalendar.DBManager;
 import com.callba.phone.widget.signcalendar.SignCalendar;
 import com.callba.phone.widget.signcalendar.sqlit;
@@ -18,6 +20,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * Created by PC-20160514 on 2016/5/24.
  */
@@ -26,24 +31,31 @@ import java.util.List;
         toolbarTitle = R.string.sign_in,
         navigationId = R.drawable.press_back
 )
-public class SignInActivity extends BaseActivity{
+public class SignInActivity extends BaseActivity {
+    @InjectView(R.id.circle)
+    CircleTextView circle;
     private String date = null;// 设置默认选中的日期  格式为 “2014-04-05” 标准DATE格式
     private TextView popupwindow_calendar_month;
     private SignCalendar calendar;
     private Button btn_signIn;
     private List<String> list = new ArrayList<String>(); //设置标记列表
     DBManager dbManager;
-    boolean isinput=false;
+    boolean isinput = false;
     private String date1 = null;//单天日期
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ButterKnife.inject(this);
         // 初始化DBManager
         dbManager = new DBManager(this);
-        SimpleDateFormat formatter    =   new    SimpleDateFormat    ("yyyy-MM-dd");
-        Date curDate    =   new    Date(System.currentTimeMillis());//获取当前时间
-        date1 =formatter.format(curDate);
-
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date curDate = new Date(System.currentTimeMillis());//获取当前时间
+        date1 = formatter.format(curDate);
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int mDensity = metrics.densityDpi;
+        circle.setDensity(mDensity);
         popupwindow_calendar_month = (TextView) findViewById(R.id.popupwindow_calendar_month);
         btn_signIn = (Button) findViewById(R.id.btn_signIn);
         calendar = (SignCalendar) findViewById(R.id.popupwindow_calendar);
@@ -65,7 +77,7 @@ public class SignInActivity extends BaseActivity{
         add("2015-11-02");
         add("2015-12-02");
         query();
-        if(isinput){
+        if (isinput) {
             btn_signIn.setText("今日已签，明日继续");
             btn_signIn.setBackgroundResource(R.drawable.button_gray);
             btn_signIn.setEnabled(false);
@@ -73,7 +85,7 @@ public class SignInActivity extends BaseActivity{
         btn_signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Date today= calendar.getThisday();
+                Date today = calendar.getThisday();
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
            /* calendar.removeAllMarks();
            list.add(df.format(today));
@@ -135,33 +147,30 @@ public class SignInActivity extends BaseActivity{
     public void refresh(Object... params) {
 
     }
-    public void add(String date)
-    {
+
+    public void add(String date) {
         ArrayList<sqlit> persons = new ArrayList<sqlit>();
 
-        sqlit person1 = new sqlit(date,"true");
+        sqlit person1 = new sqlit(date, "true");
 
         persons.add(person1);
 
         dbManager.add(persons);
     }
 
-    public void query()
-    {
+    public void query() {
         List<sqlit> persons = dbManager.query();
-        for (sqlit person : persons)
-        {
+        for (sqlit person : persons) {
             list.add(person.date);
-            if(date1.equals(person.getDate())){
-                isinput=true;
+            if (date1.equals(person.getDate())) {
+                isinput = true;
             }
         }
         calendar.addMarks(list, 0);
     }
 
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
         super.onDestroy();
         dbManager.closeDB();// 释放数据库资源
     }

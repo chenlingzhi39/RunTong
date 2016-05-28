@@ -18,6 +18,7 @@ import com.callba.phone.adapter.ChatAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.callba.phone.widget.refreshlayout.EasyRecyclerView;
+import com.callba.phone.widget.refreshlayout.RefreshLayout;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 
@@ -35,7 +36,7 @@ import butterknife.OnClick;
         contentViewId = R.layout.chat,
         navigationId = R.drawable.press_back
 )
-public class ChatActivity extends BaseActivity {
+public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefreshListener{
     @InjectView(R.id.title)
     TextView title;
     @InjectView(R.id.content)
@@ -56,18 +57,36 @@ public class ChatActivity extends BaseActivity {
         ButterKnife.inject(this);
         chatAdapter=new ChatAdapter(this);
         list.setLayoutManager(new LinearLayoutManager(this));
-        list.setRefreshEnabled(false);
-        messages=getIntent().getParcelableArrayListExtra("messages");
+        list.setRefreshEnabled(true);
         userName=getIntent().getStringExtra("username");
         title.setText(userName);
-        chatAdapter.addAll(messages);
         list.setAdapter(chatAdapter);
+        messages=(ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
+        chatAdapter.addAll(messages);
         list.showRecycler();
         list.scrollToPosition(messages.size()-1);
+        list.setRefreshListener(this);
         IntentFilter filter = new IntentFilter(
                 "com.callba.chat");
         chatReceiver=new ChatReceiver();
         registerReceiver(chatReceiver,filter);
+        EMClient.getInstance().chatManager().getConversation(userName).markAllMessagesAsRead();
+        Intent intent=new Intent("com.callba.asread");
+        sendBroadcast(intent);
+    }
+
+    @Override
+    public void onHeaderRefresh() {
+        messages=(ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
+        chatAdapter.clear();
+        chatAdapter.addAll(messages);
+        list.scrollToPosition(messages.size()-1);
+        list.setHeaderRefreshing(false);
+    }
+
+    @Override
+    public void onFooterRefresh() {
+
     }
 
     @Override

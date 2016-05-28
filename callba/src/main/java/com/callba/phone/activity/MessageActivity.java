@@ -47,6 +47,8 @@ public class MessageActivity extends BaseActivity {
     protected List<EMConversation> conversationList = new ArrayList<>();
     private ConversationAdapter adapter;
     private ChatReceiver chatReceiver;
+    private AsReadReceiver asReadReceiver;
+    private int index=-1;
     public interface EaseConversationListItemClickListener {
         /**
          * 会话listview item点击事件
@@ -96,7 +98,6 @@ public class MessageActivity extends BaseActivity {
             public void onItemClick(int position) {
              adapter.getData().get(position).markAllMessagesAsRead();
              Intent intent=new Intent(MessageActivity.this,ChatActivity.class);
-                intent.putParcelableArrayListExtra("messages",(ArrayList<EMMessage>) conversationList.get(position).getAllMessages());
                 intent.putExtra("username",conversationList.get(position).getUserName());
                 startActivity(intent);
                 adapter.notifyItemChanged(position);
@@ -105,8 +106,12 @@ public class MessageActivity extends BaseActivity {
         conversationListview.setAdapter(adapter);
         IntentFilter filter = new IntentFilter(
                 "com.callba.chat");
+        IntentFilter filter1 = new IntentFilter(
+                "com.callba.asread");
         chatReceiver=new ChatReceiver();
         registerReceiver(chatReceiver,filter);
+        asReadReceiver=new AsReadReceiver();
+        registerReceiver(asReadReceiver,filter1);
     }
 
     @Override
@@ -162,6 +167,7 @@ public class MessageActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         unregisterReceiver(chatReceiver);
+        unregisterReceiver(asReadReceiver);
         super.onDestroy();
     }
 
@@ -193,5 +199,12 @@ public class MessageActivity extends BaseActivity {
             adapter.addAll(loadConversationList());
         }
     }
-
+    class AsReadReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("message","asread");
+            adapter.clear();
+            adapter.addAll(loadConversationList());
+        }
+    }
 }

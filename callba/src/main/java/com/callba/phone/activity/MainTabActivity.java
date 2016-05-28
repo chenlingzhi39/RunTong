@@ -38,10 +38,12 @@ import com.callba.phone.BaseActivity;
 import com.callba.phone.MyApplication;
 import com.callba.phone.activity.contact.ContactActivity;
 import com.callba.phone.activity.login.LoginActivity;
+import com.callba.phone.adapter.ConversationAdapter;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
@@ -53,6 +55,8 @@ import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.util.EMLog;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -182,7 +186,7 @@ public class MainTabActivity extends TabActivity {
                 for (EMMessage message : messages) {
                     Log.i("get_message", message.getBody().toString());
                     EMTextMessageBody txtBody = (EMTextMessageBody) message.getBody();
-                    sendNotification1(ChatActivity.class, "你有一条新消息", message.getFrom().toString() + ":" + txtBody.getMessage(),EMClient.getInstance().chatManager().getConversation(message.getFrom()));
+                    sendNotification1(ChatActivity.class, "你有一条新消息", message.getFrom() + ":" + txtBody.getMessage(),message.getFrom());
                     Intent intent = new Intent("com.callba.chat");
                     intent.putExtra("username",message.getFrom());
                     sendBroadcast(intent);
@@ -281,7 +285,7 @@ public class MainTabActivity extends TabActivity {
         super.onDestroy();
     }
 
-    private void sendNotification1(Class<?> clazz, String title, String content,EMConversation conversation) {
+    private void sendNotification1(Class<?> clazz, String title, String content,String username) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                 getApplicationContext())
                 .setSmallIcon(R.drawable.logo_notification)
@@ -290,9 +294,8 @@ public class MainTabActivity extends TabActivity {
                                 R.drawable.logo))
                 .setContentTitle(title)
                 .setContentText(content);
-
         Intent notificationIntent = new Intent(getApplicationContext(), clazz);
-        notificationIntent.putParcelableArrayListExtra("messages",(ArrayList<EMMessage>) conversation.getAllMessages());
+        notificationIntent.putExtra("username",username);
         // TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         // stackBuilder.addParentStack(clazz);
         // stackBuilder.addNextIntent(notificationIntent);
@@ -302,7 +305,7 @@ public class MainTabActivity extends TabActivity {
         // PendingIntent.FLAG_UPDATE_CURRENT
         // );
         PendingIntent contentIntent = PendingIntent.getActivity(
-                getApplicationContext(), 0, notificationIntent, 0);
+                getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             mBuilder.setFullScreenIntent(contentIntent, true);
@@ -312,7 +315,65 @@ public class MainTabActivity extends TabActivity {
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(10, notification);
     }
+    /**
+     * 获取会话列表
+     *
+     * @param context
+     * @return +
+     */
+    protected List<EMConversation> loadConversationList() {
+        // 获取所有会话，包括陌生人
+        Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
+        // 过滤掉messages size为0的conversation
+        /**
+         * 如果在排序过程中有新消息收到，lastMsgTime会发生变化
+         * 影响排序过程，Collection.sort会产生异常
+         * 保证Conversation在Sort过程中最后一条消息的时间不变
+         * 避免并发问题
+         */
+        List<Pair<Long, EMConversation>> sortList = new ArrayList<Pair<Long, EMConversation>>();
+        synchronized (conversations) {
+            for (EMConversation conversation : conversations.values()) {
+                if (conversation.getAllMessages().size() != 0) {
+                    //if(conversation.getType() != EMConversationType.ChatRoom){
+                    sortList.add(new Pair<Long, EMConversation>(conversation.getLastMessage().getMsgTime(), conversation));
+                    //}
+                }
+            }
+        }
+        try {
+            // Internal is TimSort algorithm, has bug
+            sortConversationByLastChatTime(sortList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        List<EMConversation> list = new ArrayList<EMConversation>();
+        for (Pair<Long, EMConversation> sortItem : sortList) {
+            list.add(sortItem.second);
+        }
+        return list;
+    }
+    /**
+     * 根据最后一条消息的时间排序
+     *
+     * @param usernames
+     */
+    private void sortConversationByLastChatTime(List<Pair<Long, EMConversation>> conversationList) {
+        Collections.sort(conversationList, new Comparator<Pair<Long, EMConversation>>() {
+            @Override
+            public int compare(final Pair<Long, EMConversation> con1, final Pair<Long, EMConversation> con2) {
 
+                if (con1.first == con2.first) {
+                    return 0;
+                } else if (con2.first > con1.first) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+
+        });
+    }
     /**
      * 显示帐号在别处登录dialog
      */

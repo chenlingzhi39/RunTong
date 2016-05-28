@@ -87,7 +87,7 @@
 	
 	<string name="net_error_getdata_fail">网络连接超时，获取版本失败。</string>
 	<string name="switch_net_retry">切换网络</string>
-	
+	<string name="retry">重试</string>
 	<!-- welcome -->
 	<string name="getversionfailed">获取版本信息失败!</string>
 	<string name="jxbbsb">解析版本信息失败!</string>

@@ -9,6 +9,9 @@ import com.callba.R;
 import com.callba.phone.util.StringUtils;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
+import com.hyphenate.util.DateUtils;
+
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -36,7 +39,7 @@ public class ChatReceivedViewHolder extends BaseViewHolder<EMMessage> {
 
     @Override
     public void setData(EMMessage data) {
-        timestamp.setText(StringUtils.friendly_time(data.getMsgTime()));
+        timestamp.setText(DateUtils.getTimestampString(new Date(data.getMsgTime())));
         EMTextMessageBody txtBody = (EMTextMessageBody) data.getBody();
         tvChatcontent.setText(txtBody.getMessage());
     }

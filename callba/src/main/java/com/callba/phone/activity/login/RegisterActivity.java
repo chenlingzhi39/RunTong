@@ -90,6 +90,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 						break;
 					case Interfaces.GET_KEY_FAILURE:
 						activity.bn_register.setClickable(true);
+						activity.toast((String)msg.obj);
 						break;
 					case Interfaces.GET_CODE_START:
 						activity.toast("发送验证码请求");
@@ -171,14 +172,14 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 
 				final String searchNumber = et_account.getText().toString().trim();
 				if ( searchNumber.length()>10) {
-					String address = NumberAddressService.getAddress(
+				/*	String address = NumberAddressService.getAddress(
 							searchNumber, Constant.DB_PATH,
 							RegisterActivity.this);
 				if(!address.equals(""))
-				{ userDao.getRegisterKey(searchNumber);
-				}
+				{ */userDao.getRegisterKey(searchNumber);
+				/*}
 					else
-				toast("请输入正确的手机号!");
+				toast("请输入正确的手机号!");*/
 				}else
 				toast("请输入正确的手机号!");
 
@@ -224,20 +225,20 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 
 			if(!isinputOK) return;
 			if ( username.length()>10) {
-				String address = NumberAddressService.getAddress(
+			/*	String address = NumberAddressService.getAddress(
 						username, Constant.DB_PATH,
 						RegisterActivity.this);
 				if(!address.equals(""))
-				{
+				{*/
 					try {
 						Log.i("register","click");
 						Log.i("code",code);
                         Log.i("key",key);
 						sendRegisterRequest(username, password,DesUtil.encrypt(code,key));
 					}catch(Exception e){}
-				}else {toast("请输入正确的手机号!");
+				/*}else {toast("请输入正确的手机号!");
 				break;
-			    }}else {toast("请输入正确的手机号!");
+			    }*/}else {toast("请输入正确的手机号!");
 				break;
 				}
 

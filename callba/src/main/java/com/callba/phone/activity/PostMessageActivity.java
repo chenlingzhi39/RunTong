@@ -1,5 +1,6 @@
 package com.callba.phone.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,9 +55,16 @@ public class PostMessageActivity extends BaseActivity {
         Log.i("submit","onclick");
         if(content.getText().toString().equals(""))
            return;
+        if(number.getText().toString().equals(""))
+            return;
         EMMessage message = EMMessage.createTxtSendMessage(content.getText().toString(),number.getText().toString());
-
 //发送消息
         EMClient.getInstance().chatManager().sendMessage(message);
+        Intent intent=new Intent(PostMessageActivity.this,ChatActivity.class);
+        intent.putExtra("username",number.getText().toString());
+        Intent intent1=new Intent("com.callba.chat");
+        sendBroadcast(intent1);
+        startActivity(intent);
+        finish();
     }
 }

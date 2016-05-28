@@ -15,6 +15,7 @@ import com.umeng.socialize.utils.Log;
  * Created by PC-20160514 on 2016/5/20.
  */
 public class CircleTextView extends TextView{
+    int density,size=0;
     private Paint paint1,paint2,paint3,paint4;
     public CircleTextView(Context context) {
         super(context);
@@ -27,6 +28,41 @@ public class CircleTextView extends TextView{
 
     public CircleTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    public int getDensity() {
+
+        return density;
+    }
+
+    public void setDensity(int density) {
+        this.density = density;
+        switch (density){
+            case 120:
+                size=15;
+                invalidate();
+                break;
+            case 160:
+                size=20;
+                invalidate();
+                break;
+            case 240:
+                size=30;
+                invalidate();
+                break;
+            case 320:
+                size=40;
+                invalidate();
+                break;
+            case 480:
+                size=60;
+                invalidate();
+                break;
+            case 640:
+                size=80;
+                invalidate();
+                break;
+        }
     }
 
     @Override
@@ -43,7 +79,7 @@ public class CircleTextView extends TextView{
         paint3.setStyle(Paint.Style.STROKE);
         paint3.setStrokeWidth(2);
         paint4.setStrokeWidth(3);
-        paint4.setTextSize(50);
+        paint4.setTextSize(size);
         canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG));
         canvas.drawCircle(getWidth()/2, getHeight()/2, Math.max(getWidth(), getHeight())/2, paint1);
         canvas.drawCircle(getWidth()/2, getHeight()/2, Math.max(getWidth(), getHeight())/2-12, paint2);

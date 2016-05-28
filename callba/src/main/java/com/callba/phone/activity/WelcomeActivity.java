@@ -253,16 +253,34 @@ public class WelcomeActivity extends BaseActivity {
 	 * @author zhw
 	 */
 	private void alertUserGetVersionFailed() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.dialog_title);
 		builder.setMessage(R.string.net_error_getdata_fail);
-		builder.setPositiveButton(R.string.switch_net_retry,
+		builder.setPositiveButton(R.string.retry,
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						Intent intent = new Intent();
+						PackageManager pm =WelcomeActivity.this.getPackageManager();
+						String localVersion = "";
+						try {
+							PackageInfo packageInfo = pm.getPackageInfo(getPackageName(), 0);
+							localVersion = packageInfo.versionName;
+						} catch (NameNotFoundException e) {
+							e.printStackTrace();
+						}
+						ActivityUtil activityUtil = new ActivityUtil();
+						Task task = new Task(Task.TASK_GET_VERSION);
+						Map<String, Object> taskParams = new HashMap<String, Object>();
+						taskParams.put("versionName", localVersion);
+						taskParams.put("fromPage", "WelcomeActivity");
+						taskParams.put("lan", activityUtil.language(WelcomeActivity.this));
+						task.setTaskParams(taskParams);
+						MainService.newTask(task);
+						/*Intent intent = new Intent();
 						intent.setAction(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
-						startActivity(intent);
+						startActivity(intent);*/
+						dialog.dismiss();
 					}
 				});
 		builder.setNegativeButton(R.string.exit,
@@ -272,8 +290,7 @@ public class WelcomeActivity extends BaseActivity {
 						finish();
 					}
 				});
-
-		AlertDialog alertDialog = builder.create();
+		AlertDialog alertDialog=builder.create();
 		alertDialog.setCanceledOnTouchOutside(false);
 		alertDialog.setCancelable(false);
 		alertDialog.show();
