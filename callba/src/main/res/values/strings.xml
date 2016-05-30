@@ -82,7 +82,7 @@
 	<string name="login_exception">登录异常！</string>
 	
 	<string name="getdata_fail">获取数据失败</string>
-	<string name="network_error">无网络连接</string>
+	<string name="network_error">网络错误</string>
 	<string name="conn_failed">无法连接到网络</string>
 	
 	<string name="net_error_getdata_fail">网络连接超时，获取版本失败。</string>

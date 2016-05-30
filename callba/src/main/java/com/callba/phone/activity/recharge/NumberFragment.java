@@ -145,7 +145,7 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
     public void showDialog() {
         final DialogHelper helper = new DialogHelper();
         Dialog dialog = new AlertDialog.Builder(getActivity())
-                .setView(helper.getView())
+                .setView(helper.getView()).setTitle(getString(R.string.input_number))
                 .setOnDismissListener(helper)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
@@ -154,11 +154,11 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
                             address = NumberAddressService.getAddress(
                                     helper.getNumber(), Constant.DB_PATH,
                                     getActivity());
-                            if (!address.equals("")) {
+                            //if (!address.equals("")) {
                                 number.setText(helper.getNumber());
                                 tv_address.setText(address);
-                            } else
-                                toast("请输入正确的手机号!");
+                           /* } else
+                                toast("请输入正确的手机号!");*/
                         } else
                             toast("请输入正确的手机号!");
                     }

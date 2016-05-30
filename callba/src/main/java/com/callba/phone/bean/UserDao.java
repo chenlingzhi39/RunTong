@@ -85,6 +85,7 @@ public class UserDao {
 
     public void getRegisterKey(final String phoneNumber) {
         final RequestParams params = new RequestParams();
+        Log.i("phoneNumber",phoneNumber);
         params.addBodyParameter("phoneNumber", phoneNumber);
         params.addBodyParameter("softType", "android");
         httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.Send_SMS, params, new RequestCallBack<String>() {

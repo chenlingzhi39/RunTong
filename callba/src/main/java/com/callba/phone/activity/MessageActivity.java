@@ -195,16 +195,20 @@ public class MessageActivity extends BaseActivity {
     class ChatReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
+            conversationList.clear();
+            conversationList.addAll(loadConversationList());
             adapter.clear();
-            adapter.addAll(loadConversationList());
+            adapter.addAll(conversationList);
         }
     }
     class AsReadReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i("message","asread");
+            conversationList.clear();
+            conversationList.addAll(loadConversationList());
             adapter.clear();
-            adapter.addAll(loadConversationList());
+            adapter.addAll(conversationList);
         }
     }
 }

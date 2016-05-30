@@ -20,6 +20,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +46,8 @@ import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.view.MyDialog;
 import com.umeng.analytics.MobclickAgent;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -131,6 +135,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 			if(this.getClass()!= UserActivity.class)
 			{getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 			Log.i(this.getClass().getName(),"light");
+				if(Build.MANUFACTURER.equals("Xiaomi"))
+					ActivityUtil.MIUISetStatusBarLightMode(getWindow(),true);
+				if(Build.MANUFACTURER.equals("Meizu"))
+					ActivityUtil.FlymeSetStatusBarLightMode(getWindow(),true);
 			}
 		}if(Build.VERSION.SDK_INT==Build.VERSION_CODES.LOLLIPOP||Build.VERSION.SDK_INT==Build.VERSION_CODES.LOLLIPOP_MR1){
 			if(this.getClass()==MainCallActivity.class||
@@ -141,6 +149,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 			systemBarTintManager.setStatusBarTintEnabled(true);
 			systemBarTintManager.setStatusBarTintResource(R.color.gray_status);}
 		}
+		Log.i("manufacturer",Build.MANUFACTURER);
+
 		init();
 	}
 
@@ -370,4 +380,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	public void toast(String msg){
 		Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
 	}
+
+
+
 }

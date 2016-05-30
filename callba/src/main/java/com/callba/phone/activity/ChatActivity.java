@@ -19,6 +19,7 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.callba.phone.widget.refreshlayout.EasyRecyclerView;
 import com.callba.phone.widget.refreshlayout.RefreshLayout;
+import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 
@@ -110,13 +111,11 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         if(content.getText().toString().equals(""))
             return;
         EMMessage message = EMMessage.createTxtSendMessage(content.getText().toString(),userName);
-
 //发送消息
         EMClient.getInstance().chatManager().sendMessage(message);
-        chatAdapter.clear();
-        messages=(ArrayList<EMMessage>)  EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
-        chatAdapter.addAll(messages);
-        list.scrollToPosition(messages.size()-1);
+        chatAdapter.addAll(message);
+        chatAdapter.notifyItemChanged(chatAdapter.getCount()-1);
+        list.scrollToPosition(chatAdapter.getCount()-1);
 
 
     }

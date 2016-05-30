@@ -7,7 +7,7 @@ import android.os.Environment;
  * @author Administrator
  */
 public class Constant {
-	public static final String PACKAGE_NAME = "runtong";
+	public static final String PACKAGE_NAME = "callba";
 	
 	
 	public static final String SENT_SMS_ACTION = "sent_sms_action";
@@ -176,4 +176,5 @@ public class Constant {
 	public static final String PHOTO_PATH=SDCARD + "/callba/";
 	public static final String ACCOUNT_REMOVED = "account_removed";
 	public static final String ACCOUNT_CONFLICT = "conflict";
+	public static final boolean IS_MIUI=false;
 }

@@ -98,6 +98,13 @@ public class MainTabActivity extends TabActivity {
 
             window.setStatusBarColor(Color.TRANSPARENT);
         }
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
+            if(Build.MANUFACTURER.equals("Xiaomi"))
+                ActivityUtil.MIUISetStatusBarLightMode(getWindow(),true);
+            if(Build.MANUFACTURER.equals("Meizu"))
+                ActivityUtil.FlymeSetStatusBarLightMode(getWindow(),true);
+
+        }
         MyApplication.activities.add(this);
 
         if (savedInstanceState != null) {
@@ -150,7 +157,7 @@ public class MainTabActivity extends TabActivity {
         mTabhost.setOnTabChangedListener(new OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
-                if (!tabId.equals(getString(R.string.call))) {
+                if (!tabId.equals(mTabTextArray[0])) {
                     ImageView iv = (ImageView) view
                             .findViewById(R.id.iv_maintab_icon);
                     iv.setBackgroundResource(R.drawable.menu1_selector);
@@ -163,6 +170,14 @@ public class MainTabActivity extends TabActivity {
                     intent.putExtra("action", "show");
                     MainTabActivity.this.sendBroadcast(intent);
                     BaseActivity.flag = true;
+                }
+
+                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
+                if(Build.MANUFACTURER.equals("Xiaomi"))
+                    ActivityUtil.MIUISetStatusBarLightMode(getWindow(),!tabId.equals(mTabTextArray[4]));
+                if(Build.MANUFACTURER.equals("Meizu"))
+                    ActivityUtil.FlymeSetStatusBarLightMode(getWindow(),!tabId.equals(mTabTextArray[4]));
+
                 }
             }
         });
