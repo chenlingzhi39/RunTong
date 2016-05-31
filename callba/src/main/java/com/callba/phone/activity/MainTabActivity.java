@@ -62,6 +62,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 /**
  * 主界面
  *
@@ -84,6 +86,10 @@ public class MainTabActivity extends TabActivity {
             R.drawable.menu4_selector, R.drawable.menu5_selector};
     EMMessageListener msgListener;
     NotificationManager mNotificationManager;
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

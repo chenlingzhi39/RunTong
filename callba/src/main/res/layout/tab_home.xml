@@ -5,9 +5,10 @@
     <include layout="@layout/toolbar_padding"
 
         />
-    <RelativeLayout
+
+  <!--  <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="136dp"
+        android:layout_height="200dp"
         android:id="@+id/relative">
 <WebView
     android:layout_width="match_parent"
@@ -23,7 +24,14 @@
             android:layout_centerInParent="true"
             android:visibility="gone"
             />
-    </RelativeLayout>
+    </RelativeLayout>-->
+    <com.bigkoo.convenientbanner.ConvenientBanner
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/convenientBanner"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:canLoop="true"
+        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

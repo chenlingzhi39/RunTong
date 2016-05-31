@@ -25,6 +25,7 @@ import com.hyphenate.chat.EMMessage;
 
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -59,6 +60,7 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         chatAdapter=new ChatAdapter(this);
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setRefreshEnabled(true);
+        list.setFooterEnabled(false);
         userName=getIntent().getStringExtra("username");
         title.setText(userName);
         list.setAdapter(chatAdapter);

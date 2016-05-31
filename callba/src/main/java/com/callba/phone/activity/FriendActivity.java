@@ -1,5 +1,6 @@
 package com.callba.phone.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +12,9 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.activity.contact.ContactDetailActivity;
 import com.callba.phone.adapter.NearByUserAdapter;
+import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.NearByUser;
 import com.callba.phone.bean.UserDao;
@@ -23,6 +26,7 @@ import com.callba.phone.widget.refreshlayout.RefreshLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.umeng.socialize.utils.Log;
+
 
 import org.json.JSONArray;
 
@@ -87,6 +91,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         userList.showProgress();
         userList.addItemDecoration(new DividerItemDecoration(
                 this, DividerItemDecoration.VERTICAL_LIST));
+
     }
 
     @Override
@@ -127,7 +132,15 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         else{ nearByUserAdapter=new NearByUserAdapter(this);
         nearByUserAdapter.addAll(list);
         userList.setAdapter(nearByUserAdapter);
-        userList.showRecycler();}}else userList.showEmpty();
+        userList.showRecycler();
+            nearByUserAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position) {
+                    Intent intent=new Intent(FriendActivity.this, ContactDetailActivity.class);
+
+                }
+            });
+            }}else userList.showEmpty();
     }
 
     @Override

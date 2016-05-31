@@ -145,12 +145,13 @@
                 android:scrollingCache="false"
                 android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/iv_ad"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:scaleType="fitXY"
-                android:src="@drawable/call_background" />
+            <com.bigkoo.convenientbanner.ConvenientBanner
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/convenientBanner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:canLoop="true"
+            />
 
             <LinearLayout
                 android:id="@+id/ll_searchingcontact"

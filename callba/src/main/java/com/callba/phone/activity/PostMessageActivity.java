@@ -10,8 +10,6 @@ import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
-import com.umeng.socialize.utils.Log;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -52,7 +50,6 @@ public class PostMessageActivity extends BaseActivity {
 
     @OnClick(R.id.submit)
     public void onClick() {
-        Log.i("submit","onclick");
         if(content.getText().toString().equals(""))
            return;
         if(number.getText().toString().equals(""))

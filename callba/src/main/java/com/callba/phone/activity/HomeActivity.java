@@ -18,21 +18,29 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bigkoo.convenientbanner.ConvenientBanner;
+import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.activity.recharge.RechargeActivity2;
+import com.callba.phone.adapter.ImagePagerAdapter;
+import com.callba.phone.adapter.LocalImageHolderView;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.Logger;
 
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+
 
 /**
  * Created by Administrator on 2016/5/14.
@@ -59,18 +67,20 @@ public class HomeActivity extends BaseActivity {
     TextView game;
     @InjectView(R.id.sign_in)
     TextView signIn;
-    @InjectView(R.id.ad)
-    WebView webView;
-    @InjectView(R.id.progressBar)
-    ProgressBar progressBar;
     private String yue;
-
+   /* @InjectView(R.id.view_pager)
+    AutoScrollViewPager viewPager;
+    @InjectView(R.id.indicator)
+    CirclePageIndicator indicator;*/
+    @InjectView(R.id.convenientBanner)
+    ConvenientBanner convenientBanner;
+    private ArrayList<Integer> localImages = new ArrayList<Integer>();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         queryUserBalance();
-        WebSettings webSettings = webView.getSettings();
+      /*  WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webSettings.setSupportZoom(true);
@@ -106,14 +116,14 @@ public class HomeActivity extends BaseActivity {
                 webSettings.setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
             }
 
-            /**
+            *//**
              * 用WebView显示图片，可使用这个参数 设置网页布局类型： 1、LayoutAlgorithm.NARROW_COLUMNS ：
              * 适应内容大小 2、LayoutAlgorithm.SINGLE_COLUMN:适应屏幕，内容将自动缩放
-             */
+             *//*
             webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
             //WebView加载web资源
-            /*if(urls[2]!=null)
-            webView.loadUrl(urls[2]);*/
+            *//*if(urls[2]!=null)
+            webView.loadUrl(urls[2]);*//*
             //覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
             webView.setWebViewClient(new WebViewClient() {
                 @Override
@@ -139,7 +149,34 @@ public class HomeActivity extends BaseActivity {
 
                 }
             });
-        }
+        }*/
+      /*  List<Integer> imageIdList = new ArrayList<Integer>();
+        imageIdList.add(R.drawable.ad1);
+        imageIdList.add(R.drawable.ad2);
+        imageIdList.add(R.drawable.ad3);
+        viewPager.setAdapter(new ImagePagerAdapter(this, imageIdList));
+        indicator.setViewPager(viewPager);
+        indicator.setFillColor(0xff66ccff);
+        indicator.setStrokeColor(0xffc5c2bb);
+        indicator.setRadius(10);
+        viewPager.setInterval(5000);
+        viewPager.startAutoScroll();*/
+        for (int position = 1; position <= 3; position++)
+            localImages.add(getResId("ad" + position, R.drawable.class));
+        convenientBanner.setPages(
+                new CBViewHolderCreator<LocalImageHolderView>() {
+                    @Override
+                    public LocalImageHolderView createHolder() {
+                        return new LocalImageHolderView();
+                    }
+                }, localImages)
+                //设置两个点图片作为翻页指示器，不设置则没有指示器，可以根据自己需求自行配合自己的指示器,不需要圆点指示器可用不设
+                .setPageIndicator(new int[]{R.drawable.shape_corner_nor, R.drawable.shape_corner_press})
+                //设置指示器的方向
+                .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.CENTER_HORIZONTAL);
+        //设置翻页的效果，不需要翻页效果可用不设
+        //.setPageTransformer(Transformer.DefaultTransformer);    集成特效之后会有白屏现象，新版已经分离，如果要集成特效的例子可以看Demo的点击响应。
+//        convenientBanner.setManualPageable(false);//设置不能手动影响
     }
 
     @Override

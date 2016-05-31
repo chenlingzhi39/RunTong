@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.AssetManager;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -44,11 +46,11 @@ import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.view.MyDialog;
-import com.umeng.analytics.MobclickAgent;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public abstract class BaseActivity extends AppCompatActivity {
 	public static Boolean flag = true;
@@ -87,6 +89,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 	private boolean myDialogFlag = false;
    public Toolbar toolbar;
+	@Override
+	protected void attachBaseContext(Context newBase) {
+		super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+	}
 	@SuppressLint("InlinedApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -185,8 +191,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 	}
 	protected void setToolbarTitle(int strId) {
 		if (getSupportActionBar() != null) {
+			//AssetManager mgr=getAssets();//得到AssetManager
+			//Typeface tf= Typeface.createFromAsset(mgr, "fonts/STXIHEI.TTF");//根据路径得到Typeface
 			TextView title=(TextView)findViewById(R.id.title);
+			//title.setTypeface(tf);
 			title.setText(getResources().getString(mToolbarTitle));
+
+
+
 		}
 	}
 	@Override
@@ -360,13 +372,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 		if (isSendNotification) {
 			//showBackRunNotification();
 		}
-		MobclickAgent.onResume(this);
+	//	MobclickAgent.onResume(this);
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
-		MobclickAgent.onPause(this);
+	//	MobclickAgent.onPause(this);
 		super.onPause();
 	}
 
@@ -380,7 +392,15 @@ public abstract class BaseActivity extends AppCompatActivity {
 	public void toast(String msg){
 		Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
 	}
-
+	public static int getResId(String variableName, Class<?> c) {
+		try {
+			Field idField = c.getDeclaredField(variableName);
+			return idField.getInt(idField);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
 
 
 }

@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.callba"
-        minSdkVersion 9
+        minSdkVersion 10
         targetSdkVersion 22
         multiDexEnabled true
     }
@@ -29,8 +29,6 @@ dependencies {
     compile files('libs/pinyin4j-2.5.0.jar')
     compile files('libs/SocialSDK_WeiXin_1.jar')
     compile files('libs/SocialSDK_WeiXin_2.jar')
-    compile files('libs/umeng-sdk-analytics_v5.2.2_fb_v4.3.1.jar')
-    compile files('libs/umeng_social_sdk.jar')
     compile 'com.android.support:design:23.4.0'
     compile 'com.jakewharton:butterknife:5.1.1'
     compile 'com.google.code.gson:gson:2.2.4'
@@ -44,4 +42,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.4.0'
     compile files('libs/hyphenatechat_3.1.2.jar')
     compile 'com.android.support:multidex:1.0.1'
+    compile 'uk.co.chrisjenx:calligraphy:2.2.0'
+    compile files('libs/umeng_social_sdk.jar')
+    compile 'com.bigkoo:convenientbanner:2.0.5'
 }

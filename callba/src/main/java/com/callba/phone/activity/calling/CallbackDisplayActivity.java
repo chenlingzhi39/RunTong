@@ -36,7 +36,7 @@ import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.TimeFormatUtil;
-import com.umeng.analytics.MobclickAgent;
+
 @ActivityFragmentInject(
 		contentViewId = R.layout.callback_display)
 public class CallbackDisplayActivity extends BaseActivity {
@@ -69,7 +69,7 @@ public class CallbackDisplayActivity extends BaseActivity {
 		Map<String, String> paramsMap = new HashMap<String, String>();
 		paramsMap.put("errorMsg", errorMsg);
 		paramsMap.put("errorTime", errorTime);
-		MobclickAgent.onEvent(this, "callback_failed", paramsMap);
+	//	MobclickAgent.onEvent(this, "callback_failed", paramsMap);
 	}
 
 	private void callback() {

@@ -23,7 +23,7 @@ import com.callba.phone.activity.calling.CallbackDisplayActivity;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.contact.ContactPersonEntity;
-import com.umeng.analytics.MobclickAgent;
+
 
 public class CallUtils {
 	protected static final String TAG = CallUtils.class.getCanonicalName();
@@ -260,7 +260,7 @@ public class CallUtils {
 		paramsMap.put("callWeek", week);
 		paramsMap.put("callType", "回拨");
 		paramsMap.put("mobile", Build.MODEL);
-		MobclickAgent.onEventValue(context, "call_event", paramsMap, 1);
+		//MobclickAgent.onEventValue(context, "call_event", paramsMap, 1);
 	}
 
 	/**

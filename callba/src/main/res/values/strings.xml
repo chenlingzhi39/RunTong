@@ -148,6 +148,7 @@
 	<string name="login_card_hint">请输入充值卡帐号</string>
 	<string name="login_password">登录密码</string>
     <string name="confirm_password">确认密码</string>
+    <string name="please_confirm_password">请确认密码</string>
 	<string name="login_register">注册账号</string>
 	<string name="login_login">登录账号</string>
 	<string name="login_name_hint">请输入手机号码</string>
@@ -163,7 +164,7 @@
 	<!-- manual register -->
 	<string name="manregedit">手动注册</string>
 	<string name="manregedit_yijian">一键注册</string>
-	<string name="manregedit_acc_hint">请输入真实手机号码注册</string>
+	<string name="manregedit_acc_hint">请输入手机号码注册</string>
 	<string name="manregedit_get_yzm">获取验证码</string>
 	<string name="manregedit_yzm">验证码</string>
 	<string name="manregedit_yzm_hint">请输入验证码</string>

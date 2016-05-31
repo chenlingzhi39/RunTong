@@ -9,6 +9,8 @@ import android.widget.TextView;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.bean.UserDao;
+import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.view.CircleTextView;
 import com.callba.phone.widget.signcalendar.DBManager;
 import com.callba.phone.widget.signcalendar.SignCalendar;
@@ -31,7 +33,7 @@ import butterknife.InjectView;
         toolbarTitle = R.string.sign_in,
         navigationId = R.drawable.press_back
 )
-public class SignInActivity extends BaseActivity {
+public class SignInActivity extends BaseActivity implements UserDao.PostListener{
     @InjectView(R.id.circle)
     CircleTextView circle;
     private String date = null;// 设置默认选中的日期  格式为 “2014-04-05” 标准DATE格式
@@ -42,7 +44,7 @@ public class SignInActivity extends BaseActivity {
     DBManager dbManager;
     boolean isinput = false;
     private String date1 = null;//单天日期
-
+    private UserDao userDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,21 +87,8 @@ public class SignInActivity extends BaseActivity {
         btn_signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Date today = calendar.getThisday();
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-           /* calendar.removeAllMarks();
-           list.add(df.format(today));
-           calendar.addMarks(list, 0);*/
-                //将当前日期标示出来
-                add(df.format(today));
-                //calendar.addMark(today, 0);
-                query();
-                HashMap<String, Integer> bg = new HashMap<String, Integer>();
+                userDao.getSign(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
 
-                calendar.setCalendarDayBgColor(today, R.drawable.bg_sign_today);
-                btn_signIn.setText("今日已签，明日继续");
-                btn_signIn.setBackgroundResource(R.drawable.button_gray);
-                btn_signIn.setEnabled(false);
             }
         });
         //监听所选中的日期
@@ -136,6 +125,38 @@ public class SignInActivity extends BaseActivity {
                         .setText(year + "年" + month + "月");
             }
         });
+        userDao=new UserDao(this,this);
+
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void success(String msg) {
+        toast(msg);
+        Date today = calendar.getThisday();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+           /* calendar.removeAllMarks();
+           list.add(df.format(today));
+           calendar.addMarks(list, 0);*/
+        //将当前日期标示出来
+        add(df.format(today));
+        //calendar.addMark(today, 0);
+        query();
+        HashMap<String, Integer> bg = new HashMap<String, Integer>();
+
+        calendar.setCalendarDayBgColor(today, R.drawable.bg_sign_today);
+        btn_signIn.setText("今日已签，明日继续");
+        btn_signIn.setBackgroundResource(R.drawable.button_gray);
+        btn_signIn.setEnabled(false);
+    }
+
+    @Override
+    public void failure(String msg) {
+      toast(msg);
     }
 
     @Override

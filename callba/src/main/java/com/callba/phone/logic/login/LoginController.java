@@ -28,7 +28,7 @@ import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.download.DownLoadAdvertisement;
 import com.callba.phone.view.CalldaToast;
-import com.umeng.analytics.MobclickAgent;
+
 
 /** 
  * 登录控制器
@@ -238,7 +238,7 @@ public class LoginController {
 					return true;
 				} else {
 					//统计登录超时
-					MobclickAgent.onEvent(context, "login_timeout");
+					//MobclickAgent.onEvent(context, "login_timeout");
 					
 					loginState = false;
 					loginListener.localLoginFailed(UserLoginErrorMsg.TIMEOUT);

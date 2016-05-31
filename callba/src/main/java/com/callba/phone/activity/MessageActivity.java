@@ -19,15 +19,13 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
-import com.hyphenate.chat.EMMessage;
-import com.umeng.socialize.utils.Log;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
@@ -89,7 +87,6 @@ public class MessageActivity extends BaseActivity {
         conversationList.addAll(loadConversationList());
         conversationListview.addItemDecoration(new DividerItemDecoration(
                 this, DividerItemDecoration.VERTICAL_LIST));
-        Log.i("size",conversationList.size()+"");
         conversationListview.setLayoutManager(new LinearLayoutManager(this));
         adapter=new ConversationAdapter(this);
         adapter.addAll(conversationList);
@@ -204,7 +201,6 @@ public class MessageActivity extends BaseActivity {
     class AsReadReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("message","asread");
             conversationList.clear();
             conversationList.addAll(loadConversationList());
             adapter.clear();

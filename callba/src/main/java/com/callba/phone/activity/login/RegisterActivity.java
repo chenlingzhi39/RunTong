@@ -1,6 +1,8 @@
 package com.callba.phone.activity.login;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -8,12 +10,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,7 +48,7 @@ import com.callba.phone.view.MyProgressDialog;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
-import com.umeng.socialize.utils.Log;
+
 
 
 @ActivityFragmentInject(
@@ -67,7 +72,8 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 	String[] results;
 	UserDao userDao;
 	String key;
-
+	private SMSBroadcastReceiver mSMSBroadcastReceiver;
+	private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
 	private static class MyHandler extends Handler {
 		private final WeakReference<RegisterActivity> mActivity;
 		static TimeCount time;
@@ -163,6 +169,14 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 		et_password = (EditText) this.findViewById(R.id.et_mre_password);
 		
 		imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+		//生成广播处理
+		mSMSBroadcastReceiver = new SMSBroadcastReceiver();
+
+		//实例化过滤器并设置要过滤的广播
+		IntentFilter intentFilter = new IntentFilter(ACTION);
+		intentFilter.setPriority(Integer.MAX_VALUE);
+		//注册广播
+		registerReceiver(mSMSBroadcastReceiver, intentFilter);
 	}
 
 	@Override
@@ -231,9 +245,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 				if(!address.equals(""))
 				{*/
 					try {
-						Log.i("register","click");
-						Log.i("code",code);
-                        Log.i("key",key);
 						sendRegisterRequest(username, password,DesUtil.encrypt(code,key));
 					}catch(Exception e){}
 				/*}else {toast("请输入正确的手机号!");
@@ -485,6 +496,12 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 	}
 
 	@Override
+	protected void onDestroy() {
+		unregisterReceiver(mSMSBroadcastReceiver);
+		super.onDestroy();
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()){
 			case R.id.login:
@@ -495,5 +512,35 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	public class SMSBroadcastReceiver extends BroadcastReceiver {
+		public static final String SMS_RECEIVED_ACTION = "android.provider.Telephony.SMS_RECEIVED";
 
+		public SMSBroadcastReceiver() {
+			super();
+		}
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(SMS_RECEIVED_ACTION)) {
+				Object[] pdus = (Object[]) intent.getExtras().get("pdus");
+				for(Object pdu:pdus) {
+					SmsMessage smsMessage = SmsMessage.createFromPdu((byte [])pdu);
+					String sender = smsMessage.getDisplayOriginatingAddress();
+					//短信内容
+					String content = smsMessage.getDisplayMessageBody();
+					long date = smsMessage.getTimestampMillis();
+					Date tiemDate = new Date(date);
+					SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					String time = simpleDateFormat.format(tiemDate);
+					String regEx = "[^0-9]";
+					Pattern p = Pattern.compile(regEx);
+					Matcher m = p.matcher(content);
+                     et_yzm.setText(m.replaceAll("").trim().toString());
+				}
+			}
+
+		}
+
+
+	}
 }

@@ -2,6 +2,7 @@ package com.callba.phone.activity;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import android.app.AlertDialog;
@@ -41,7 +42,6 @@ import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.ZipUtil;
-import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.utils.Log;
 
 @ActivityFragmentInject(
@@ -158,6 +158,7 @@ public class WelcomeActivity extends BaseActivity {
 	private void initEnvironment() {
 		String s = getResources().getConfiguration().locale.getCountry();
 		Logger.v("语言环境", s);
+        Locale.setDefault(new Locale("zh"));
 		// 查询联系人
 		new QueryContacts(null).loadContact(this);
 
@@ -230,7 +231,7 @@ public class WelcomeActivity extends BaseActivity {
 
 		} else {
 			// 统计获取版本失败次数
-			MobclickAgent.onEvent(this, "version_timeout");
+			//MobclickAgent.onEvent(this, "version_timeout");
 
 			String secretKey = mSharedPreferenceUtil
 					.getString(Constant.SECRET_KEY);
@@ -413,7 +414,7 @@ public class WelcomeActivity extends BaseActivity {
 		// 判断是不是第一次使用
 		boolean isFirstStart = mSharedPreferenceUtil.getBoolean(
 				Constant.ISFRISTSTART, true);
-		Log.i("autologin",CalldaGlobalConfig.getInstance().isAutoLogin()+"");
+
 		if (isFirstStart) {
 			// 第一次启动，跳转到新功能介绍页面
 			Intent intent = new Intent(WelcomeActivity.this,

@@ -17,6 +17,7 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
+import com.callba.R;
 import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.activity.WelcomeActivity;
 import com.callba.phone.cfg.Constant;
@@ -26,9 +27,9 @@ import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
-import com.hyphenate.util.NetUtils;
-import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.utils.Log;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class MyApplication extends Application {
     /**
@@ -57,6 +58,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/STXIHEI.TTF").setFontAttrId(R.attr.fontPath).build());
         EMOptions options = new EMOptions();
 // 默认添加好友时，是不需要验证的，改成需要验证
         options.setAcceptInvitationAlways(false);
@@ -69,7 +71,7 @@ public class MyApplication extends Application {
         EMClient.getInstance().addConnectionListener(new MyConnectionListener());
 
 
-        Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+       /* Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable ex) {
                 try {
@@ -91,7 +93,7 @@ public class MyApplication extends Application {
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
       /*  EMChat.getInstance().init(this);
 
 *//**
@@ -166,9 +168,9 @@ public class MyApplication extends Application {
      * 初始化友盟统计参数设置
      */
     private void initUmengAnalytics() {
-        MobclickAgent.updateOnlineConfig(this);
+       /* MobclickAgent.updateOnlineConfig(this);
         //设置时间间隔为5分钟
-        MobclickAgent.setSessionContinueMillis(5 * 60 * 1000);
+        MobclickAgent.setSessionContinueMillis(5 * 60 * 1000);*/
     }
     /**
      * 账号在别的设备登录

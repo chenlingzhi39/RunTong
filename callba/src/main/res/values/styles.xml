@@ -4,6 +4,8 @@
         <item name="colorAccent">@color/orange</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>
+        <!--<item name="android:textAppearance">@style/TextAppearance.FontPath</item>-->
     </style>
     <style name="TransparentDialog" parent="@android:style/Theme.Dialog">
         <item
@@ -12,6 +14,17 @@
     <style name="BaseAppTheme.AppTheme" >
         <!-- Customize your theme here. -->
 
+    </style>
+    <style name="TextAppearance.FontPath" parent="android:TextAppearance">
+        <!-- Custom Attr-->
+        <item name="fontPath">fonts/STXIHEI.TTF</item>
+    </style>
+    <style name="TextViewCustomFont">
+        <item name="fontPath">fonts/STXIHEI.TTF</item>
+    </style>
+    <style name="AppTheme.Widget.TextView" parent="android:Widget.TextView">
+        <item name="fontPath">fonts/STXIHEI.TTF</item>
+        <item name="android:textColor">@color/black</item>
     </style>
     <style name="ToolBarStyle" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <item name="actionMenuTextColor">@color/orange</item>

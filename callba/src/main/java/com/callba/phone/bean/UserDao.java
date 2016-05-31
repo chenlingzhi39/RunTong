@@ -393,4 +393,31 @@ public class UserDao {
             }
         });
     }
+    public void getSign(String loginName,String password){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("softType","android");
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.Sign, params, new RequestCallBack<String>(){
+            @Override
+            public void onStart() {
+              postListener.start();
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                result=responseInfo.result.split("\\|");
+                Log.i("get_sign",responseInfo.result);
+                if(result[0].equals("0"))
+                postListener.success(result[1]);
+                else postListener.failure(result[1]);
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                postListener.failure(context.getString(R.string.network_error));
+            }
+
+        });
+    }
 }

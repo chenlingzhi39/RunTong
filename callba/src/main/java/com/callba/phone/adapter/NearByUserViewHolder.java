@@ -31,6 +31,6 @@ public class NearByUserViewHolder extends BaseViewHolder<NearByUser> {
     public void setData(NearByUser data) {
        userName.setText(data.getNickname());
         Glide.with(getContext()).load(data.getUrl_head()).into(userHead);
-        distance.setHint(data.getDistance()+"米以内");
+        distance.setHint(data.getDistance().substring(0,data.getDistance().lastIndexOf("."))+"米以内");
     }
 }
