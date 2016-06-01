@@ -420,4 +420,60 @@ public class UserDao {
 
         });
     }
+    public void getSuits(String loginName,String password){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("softType","android");
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.QUERY_MEAL, params, new RequestCallBack<String>(){
+            @Override
+            public void onStart() {
+                postListener.start();
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                result=responseInfo.result.split("\\|");
+                Log.i("get_meal",responseInfo.result);
+                if(result[0].equals("0"))
+                { if(result.length>1)
+                    postListener.success(result[1]);
+                else postListener.success(null);}
+                else postListener.failure(result[1]);
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                postListener.failure(context.getString(R.string.network_error));
+            }
+
+        });
+    }
+    public void getBalance(String loginName,String password){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("softType","android");
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.Query_Balance, params, new RequestCallBack<String>(){
+            @Override
+            public void onStart() {
+                postListener.start();
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                result=responseInfo.result.split("\\|");
+                Log.i("get_meal",responseInfo.result);
+                if(result[0].equals("0"))
+                    postListener.success(result[1]);
+                else postListener.failure(result[1]);
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                postListener.failure(context.getString(R.string.network_error));
+            }
+
+        });
+    }
 }

@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
@@ -23,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -31,27 +33,29 @@ import android.widget.Spinner;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.Logger;
 import com.callba.phone.view.CalldaToast;
 import com.callba.phone.view.MyProgressDialog;
-
+@ActivityFragmentInject(
+		contentViewId = R.layout.more_query_calllog,
+		toolbarTitle = R.string.calllog_search,
+		navigationId = R.drawable.press_back
+)
 public class QueryCalllogActivity extends BaseActivity implements
 		OnClickListener, OnScrollListener,OnItemSelectedListener {
-	private Button bn_back, bn_queryZhibo, bn_queryHuibo;
-	private EditText et_year, et_month;
 	private ListView lv_calllog;
 	private LinearLayout ll_loading;
-	private Spinner sp_month, sp_year;
+	private DatePicker datePicker;
 
 	private int prePageNum = 15; // List每页显示的calllog数量
 
 	private int lastVisibleItem = 0;
 	private int fristVisItem = 0;
 	private int currentPage = 1;
-	private String currentCallogType = ""; // 记录当前查询的通话记录类型
 
 	private String year, month; // 查询的年 月
 	private Time time;
@@ -62,20 +66,13 @@ public class QueryCalllogActivity extends BaseActivity implements
 	private ArrayAdapter<String> arrayadapter;
 	// 真正的字符串数据将保存在这个list中
 	private List<String> all;
-	private MyProgressDialog progressDialog;
 
 	// 存储查询到的通话记录
 	private List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
 	private SimpleAdapter adapter;
-
+    ProgressDialog progressDialog;
 	@Override
 	public void init() {
-		bn_back = (Button) findViewById(R.id.bn_calllog_back);
-		bn_queryZhibo = (Button) findViewById(R.id.bn_calllog_zhibo);
-		bn_queryHuibo = (Button) findViewById(R.id.bn_calllog_huibo);
-		bn_back.setOnClickListener(this);
-		bn_queryZhibo.setOnClickListener(this);
-		bn_queryHuibo.setOnClickListener(this);
 
 		time = new Time();
 		time.setToNow(); // 取得系统时间。
@@ -89,18 +86,8 @@ public class QueryCalllogActivity extends BaseActivity implements
 		}
 		
 		// et_year = (EditText) findViewById(R.id.et_calllog_year);
-		sp_year = (Spinner) findViewById(R.id.sp_calllog_year);
-		arrayadapter = new ArrayAdapter<String>(this, R.layout.item_spinner,
-				all);
-		arrayadapter
-				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		sp_year.setAdapter(arrayadapter);
-		sp_year.setSelection(i_y_num);
-		sp_year.setOnItemSelectedListener(this);
-		// et_month = (EditText) findViewById(R.id.et_calllog_month);
-		sp_month = (Spinner) findViewById(R.id.sp_calllog_month);
-		sp_month.setSelection(nowM);
-		sp_month.setOnItemSelectedListener(this);
+
+
 
 		lv_calllog = (ListView) findViewById(R.id.lv_calllog);
 		lv_calllog.setOnScrollListener(this);
@@ -112,7 +99,7 @@ public class QueryCalllogActivity extends BaseActivity implements
 						R.id.tv_calllog_time, R.id.tv_calllog_duration,
 						R.id.tv_calllog_money });
 		lv_calllog.setAdapter(adapter);
-
+        datePicker=(DatePicker) findViewById(R.id.datePicker);
 		ll_loading = (LinearLayout) findViewById(R.id.ll_load_more);
 		year=nowY+"";
 		month=nowM+1+"";
@@ -233,7 +220,7 @@ public class QueryCalllogActivity extends BaseActivity implements
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.bn_calllog_back:
+		/*case R.id.bn_calllog_back:
 			finish();
 			break;
 
@@ -270,7 +257,7 @@ public class QueryCalllogActivity extends BaseActivity implements
 			break;
 
 		default:
-			break;
+			break;*/
 		}
 	}
 
@@ -348,7 +335,7 @@ public class QueryCalllogActivity extends BaseActivity implements
 	public void onItemSelected(AdapterView<?> parent, View view, int position,
 			long id) {
 		switch (parent.getId()) {
-		case R.id.sp_calllog_year:
+		/*case R.id.sp_calllog_year:
 			year=all.get(position);
 			Logger.i("onItemSelected", "year:"+year+"-----position:"+position);
 			break;
@@ -356,7 +343,7 @@ public class QueryCalllogActivity extends BaseActivity implements
 			month=position+1+"";
 			Logger.i("onItemSelected", "month:"+month+"-----position:"+position);
 			break;
-
+*/
 		default:
 			break;
 		}

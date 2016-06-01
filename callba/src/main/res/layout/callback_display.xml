@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="姓名"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="25sp" />
 
             <TextView
@@ -47,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="133XXXXXX3 /"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="18sp" />
 
                 <TextView
@@ -86,7 +86,7 @@
                     android:id="@+id/countdown"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/orange"
+                    android:textColor="@color/white"
                     android:textSize="25sp"
                     android:visibility="invisible" />
 
@@ -95,14 +95,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/zzhuibo"
-                    android:textColor="@color/callback_blue"
+                    android:textColor="@color/white"
                     android:textSize="20sp" />
             </LinearLayout>
 
-            <View
+            <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
-                android:layout_weight="0.8" />
+                android:layout_weight="0.8" >
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/bg_cancel"
+                    android:text="@string/cancel"
+                    android:id="@+id/cancel"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:textColor="?attr/colorAccent" />
+            </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
 

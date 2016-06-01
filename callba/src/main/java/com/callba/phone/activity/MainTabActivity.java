@@ -16,51 +16,47 @@ import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.MyApplication;
 import com.callba.phone.activity.contact.ContactActivity;
 import com.callba.phone.activity.login.LoginActivity;
-import com.callba.phone.adapter.ConversationAdapter;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.ActivityUtil;
-import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
-import com.hyphenate.chat.EMChatManager;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
-import com.hyphenate.util.EMLog;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -86,10 +82,14 @@ public class MainTabActivity extends TabActivity {
             R.drawable.menu4_selector, R.drawable.menu5_selector};
     EMMessageListener msgListener;
     NotificationManager mNotificationManager;
+    private static final int FLING_MIN_DISTANCE = 100;
+    private static final int FLING_MIN_VELOCITY = 0;
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,11 +104,11 @@ public class MainTabActivity extends TabActivity {
 
             window.setStatusBarColor(Color.TRANSPARENT);
         }
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
-            if(Build.MANUFACTURER.equals("Xiaomi"))
-                ActivityUtil.MIUISetStatusBarLightMode(getWindow(),true);
-            if(Build.MANUFACTURER.equals("Meizu"))
-                ActivityUtil.FlymeSetStatusBarLightMode(getWindow(),true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.MANUFACTURER.equals("Xiaomi"))
+                ActivityUtil.MIUISetStatusBarLightMode(getWindow(), true);
+            if (Build.MANUFACTURER.equals("Meizu"))
+                ActivityUtil.FlymeSetStatusBarLightMode(getWindow(), true);
 
         }
         MyApplication.activities.add(this);
@@ -136,6 +136,37 @@ public class MainTabActivity extends TabActivity {
 
         //获取第一个tabwidget
         final View view = mTabhost.getTabWidget().getChildAt(0);
+     /*   mTabhost.getTabContentView().setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                float x = 0;
+                float y = 0;
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        x = event.getX();
+                        y = event.getY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        if (Math.abs(event.getX() - x) > Math.abs(event.getY() - y))
+                            return true;
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (Math.abs(event.getX() - x) > Math.abs(event.getY() - y)) {
+                            if (event.getX() > x && Math.abs(event.getX() - x) >= 100)
+                                if (mTabhost.getCurrentTab() == mTabhost.getTabWidget().getChildCount() - 1)
+                                    mTabhost.setCurrentTab(0);
+                                else mTabhost.setCurrentTab(mTabhost.getCurrentTab() + 1);
+                            else if (mTabhost.getCurrentTab() == 0)
+                                mTabhost.setCurrentTab(mTabhost.getTabWidget().getChildCount() - 1);
+                            else mTabhost.setCurrentTab(mTabhost.getCurrentTab() - 1);
+                            return true;
+                        } else
+                            return false;
+
+                }
+                return  false;
+            }
+        });*/
         view.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -178,11 +209,11 @@ public class MainTabActivity extends TabActivity {
                     BaseActivity.flag = true;
                 }
 
-                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
-                if(Build.MANUFACTURER.equals("Xiaomi"))
-                    ActivityUtil.MIUISetStatusBarLightMode(getWindow(),!tabId.equals(mTabTextArray[4]));
-                if(Build.MANUFACTURER.equals("Meizu"))
-                    ActivityUtil.FlymeSetStatusBarLightMode(getWindow(),!tabId.equals(mTabTextArray[4]));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (Build.MANUFACTURER.equals("Xiaomi"))
+                        ActivityUtil.MIUISetStatusBarLightMode(getWindow(), !tabId.equals(mTabTextArray[4]));
+                    if (Build.MANUFACTURER.equals("Meizu"))
+                        ActivityUtil.FlymeSetStatusBarLightMode(getWindow(), !tabId.equals(mTabTextArray[4]));
 
                 }
             }
@@ -207,9 +238,9 @@ public class MainTabActivity extends TabActivity {
                 for (EMMessage message : messages) {
                     Log.i("get_message", message.getBody().toString());
                     EMTextMessageBody txtBody = (EMTextMessageBody) message.getBody();
-                    sendNotification1(ChatActivity.class, "你有一条新消息", message.getFrom() + ":" + txtBody.getMessage(),message.getFrom());
+                    sendNotification1(ChatActivity.class, "你有一条新消息", message.getFrom() + ":" + txtBody.getMessage(), message.getFrom());
                     Intent intent = new Intent("com.callba.chat");
-                    intent.putExtra("username",message.getFrom());
+                    intent.putExtra("username", message.getFrom());
                     sendBroadcast(intent);
                 }
             }
@@ -300,13 +331,13 @@ public class MainTabActivity extends TabActivity {
     @Override
     protected void onDestroy() {
         MyApplication.activities.remove(this);
-        if(mNotificationManager!=null)
-        mNotificationManager.cancel(10);
+        if (mNotificationManager != null)
+            mNotificationManager.cancel(10);
         EMClient.getInstance().chatManager().removeMessageListener(msgListener);
         super.onDestroy();
     }
 
-    private void sendNotification1(Class<?> clazz, String title, String content,String username) {
+    private void sendNotification1(Class<?> clazz, String title, String content, String username) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                 getApplicationContext())
                 .setSmallIcon(R.drawable.logo_notification)
@@ -316,7 +347,7 @@ public class MainTabActivity extends TabActivity {
                 .setContentTitle(title)
                 .setContentText(content);
         Intent notificationIntent = new Intent(getApplicationContext(), clazz);
-        notificationIntent.putExtra("username",username);
+        notificationIntent.putExtra("username", username);
         // TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         // stackBuilder.addParentStack(clazz);
         // stackBuilder.addNextIntent(notificationIntent);
@@ -336,6 +367,7 @@ public class MainTabActivity extends TabActivity {
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(10, notification);
     }
+
     /**
      * 获取会话列表
      *
@@ -374,6 +406,7 @@ public class MainTabActivity extends TabActivity {
         }
         return list;
     }
+
     /**
      * 根据最后一条消息的时间排序
      *
@@ -395,13 +428,14 @@ public class MainTabActivity extends TabActivity {
 
         });
     }
+
     /**
      * 显示帐号在别处登录dialog
      */
     private void showConflictDialog() {
         isConflictDialogShow = true;
         logout();
-       AlertDialog.Builder builder= new AlertDialog.Builder(this).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 CalldaGlobalConfig.getInstance().setUsername("");
@@ -478,6 +512,7 @@ public class MainTabActivity extends TabActivity {
             }
         });
     }
+
 
 
 

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginBottom="53dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -69,17 +70,26 @@
             </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:padding="10dp">
+            android:background="?attr/selectableItemBackground"
+            android:padding="10dp"
+            android:id="@+id/account">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -93,7 +103,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="40dp"
-                android:text="@string/my_number" />
+                android:text="@string/my_number"
+                android:textSize="16sp"/>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -112,7 +123,7 @@
             android:id="@+id/change_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="?attr/selectableItemBackground"
             android:padding="10dp">
             <ImageView
                 android:layout_width="wrap_content"
@@ -125,13 +136,15 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="40dp"
-                android:text="@string/change" />
+                android:text="@string/change"
+                android:textSize="16sp"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/more" />
+                android:src="@drawable/more"
+                android:layout_centerVertical="true"/>
         </RelativeLayout>
 
         <View
@@ -143,7 +156,7 @@
             android:id="@+id/change_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="?attr/selectableItemBackground"
             android:padding="10dp">
             <ImageView
                 android:layout_width="wrap_content"
@@ -156,13 +169,15 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="40dp"
-                android:text="@string/change_password" />
+                android:text="@string/change_password"
+                android:textSize="16sp"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/more" />
+                android:src="@drawable/more"
+                android:layout_centerVertical="true"/>
         </RelativeLayout>
 
         <View
@@ -174,7 +189,7 @@
             android:id="@+id/retrieve"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="?attr/selectableItemBackground"
             android:padding="10dp">
             <ImageView
                 android:layout_width="wrap_content"
@@ -187,31 +202,41 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="40dp"
-                android:text="@string/find_password" />
+                android:text="@string/find_password"
+                android:textSize="16sp"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/more" />
+                android:src="@drawable/more"
+                android:layout_centerVertical="true"/>
         </RelativeLayout>
+    </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:background="@color/light_black" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:layout_marginTop="10dp">
         <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginTop="10dp"
-            android:background="@color/light_black" />
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+
+        android:background="@color/light_black" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:padding="10dp">
+            android:background="?attr/selectableItemBackground"
+            android:padding="10dp"
+            android:clickable="true">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -223,13 +248,15 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="40dp"
-                android:text="@string/about_us" />
+                android:text="@string/about_us"
+                android:textSize="16sp"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/more" />
+                android:src="@drawable/more"
+                android:layout_centerVertical="true"/>
         </RelativeLayout>
 
         <View
@@ -240,8 +267,9 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:padding="10dp">
+            android:background="?attr/selectableItemBackground"
+            android:padding="10dp"
+            android:clickable="true">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -253,15 +281,49 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="40dp"
-                android:text="@string/help" />
+                android:text="@string/help"
+                android:textSize="16sp"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/more" />
+                android:src="@drawable/more"
+                android:layout_centerVertical="true"/>
         </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/light_black" />
 
+        <RelativeLayout
+            android:id="@+id/update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:padding="10dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/update" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="40dp"
+            android:text="@string/update"
+            android:textSize="16sp"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/more"
+            android:layout_centerVertical="true"/>
+        </RelativeLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
@@ -271,7 +333,7 @@
             android:id="@+id/logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="?attr/selectableItemBackground"
             android:clickable="true"
             android:padding="10dp">
             <ImageView
@@ -285,13 +347,15 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="40dp"
-                android:text="@string/logout" />
+                android:text="@string/logout"
+                android:textSize="16sp"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/more" />
+                android:src="@drawable/more"
+                android:layout_centerVertical="true"/>
         </RelativeLayout>
 
         <View
@@ -299,4 +363,6 @@
             android:layout_height="1px"
             android:background="@color/light_black" />
     </LinearLayout>
+    </LinearLayout>
+</ScrollView>
 </LinearLayout>

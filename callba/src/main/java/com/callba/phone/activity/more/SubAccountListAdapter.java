@@ -89,7 +89,7 @@ public class SubAccountListAdapter extends BaseAdapter {
 	 * @param bean
 	 */
 	private void confirm2Delete(final SubAccountBean bean) {
-		new AlertDialog.Builder(context)
+		new Builder(context)
 			.setTitle(context.getString(R.string.sacc_tip))
 			.setMessage(context.getString(R.string.sacc_sfsczh))
 			.setPositiveButton(context.getString(R.string.sacc_delete), new DialogInterface.OnClickListener() {
@@ -135,7 +135,7 @@ public class SubAccountListAdapter extends BaseAdapter {
 	 * @param subAccountBean
 	 */
 	private void showChangePassDialog(final SubAccountBean subAccountBean) {
-		Builder dialog = new AlertDialog.Builder(context);
+		Builder dialog = new Builder(context);
 		dialog.setTitle(context.getString(R.string.modify_pwd));
 		
 		View view = View.inflate(context, R.layout.more_subaccount_changepass_dialog, null);

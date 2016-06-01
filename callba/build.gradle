@@ -44,5 +44,4 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'uk.co.chrisjenx:calligraphy:2.2.0'
     compile files('libs/umeng_social_sdk.jar')
-    compile 'com.bigkoo:convenientbanner:2.0.5'
 }

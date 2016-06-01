@@ -38,14 +38,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
-import com.bigkoo.convenientbanner.ConvenientBanner;
-import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
-import com.bigkoo.convenientbanner.holder.Holder;
-import com.callba.phone.adapter.LocalImageHolderView;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMChatManager;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.exceptions.HyphenateException;
+import com.callba.phone.view.BannerLayout;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.bitmap.BitmapCommonUtils;
@@ -87,7 +80,6 @@ import com.callba.phone.util.PhoneUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CalldaToast;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -173,7 +165,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
     private BitmapDisplayConfig bigPicDisplayConfig;
     private TextView tv_location;
-    private ConvenientBanner iv_ad;
+    private BannerLayout iv_ad;
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -333,24 +325,11 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         et_number.addTextChangedListener(new PhoneNumTextWatcher(et_number));
         //et_number.setOnLongClickListener(this);
         ll_delete = (LinearLayout) findViewById(R.id.delete_layout);
-        iv_ad=(ConvenientBanner) findViewById(R.id.convenientBanner);
+        iv_ad=(BannerLayout) findViewById(R.id.banner);
         for (int position = 1; position <= 3; position++)
             localImages.add(getResId("ad" + position, R.drawable.class));
 
-        iv_ad.setPages(
-                new CBViewHolderCreator<LocalImageHolderView>() {
-                    @Override
-                    public LocalImageHolderView createHolder() {
-                        return new LocalImageHolderView();
-                    }
-                }, localImages)
-                //设置两个点图片作为翻页指示器，不设置则没有指示器，可以根据自己需求自行配合自己的指示器,不需要圆点指示器可用不设
-                .setPageIndicator(new int[]{R.drawable.shape_corner_nor, R.drawable.shape_corner_press})
-                //设置指示器的方向
-                .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.CENTER_HORIZONTAL);
-        //设置翻页的效果，不需要翻页效果可用不设
-        //.setPageTransformer(Transformer.DefaultTransformer);    集成特效之后会有白屏现象，新版已经分离，如果要集成特效的例子可以看Demo的点击响应。
-//        convenientBanner.setManualPageable(false);//设置不能手动影响
+        iv_ad.setViewRes(localImages);
 
         ll_delete.setOnClickListener(this);
         //dialnumdelete = (ImageView) this.findViewById(R.id.dialnumdelete);

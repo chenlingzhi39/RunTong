@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -40,6 +41,10 @@ public class UserActivity extends BaseActivity {
     TextView number;
     @InjectView(R.id.retrieve)
     RelativeLayout retrieve;
+    @InjectView(R.id.account)
+    RelativeLayout account;
+    @InjectView(R.id.change_password)
+    RelativeLayout changePassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,61 +53,7 @@ public class UserActivity extends BaseActivity {
         number.setText(CalldaGlobalConfig.getInstance().getUsername());
     }
 
-    @OnClick(R.id.logout)
-    public void logout() {
-        EMClient.getInstance().login(SharedPreferenceUtil.getInstance(this).getString(Constant.LOGIN_USERNAME),SharedPreferenceUtil.getInstance(this).getString(Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
-            @Override
-            public void onSuccess() {
 
-                EMClient.getInstance().groupManager().loadAllGroups();
-                EMClient.getInstance().chatManager().loadAllConversations();
-                Log.d("main", "登录聊天服务器成功！");
-
-
-            }
-
-            @Override
-            public void onProgress(int progress, String status) {
-
-            }
-
-            @Override
-            public void onError(int code, String message) {
-                Log.d("main", "登录聊天服务器失败！");
-            }
-        });
-        CalldaGlobalConfig.getInstance().setUsername("");
-        CalldaGlobalConfig.getInstance().setPassword("");
-        CalldaGlobalConfig.getInstance().setIvPath("");
-        LoginController.getInstance().setUserLoginState(false);
-        SharedPreferenceUtil.getInstance(this).putString(Constant.LOGIN_PASSWORD, "", true);
-        Intent intent0 = new Intent("com.callba.location");
-        intent0.putExtra("action", "logout");
-        sendBroadcast(intent0);
-        Intent intent = new Intent();
-        intent.setClass(this, LoginActivity.class);
-        for (Activity activity : MyApplication.activities) {
-            activity.finish();
-        }
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.change_info)
-    public void change_info() {
-        Intent intent = new Intent(UserActivity.this, ChangeInfoActivity.class);
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.change_password)
-    public void change_password() {
-        Intent intent = new Intent(UserActivity.this, ChangePasswordActivity.class);
-        startActivity(intent);
-    }
-    @OnClick(R.id.retrieve)
-    public void retrieve(){
-        Intent intent = new Intent(UserActivity.this, RetrievePasswordActivity.class);
-        startActivity(intent);
-    }
     @Override
     public void init() {
 
@@ -111,5 +62,65 @@ public class UserActivity extends BaseActivity {
     @Override
     public void refresh(Object... params) {
 
+    }
+
+    @OnClick({R.id.account, R.id.change_info, R.id.change_password, R.id.retrieve, R.id.logout})
+    public void onClick(View view) {
+        Intent intent;
+        switch (view.getId()) {
+            case R.id.account:
+                intent=new Intent(UserActivity.this,AccountActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.change_info:
+                intent = new Intent(UserActivity.this, ChangeInfoActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.change_password:
+                intent = new Intent(UserActivity.this, ChangePasswordActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.retrieve:
+                intent = new Intent(UserActivity.this, RetrievePasswordActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.logout:
+                EMClient.getInstance().login(SharedPreferenceUtil.getInstance(this).getString(Constant.LOGIN_USERNAME), SharedPreferenceUtil.getInstance(this).getString(Constant.LOGIN_PASSWORD), new EMCallBack() {//回调
+                    @Override
+                    public void onSuccess() {
+
+                        EMClient.getInstance().groupManager().loadAllGroups();
+                        EMClient.getInstance().chatManager().loadAllConversations();
+                        Log.d("main", "登录聊天服务器成功！");
+
+
+                    }
+
+                    @Override
+                    public void onProgress(int progress, String status) {
+
+                    }
+
+                    @Override
+                    public void onError(int code, String message) {
+                        Log.d("main", "登录聊天服务器失败！");
+                    }
+                });
+                CalldaGlobalConfig.getInstance().setUsername("");
+                CalldaGlobalConfig.getInstance().setPassword("");
+                CalldaGlobalConfig.getInstance().setIvPath("");
+                LoginController.getInstance().setUserLoginState(false);
+                SharedPreferenceUtil.getInstance(this).putString(Constant.LOGIN_PASSWORD, "", true);
+                Intent intent0 = new Intent("com.callba.location");
+                intent0.putExtra("action", "logout");
+                sendBroadcast(intent0);
+                intent = new Intent();
+                intent.setClass(this, LoginActivity.class);
+                for (Activity activity : MyApplication.activities) {
+                    activity.finish();
+                }
+                startActivity(intent);
+                break;
+        }
     }
 }

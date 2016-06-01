@@ -78,6 +78,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".phone.activity.AccountActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            />
         <activity android:name=".phone.activity.PostMessageActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -125,7 +130,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize"/>
-        <activity android:name="com.callba.phone.activity.HomeActivity"
+        <activity android:name=".phone.activity.HomeActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"/>
@@ -328,7 +333,7 @@
             android:name="com.callba.phone.activity.more.QueryCalllogActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name="com.callba.phone.activity.more.SubAccountActivity"
             android:launchMode="singleTop"

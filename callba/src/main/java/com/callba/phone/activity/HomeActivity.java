@@ -3,38 +3,27 @@ package com.callba.phone.activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bigkoo.convenientbanner.ConvenientBanner;
-import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.activity.recharge.RechargeActivity2;
-import com.callba.phone.adapter.ImagePagerAdapter;
-import com.callba.phone.adapter.LocalImageHolderView;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.Logger;
+import com.callba.phone.view.BannerLayout;
 
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.ButterKnife;
@@ -67,14 +56,15 @@ public class HomeActivity extends BaseActivity {
     TextView game;
     @InjectView(R.id.sign_in)
     TextView signIn;
+    @InjectView(R.id.banner)
+    BannerLayout banner;
     private String yue;
-   /* @InjectView(R.id.view_pager)
-    AutoScrollViewPager viewPager;
-    @InjectView(R.id.indicator)
-    CirclePageIndicator indicator;*/
-    @InjectView(R.id.convenientBanner)
-    ConvenientBanner convenientBanner;
+    /* @InjectView(R.id.view_pager)
+     AutoScrollViewPager viewPager;
+     @InjectView(R.id.indicator)
+     CirclePageIndicator indicator;*/
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,9 +107,9 @@ public class HomeActivity extends BaseActivity {
             }
 
             *//**
-             * 用WebView显示图片，可使用这个参数 设置网页布局类型： 1、LayoutAlgorithm.NARROW_COLUMNS ：
-             * 适应内容大小 2、LayoutAlgorithm.SINGLE_COLUMN:适应屏幕，内容将自动缩放
-             *//*
+         * 用WebView显示图片，可使用这个参数 设置网页布局类型： 1、LayoutAlgorithm.NARROW_COLUMNS ：
+         * 适应内容大小 2、LayoutAlgorithm.SINGLE_COLUMN:适应屏幕，内容将自动缩放
+         *//*
             webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
             //WebView加载web资源
             *//*if(urls[2]!=null)
@@ -150,33 +140,10 @@ public class HomeActivity extends BaseActivity {
                 }
             });
         }*/
-      /*  List<Integer> imageIdList = new ArrayList<Integer>();
-        imageIdList.add(R.drawable.ad1);
-        imageIdList.add(R.drawable.ad2);
-        imageIdList.add(R.drawable.ad3);
-        viewPager.setAdapter(new ImagePagerAdapter(this, imageIdList));
-        indicator.setViewPager(viewPager);
-        indicator.setFillColor(0xff66ccff);
-        indicator.setStrokeColor(0xffc5c2bb);
-        indicator.setRadius(10);
-        viewPager.setInterval(5000);
-        viewPager.startAutoScroll();*/
-        for (int position = 1; position <= 3; position++)
-            localImages.add(getResId("ad" + position, R.drawable.class));
-        convenientBanner.setPages(
-                new CBViewHolderCreator<LocalImageHolderView>() {
-                    @Override
-                    public LocalImageHolderView createHolder() {
-                        return new LocalImageHolderView();
-                    }
-                }, localImages)
-                //设置两个点图片作为翻页指示器，不设置则没有指示器，可以根据自己需求自行配合自己的指示器,不需要圆点指示器可用不设
-                .setPageIndicator(new int[]{R.drawable.shape_corner_nor, R.drawable.shape_corner_press})
-                //设置指示器的方向
-                .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.CENTER_HORIZONTAL);
-        //设置翻页的效果，不需要翻页效果可用不设
-        //.setPageTransformer(Transformer.DefaultTransformer);    集成特效之后会有白屏现象，新版已经分离，如果要集成特效的例子可以看Demo的点击响应。
-//        convenientBanner.setManualPageable(false);//设置不能手动影响
+        localImages.add(R.drawable.ad1);
+        localImages.add(R.drawable.ad2);
+        localImages.add(R.drawable.ad3);
+        banner.setViewRes(localImages);
     }
 
     @Override

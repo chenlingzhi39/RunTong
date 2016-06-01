@@ -1,2 +1,2 @@
-include ':xUtils_library', ':lib'
+include ':xUtils_library', ':lib', ':easeui'
 include ':callba'

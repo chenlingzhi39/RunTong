@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@id/dialRoot"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -145,13 +146,21 @@
                 android:scrollingCache="false"
                 android:visibility="gone" />
 
-            <com.bigkoo.convenientbanner.ConvenientBanner
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/convenientBanner"
+            <com.callba.phone.view.BannerLayout
+                android:id="@+id/banner"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:canLoop="true"
-            />
+                app:autoPlayDuration="8000"
+                app:indicatorMargin="10dp"
+                app:indicatorShape="oval"
+                app:indicatorSpace="2dp"
+                app:scrollDuration="1100"
+                app:selectedIndicatorColor="?attr/colorPrimary"
+                app:selectedIndicatorHeight="6dp"
+                app:selectedIndicatorWidth="6dp"
+                app:unSelectedIndicatorColor="#99ffffff"
+                app:unSelectedIndicatorHeight="6dp"
+                app:unSelectedIndicatorWidth="6dp" />
 
             <LinearLayout
                 android:id="@+id/ll_searchingcontact"

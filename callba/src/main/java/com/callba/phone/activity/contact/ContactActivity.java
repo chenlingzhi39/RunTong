@@ -3,14 +3,19 @@ package com.callba.phone.activity.contact;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
@@ -20,7 +25,9 @@ import android.widget.ListView;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.logic.contact.ContactController;
 import com.callba.phone.logic.contact.ContactEntity;
 import com.callba.phone.logic.contact.ContactListAdapter;
@@ -34,7 +41,7 @@ import com.callba.phone.view.QuickSearchBar;
 		menuId=R.menu.menu_contact
 )
 public class ContactActivity extends BaseActivity implements OnClickListener,
-		OnItemClickListener {
+		OnItemClickListener,OnItemLongClickListener {
 	
 	private ImageButton ibn_backup, ibn_add;
 	private EditText et_search; // 联系人搜索框
@@ -59,7 +66,7 @@ public class ContactActivity extends BaseActivity implements OnClickListener,
 	public void init() {
 		mListView = (ListView) findViewById(R.id.lv_contact_contacts);
 		mListView.setOnItemClickListener(this);
-
+        mListView.setOnItemLongClickListener(this);
 		ll_tab_contact = (LinearLayout) findViewById(R.id.tab_contact_ll);
 
 		ibn_add = (ImageButton) this.findViewById(R.id.ibn_contact_add);
@@ -188,7 +195,28 @@ public class ContactActivity extends BaseActivity implements OnClickListener,
 		startActivity(intent);
 	}
 
-	/*@Override
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+		Dialog dialog=new AlertDialog.Builder(this).setTitle("是否邀请此好友？").setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				ContactPersonEntity contactPersonEntity=(ContactPersonEntity)mContactListData.get(position);
+				Uri smsToUri = Uri.parse("smsto://" + contactPersonEntity.getPhoneNumber());
+				Intent mIntent = new Intent(android.content.Intent.ACTION_SENDTO, smsToUri);
+				mIntent.putExtra("sms_body", "我是"+ CalldaGlobalConfig.getInstance().getNickname()+"，我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+				startActivity(mIntent);
+				dialog.dismiss();
+			}
+		}).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		}).create();
+		dialog.show();
+		return false;
+	}
+   /*@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		this.getMenuInflater().inflate(R.menu.options_menu, menu);
 		return true;
