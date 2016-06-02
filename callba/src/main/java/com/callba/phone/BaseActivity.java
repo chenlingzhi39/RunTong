@@ -397,6 +397,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 			return -1;
 		}
 	}
-
+  public void toast(int id){
+	  Toast.makeText(this,getString(id),Toast.LENGTH_SHORT).show();
+  }
 
 }

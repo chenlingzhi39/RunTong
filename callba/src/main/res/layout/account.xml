@@ -145,36 +145,7 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_width="1px"
-            android:layout_height="match_parent"
-            android:background="@color/light_black" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="20dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/give"
-                android:textSize="16sp" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/bg_yue"
-                android:text="0元"
-                android:textColor="@color/white"/>
-
-
-        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

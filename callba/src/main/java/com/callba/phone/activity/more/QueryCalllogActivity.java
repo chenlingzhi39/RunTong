@@ -1,6 +1,8 @@
 package com.callba.phone.activity.more;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -14,6 +16,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.format.Time;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,6 +31,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 
@@ -40,29 +44,18 @@ import com.callba.phone.service.MainService;
 import com.callba.phone.util.Logger;
 import com.callba.phone.view.CalldaToast;
 import com.callba.phone.view.MyProgressDialog;
+import com.jzxiang.pickerview.TimePickerDialog;
+import com.jzxiang.pickerview.data.Type;
+import com.jzxiang.pickerview.listener.OnDateSetListener;
+
 @ActivityFragmentInject(
 		contentViewId = R.layout.more_query_calllog,
 		toolbarTitle = R.string.calllog_search,
 		navigationId = R.drawable.press_back
 )
 public class QueryCalllogActivity extends BaseActivity implements
-		OnClickListener, OnScrollListener,OnItemSelectedListener {
+		OnClickListener,OnDateSetListener,SwipeRefreshLayout.OnRefreshListener {
 	private ListView lv_calllog;
-	private LinearLayout ll_loading;
-	private DatePicker datePicker;
-
-	private int prePageNum = 15; // List每页显示的calllog数量
-
-	private int lastVisibleItem = 0;
-	private int fristVisItem = 0;
-	private int currentPage = 1;
-
-	private String year, month; // 查询的年 月
-	private Time time;
-	private int nowY;
-	private int nowM;
-	private int startY = 2010;
-	private int i_y_num;
 	private ArrayAdapter<String> arrayadapter;
 	// 真正的字符串数据将保存在这个list中
 	private List<String> all;
@@ -71,27 +64,19 @@ public class QueryCalllogActivity extends BaseActivity implements
 	private List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
 	private SimpleAdapter adapter;
     ProgressDialog progressDialog;
+	private Button bt_date;
+	TimePickerDialog mDialogYearMonthDay;
+	private ProgressBar progressBar;
+	private SwipeRefreshLayout refreshLayout;
+	String time;
+	private boolean first=true;
 	@Override
 	public void init() {
-
-		time = new Time();
-		time.setToNow(); // 取得系统时间。
-		nowY = time.year;
-		Logger.i("time.year", nowY+"");
-		nowM = time.month;
-		i_y_num = nowY - startY;
-		all = new ArrayList<String>();
-		for (int i = 0; i <= i_y_num; i++) {
-			all.add(startY + i + "");
-		}
-		
-		// et_year = (EditText) findViewById(R.id.et_calllog_year);
-
-
-
+        bt_date=(Button)findViewById(R.id.date);
+        bt_date.setOnClickListener(this);
 		lv_calllog = (ListView) findViewById(R.id.lv_calllog);
-		lv_calllog.setOnScrollListener(this);
-
+		progressBar=(ProgressBar) findViewById(R.id.progressBar);
+		refreshLayout=(SwipeRefreshLayout) findViewById(R.id.refresh);
 		adapter = new SimpleAdapter(this, data,
 				R.layout.more_query_calllog_lv_item, new String[] { "no",
 						"callnum", "startTime", "duration", "fee" }, new int[] {
@@ -99,19 +84,41 @@ public class QueryCalllogActivity extends BaseActivity implements
 						R.id.tv_calllog_time, R.id.tv_calllog_duration,
 						R.id.tv_calllog_money });
 		lv_calllog.setAdapter(adapter);
-        datePicker=(DatePicker) findViewById(R.id.datePicker);
-		ll_loading = (LinearLayout) findViewById(R.id.ll_load_more);
-		year=nowY+"";
-		month=nowM+1+"";
-		Logger.i("OnCreate", "year:"+year+"-------month"+month);
+		Date date=new Date();
+		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+		time=format.format(date);
+		bt_date.setText(time);
+        refreshLayout.setOnRefreshListener(this);
+		refreshLayout.setColorSchemeResources(R.color.orange);
+		mDialogYearMonthDay = new TimePickerDialog.Builder()
+				.setType(Type.YEAR_MONTH_DAY)
+				.setCallBack(this)
+				.build();
+		queryCalllog(time);
+	}
+
+	@Override
+	public void onRefresh() {
+		queryCalllog(time);
+	}
+
+	@Override
+	public void onDateSet(TimePickerDialog timePickerView, long millseconds) {
+		SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+		time=simpleDateFormat.format(new Date(millseconds));
+		if(!bt_date.getText().equals(time))
+		{bt_date.setText(time);
+		queryCalllog(time);
+			refreshLayout.setRefreshing(true);}
 	}
 
 	@Override
 	public void refresh(Object... params) {
 		Message msg = (Message) params[0];
-
-		ll_loading.setVisibility(View.GONE);
-
+       refreshLayout.setRefreshing(false);
+		//ll_loading.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
+		refreshLayout.setVisibility(View.VISIBLE);
 		if (msg.what == Task.TASK_QUERY_CALLLOG) {
 			if (progressDialog!=null&&progressDialog.isShowing()) {
 				progressDialog.dismiss();
@@ -127,18 +134,20 @@ public class QueryCalllogActivity extends BaseActivity implements
 						Logger.i("查询话单通话记录", content);
 						parseData(result);
 					} else if ("1".equals(result[0])) {
-						CalldaToast calldaToast = new CalldaToast();
-						calldaToast.showToast(getApplicationContext(), result[1]);
+						toast(result[1]);
+						/*CalldaToast calldaToast = new CalldaToast();
+						calldaToast.showToast(getApplicationContext(), result[1]);*/
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					
-					CalldaToast calldaToast = new CalldaToast();
-					calldaToast.showToast(getApplicationContext(), R.string.getserverdata_exception);
+					toast(R.string.getserverdata_exception);
+					/*CalldaToast calldaToast = new CalldaToast();
+					calldaToast.showToast(getApplicationContext(), R.string.getserverdata_exception);*/
 				}
 			} else {
-				CalldaToast calldaToast = new CalldaToast();
-				calldaToast.showToast(getApplicationContext(), R.string.getserverdata_failed);
+				toast( R.string.getserverdata_failed);
+			/*	CalldaToast calldaToast = new CalldaToast();
+				calldaToast.showToast(getApplicationContext(), R.string.getserverdata_failed);*/
 			}
 		}
 	}
@@ -164,8 +173,9 @@ public class QueryCalllogActivity extends BaseActivity implements
 		JSONArray jArray = jsonObject.getJSONArray("callContent");
 		
 		if(0>=jArray.length()){
-			CalldaToast calldaToast = new CalldaToast();
-			calldaToast.showToast(getApplicationContext(), R.string.no_dail_calllog);
+			toast(R.string.no_dail_calllog);
+			/*CalldaToast calldaToast = new CalldaToast();
+			calldaToast.showToast(getApplicationContext(), R.string.no_dail_calllog);*/
 			return;
 		}
 
@@ -191,15 +201,15 @@ public class QueryCalllogActivity extends BaseActivity implements
 		super.onCreate(savedInstanceState);
 	}
 
-	@Override
+	/*@Override
 	public void onScroll(AbsListView view, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount) {
 		// 计算当前最后可见的条目
 		lastVisibleItem = firstVisibleItem + visibleItemCount - 1;
 		fristVisItem = firstVisibleItem;
-	}
+	}*/
 
-	@Override
+/*	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		if (scrollState == OnScrollListener.SCROLL_STATE_IDLE
 				&& lastVisibleItem == data.size() - 1
@@ -210,12 +220,12 @@ public class QueryCalllogActivity extends BaseActivity implements
 			// 如果未加载完毕
 			// if (!loadCompleted) {
 			ll_loading.setVisibility(View.VISIBLE);
-			queryCalllog("currentCallogType", currentPage + "");
+			/queryCalllog("currentCallogType", currentPage + "");
 			// } else {
 			// Toast.makeText(QueryCalllogActivity.this, "没有更多的数据！", 0).show();
 			// }
 		}
-	}
+	}*/
 
 	@Override
 	public void onClick(View v) {
@@ -258,51 +268,12 @@ public class QueryCalllogActivity extends BaseActivity implements
 
 		default:
 			break;*/
+			case R.id.date:
+				mDialogYearMonthDay.show(getSupportFragmentManager(), "year_month_day");
+				break;
 		}
 	}
 
-	/**
-	 * 校验输入的年月日期是否合法
-	 * 
-	 * @return
-	 */
-	private boolean checkQueryDate() {
-//		year = et_year.getText().toString().trim();
-//		month = et_month.getText().toString().trim();
-		CalldaToast calldaToast = new CalldaToast();
-		
-		if ("".equals(year) || year.length() < 1) {
-			calldaToast.showToast(getApplicationContext(), R.string.qclog_cxnf);
-			return false;
-		}
-		if ("".equals(month) || month.length() < 1) {
-			calldaToast.showToast(getApplicationContext(), R.string.qclog_cxyf);
-			return false;
-		}
-		if (year.contains(".") || month.contains(".")) {
-			calldaToast.showToast(getApplicationContext(), R.string.qclog_rqbhxs);
-			return false;
-		}
-		try {
-			int intYear = Integer.parseInt(year);
-			if (intYear < 1 || intYear > 9999) {
-				calldaToast.showToast(getApplicationContext(), R.string.qclog_srnf);
-				return false;
-			}
-
-			int intMonth = Integer.parseInt(month);
-			if (intMonth < 1 || intMonth > 12) {
-				calldaToast.showToast(getApplicationContext(), R.string.qclog_sryf);
-				return false;
-			}
-			if (intMonth < 10)
-				month = "0" + intMonth;
-		} catch (Exception e) {
-			calldaToast.showToast(getApplicationContext(), R.string.qclog_srzqgs);
-			return false;
-		}
-		return true;
-	}
 
 	/**
 	 * 查询通话记录
@@ -312,47 +283,27 @@ public class QueryCalllogActivity extends BaseActivity implements
 	 * @param currentPage
 	 *            当前页码
 	 */
-	private void queryCalllog(String callType, String currentPage) {
+	private void queryCalllog(String date) {
+		if(first){
+        progressBar.setVisibility(View.VISIBLE);
+		first=false;}
 		Task task = new Task(Task.TASK_QUERY_CALLLOG);
 		Locale locale = getResources().getConfiguration().locale;
 		String language = locale.getCountry();
 		Map<String, Object> taskParams = new HashMap<String, Object>();
 		taskParams.put("loginName", CalldaGlobalConfig.getInstance().getUsername());
 		taskParams.put("loginPwd", CalldaGlobalConfig.getInstance().getPassword());
-		taskParams.put("softType", "android");
+		/*taskParams.put("softType", "android");
 		taskParams.put("year", year);
 		taskParams.put("month", month);
 		taskParams.put("type", callType);
 		taskParams.put("currentPage", currentPage);
 		taskParams.put("pageNum", String.valueOf(prePageNum));
-		taskParams.put("lan", language);
+		taskParams.put("lan", language);*/
+		taskParams.put("date",date);
 		task.setTaskParams(taskParams);
-
 		MainService.newTask(task);
 	}
 
-	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position,
-			long id) {
-		switch (parent.getId()) {
-		/*case R.id.sp_calllog_year:
-			year=all.get(position);
-			Logger.i("onItemSelected", "year:"+year+"-----position:"+position);
-			break;
-		case R.id.sp_calllog_month:
-			month=position+1+"";
-			Logger.i("onItemSelected", "month:"+month+"-----position:"+position);
-			break;
-*/
-		default:
-			break;
-		}
-	}
 
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
-//		year=nowY+"";
-//		month=nowM+1+"";
-		Logger.i("onNothingSelected", year);
-	}
 }

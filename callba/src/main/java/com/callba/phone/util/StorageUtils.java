@@ -62,7 +62,19 @@ public final class StorageUtils {
         }
         return appCacheDir;
     }
-
+    public static File getFilesDirectory(Context context) {
+        File appCacheDir = null;
+        if (MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) && hasExternalStoragePermission(context)) {
+            appCacheDir = getExternalFilesDir(context);
+        }
+        if (appCacheDir == null) {
+            appCacheDir = context.getFilesDir();
+        }
+        if (appCacheDir == null) {
+            Log.i("","Can't define system cache directory! The app should be re-installed.");
+        }
+        return appCacheDir;
+    }
     /**
      * Returns individual application cache directory (for only image caching from ImageLoader). Cache directory will be
      * created on SD card <i>("/Android/data/[app_package_name]/cache/uil-images")</i> if card is mounted and app has
@@ -117,8 +129,23 @@ public final class StorageUtils {
         }
         return appCacheDir;
     }
-
-    private static boolean hasExternalStoragePermission(Context context) {
+    public static File getExternalFilesDir(Context context) {
+        File dataDir = new File(new File(Environment.getExternalStorageDirectory(), "Android"), "data");
+        File appCacheDir = new File(new File(dataDir, context.getPackageName()), "files");
+        if (!appCacheDir.exists()) {
+            if (!appCacheDir.mkdirs()) {
+                Log.i("","Unable to create external files directory");
+                return null;
+            }
+            try {
+                new File(appCacheDir, ".nomedia").createNewFile();
+            } catch (IOException e) {
+                Log.i("","Can't create \".nomedia\" file in application external files directory");
+            }
+        }
+        return appCacheDir;
+    }
+    public static boolean hasExternalStoragePermission(Context context) {
         int perm = context.checkCallingOrSelfPermission(EXTERNAL_STORAGE_PERMISSION);
         return perm == PackageManager.PERMISSION_GRANTED;
     }

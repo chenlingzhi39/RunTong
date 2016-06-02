@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -43,7 +45,7 @@ import com.callba.phone.view.QuickSearchBar;
 public class ContactActivity extends BaseActivity implements OnClickListener,
 		OnItemClickListener,OnItemLongClickListener {
 	
-	private ImageButton ibn_backup, ibn_add;
+	;
 	private EditText et_search; // 联系人搜索框
 	
 	//联系人界面整体
@@ -69,10 +71,6 @@ public class ContactActivity extends BaseActivity implements OnClickListener,
         mListView.setOnItemLongClickListener(this);
 		ll_tab_contact = (LinearLayout) findViewById(R.id.tab_contact_ll);
 
-		ibn_add = (ImageButton) this.findViewById(R.id.ibn_contact_add);
-		ibn_backup = (ImageButton) this.findViewById(R.id.ibn_contact_backup);
-		ibn_add.setOnClickListener(this);
-		ibn_backup.setOnClickListener(this);
 
 		et_search = (EditText) findViewById(R.id.et_contact_search);
 		
@@ -95,7 +93,7 @@ public class ContactActivity extends BaseActivity implements OnClickListener,
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.ibn_contact_add:
+	/*	case R.id.ibn_contact_add:
 			// 调用系统自带应用添加联系人
 			Intent intent = new Intent(Intent.ACTION_INSERT);
 			intent.setType("vnd.android.cursor.dir/person");
@@ -112,7 +110,7 @@ public class ContactActivity extends BaseActivity implements OnClickListener,
 			Intent intent_add = new Intent(this, ContactBackupActivity.class);
 			startActivity(intent_add);
 			break;
-
+*/
 		default:
 			break;
 		}
@@ -197,23 +195,7 @@ public class ContactActivity extends BaseActivity implements OnClickListener,
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-		Dialog dialog=new AlertDialog.Builder(this).setTitle("是否邀请此好友？").setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				ContactPersonEntity contactPersonEntity=(ContactPersonEntity)mContactListData.get(position);
-				Uri smsToUri = Uri.parse("smsto://" + contactPersonEntity.getPhoneNumber());
-				Intent mIntent = new Intent(android.content.Intent.ACTION_SENDTO, smsToUri);
-				mIntent.putExtra("sms_body", "我是"+ CalldaGlobalConfig.getInstance().getNickname()+"，我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
-				startActivity(mIntent);
-				dialog.dismiss();
-			}
-		}).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		}).create();
-		dialog.show();
+
 		return false;
 	}
    /*@Override
@@ -238,5 +220,16 @@ public class ContactActivity extends BaseActivity implements OnClickListener,
 		break;
       }
 		return super.onOptionsItemSelected(item);
+	}
+	public void updataCotact(long rawContactId) {
+		ContentValues values = new ContentValues();
+		values.put(ContactsContract.CommonDataKinds.Phone.NUMBER, "13800138000");
+		values.put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE);
+		String where = ContactsContract.Data.RAW_CONTACT_ID + "=? AND "
+				+ ContactsContract.Data.MIMETYPE + "=?";
+		String[] selectionArgs = new String[] { String.valueOf(rawContactId),
+				ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE };
+		getContentResolver().update(ContactsContract.Data.CONTENT_URI, values,
+				where, selectionArgs);
 	}
 }

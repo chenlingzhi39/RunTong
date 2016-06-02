@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.MyApplication;
@@ -24,6 +25,7 @@ import com.hyphenate.chat.EMClient;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Administrator on 2016/5/15.
@@ -45,12 +47,15 @@ public class UserActivity extends BaseActivity {
     RelativeLayout account;
     @InjectView(R.id.change_password)
     RelativeLayout changePassword;
-
+    @InjectView(R.id.user_head)
+    CircleImageView circleImageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         number.setText(CalldaGlobalConfig.getInstance().getUsername());
+        if(CalldaGlobalConfig.getInstance().getUserhead()!=null)
+            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(circleImageView);
     }
 
 

@@ -1,11 +1,13 @@
 package com.callba.phone.activity;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -13,12 +15,20 @@ import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.activity.recharge.RechargeActivity2;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.Constant;
+import com.callba.phone.logic.login.LoginController;
+import com.callba.phone.logic.login.UserLoginErrorMsg;
+import com.callba.phone.logic.login.UserLoginListener;
 import com.callba.phone.service.MainService;
+import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.BannerLayout;
 
 
@@ -64,12 +74,38 @@ public class HomeActivity extends BaseActivity {
      @InjectView(R.id.indicator)
      CirclePageIndicator indicator;*/
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
-
+    private SharedPreferenceUtil mPreferenceUtil;
+    private ProgressDialog progressDialog;
+    private String username;
+    private String password;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        queryUserBalance();
+        mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
+
+        mPreferenceUtil.putBoolean(Constant.IS_FROMGUIDE, false, true);
+        // 判断是否自动启动
+        if (savedInstanceState == null
+                && CalldaGlobalConfig.getInstance().isAutoLogin()
+                && !LoginController.getInstance().getUserLoginState()) {
+            Log.i("MainCallActivity", "auto");
+            Logger.i("MainCallActivity", "MainCallActivity  oncreate autoLogin");
+            // 登录
+            autoLogin();
+
+        } else {
+
+
+            // 检查内存数据是否正常
+            String username = CalldaGlobalConfig.getInstance().getUsername();
+            String password = CalldaGlobalConfig.getInstance().getPassword();
+            if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+                // 重新打开
+                gotoWelcomePage();
+            }
+        }
+
       /*  WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
@@ -150,7 +186,15 @@ public class HomeActivity extends BaseActivity {
     public void init() {
 
     }
+    // 跳转到起始页
+    private void gotoWelcomePage() {
+        Intent intent = new Intent();
+        intent.setClass(HomeActivity.this, WelcomeActivity.class);
+        startActivity(intent);
 
+        // 关闭主tab页面
+        ActivityUtil.finishMainTabPages();
+    }
     @Override
     public void refresh(Object... params) {
         Message msg = (Message) params[0];
@@ -170,6 +214,7 @@ public class HomeActivity extends BaseActivity {
                                 accountBalance);
                         Log.i("yue", accountBalance);
                         yue = result[1];
+                        showYueDialog();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -189,7 +234,8 @@ public class HomeActivity extends BaseActivity {
                 break;
             case R.id.search:
                 Log.i("home", "search_yue");
-                showYueDialog();
+                queryUserBalance();
+
                 break;
             case R.id.friend:
                 Intent intent1 = new Intent(HomeActivity.this, FriendActivity.class);
@@ -292,4 +338,111 @@ public class HomeActivity extends BaseActivity {
 
         MainService.newTask(task);
     }
+    /**
+     * 自动登录
+     */
+    private void autoLogin() {
+        username = mPreferenceUtil.getString(Constant.LOGIN_USERNAME);
+        password = mPreferenceUtil.getString(Constant.LOGIN_PASSWORD);
+
+        if ("".equals(CalldaGlobalConfig.getInstance().getSecretKey())) {
+
+            // 跳转到起始页
+            gotoWelcomePage();
+            return;
+
+        } else if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+
+            // 保存的数据被清空，跳转到手动登录界面
+            switchManualLogin();
+            return;
+        }
+
+        // 加密，生成loginSign
+        String source = username + "," + password;
+        String sign = null;
+        try {
+            sign = DesUtil.encrypt(source, CalldaGlobalConfig.getInstance()
+                    .getSecretKey());
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            // 手动登录
+            switchManualLogin();
+            return;
+        }
+
+        progressDialog = ProgressDialog.show(this, null, getResources().getString(R.string.logining));
+
+
+        Task task = new Task(Task.TASK_LOGIN);
+        Map<String, Object> taskParams = new HashMap<String, Object>();
+        taskParams.put("loginSign", sign);
+        taskParams.put("loginType", "0");
+        task.setTaskParams(taskParams);
+
+        // 登录
+        LoginController.getInstance().userLogin(this, task,
+                new UserLoginListener() {
+                    @Override
+                    public void serverLoginFailed(String info) {
+                        if (progressDialog != null
+                                && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                        toast(info);
+                        // 手动登录
+                        switchManualLogin();
+                    }
+
+                    @Override
+                    public void loginSuccess(String[] resultInfo) {
+                        if (progressDialog != null
+                                && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+
+                        }
+
+
+                        // 处理登录成功返回信息
+                        LoginController.parseLoginSuccessResult(
+                                HomeActivity.this, username, password,
+                                resultInfo);
+
+
+
+
+                        // 查询余额
+                        //queryUserBalance();
+                    }
+
+                    @Override
+                    public void localLoginFailed(UserLoginErrorMsg errorMsg) {
+                        if (progressDialog != null
+                                && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                        // 解析登录失败信息
+                        LoginController.parseLocalLoginFaildInfo(
+                                getApplicationContext(), errorMsg);
+                        // 手动登录
+                        switchManualLogin();
+                    }
+                });
+
+    }
+
+    /**
+     * 跳转到手动登陆界面
+     */
+    private void switchManualLogin() {
+        Intent intent = new Intent();
+        intent.setClass(HomeActivity.this, LoginActivity.class);
+        startActivity(intent);
+
+        // 关闭主tab页面
+        ActivityUtil.finishMainTabPages();
+    }
+
+
 }

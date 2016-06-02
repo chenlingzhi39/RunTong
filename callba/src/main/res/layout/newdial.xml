@@ -347,7 +347,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="电话"
-                android:textColor="@color/orange" />
+                android:textColor="@color/orange"
+                android:textSize="12sp"/>
         </LinearLayout>
 
         <RelativeLayout
@@ -355,7 +356,7 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:layout_weight="1"
+            android:layout_weight="0.85"
             android:background="@drawable/call_button_bg"
             android:clickable="true">
 
@@ -392,7 +393,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="撤销"
-                android:textColor="@color/orange" />
+                android:textColor="@color/orange"
+                android:textSize="12sp"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -20,11 +20,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
+import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -61,8 +64,9 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 	private Button bn_back, bn_ok_register;
 	private Button  bn_register, bn_login;
 	private ProgressDialog progressDialog;
-	private EditText et_account, et_verification, et_password,et_yzm,et_confirm;
-	private TextView send_yzm;
+	private EditText et_account, et_verification, et_password,et_yzm;
+	private CheckBox hide;
+	private Button send_yzm;
 	private InputMethodManager imm;
 	private String username;	//获取验证码的手机号
 	private String password ;
@@ -125,7 +129,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 
 			@Override
 			public void onFinish() {// 计时完毕
-				activity.send_yzm.setTextColor(activity.getResources().getColor(R.color.orange));
+				activity.send_yzm.setBackgroundColor(activity.getResources().getColor(R.color.orange));
 				activity.send_yzm.setText(activity.getString(R.string.send_yzm));
 				activity.send_yzm.setClickable(true);
 			}
@@ -133,7 +137,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 			@Override
 			public void onTick(long millisUntilFinished) {// 计时过程
 				activity.send_yzm.setClickable(false);//防止重复点击
-				activity.send_yzm.setTextColor(activity.getResources().getColor(R.color.light_black));
+				activity.send_yzm.setBackgroundColor(activity.getResources().getColor(R.color.light_black));
 				activity.send_yzm.setText(millisUntilFinished / 1000 + "秒后重新发送");
 			}
 		}
@@ -150,17 +154,28 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 		preferenceUtil=SharedPreferenceUtil.getInstance(this);
 		Locale locale = getResources().getConfiguration().locale;
 		 language = locale.getCountry();
-		et_confirm=(EditText) this.findViewById(R.id.confirm_password);
 		bn_back = (Button) this.findViewById(R.id.bn_mre_back);
 		bn_ok_register = (Button) this.findViewById(R.id.bn_mre_yijianzhuce);
 		bn_back.setOnClickListener(this);
 		bn_ok_register.setOnClickListener(this);
 		et_yzm=(EditText)findViewById(R.id.et_yzm);
-        send_yzm=(TextView) findViewById(R.id.send_yzm);
+        send_yzm=(Button) findViewById(R.id.send_yzm);
 		send_yzm.setOnClickListener(this);
 		bn_register = (Button) this.findViewById(R.id.bn_mre_register);
 		bn_register.setOnClickListener(this);
+        hide=(CheckBox)findViewById(R.id.hide);
+		hide.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked) {
+					et_password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+				} else {
+					et_password.setInputType(InputType.TYPE_CLASS_TEXT
+							| InputType.TYPE_TEXT_VARIATION_PASSWORD);
+				}
 
+			}
+		});
 		et_account = (EditText) this.findViewById(R.id.et_mre_account);
 		if(!"".equals(CalldaGlobalConfig.getInstance().getUsername())){
 			et_account.setText(CalldaGlobalConfig.getInstance().getUsername());
@@ -225,14 +240,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 			}
 			if(code.equals("")){
 				toast("验证码不能为空!");
-				break;
-			}
-			if (et_confirm.getText().toString().equals("")) {
-				toast("请再输入一遍密码!");
-				break;
-			}
-			if (!et_password.getText().toString().equals(et_confirm.getText().toString())) {
-				toast( "密码不匹配!");
 				break;
 			}
 			boolean isinputOK = verification(username, password, code);

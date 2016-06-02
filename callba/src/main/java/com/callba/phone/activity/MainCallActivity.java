@@ -132,7 +132,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     private PopupWindow popupWindow;
 
     private SharedPreferenceUtil mPreferenceUtil;
-    private ProgressDialog progressDialog;
+
     private String username;
     private String password;
     private String callNum;
@@ -189,30 +189,11 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         keyboardUtil = new KeyboardUtil();
         dataAnalysis = new DataAnalysis();
         context = this;
-
-        // 判断是否自动启动
-        if (savedInstanceState == null
-                && CalldaGlobalConfig.getInstance().isAutoLogin()
-                && !LoginController.getInstance().getUserLoginState()) {
-            Log.i("MainCallActivity", "auto");
-            Logger.i("MainCallActivity", "MainCallActivity  oncreate autoLogin");
-            // 登录
-            autoLogin();
-
-        } else {
-            if (savedInstanceState == null) {
-                // 检测是否需要自动拨号
-                checkMakePhoneCall();
-            }
-
-            // 检查内存数据是否正常
-            String username = CalldaGlobalConfig.getInstance().getUsername();
-            String password = CalldaGlobalConfig.getInstance().getPassword();
-            if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-                // 重新打开
-                gotoWelcomePage();
-            }
+        if (savedInstanceState == null) {
+            // 检测是否需要自动拨号
+            checkMakePhoneCall();
         }
+
 
         // 注册监听MainTab页面onResume方法的广播
         IntentFilter filter = new IntentFilter();
@@ -257,15 +238,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         //bitmapUtils.display(iv_ad, imgUrl, bigPicDisplayConfig, callback);
     }
 
-    // 跳转到起始页
-    private void gotoWelcomePage() {
-        Intent intent = new Intent();
-        intent.setClass(MainCallActivity.this, WelcomeActivity.class);
-        startActivity(intent);
 
-        // 关闭主tab页面
-        ActivityUtil.finishMainTabPages();
-    }
 
     @Override
     public void init() {
@@ -1043,114 +1016,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         public void onDismiss(DialogInterface dialog) {
             mDialog=null;
         }
-    }
-    /**
-     * 自动登录
-     */
-    private void autoLogin() {
-        username = mPreferenceUtil.getString(Constant.LOGIN_USERNAME);
-        password = mPreferenceUtil.getString(Constant.LOGIN_PASSWORD);
-
-        if ("".equals(CalldaGlobalConfig.getInstance().getSecretKey())) {
-
-            // 跳转到起始页
-            gotoWelcomePage();
-            return;
-
-        } else if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-
-            // 保存的数据被清空，跳转到手动登录界面
-            switchManualLogin();
-            return;
-        }
-
-        // 加密，生成loginSign
-        String source = username + "," + password;
-        String sign = null;
-        try {
-            sign = DesUtil.encrypt(source, CalldaGlobalConfig.getInstance()
-                    .getSecretKey());
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            // 手动登录
-            switchManualLogin();
-            return;
-        }
-
-        progressDialog = ProgressDialog.show(this, null, getResources().getString(R.string.logining));
-
-
-        Task task = new Task(Task.TASK_LOGIN);
-        Map<String, Object> taskParams = new HashMap<String, Object>();
-        taskParams.put("loginSign", sign);
-        taskParams.put("loginType", "0");
-        task.setTaskParams(taskParams);
-
-        // 登录
-        LoginController.getInstance().userLogin(this, task,
-                new UserLoginListener() {
-                    @Override
-                    public void serverLoginFailed(String info) {
-                        if (progressDialog != null
-                                && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                        toast(info);
-                        // 手动登录
-                        switchManualLogin();
-                    }
-
-                    @Override
-                    public void loginSuccess(String[] resultInfo) {
-                        if (progressDialog != null
-                                && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-
-                        }
-
-
-                        // 处理登录成功返回信息
-                        LoginController.parseLoginSuccessResult(
-                                MainCallActivity.this, username, password,
-                                resultInfo);
-
-                        // 检测是否需要自动拨号
-                        checkMakePhoneCall();
-
-
-
-
-                        // 查询余额
-                        //queryUserBalance();
-                    }
-
-                    @Override
-                    public void localLoginFailed(UserLoginErrorMsg errorMsg) {
-                        if (progressDialog != null
-                                && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                        // 解析登录失败信息
-                        LoginController.parseLocalLoginFaildInfo(
-                                getApplicationContext(), errorMsg);
-                        // 手动登录
-                        switchManualLogin();
-                    }
-                });
-
-    }
-
-    /**
-     * 跳转到手动登陆界面
-     */
-    private void switchManualLogin() {
-        Intent intent = new Intent();
-        intent.setClass(MainCallActivity.this, LoginActivity.class);
-        startActivity(intent);
-
-        // 关闭主tab页面
-        ActivityUtil.finishMainTabPages();
     }
 
     @Override

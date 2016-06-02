@@ -1,44 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
-<include layout="@layout/toolbar"/>
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar" />
+
     <com.callba.phone.widget.refreshlayout.EasyRecyclerView
+        android:id="@+id/messages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/mToolbarContainer"
         android:layout_above="@+id/input_menu"
-        android:id="@+id/messages"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:padding="5dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white"
+        android:layout_below="@+id/mToolbarContainer" />
+    <!--    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:id="@id/input_menu"
+            >
+            <EditText
+                android:id="@+id/content"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:hint="@string/input_text"
+                android:maxLength="200"
+                />
+            <Button
+                android:id="@+id/submit"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:minWidth="80dp"
+                android:layout_weight="0"
+                android:layout_marginLeft="5dp"
+                android:text="发送"
+                android:textColor="?attr/colorAccent"
+                android:textSize="16sp"
+                android:background="?attr/selectableItemBackground"
+                />
+        </LinearLayout>-->
+    <FrameLayout
         android:id="@id/input_menu"
-        >
-        <EditText
-            android:id="@+id/content"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:hint="@string/input_text"
-            android:maxLength="200"
-            />
-        <Button
-            android:id="@+id/submit"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:minWidth="80dp"
-            android:layout_weight="0"
-            android:layout_marginLeft="5dp"
-            android:text="发送"
-            android:textColor="?attr/colorAccent"
-            android:textSize="16sp"
-            android:background="?attr/selectableItemBackground"
-            />
-    </LinearLayout>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white">
 
+        <include layout="@layout/ease_widget_chat_primary_menu" />
+    </FrameLayout>
 </RelativeLayout>

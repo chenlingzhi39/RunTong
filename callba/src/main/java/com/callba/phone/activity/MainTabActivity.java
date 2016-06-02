@@ -308,7 +308,7 @@ public class MainTabActivity extends TabActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+         mTabhost.setCurrentTab(2);
         //延迟发送广播（让新来电更新数据库）
         new Handler().postDelayed(new Runnable() {
             @Override

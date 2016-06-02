@@ -24,7 +24,7 @@
     <color name="gray_d8a">#D8D8D8</color>
     <color name="gray_ea">#EAEAEA</color>
     <color name="gray_bg">#F0EFF5</color>
-    
+    <color name="gray_normal">#666667</color>
     <color name="background">#FAFAFA</color>
     <color name="blue">#CCFFFF</color>
     <color name="callback_blue">#1782d5</color>

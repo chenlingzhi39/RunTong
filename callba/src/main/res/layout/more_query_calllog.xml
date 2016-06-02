@@ -3,60 +3,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true">
- <include layout="@layout/toolbar"/>
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar" />
 
 
-
-
-    <android.widget.DatePicker
-        android:id="@+id/datePicker"
+    <Button
+        android:id="@+id/date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
+        android:layout_margin="20dp"
+        android:background="?attr/colorAccent"
+        android:textColor="@color/white" />
 
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/lv_calllog"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginTop="8dp"
-            android:cacheColorHint="@null"
-            android:divider="@null"
-            android:fadingEdge="@null"
-            android:listSelector="@null"
-            android:transcriptMode="disabled" >
-        </ListView>
-
-        <LinearLayout
-            android:id="@+id/ll_load_more"
-            android:layout_width="fill_parent"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/refresh"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="#88000000"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:visibility="gone" >
+            android:visibility="gone">
 
-            <ProgressBar
-                android:id="@+id/progressBar1"
-                style="?android:attr/progressBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminateDrawable="@drawable/my_progressbar1" />
+            <ListView
+                android:id="@+id/lv_calllog"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="8dp"
+                android:cacheColorHint="@null"
+                android:divider="@null"
+                android:fadingEdge="@null"
+                android:listSelector="@null"
+                android:transcriptMode="disabled"></ListView>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:text="@string/loading"
-                android:textColor="@color/gray_ea" />
-        </LinearLayout>
-    </FrameLayout>
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+
+    </RelativeLayout>
 
 </LinearLayout>

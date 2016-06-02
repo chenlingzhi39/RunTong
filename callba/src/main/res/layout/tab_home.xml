@@ -30,7 +30,7 @@
     <com.callba.phone.view.BannerLayout
         android:id="@+id/banner"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
         app:autoPlayDuration="8000"
         app:indicatorMargin="10dp"
         app:indicatorShape="oval"
@@ -58,7 +58,8 @@
           android:padding="10dp"
           android:gravity="center"
           android:clickable="true"
-          android:background="?attr/selectableItemBackground"/>
+          android:background="?attr/selectableItemBackground"
+          android:textSize="12sp"/>
         <View
             android:layout_width="1px"
             android:layout_height="match_parent"
@@ -75,7 +76,8 @@
             android:padding="10dp"
             android:gravity="center"
             android:clickable="true"
-            android:background="?attr/selectableItemBackground"/>
+            android:background="?attr/selectableItemBackground"
+            android:textSize="12sp"/>
         <View
             android:layout_width="1px"
             android:layout_height="match_parent"
@@ -92,7 +94,8 @@
             android:padding="10dp"
             android:gravity="center"
             android:clickable="true"
-            android:background="?attr/selectableItemBackground"/>
+            android:background="?attr/selectableItemBackground"
+            android:textSize="12sp"/>
         <View
             android:layout_width="1px"
             android:layout_height="match_parent"
@@ -109,7 +112,8 @@
             android:padding="10dp"
             android:gravity="center"
             android:clickable="true"
-            android:background="?attr/selectableItemBackground"/>
+            android:background="?attr/selectableItemBackground"
+            android:textSize="12sp"/>
     </LinearLayout>
     <View
         android:layout_width="match_parent"
@@ -132,7 +136,8 @@
             android:padding="10dp"
             android:gravity="center"
             android:clickable="true"
-            android:background="?attr/selectableItemBackground"/>
+            android:background="?attr/selectableItemBackground"
+            android:textSize="12sp"/>
         <View
             android:layout_width="1px"
             android:layout_height="match_parent"
@@ -149,7 +154,8 @@
             android:padding="10dp"
             android:gravity="center"
             android:clickable="true"
-            android:background="?attr/selectableItemBackground"/>
+            android:background="?attr/selectableItemBackground"
+            android:textSize="12sp"/>
         <View
             android:layout_width="1px"
             android:layout_height="match_parent"
@@ -166,7 +172,8 @@
             android:padding="10dp"
             android:gravity="center"
             android:clickable="true"
-            android:background="?attr/selectableItemBackground"/>
+            android:background="?attr/selectableItemBackground"
+            android:textSize="12sp"/>
         <View
             android:layout_width="1px"
             android:layout_height="match_parent"
@@ -183,7 +190,8 @@
             android:padding="10dp"
             android:gravity="center"
             android:clickable="true"
-            android:background="?attr/selectableItemBackground"/>
+            android:background="?attr/selectableItemBackground"
+            android:textSize="12sp"/>
     </LinearLayout>
     <View
         android:layout_width="match_parent"

@@ -111,7 +111,7 @@ public interface Interfaces {
 	/**
 	 * 查询用户通话记录
 	 */
-	String QUERY_CALLLOG = "http://inter.runtong77.com/inter/callrecord/callrecord.jsp";
+	String QUERY_CALLLOG = "http://bointer.aihuzhongchou.com/inter/callrecord/callrecord.jsp";
 	/**
 	 * 获取子账户个数
 	 */

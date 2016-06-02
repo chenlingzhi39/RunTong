@@ -6,9 +6,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -41,12 +46,12 @@ import butterknife.OnClick;
 public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefreshListener{
     @InjectView(R.id.title)
     TextView title;
-    @InjectView(R.id.content)
+    @InjectView(R.id.et_sendmessage)
     EditText content;
-    @InjectView(R.id.submit)
+    @InjectView(R.id.btn_send)
     Button submit;
     @InjectView(R.id.input_menu)
-    LinearLayout inputMenu;
+    FrameLayout inputMenu;
     @InjectView(R.id.messages)
     EasyRecyclerView list;
     private ChatAdapter chatAdapter;
@@ -76,6 +81,25 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         EMClient.getInstance().chatManager().getConversation(userName).markAllMessagesAsRead();
         Intent intent=new Intent("com.callba.asread");
         sendBroadcast(intent);
+        content.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+             if(s.length()>0)
+                 submit.setVisibility(View.VISIBLE);
+                else
+                 submit.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     @Override
@@ -107,7 +131,7 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         unregisterReceiver(chatReceiver);
         super.onDestroy();
     }
-    @OnClick(R.id.submit)
+    @OnClick(R.id.btn_send)
     public void onClick(){
         Log.i("submit",userName);
         if(content.getText().toString().equals(""))

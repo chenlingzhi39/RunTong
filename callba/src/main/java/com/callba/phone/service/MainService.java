@@ -1145,24 +1145,25 @@ public class MainService extends Service implements Runnable{
 		Map<String, Object> taskParams = task.getTaskParams();
 		String loginName = (String) taskParams.get("loginName");
 		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
+	/*	String softType = (String) taskParams.get("softType");
 		String lan = (String) taskParams.get("lan");
 		String year = (String) taskParams.get("year");
 		String month = (String) taskParams.get("month");
 		String type = (String) taskParams.get("type");
 		String currentPage = (String) taskParams.get("currentPage");
-		String pageNum = (String) taskParams.get("pageNum");
-
+		String pageNum = (String) taskParams.get("pageNum");*/
+        String date=(String)taskParams.get("date");
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("loginName", loginName);
 		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
+	/*	params.put("softType", softType);
 		params.put("year", year);
 		params.put("month", month);
 		params.put("type", type);
 		params.put("currentPage", currentPage);
 		params.put("pageNum", pageNum);
-		params.put("lan", lan);
+		params.put("lan", lan);*/
+		params.put("date",date);
 		Logger.i("查询通话记录", params.toString());
 		handleDataByPost(Interfaces.QUERY_CALLLOG, task, msg, params);
 	}

@@ -23,19 +23,17 @@
 	        android:id="@+id/bn_guide_manual"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:background="@drawable/btn_regester_white_selector"
-	         android:textColor="@color/white"
 	        android:textSize="18sp"
 	        android:padding="6dp"
-	        android:text="@string/guide_manual" />
+	        android:text="@string/guide_manual"
+			android:background="@drawable/bg_cancel"/>
         <Button
 	        android:id="@+id/bn_guide_login"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:background="@drawable/btn_regester_white_selector"
+			android:background="@drawable/bg_cancel"
 	         android:layout_marginTop="20dp"
 	        android:layout_marginBottom="50dp"
-	        android:textColor="@color/white"
 	        android:textSize="18sp"
 	        android:padding="6dp"
 	        android:text="@string/guide_login" />
