@@ -54,10 +54,16 @@ public class UserActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         number.setText(CalldaGlobalConfig.getInstance().getUsername());
-        if(CalldaGlobalConfig.getInstance().getUserhead()!=null)
+        if(!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
             Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(circleImageView);
     }
 
+    @Override
+    protected void onResume() {
+        if(!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
+            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(circleImageView);
+        super.onResume();
+    }
 
     @Override
     public void init() {

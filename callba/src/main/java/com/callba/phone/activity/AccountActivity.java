@@ -58,7 +58,7 @@ public class AccountActivity extends BaseActivity {
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
         account.setHint(CalldaGlobalConfig.getInstance().getUsername());
-        if(CalldaGlobalConfig.getInstance().getUserhead()!=null)
+        if(!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
         Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(head);
         userDao = new UserDao(this, new UserDao.PostListener() {
             @Override
