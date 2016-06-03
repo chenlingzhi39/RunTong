@@ -96,7 +96,7 @@ public class FunIntroduceActivity extends BaseActivity implements OnPageChangeLi
 			View v3 = new View(FunIntroduceActivity.this);
 			View v4 = new View(FunIntroduceActivity.this);
 			
-			v1.setBackgroundResource(R.drawable.introduce_bg1);
+			v1.setBackgroundResource(R.drawable.introduce_bg3);
 			v2.setBackgroundResource(R.drawable.introduce_bg2);
 			v3.setBackgroundResource(R.drawable.introduce_bg3);
 			

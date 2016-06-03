@@ -60,6 +60,7 @@ public class ZipUtil {
 		String zippath=upZipFile(zipFile, Constant.ZIP_PATH,context);
 		Constant.DB_PATH=zippath;
 		Logger.v("Constant.DB_PATH", "Constant.DB_PATH=zippath:"+zippath);
+		SharedPreferenceUtil.getInstance(context).putString("db",outFileName,true);
 	}
 	/**
      * 解压缩一个文件

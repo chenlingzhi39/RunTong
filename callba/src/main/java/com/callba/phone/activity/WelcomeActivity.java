@@ -1,5 +1,6 @@
 package com.callba.phone.activity;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
@@ -23,6 +24,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.LinearLayout;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
@@ -52,7 +56,7 @@ public class WelcomeActivity extends BaseActivity {
 	private SharedPreferenceUtil mSharedPreferenceUtil;
 	private Handler mHandler;
 	private boolean isNetworkAvail = false; // 当前是否有可用网络
-
+    private LinearLayout rootView;
 	// 记录当前获取key的次数
 	private int currentGetVersionTime = 0;
 
@@ -62,6 +66,7 @@ public class WelcomeActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mSharedPreferenceUtil = SharedPreferenceUtil.getInstance(this);
+		Log.i("welcome","oncreate");
 	}
 
 	/**
@@ -98,6 +103,7 @@ public class WelcomeActivity extends BaseActivity {
 	private void startZip() {
 		try {
 			Logger.i(TAG, "start zip");
+			if(new File(SharedPreferenceUtil.getInstance(this).getString("db")).exists())
 			ZipUtil.copyBigDataBase(WelcomeActivity.this);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -106,6 +112,58 @@ public class WelcomeActivity extends BaseActivity {
 
 	@Override
 	public void init() {
+		startService(new Intent(WelcomeActivity.this, MainService.class));
+		mHandler = new Handler();
+		rootView=(LinearLayout) findViewById(R.id.root);
+		AlphaAnimation alphaAnimation=new AlphaAnimation(0.0f,1.0f);
+		alphaAnimation.setDuration(2000);
+		alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+			@Override
+			public void onAnimationStart(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				mHandler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						initEnvironment();
+
+						// 设置用户的登录状态
+						LoginController.getInstance().setUserLoginState(false);
+
+						// 启动服务
+						asyncInitLoginEnvironment();
+					}
+				}, 500);
+				mHandler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						// 检查网络
+						isNetworkAvail = NetworkDetector.detect(WelcomeActivity.this);
+						alertNetWork(isNetworkAvail);
+						if (isNetworkAvail) {
+							currentGetVersionTime = 0;
+							// 获取版本信息
+							sendGetVersionTask();
+						}
+					}
+				}, 500);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+
+			}
+		});
+		rootView.startAnimation(alphaAnimation);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			Window window = getWindow();
 			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
@@ -117,39 +175,6 @@ public class WelcomeActivity extends BaseActivity {
 					| View.SYSTEM_UI_FLAG_FULLSCREEN
 					| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 		}
-		startService(new Intent(WelcomeActivity.this, MainService.class));
-		mHandler = new Handler();
-		mHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				initEnvironment();
-
-				// 设置用户的登录状态
-				LoginController.getInstance().setUserLoginState(false);
-
-				// 启动服务
-				asyncInitLoginEnvironment();
-			}
-		}, 500);
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		mHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				// 检查网络
-				isNetworkAvail = NetworkDetector.detect(WelcomeActivity.this);
-				alertNetWork(isNetworkAvail);
-				if (isNetworkAvail) {
-					currentGetVersionTime = 0;
-					// 获取版本信息
-					sendGetVersionTask();
-				}
-			}
-		}, 500);
-
 
 
 		}
@@ -232,7 +257,6 @@ public class WelcomeActivity extends BaseActivity {
 		} else {
 			// 统计获取版本失败次数
 			//MobclickAgent.onEvent(this, "version_timeout");
-
 			String secretKey = mSharedPreferenceUtil
 					.getString(Constant.SECRET_KEY);
 			CalldaGlobalConfig.getInstance().setSecretKey(secretKey);
@@ -436,6 +460,7 @@ public class WelcomeActivity extends BaseActivity {
 				return;
 			}
 			// 自动登陆
+			Log.i("intent","maintab");
 			Intent intent = new Intent(WelcomeActivity.this,
 					MainTabActivity.class);
 			intent.putExtra("frompage", "WelcomeActivity");
@@ -499,5 +524,11 @@ public class WelcomeActivity extends BaseActivity {
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	protected void onDestroy() {
+		Log.i("welcome","ondestroy");
+		super.onDestroy();
 	}
 }

@@ -34,7 +34,6 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.MyApplication;
@@ -52,6 +51,7 @@ import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -90,10 +90,12 @@ public class MainTabActivity extends TabActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_tab);
+        Log.i("maintab","ocreate");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
@@ -124,7 +126,14 @@ public class MainTabActivity extends TabActivity {
         mTabhost = this.getTabHost();
 
         mTabTextArray = getResources().getStringArray(R.array.maintab_texts);
-
+       /* try
+        {
+            Field current = mTabhost.getClass().getDeclaredField("mCurrentTab");
+            current.setAccessible(true);
+            current.setInt(mTabhost, 2);
+        }catch (Exception e){
+            e.printStackTrace();
+        }*/
         //放入底部状态栏数据
         for (int i = 0; i < mTabClassArray.length; i++) {
             TabSpec tabSpec = mTabhost.newTabSpec(mTabTextArray[i])
@@ -133,7 +142,15 @@ public class MainTabActivity extends TabActivity {
             mTabhost.addTab(tabSpec);
             mTabhost.getTabWidget().getChildAt(i);
         }
-
+      /*  try
+        {
+            Field current = mTabhost.getClass().getDeclaredField("mCurrentTab");
+            current.setAccessible(true);
+            current.set(mTabhost, -1);
+        }catch (Exception e){
+            e.printStackTrace();
+        }*/
+        mTabhost.setCurrentTab(2);
         //获取第一个tabwidget
         final View view = mTabhost.getTabWidget().getChildAt(0);
      /*   mTabhost.getTabContentView().setOnTouchListener(new View.OnTouchListener() {
@@ -237,8 +254,12 @@ public class MainTabActivity extends TabActivity {
                 //收到消息
                 for (EMMessage message : messages) {
                     Log.i("get_message", message.getBody().toString());
+                    if(message.getType() == EMMessage.Type.TXT){
                     EMTextMessageBody txtBody = (EMTextMessageBody) message.getBody();
                     sendNotification1(ChatActivity.class, "你有一条新消息", message.getFrom() + ":" + txtBody.getMessage(), message.getFrom());
+                 }
+                    if(message.getType() == EMMessage.Type.IMAGE)
+                        sendNotification1(ChatActivity.class, "你有一条新消息", message.getFrom() + ":[图片]" , message.getFrom());
                     Intent intent = new Intent("com.callba.chat");
                     intent.putExtra("username", message.getFrom());
                     sendBroadcast(intent);
@@ -264,13 +285,16 @@ public class MainTabActivity extends TabActivity {
             public void onMessageChanged(EMMessage message, Object change) {
                 //消息状态变动
             }
+
         };
         if (getIntent().getBooleanExtra(Constant.ACCOUNT_CONFLICT, false) && !isConflictDialogShow) {
             showConflictDialog();
         } else if (getIntent().getBooleanExtra(Constant.ACCOUNT_REMOVED, false) && !isAccountRemovedDialogShow) {
             showAccountRemovedDialog();
         }
+
     }
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -306,9 +330,15 @@ public class MainTabActivity extends TabActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("maintab","onstart");
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-         mTabhost.setCurrentTab(2);
+        Log.i("maintab","onresume");
         //延迟发送广播（让新来电更新数据库）
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -323,8 +353,7 @@ public class MainTabActivity extends TabActivity {
 
     @Override
     protected void onStop() {
-
-
+        Log.i("maintab","onstop");
         super.onStop();
     }
 
@@ -334,6 +363,7 @@ public class MainTabActivity extends TabActivity {
         if (mNotificationManager != null)
             mNotificationManager.cancel(10);
         EMClient.getInstance().chatManager().removeMessageListener(msgListener);
+        Log.i("maintab","ondestroy");
         super.onDestroy();
     }
 

@@ -40,7 +40,7 @@ import java.util.Map;
 		navigationId=R.drawable.press_cancel
 )
 public class LoginActivity extends BaseActivity implements OnClickListener {
-	private Button bn_back,  bn_login, bn_retrievePass;
+	private Button bn_login, bn_retrievePass;
 	private EditText  et_password;
 	private CleanableEditText et_username;
 	private ProgressDialog progressDialog;
@@ -55,25 +55,16 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
 	@Override
 	public void init() {
-		bn_back = (Button) this.findViewById(R.id.bn_login_back);
 		bn_login = (Button) this.findViewById(R.id.bn_login_login);
 		bn_retrievePass = (Button) this
 				.findViewById(R.id.bn_login_retrievePass);
-		bn_back.setOnClickListener(this);
+
 		bn_login.setOnClickListener(this);
 		bn_retrievePass.setOnClickListener(this);
 
 		et_username = (CleanableEditText) this.findViewById(R.id.et_login_name);
 		et_password = (EditText) this.findViewById(R.id.et_login_password);
-
 		mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
-		boolean isFromGuide = mPreferenceUtil
-					.getBoolean(Constant.IS_FROMGUIDE);
-		if (isFromGuide) {
-			bn_back.setVisibility(View.VISIBLE);
-		} else {
-			bn_back.setVisibility(View.GONE);
-		}
 		if(getIntent().getStringExtra("number")!=null)
 		{et_username.setText(getIntent().getStringExtra("number"));
 		   et_password.setText(getIntent().getStringExtra("password"));}
@@ -86,10 +77,6 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.bn_login_back:
-			// 返回
-			finish();
-			break;
 		case R.id.bn_login_login:
 			InputMethodManager imm = (InputMethodManager) this
 					.getSystemService(INPUT_METHOD_SERVICE);

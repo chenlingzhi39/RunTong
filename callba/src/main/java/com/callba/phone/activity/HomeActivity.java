@@ -83,8 +83,8 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
-
         mPreferenceUtil.putBoolean(Constant.IS_FROMGUIDE, false, true);
+        mPreferenceUtil.commit();
         // 判断是否自动启动
         if (savedInstanceState == null
                 && CalldaGlobalConfig.getInstance().isAutoLogin()
@@ -102,7 +102,7 @@ public class HomeActivity extends BaseActivity {
             String password = CalldaGlobalConfig.getInstance().getPassword();
             if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
                 // 重新打开
-                gotoWelcomePage();
+               gotoWelcomePage();
             }
         }
 
@@ -346,7 +346,7 @@ public class HomeActivity extends BaseActivity {
         password = mPreferenceUtil.getString(Constant.LOGIN_PASSWORD);
 
         if ("".equals(CalldaGlobalConfig.getInstance().getSecretKey())) {
-
+             Log.i("home","nosecret");
             // 跳转到起始页
             gotoWelcomePage();
             return;

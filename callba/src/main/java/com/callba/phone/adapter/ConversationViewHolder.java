@@ -1,5 +1,7 @@
 package com.callba.phone.adapter;
 
+import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -7,7 +9,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.callba.R;
+import com.callba.phone.util.EaseCommonUtils;
+import com.callba.phone.util.EaseSmileUtils;
+import com.callba.phone.util.EaseUserUtils;
+import com.hyphenate.chat.EMChatRoom;
+import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
+import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.util.DateUtils;
@@ -26,7 +34,7 @@ public class ConversationViewHolder extends BaseViewHolder<EMConversation> {
     @InjectView(R.id.avatar)
     CircleImageView avatar;
     @InjectView(R.id.unread_msg_number)
-    TextView unreadMsgNumber;
+    TextView unreadLabel;
     @InjectView(R.id.avatar_container)
     RelativeLayout avatarContainer;
     @InjectView(R.id.name)
@@ -39,35 +47,56 @@ public class ConversationViewHolder extends BaseViewHolder<EMConversation> {
     TextView message;
     @InjectView(R.id.list_itease_layout)
     RelativeLayout listIteaseLayout;
-
+    protected int primaryColor;
+    protected int secondaryColor;
+    protected int timeColor;
+    protected int primarySize;
+    protected int secondarySize;
+    protected float timeSize;
     public ConversationViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_conversation);
         ButterKnife.inject(this, itemView);
     }
 
     @Override
-    public void setData(EMConversation data) {
-     name.setText(data.getUserName());
-        if (data.getUnreadMsgCount() > 0) {
+    public void setData(EMConversation conversation) {
+        String username = conversation.getUserName();
+            EaseUserUtils.setUserAvatar(getContext(), username, avatar);
+            EaseUserUtils.setUserNick(username, name);
+
+
+        if (conversation.getUnreadMsgCount() > 0) {
             // 显示与此用户的消息未读数
-            unreadMsgNumber.setText(String.valueOf(data.getUnreadMsgCount()));
-            unreadMsgNumber.setVisibility(View.VISIBLE);
+           unreadLabel.setText(String.valueOf(conversation.getUnreadMsgCount()));
+           unreadLabel.setVisibility(View.VISIBLE);
         } else {
-            unreadMsgNumber.setVisibility(View.INVISIBLE);
+            unreadLabel.setVisibility(View.INVISIBLE);
         }
 
-        if (data.getAllMsgCount() != 0) {
+        if (conversation.getAllMsgCount() != 0) {
             // 把最后一条消息的内容作为item的message内容
-            EMMessage lastMessage = data.getLastMessage();
-            EMTextMessageBody txtBody = (EMTextMessageBody) lastMessage.getBody();
-            message.setText(txtBody.getMessage());
-            Log.i("message",txtBody.getMessage());
-            time.setText(DateUtils.getTimestampString(new Date(lastMessage.getMsgTime())));
+            EMMessage lastMessage = conversation.getLastMessage();
+            message.setText(EaseSmileUtils.getSmiledText(getContext(), EaseCommonUtils.getMessageDigest(lastMessage, (this.getContext()))),
+                    TextView.BufferType.SPANNABLE);
+
+           time.setText(DateUtils.getTimestampString(new Date(lastMessage.getMsgTime())));
             if (lastMessage.direct() == EMMessage.Direct.SEND && lastMessage.status() == EMMessage.Status.FAIL) {
-               msgState.setVisibility(View.VISIBLE);
+                msgState.setVisibility(View.VISIBLE);
             } else {
-               msgState.setVisibility(View.GONE);
+                msgState.setVisibility(View.GONE);
             }
         }
+
+        //设置自定义属性
+      /*  name.setTextColor(primaryColor);
+        message.setTextColor(secondaryColor);
+        time.setTextColor(timeColor);
+        if(primarySize != 0)
+            name.setTextSize(TypedValue.COMPLEX_UNIT_PX, primarySize);
+        if(secondarySize != 0)
+           message.setTextSize(TypedValue.COMPLEX_UNIT_PX, secondarySize);
+        if(timeSize != 0)
+            time.setTextSize(TypedValue.COMPLEX_UNIT_PX, timeSize);*/
+
     }
 }

@@ -7,8 +7,10 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMImageMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.util.DateUtils;
 
@@ -50,21 +52,22 @@ public class ChatSentPictureViewHolder extends BaseChatViewHolder {
     @Override
     public void setData(final EMMessage data) {
         timestamp.setText(DateUtils.getTimestampString(new Date(data.getMsgTime())));
-
+        EMImageMessageBody imgBody = (EMImageMessageBody)data.getBody();
+        Glide.with(getContext()).load(imgBody.getLocalUrl()).into(image);
         data.setMessageStatusCallback(new EMCallBack() {
             @Override
             public void onSuccess() {
-                updateView(data,progressBar,null,msgStatus);
+                updateView(data,progressBar,percentage,msgStatus);
             }
 
             @Override
             public void onError(int i, String s) {
-                updateView(data,progressBar,null,msgStatus);
+                updateView(data,progressBar,percentage,msgStatus);
             }
 
             @Override
             public void onProgress(int i, String s) {
-                updateView(data,progressBar,null,msgStatus);
+                updateView(data,progressBar,percentage,msgStatus);
             }
         });
     }

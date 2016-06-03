@@ -52,4 +52,12 @@
         <attr name="isAutoPlay" format="boolean"/>
         <attr name="defaultImage" format="integer|reference"/>
     </declare-styleable>
+    <declare-styleable name="EaseChatExtendMenu">
+        <attr name="numColumns" format="integer"/>
+    </declare-styleable>
+    <declare-styleable name="EaseEmojiconMenu">
+        <attr name="bigEmojiconRows" format="integer"/>
+        <attr name="emojiconColumns" format="integer"/>
+    </declare-styleable>
+
 </resources>

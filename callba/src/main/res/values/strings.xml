@@ -239,7 +239,7 @@
 	<string name="exit_confirm">确定要退出程序吗？</string>
 	<string name="backrun">闰通已转至后台运行…</string>
 	<string name="contenttitle">Call吧</string>
-	<string name="contenttext">长途电话，尽情拨打</string>
+	<string name="contenttext">尽情call吧，随心畅聊</string>
 	<string name="contactcount">共有联系人%1$d个</string>
 	<string name="makecall">打电话</string>
 	<string name="sendsms">发短信</string>
@@ -628,4 +628,28 @@
     <string name="local">本地</string>
     <string name="button_pushtotalk">按住说话</string>
     <string name="button_send">发送</string>
+    <string name="attach_take_pic">拍照</string>
+    <string name="attach_smile">表情</string>
+    <string name="attach_picture">图片</string>
+    <string name="attach_location">位置</string>
+    <string name="attach_video">视频</string>
+    <string name="attach_file">文件</string>
+    <string name="attach_voice_call">语音电话</string>
+    <string name="attach_video_call">视频通话</string>
+    <string name="clear_all_records">是否清空所有聊天记录？</string>
+    <string name="location_recv">[%1$s的位置]</string>
+    <string name="location_message">位置信息</string>
+    <string name="recording_video">录制视频</string>
+    <string name="location_prefix">[我的位置]</string>
+    <string name="picture">[图片]</string>
+    <string name="video">[视频]</string>
+    <string name="file">[文件]</string>
+    <string name="voice_prefix">[语音]</string>
+    <string name="voice_call">[语音通话]</string>
+    <string name="video_call">[视频通话]</string>
+    <string name="dynamic_expression">[动态表情]</string>
+    <string name="sd_card_does_not_exist">SD卡不存在，不能拍照</string>
+    <string name="cant_find_pictures">找不到图片</string>
+    <string name="File_does_not_exist">文件不存在</string>
+    <string name="The_file_is_not_greater_than_10_m">文件不能大于10M</string>
 </resources>

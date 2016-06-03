@@ -111,7 +111,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 		MyApplication.activities.add(this);
 
-		if (this.getClass() != MainCallActivity.class
+	/*	if (this.getClass() != MainCallActivity.class
 				&& this.getClass() != WelcomeActivity.class
 				&& this.getClass() != FunIntroduceActivity.class
 				&& this.getClass() != GuideActivity.class
@@ -132,7 +132,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 				finish();
 				ActivityUtil.finishMainTabPages();
 			}
-		}
+		}*/
 		if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
 			if(this.getClass()!= UserActivity.class)
 			{getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
@@ -254,13 +254,15 @@ public abstract class BaseActivity extends AppCompatActivity {
 	private void showBackRunNotification() {
 		Class<?> clazz = this.getClass();
 		if (clazz.getName()
-				.equals("com.runtong.phone.activity.MainCallActivity")
+				.equals("com.callba.phone.activity.MainCallActivity")
 				|| clazz.getName().equals(
-						"com.runtong.phone.activity.contact.ContactActivity")
+						"com.callba.phone.activity.contact.ContactActivity")
 				|| clazz.getName()
-						.equals("com.runtong.phone.activity.recharge.RechargeWayActivity")
+						.equals("com.callba.phone.activity.HomeActivity")
 				|| clazz.getName().equals(
-						"com.runtong.phone.activity.more.MoreInfoActivity")) {
+						"com.callba.phone.activity.MessageActivity")
+				|| clazz.getName().equals(
+				"com.callba.phone.activity.UserActivity")) {
 
 			 clazz = MainTabActivity.class;
 //			clazz = OpenTabHelperActivity.class;
@@ -366,7 +368,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	@Override
 	protected void onResume() {
 		if (isSendNotification) {
-			//showBackRunNotification();
+			showBackRunNotification();
 		}
 	//	MobclickAgent.onResume(this);
 		super.onResume();

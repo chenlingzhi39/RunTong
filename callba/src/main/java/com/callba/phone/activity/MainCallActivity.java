@@ -175,7 +175,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         //loadADImage();
         mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
 
-        mPreferenceUtil.putBoolean(Constant.IS_FROMGUIDE, false, true);
+
 
         allcalllists = new ArrayList<CalldaCalllogBean>();
         mergecalllists = new ArrayList<CalllogDetailBean>();

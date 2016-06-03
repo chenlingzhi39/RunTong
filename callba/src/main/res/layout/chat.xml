@@ -43,13 +43,9 @@
                 android:background="?attr/selectableItemBackground"
                 />
         </LinearLayout>-->
-    <FrameLayout
-        android:id="@id/input_menu"
+    <com.callba.phone.widget.EaseChatInputMenu
+        android:id="@+id/input_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white">
-
-        <include layout="@layout/ease_widget_chat_primary_menu" />
-    </FrameLayout>
+        android:layout_alignParentBottom="true" />
 </RelativeLayout>

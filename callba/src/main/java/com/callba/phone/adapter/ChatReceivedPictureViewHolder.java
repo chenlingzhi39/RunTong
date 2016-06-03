@@ -54,40 +54,6 @@ public class ChatReceivedPictureViewHolder extends BaseChatViewHolder {
     public void setData(final EMMessage data) {
         timestamp.setText(DateUtils.getTimestampString(new Date(data.getMsgTime())));
         EMImageMessageBody imgBody = (EMImageMessageBody)data.getBody();
-        if (imgBody.thumbnailDownloadStatus() == EMFileMessageBody.EMDownloadStatus.DOWNLOADING ||
-                imgBody.thumbnailDownloadStatus() == EMFileMessageBody.EMDownloadStatus.PENDING) {
-            image.setImageResource(R.drawable.ease_default_image);
-            updateView(data,progressBar,null,null);
-            data.setMessageStatusCallback(new EMCallBack() {
-                @Override
-                public void onSuccess() {
-                    updateView(data,progressBar,percentage,null);
-                }
-
-                @Override
-                public void onError(int i, String s) {
-                    updateView(data,progressBar,percentage,null);
-                }
-
-                @Override
-                public void onProgress(int i, String s) {
-                    updateView(data,progressBar,percentage,null);
-                }
-            });
-        } else {
-            progressBar.setVisibility(View.GONE);
-            percentage.setVisibility(View.GONE);
-            image.setImageResource(R.drawable.ease_default_image);
-            String thumbPath = imgBody.thumbnailLocalPath();
-            if (!new File(thumbPath).exists()) {
-                // 兼容旧版SDK收到的thumbnail
-                thumbPath = EaseImageUtils.getThumbnailImagePath(imgBody.getLocalUrl());
-            }
-        Glide.with(getContext()).load(thumbPath).into(image);
-    }
-        String filePath = imgBody.getLocalUrl();
-        String thumbPath = EaseImageUtils.getThumbnailImagePath(imgBody.getLocalUrl());
-        Glide.with(getContext()).load(thumbPath).into(image);
-        updateView(data,progressBar,percentage,null);
+        Glide.with(getContext()).load(imgBody.getRemoteUrl()).into(image);
     }
 }
