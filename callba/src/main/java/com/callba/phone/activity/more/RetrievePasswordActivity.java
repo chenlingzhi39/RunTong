@@ -206,15 +206,15 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 				return;
 			}
 			if ( num.length()>10) {
-				String address = NumberAddressService.getAddress(
+			/*	String address = NumberAddressService.getAddress(
 						num, Constant.DB_PATH,
 						RetrievePasswordActivity.this);
 				if(!address.equals(""))
-				{
+				{*/
 					userDao.getFindKey(num);
-				}else {toast("请输入正确的手机号!");
+				/*}else {toast("请输入正确的手机号!");
 					return;
-				}}else {toast("请输入正确的手机号!");
+				}*/}else {toast("请输入正确的手机号!");
 				return;
 			}
 

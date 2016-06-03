@@ -200,6 +200,10 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 			case R.id.send_yzm:
 
 				final String searchNumber = et_account.getText().toString().trim();
+				if (searchNumber.equals("")) {
+					toast( "手机号不能为空!");
+					break;
+				}
 				if ( searchNumber.length()>10) {
 				/*	String address = NumberAddressService.getAddress(
 							searchNumber, Constant.DB_PATH,

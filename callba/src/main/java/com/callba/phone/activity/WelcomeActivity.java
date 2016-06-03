@@ -103,8 +103,9 @@ public class WelcomeActivity extends BaseActivity {
 	private void startZip() {
 		try {
 			Logger.i(TAG, "start zip");
-			if(new File(SharedPreferenceUtil.getInstance(this).getString("db")).exists())
+			if(!new File(SharedPreferenceUtil.getInstance(this).getString("db")).exists())
 			ZipUtil.copyBigDataBase(WelcomeActivity.this);
+			else Constant.DB_PATH=SharedPreferenceUtil.getInstance(this).getString("db");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
