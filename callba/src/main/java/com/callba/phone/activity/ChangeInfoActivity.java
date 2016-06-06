@@ -121,7 +121,7 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode) {
             case RESULT_OK:
-                Bundle b = data.getBundleExtra("photo");
+                Bundle b = data.getBundleExtra("photo_item");
                 photo = b.getParcelable("data");
                 head.setImageBitmap(photo);
                 f= BitmapUtil.saveBitmap(ChangeInfoActivity.this, photo, Constant.PHOTO_PATH, "head.jpg");

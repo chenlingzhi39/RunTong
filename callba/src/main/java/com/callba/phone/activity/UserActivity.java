@@ -110,27 +110,6 @@ public class UserActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case R.id.logout:
-                EMClient.getInstance().login(SharedPreferenceUtil.getInstance(this).getString(Constant.LOGIN_USERNAME), SharedPreferenceUtil.getInstance(this).getString(Constant.LOGIN_PASSWORD), new EMCallBack() {//回调
-                    @Override
-                    public void onSuccess() {
-
-                        EMClient.getInstance().groupManager().loadAllGroups();
-                        EMClient.getInstance().chatManager().loadAllConversations();
-                        Log.d("main", "登录聊天服务器成功！");
-
-
-                    }
-
-                    @Override
-                    public void onProgress(int progress, String status) {
-
-                    }
-
-                    @Override
-                    public void onError(int code, String message) {
-                        Log.d("main", "登录聊天服务器失败！");
-                    }
-                });
                 CalldaGlobalConfig.getInstance().setUsername("");
                 CalldaGlobalConfig.getInstance().setPassword("");
                 CalldaGlobalConfig.getInstance().setIvPath("");
@@ -147,6 +126,7 @@ public class UserActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case R.id.update:
+                Log.i("click","update");
                 sendGetVersionTask();
                 break;
         }
@@ -169,17 +149,15 @@ public class UserActivity extends BaseActivity {
         Task task = new Task(Task.TASK_GET_VERSION);
         Map<String, Object> taskParams = new HashMap<String, Object>();
         taskParams.put("versionName", localVersion);
-        taskParams.put("fromPage", "WelcomeActivity");
+        taskParams.put("fromPage", "UserActivity");
         taskParams.put("lan", activityUtil.language(this));
         task.setTaskParams(taskParams);
-
         MainService.newTask(task);
-
-
     }
 
     @Override
     public void refresh(Object... params) {
+        Log.i("user","refresh");
         Message verionMessage = (Message) params[0];
         // 解析版本返回数据
         AppVersionChecker.AppVersionBean appVersionBean = AppVersionChecker.parseVersionInfo(
@@ -215,6 +193,7 @@ public class UserActivity extends BaseActivity {
                 // Toast.LENGTH_SHORT).show();
                 // 提示用户获取失败
                 //alertUserGetVersionFailed();
+                toast(R.string.net_error_getdata_fail);
             } else {
                 check2Upgrade(appVersionBean);
             }
@@ -321,7 +300,7 @@ public class UserActivity extends BaseActivity {
 
             } else {
                 // 无新版本
-
+                toast(R.string.upgrade_no);
             }
         }
     }

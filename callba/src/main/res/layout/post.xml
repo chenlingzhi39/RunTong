@@ -12,10 +12,35 @@
         android:layout_height="wrap_content"
         android:background="@null"
         android:gravity="top|left"
-        android:hint="内容"
+        android:hint="这一刻的想法..."
         android:minLines="5"
         android:padding="10dp"
         android:maxLength="200"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#ffdddddd" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/location"
+            android:drawableLeft="@drawable/location"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="30dp"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/is_located"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -26,5 +51,7 @@
         android:id="@+id/photos"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:padding="5dp"
         />
 </LinearLayout>

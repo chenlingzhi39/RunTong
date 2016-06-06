@@ -25,6 +25,7 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.callba.R;
 import com.callba.phone.activity.HomeActivity;
+import com.callba.phone.activity.UserActivity;
 import com.callba.phone.activity.WelcomeActivity;
 import com.callba.phone.activity.contact.ContactBackupActivity;
 import com.callba.phone.activity.contact.RemoteContactsActvity;
@@ -116,11 +117,11 @@ public class MainService extends Service implements Runnable{
 			case Task.TASK_GET_VERSION:// 获取版本
 				Bundle bundle = (Bundle) msg.obj;
 				String fromPage = bundle.getString("fromPage");
-				if("MoreInfoActivity".equals(fromPage)){
+				if("UserActivity".equals(fromPage)){
 					
-					MoreInfoActivity mia= (MoreInfoActivity) ActivityUtil.getActivityByName("MoreInfoActivity");
-					if (mia != null)
-						mia.refresh(msg);
+					UserActivity userActivity= (UserActivity) ActivityUtil.getActivityByName("UserActivity");
+					if (userActivity != null)
+						userActivity.refresh(msg);
 				}else if("WelcomeActivity".equals(fromPage)){
 					WelcomeActivity wa = (WelcomeActivity) ActivityUtil.getActivityByName("WelcomeActivity");
 					if (wa != null)
@@ -579,7 +580,7 @@ public class MainService extends Service implements Runnable{
 			params.put("lan", lan);
 			String result = HttpUtils.getDatafFromPostConnClose(Interfaces.Version
 					, params);
-			
+			Log.i("result",result);
 			msg.arg1 = Task.TASK_SUCCESS;
 			bundle.putString("result",
 					result.replace("\n", "").replace("\r", ""));

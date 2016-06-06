@@ -47,4 +47,5 @@ dependencies {
     compile 'com.jzxiang.pickerview:TimePickerDialog:0.9.2'
     compile files('libs/umeng-sdk-analytics_v5.2.2_fb_v4.3.1.jar')
     compile files('libs/MiPush_SDK_Client_2_2_19.jar')
+    compile 'me.iwf.photopicker:PhotoPicker:0.8.1@aar'
 }

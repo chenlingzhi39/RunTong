@@ -170,7 +170,17 @@ public interface Interfaces {
 	 * 附近的人
 	 */
 	String GET_NEARBY="http://bointer.aihuzhongchou.com/inter/nearby/nearby.jsp";
+	/**
+	 * 保存位置
+	 */
 	String SAVE_LOCATION="http://bointer.aihuzhongchou.com/inter/savelocation/savelocation.jsp";
+	/**
+	 * 获取签到日期
+	 */
+	String GET_MARKS="http://bointer.aihuzhongchou.com/inter/getmarks/getmarks.jsp";
+	/**
+	 * 上传头像
+	 */
 	String CHANGE_HEAD=BASIC_URL+"/user_head.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;

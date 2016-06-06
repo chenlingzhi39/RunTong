@@ -476,4 +476,21 @@ public class UserDao {
 
         });
     }
+    public void getMarks(String loginName,String password,String date){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("date",date);
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_MARKS, params, new RequestCallBack<String>(){
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                postListener.failure(context.getString(R.string.network_error));
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                postListener.success(responseInfo.result);
+            }
+        });
+    }
 }

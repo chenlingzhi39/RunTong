@@ -156,8 +156,8 @@ boolean isCrop;
                 if (data != null) {
                     Bundle extras = data.getExtras();
                     if (extras != null) {
-                        // photo = extras.getParcelable("data");
-//                 Drawable drawable = new BitmapDrawable(photo);
+                        // photo_item = extras.getParcelable("data");
+//                 Drawable drawable = new BitmapDrawable(photo_item);
 
                         /**
 
@@ -169,7 +169,7 @@ boolean isCrop;
 
                  /*ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-                 photo.compress(Bitmap.CompressFormat.JPEG, 60, stream);
+                 photo_item.compress(Bitmap.CompressFormat.JPEG, 60, stream);
 
                  byte[] b = stream.toByteArray();
 
@@ -194,10 +194,10 @@ boolean isCrop;
                  Drawable drawable = new BitmapDrawable(dBitmap);
 
                  */
-                        //  head.setImageBitmap(photo);
+                        //  head.setImageBitmap(photo_item);
 
                         Intent intent = new Intent();
-                        intent.putExtra("photo", extras);
+                        intent.putExtra("photo_item", extras);
                         setResult(RESULT_OK, intent);
                         finish();
                     }

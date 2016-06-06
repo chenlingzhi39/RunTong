@@ -78,6 +78,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name="me.iwf.photopicker.PhotoPickerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            />
+
+        <activity android:name="me.iwf.photopicker.PhotoPagerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity android:name=".phone.activity.PhotoActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity android:name=".phone.activity.AccountActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -304,11 +313,11 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
+       <!-- <activity
             android:name=".phone.activity.more.CallSettingActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            android:theme="@android:style/Theme.Black.NoTitleBar" />-->
         <activity
             android:name="com.callba.phone.activity.contact.RemoteContactsActvity"
             android:launchMode="singleTop"

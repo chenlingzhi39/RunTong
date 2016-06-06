@@ -95,7 +95,6 @@ public class MainTabActivity extends TabActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_tab);
-        Log.i("maintab","ocreate");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
@@ -332,7 +331,6 @@ public class MainTabActivity extends TabActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i("maintab","onstart");
     }
 
     @Override
@@ -353,7 +351,6 @@ public class MainTabActivity extends TabActivity {
 
     @Override
     protected void onStop() {
-        Log.i("maintab","onstop");
         super.onStop();
     }
 
@@ -363,7 +360,6 @@ public class MainTabActivity extends TabActivity {
         if (mNotificationManager != null)
             mNotificationManager.cancel(10);
         EMClient.getInstance().chatManager().removeMessageListener(msgListener);
-        Log.i("maintab","ondestroy");
         super.onDestroy();
     }
 

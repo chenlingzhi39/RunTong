@@ -9,6 +9,7 @@ import android.os.Message;
 import android.text.TextUtils;
 
 import com.callba.phone.bean.Task;
+import com.umeng.socialize.utils.Log;
 
 /**
  * 版本更新检测器
@@ -73,7 +74,7 @@ public class AppVersionChecker {
 		if (verionMessage.arg1 == Task.TASK_SUCCESS) {
 			Bundle bundle = (Bundle) verionMessage.obj;
 			String result = bundle.getString("result");
-
+            Log.i("result",result);
 			if (TextUtils.isEmpty(result)) {
 				appVersionBean.setHasNewVersion(false);
 			}

@@ -106,10 +106,9 @@ public class QueryCalllogActivity extends BaseActivity implements
 	public void onDateSet(TimePickerDialog timePickerView, long millseconds) {
 		SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
 		time=simpleDateFormat.format(new Date(millseconds));
-		if(!bt_date.getText().equals(time))
-		{bt_date.setText(time);
+		bt_date.setText(time);
 		queryCalllog(time);
-			refreshLayout.setRefreshing(true);}
+			refreshLayout.setRefreshing(true);
 	}
 
 	@Override

@@ -31,6 +31,7 @@
     <string name="community">我的圈子</string>
     <string name="camera">拍照</string>
     <string name="post">发送</string>
+    <string name="delete">删除</string>
     <string name="game">我的游戏</string>
     <string name="sign_in">我的签到</string>
     <string name="message">信息</string>
@@ -104,7 +105,8 @@
 	<string name="sjtsxx">您目前的版本已停止使用，必须升级新版本才能继续使用！</string>
 	<string name="upgrade">升级</string>
 	<string name="upgrade_findnewversion">发现新版本，是否现在升级？</string>
-	<string name="upgrade_openfailed">无法打开浏览器，请到闰通官网下载最新版本。</string>
+	<string name="upgrade_openfailed">无法打开浏览器，请到Callba官网下载最新版本。</string>
+    <string name="upgrade_no">已是最新版本</string>
 	<string name="networksetup">网络设置</string>
 	<string name="networksetupinfo">未检测到网络连接，是否设置？</string>
 	

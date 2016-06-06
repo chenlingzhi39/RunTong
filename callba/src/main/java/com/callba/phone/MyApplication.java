@@ -109,6 +109,7 @@ public class MyApplication extends Application {
         builder.setDiskCache(
                 new ExternalCacheDiskCacheFactory(this, StorageUtils.getCacheDirectory(getApplicationContext()).getPath(), 10 * 1024 * 1024));
         initUmengAnalytics();
+
 //		initUmengPush();
     }
 

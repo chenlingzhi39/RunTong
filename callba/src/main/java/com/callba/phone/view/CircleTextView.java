@@ -18,6 +18,7 @@ import org.apache.commons.logging.Log;
 public class CircleTextView extends TextView{
     int density,size=0;
     private Paint paint1,paint2,paint3,paint4;
+    private int constant;
     public CircleTextView(Context context) {
         super(context);
 
@@ -34,6 +35,11 @@ public class CircleTextView extends TextView{
     public int getDensity() {
 
         return density;
+    }
+
+    public void setConstant(int constant) {
+        this.constant = constant;
+        invalidate();
     }
 
     public void setDensity(int density) {
@@ -87,10 +93,14 @@ public class CircleTextView extends TextView{
         canvas.drawCircle(getWidth()/2, getHeight()/2, Math.max(getWidth(), getHeight())/2-24, paint3);
         canvas.drawLine(36,getHeight()/2,getWidth()-36,getHeight()/2,paint3);
         Rect targetRect = new Rect((int)(getMeasuredWidth()*(2-(Math.sqrt(2)))/4), (int)(getMeasuredHeight()*(2-(Math.sqrt(2)))/4),(int)(getMeasuredWidth()*(2+(Math.sqrt(2)))/4), (getMeasuredHeight()/2));
+        Rect targetRect1 = new Rect((int)(getMeasuredWidth()*(2-(Math.sqrt(2)))/4), (getMeasuredHeight()/2),(int)(getMeasuredWidth()*(2+(Math.sqrt(2)))/4), (int)(getMeasuredHeight()*(2+(Math.sqrt(2)))/4));
         Paint.FontMetricsInt fontMetrics = paint4.getFontMetricsInt();
         int baseline = (targetRect.bottom + targetRect.top - fontMetrics.bottom - fontMetrics.top) / 2;
+        int baseline1=(targetRect1.bottom + targetRect1.top - fontMetrics.bottom - fontMetrics.top) / 2;
         paint4.setTextAlign(Paint.Align.CENTER);
         canvas.drawText("签到", targetRect.centerX(), baseline, paint4);
+        paint4.setTextSize(3*size/4);
+        canvas.drawText("连续"+constant+"天",targetRect1.centerX(), baseline1, paint4);
         super.draw(canvas);
     }
 }
