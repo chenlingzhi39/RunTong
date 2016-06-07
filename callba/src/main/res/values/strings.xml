@@ -10,7 +10,7 @@
     <string name="home">主页</string>
     <string name="recharge">话费充值</string>
     <string name="recharge2">立即充值</string>
-    <string name="input_card">请输入充值卡号</string>
+    <string name="input_card">请输入充值卡号+密码</string>
     <string name="input_number">请输入手机号码</string>
     <string name="bind_number">账户绑定号码</string>
     <string name="on_recharge">正在充值</string>
@@ -34,6 +34,7 @@
     <string name="delete">删除</string>
     <string name="game">我的游戏</string>
     <string name="sign_in">我的签到</string>
+    <string name="share">分享</string>
     <string name="message">信息</string>
     <string name="post_message">发送信息</string>
     <string name="search">搜索</string>

@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.callba"
     android:versionCode="103"
-    android:versionName="1.0.3" >
+    android:versionName="1.0.3">
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -11,28 +11,31 @@
         android:anyDensity="true"
         android:largeScreens="true"
         android:normalScreens="true"
-        android:smallScreens="true" >
-    </supports-screens>
+        android:smallScreens="true"></supports-screens>
 
     <application
         android:name="com.callba.phone.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <!-- 设置环信应用的AppKey -->
-       <meta-data android:name="EASEMOB_APPKEY"  android:value="boboit#callba" />
+        <meta-data
+            android:name="EASEMOB_APPKEY"
+            android:value="boboit#callba" />
         <!-- 声明SDK所需的service SDK核心功能-->
-        <service android:name="com.hyphenate.chat.EMChatService" android:exported="true"/>
+        <service
+            android:name="com.hyphenate.chat.EMChatService"
+            android:exported="true" />
         <!-- 声明SDK所需的receiver -->
         <receiver android:name="com.hyphenate.chat.EMMonitorReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
-                <data android:scheme="package"/>
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <data android:scheme="package" />
             </intent-filter>
             <!-- 可选filter -->
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
@@ -43,17 +46,16 @@
             android:value="b4a6afcc1d6426ef0ccd1985898e6ba4" />
         <!-- 定位需要的服务 -->
         <service android:name="com.amap.api.location.APSService"></service>
-        <service android:name="com.callba.phone.service.MainService" >
-        </service>
+        <service android:name="com.callba.phone.service.MainService"></service>
 
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="5371aef356240bac320264f5" />
         <!-- 友盟发布渠道 -->
         <!-- 应用发布渠道 -->
-       <!-- <meta-data
-            android:name="UMENG_CHANNEL"
-            android:value="runtong" />-->
+        <!-- <meta-data
+             android:name="UMENG_CHANNEL"
+             android:value="runtong" />-->
         <!--<meta-data
             android:name="UMENG_MESSAGE_SECRET"
             android:value="c2c0420b2f48ef7fa0e69e8d1d0cc17f" >
@@ -61,96 +63,113 @@
         <activity
             android:name=".phone.activity.SelectPicPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />
-        <activity android:name=".phone.activity.ChatActivity"
+        <activity
+            android:name=".phone.activity.ChatActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            />
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name="com.callba.phone.activity.WelcomeActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme" >
+            android:theme="@style/BaseAppTheme.AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.alipay.sdk.app.H5PayActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Light.NoTitleBar"/>
+        <activity
+            android:name="com.alipay.sdk.auth.AuthActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Light.NoTitleBar"/>
+        <activity
+            android:name="me.iwf.photopicker.PhotoPickerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
-        <activity android:name="me.iwf.photopicker.PhotoPickerActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            />
-
-        <activity android:name="me.iwf.photopicker.PhotoPagerActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name=".phone.activity.PhotoActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
-        <activity android:name=".phone.activity.AccountActivity"
+        <activity
+            android:name="me.iwf.photopicker.PhotoPagerActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".phone.activity.PhotoActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".phone.activity.AccountActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.PostMessageActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.activity.PostMessageActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".phone.activity.PostActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.CommunityActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.SignInActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.ChangePasswordActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            />
-        <activity android:name=".phone.activity.PostActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name="com.callba.phone.activity.FriendActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <!-- <activity android:name=".phone.activity.SignInActivity"
+             android:launchMode="singleTop"
+             android:screenOrientation="portrait"
+             android:theme="@style/BaseAppTheme.AppTheme"
+             />-->
+        <activity
+            android:name=".phone.activity.ChangeInfoActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name="com.callba.phone.activity.recharge.RechargeActivity2"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.activity.CommunityActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".phone.activity.HomeActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.activity.SignInActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name="com.callba.phone.activity.MessageActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.activity.ChangePasswordActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name="com.callba.phone.activity.UserActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            />
-        <activity android:name="com.callba.phone.activity.FriendActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
-       <!-- <activity android:name=".phone.activity.SignInActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />-->
-        <activity android:name=".phone.activity.ChangeInfoActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name="com.callba.phone.activity.recharge.RechargeActivity2"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
-        <activity android:name=".phone.activity.HomeActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"/>
-        <activity android:name="com.callba.phone.activity.MessageActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"/>
-        <activity android:name="com.callba.phone.activity.UserActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"/>
+            android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name="com.callba.phone.activity.FunIntroduceActivity"
             android:launchMode="singleTop"
@@ -166,7 +185,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name="com.callba.phone.activity.login.OnekeyRegisterAcitvity"
             android:launchMode="singleTop"
@@ -177,7 +196,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name="com.callba.phone.activity.contact.ContactActivity"
             android:launchMode="singleTop"
@@ -313,11 +332,11 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Black.NoTitleBar" />
-       <!-- <activity
-            android:name=".phone.activity.more.CallSettingActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />-->
+        <!-- <activity
+             android:name=".phone.activity.more.CallSettingActivity"
+             android:launchMode="singleTop"
+             android:screenOrientation="portrait"
+             android:theme="@android:style/Theme.Black.NoTitleBar" />-->
         <activity
             android:name="com.callba.phone.activity.contact.RemoteContactsActvity"
             android:launchMode="singleTop"
@@ -366,8 +385,7 @@
         <activity
             android:name="com.callba.phone.OpenTabHelperActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <!--
         <activity
             android:name=".activity.SendCallActivity"
@@ -399,8 +417,7 @@
             android:launchMode="singleTask"
             android:noHistory="true"
             android:theme="@style/Theme.UMDialog"
-            android:windowSoftInputMode="stateVisible|adjustResize" >
-        </activity>
+            android:windowSoftInputMode="stateVisible|adjustResize"></activity>
         <activity
             android:name="com.callba.wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -413,12 +430,12 @@
         <activity
             android:name="com.umeng.fb.ContactActivity"
             android:theme="@android:style/Theme.Black.NoTitleBar" />
-       
+
         <activity
             android:name="com.callba.phone.activity.calling.CallbackDisplayActivity"
             android:launchMode="singleTop"
             android:theme="@style/BaseAppTheme.AppTheme" />
-       
+
         <activity
             android:name="com.callba.phone.activity.more.SystemDialSettingActivity"
             android:launchMode="singleTop"
@@ -429,7 +446,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:taskAffinity="com.runtong.call"
-            android:theme="@style/dialog_no_title" >
+            android:theme="@style/dialog_no_title">
             <intent-filter>
                 <action android:name="android.intent.action.CALL_BUTTON" />
 
@@ -466,8 +483,8 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.callba.phone.activity.CallChooserBroadCast" >
-            <intent-filter android:priority="2147483647" >
+        <receiver android:name="com.callba.phone.activity.CallChooserBroadCast">
+            <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
@@ -537,10 +554,10 @@
         <meta-data
             android:name="PUSH_GROUPID"
             android:value="" />
-<!-- 配置第三方Receiver -->
+        <!-- 配置第三方Receiver -->
         <receiver
             android:name="com.callba.phone.service.GeTuiPushReceiver"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.igexin.sdk.action.TGwkV5YvcQ7bw0ZnzKxPo5" />
             </intent-filter>
@@ -550,10 +567,9 @@
             android:name="com.igexin.sdk.PushService"
             android:exported="true"
             android:label="NotificationCenter"
-            android:process=":pushservice" >
-        </service>
+            android:process=":pushservice"></service>
 
-        <receiver android:name="com.igexin.sdk.PushReceiver" >
+        <receiver android:name="com.igexin.sdk.PushReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -563,7 +579,7 @@
         </receiver>
         <receiver
             android:name="com.igexin.sdk.PushManagerReceiver"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.igexin.sdk.action.pushmanager" />
             </intent-filter>
@@ -575,8 +591,7 @@
             android:exported="false"
             android:process=":pushservice"
             android:taskAffinity="com.igexin.sdk.PushActivityTask"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
-        </activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
 
         <!-- 配置弹框activity -->
         <activity
@@ -590,7 +605,7 @@
 
         <receiver
             android:name="com.igexin.getuiext.service.PayloadReceiver"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
 
                 <!-- 这个com.igexin.sdk.action.7fjUl2Z3LH6xYy7NQK4ni4固定，不能修改 -->
@@ -611,7 +626,7 @@
 
         <receiver
             android:name="com.igexin.download.DownloadReceiver"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
@@ -680,16 +695,15 @@
     <!-- V1.2.3新增的权限, GET_TASKS用于检测APP是否处于前台、是否活着；REORDER_TASKS用于将APP切换到前台 -->
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
-    
+
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
-    
+
     <uses-permission android:name="getui.permission.GetuiService.com.runtong" />
 
     <!-- 自定义权限 -->
     <permission
         android:name="getui.permission.GetuiService.com.callba"
-        android:protectionLevel="normal" >
-    </permission>
+        android:protectionLevel="normal"></permission>
 
 </manifest>

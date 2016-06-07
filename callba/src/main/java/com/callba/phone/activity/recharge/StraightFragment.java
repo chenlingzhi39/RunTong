@@ -1,44 +1,47 @@
 package com.callba.phone.activity.recharge;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alipay.sdk.app.PayTask;
 import com.callba.R;
 import com.callba.phone.BaseFragment;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.Task;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
-import com.callba.phone.pay.alipay.AlipayClient;
-import com.callba.phone.service.MainService;
-import com.callba.phone.util.ActivityUtil;
-import com.callba.phone.util.HttpUtils;
-import com.callba.phone.util.Interfaces;
-import com.callba.phone.util.Logger;
 import com.callba.phone.util.NumberAddressService;
-import com.callba.phone.view.CalldaToast;
-import com.callba.phone.view.MyProgressDialog;
+import com.callba.phone.util.PayResult;
+import com.callba.phone.util.SignUtils;
+import com.umeng.socialize.utils.Log;
 
-import java.util.HashMap;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Random;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -49,7 +52,7 @@ import butterknife.OnClick;
  */
 @ActivityFragmentInject(
         contentViewId = R.layout.fragment_straight)
-public class StraightFragment extends BaseFragment implements UserDao.PostListener{
+public class StraightFragment extends BaseFragment implements UserDao.PostListener {
     @InjectView(R.id.price1)
     RadioButton price1;
     @InjectView(R.id.price2)
@@ -62,54 +65,140 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     Button recharge;
     @InjectView(R.id.change_number)
     LinearLayout change;
+    @InjectView(R.id.group)
+    RadioGroup group;
     private UserDao userDao;
     private String address;
     private int size;
+    private String subject,body,price;
+    // 商户PID
+    public static final String PARTNER = "2088221931971814";
+    // 商户收款账号
+    public static final String SELLER = "callba@aihuzhongchou.com";
+    // 商户私钥，pkcs8格式
+    public static final String RSA_PRIVATE =
+            "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAOtUqNpqQuxOq174" +
+                    "AoOGhEbRauzhp/fXaxp4CFBjZNntfSpHJ31kJ1Gi2SyQupA3VHUNXZfelMafdDjV" +
+                    "3NVdNo1M4WOu+8PY4ugVQdKnvbbvV2ui40y8l1suI/WI6DORowOZjAg+XNTys5bk" +
+                    "0ZtyHfluM/Eb9vmkRu8dyhUH0WQPAgMBAAECgYEA0qPro9z7XBMql438igfMvKrU" +
+                    "P4XYWCIszvtjzbi528sUftRDx5vvCcZvB9Hf/Bhac49sF/T2TDcLy5e53A1cNjSP" +
+                    "VjPPg/iUq74sC47YivCfyfalOYZVpwnTrsHB6gmCEPz0zmaPSyOGoJvimxQ2AObc" +
+                    "blbHS51WGoi5IkpnfXECQQD4BQfqrMrg4nSRpLmD4gh3JchQNhnLxDdD9HZSD9kM" +
+                    "L3xjq/Mp1wkVMCa1f6Iemp8tzJ9GvaXUiYlvzv/ebXxXAkEA8ucbsW5JHUAkq1uq" +
+                    "KZ0ne+5DWd8/52XK9udTcfdp2tDwS/9klT3q0gGlbJK8mMdwqV7uWnFY2oQTavn7" +
+                    "nLUDCQJAVgnwwCFnU/JbO/coAC9WfnbV8bWC52RPQ7y3myoyQn7qqO0KsvYNCZOl" +
+                    "qgr346QCGnJEwtahg4Se7/GgY7oZiwJBAIGshWk8skWuV6Uvg3FB17FeqpAREgGL" +
+                    "o0Yair690cIiZxZ7WoweCP1iKZkD4TFCz89rwZ2BA2lstx0WJZAsRlkCQEXelOoa" +
+                    "VOQHaRxGyHVeBXlniTD4R+PWuLh/T3sBxIJzUb1VgasvKlvSQomv+v/cKwd9rJCj" +
+                    "4WwHfl+tSIazTbM=";
+    // 支付宝公钥
+    public static final String RSA_PUBLIC = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnxj/9qwVfgoUh/y2W89L6BkRAFljhNhgPdyPuBV64bfQNN1PjbCzkIM6qRdKBoLPXmKKMiFYnkd6rAoprih3/PrQEB/VsW8OoM8fxn67UDYuyBTqA23MML9q1+ilIZwBC2AQ2UBVOrFXfFl75p6/B5KsiNG9zpgmLCUYuLkxpLQIDAQAB";
+    private static final int SDK_PAY_FLAG = 1;
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @SuppressWarnings("unused")
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case SDK_PAY_FLAG: {
+                    PayResult payResult = new PayResult((String) msg.obj);
+                    /**
+                     * 同步返回的结果必须放置到服务端进行验证（验证的规则请看https://doc.open.alipay.com/doc2/
+                     * detail.htm?spm=0.0.0.0.xdvAU6&treeId=59&articleId=103665&
+                     * docType=1) 建议商户依赖异步通知
+                     */
+                    String resultInfo = payResult.getResult();// 同步返回需要验证的信息
+                    String resultStatus = payResult.getResultStatus();
+                    // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
+                    if (TextUtils.equals(resultStatus, "9000")) {
+                        Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // 判断resultStatus 为非"9000"则代表可能支付失败
+                        // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
+                        if (TextUtils.equals(resultStatus, "8000")) {
+                            Toast.makeText(getActivity(), "支付结果确认中", Toast.LENGTH_SHORT).show();
+
+                        } else {
+                            // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
+                            Toast.makeText(getActivity(), "支付失败", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+
+        ;
+    };
+
     public static StraightFragment newInstance() {
         StraightFragment straightFragment = new StraightFragment();
         return straightFragment;
     }
+
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int mDensity = metrics.densityDpi;
-        switch (mDensity){
+        switch (mDensity) {
             case 120:
-                size=15;
+                size = 15;
                 break;
             case 160:
-                size=20;
+                size = 20;
                 break;
             case 240:
-                size=30;
+                size = 30;
                 break;
             case 320:
-                size=40;
+                size = 40;
                 break;
             case 480:
-                size=60;
+                size = 60;
                 break;
             case 640:
-                size=80;
+                size = 80;
                 break;
         }
-        Spannable spannable = new SpannableString("38元\n\n原价50元");
+        Spannable spannable = new SpannableString("39元\n\n（包月畅聊）\n原价50元");
         spannable.setSpan(new AbsoluteSizeSpan(size), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable.setSpan(new AbsoluteSizeSpan(size/2), spannable.toString().lastIndexOf("\n"), spannable.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannable.setSpan(new AbsoluteSizeSpan(size / 2), 4, spannable.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         price1.setText(spannable);
-        Spannable spannable1 = new SpannableString("398元\n\n原价500元");
+        Spannable spannable1 = new SpannableString("399元\n\n（包年畅聊）\n原价500元");
         spannable1.setSpan(new AbsoluteSizeSpan(size), 0, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable1.setSpan(new AbsoluteSizeSpan(size/2), spannable.toString().lastIndexOf("\n"), spannable1.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        spannable1.setSpan(new AbsoluteSizeSpan(size / 2), 5, spannable1.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         price2.setText(spannable1);
         number.setText(CalldaGlobalConfig.getInstance().getUsername());
         String address = NumberAddressService.getAddress(
                 CalldaGlobalConfig.getInstance().getUsername(), Constant.DB_PATH,
                 getActivity());
         tv_address.setText(address);
-        userDao=new UserDao(getActivity(),this);
-        userDao.getRechargeMeal(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
+        userDao = new UserDao(getActivity(), this);
+        subject="39元套餐";
+        body="包月畅聊";
+        price="39";
+        group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.price1:
+                        subject="39元套餐";
+                        body="包月畅聊";
+                        price="39";
+                        break;
+                    case R.id.price2:
+                        subject="399元套餐";
+                        body="包年畅聊";
+                        price="399";
+                        break;
+                }
+            }
+        });
+        //userDao.getRechargeMeal(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
     }
 
     @Override
@@ -134,7 +223,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
 
     @OnClick(R.id.recharge)
     public void recharge() {
-
+        pay();
     }
 
 
@@ -142,6 +231,14 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        ButterKnife.inject(this, rootView);
+        return rootView;
     }
 
     public class DialogHelper implements DialogInterface.OnDismissListener {
@@ -185,8 +282,8 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                                     helper.getNumber(), Constant.DB_PATH,
                                     getActivity());
                             //if (!address.equals("")) {
-                                number.setText(helper.getNumber());
-                                tv_address.setText(address);
+                            number.setText(helper.getNumber());
+                            tv_address.setText(address);
                           /*  } else
                                 toast("请输入正确的手机号!");*/
                         } else
@@ -203,83 +300,135 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         helper.setDialog(dialog);
         dialog.show();
     }
+
     /**
-     * 调用支付宝客户端支付
+     * call alipay sdk pay. 调用SDK支付
      */
-    private void rechargeAlipayClient(final String payMoney) {
-        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(),null, getString(R.string.rech_hqddh));
-        final Handler mHanlder = new Handler() {
+    public void pay() {
+
+        String orderInfo = getOrderInfo(subject,body, price);
+
+        /**
+         * 特别注意，这里的签名逻辑需要放在服务端，切勿将私钥泄露在代码中！
+         */
+        String sign = sign(orderInfo);
+        Log.i("sign", sign);
+        try {
+            /**
+             * 仅需对sign 做URL编码
+             */
+            sign = URLEncoder.encode(sign, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        /**
+         * 完整的符合支付宝参数规范的订单信息
+         */
+        final String payInfo = orderInfo + "&sign=\"" + sign + "\"&" + getSignType();
+
+        Runnable payRunnable = new Runnable() {
+
             @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if (progressDialog!=null&&progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
+            public void run() {
+                // 构造PayTask 对象
+                PayTask alipay = new PayTask(getActivity());
+                // 调用支付接口，获取支付结果
+                String result = alipay.pay(payInfo, true);
 
-                if (msg.what == 0) {
-                    String orderNo = (String) msg.obj;
-
-                    new AlipayClient(getActivity(), orderNo,
-                            payMoney).prepared2Pay();
-                } else if (msg.what == -1) {
-                    String errorMsg = (String) msg.obj;
-                    Toast.makeText(getActivity(),errorMsg,Toast.LENGTH_SHORT).show();
-               /*     CalldaToast calldaToast = new CalldaToast();
-                    calldaToast.showToast(context, errorMsg);*/
-                }
+                Message msg = new Message();
+                msg.what = SDK_PAY_FLAG;
+                msg.obj = result;
+                mHandler.sendMessage(msg);
             }
         };
 
-        new Thread() {
-            public void run() {
-                ActivityUtil activityUtil=new ActivityUtil();
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("loginName", CalldaGlobalConfig.getInstance().getUsername());
-                params.put("loginPwd", CalldaGlobalConfig.getInstance().getPassword());
-                params.put("softType", "android");
-                params.put("payMoney", payMoney);
-                params.put("payMethod", "0");
-              /*  params.put("suiteName", suiteName);
-                params.put("lan", lan);*/
+        // 必须异步调用
+        Thread payThread = new Thread(payRunnable);
+        payThread.start();
+    }
 
-                String result = null;
-                Message msg = mHanlder.obtainMessage();
-                try {
-                    Logger.i("套餐客户端充值", Interfaces.GET_RECHARGE_TRADENO
-                            + params);
-                    result = HttpUtils.getDataFromHttpPost(
-                            Interfaces.GET_RECHARGE_TRADENO, params);
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                    msg.what = -1;
-                    msg.obj = getString(R.string.getserverdata_exception);
-                    mHanlder.sendMessage(msg);
+    /**
+     * create the order info. 创建订单信息
+     */
+    private String getOrderInfo(String subject, String body, String price) {
 
-                    return;
-                }
+        // 签约合作者身份ID
+        String orderInfo = "partner=" + "\"" + PARTNER + "\"";
 
-                try {
-                    String content[] = result.trim().split("\\|");
-                    if ("0".equals(content[0])) {
-                        String orderNo = content[1];
+        // 签约卖家支付宝账号
+        orderInfo += "&seller_id=" + "\"" + SELLER + "\"";
 
-                        msg.what = 0;
-                        msg.obj = orderNo;
-                    } else if ("1".equals(content[0])) {
-                        msg.what = -1;
-                        msg.obj = content[1];
-                    } else {
-                        msg.what = -1;
-                        msg.obj = getString(R.string.rech_hqddsb);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    msg.what = -1;
-                    msg.obj = getString(R.string.getserverdata_exception);
-                } finally {
-                    mHanlder.sendMessage(msg);
-                }
-            }
-        }.start();
+        // 商户网站唯一订单号
+        orderInfo += "&out_trade_no=" + "\"" + getOutTradeNo() + "\"";
+
+        // 商品名称
+        orderInfo += "&subject=" + "\"" + subject + "\"";
+
+        // 商品详情
+        orderInfo += "&body=" + "\"" + body + "\"";
+
+        // 商品金额
+        orderInfo += "&total_fee=" + "\"" + price + "\"";
+
+        // 服务器异步通知页面路径
+        orderInfo += "&notify_url=" + "\"" + "http://notify.msp.hk/notify.htm" + "\"";
+
+        // 服务接口名称， 固定值
+        orderInfo += "&service=\"mobile.securitypay.pay\"";
+
+        // 支付类型， 固定值
+        orderInfo += "&payment_type=\"1\"";
+
+        // 参数编码， 固定值
+        orderInfo += "&_input_charset=\"utf-8\"";
+
+        // 设置未付款交易的超时时间
+        // 默认30分钟，一旦超时，该笔交易就会自动被关闭。
+        // 取值范围：1m～15d。
+        // m-分钟，h-小时，d-天，1c-当天（无论交易何时创建，都在0点关闭）。
+        // 该参数数值不接受小数点，如1.5h，可转换为90m。
+        orderInfo += "&it_b_pay=\"30m\"";
+
+        // extern_token为经过快登授权获取到的alipay_open_id,带上此参数用户将使用授权的账户进行支付
+        // orderInfo += "&extern_token=" + "\"" + extern_token + "\"";
+
+        // 支付宝处理完请求后，当前页面跳转到商户指定页面的路径，可空
+        orderInfo += "&return_url=\"m.alipay.com\"";
+
+        // 调用银行卡支付，需配置此参数，参与签名， 固定值 （需要签约《无线银行卡快捷支付》才能使用）
+        // orderInfo += "&paymethod=\"expressGateway\"";
+
+        return orderInfo;
+    }
+
+    /**
+     * get the out_trade_no for an order. 生成商户订单号，该值在商户端应保持唯一（可自定义格式规范）
+     */
+    private String getOutTradeNo() {
+        SimpleDateFormat format = new SimpleDateFormat("MMddHHmmss", Locale.getDefault());
+        Date date = new Date();
+        String key = format.format(date);
+
+        Random r = new Random();
+        key = key + r.nextInt();
+        key = key.substring(0, 15);
+        return key;
+    }
+
+    /**
+     * sign the order info. 对订单信息进行签名
+     *
+     * @param content 待签名订单信息
+     */
+    private String sign(String content) {
+        return SignUtils.sign(content, RSA_PRIVATE);
+    }
+
+    /**
+     * get the sign type we use. 获取签名方式
+     */
+    private String getSignType() {
+        return "sign_type=\"RSA\"";
     }
 }

@@ -32,7 +32,7 @@ public class FunIntroduceActivity extends BaseActivity implements OnPageChangeLi
 
 		mViewPager = (ViewPager) this.findViewById(R.id.view_pager);
 		mViewPager.setAdapter(new MyPagerAdapter());
-		mViewPager.setOnPageChangeListener(this);
+		mViewPager.addOnPageChangeListener(this);
 		
 		dots = new ArrayList<View>();
 		ImageView iv1 = (ImageView) this.findViewById(R.id.wn_iv1);
@@ -41,6 +41,12 @@ public class FunIntroduceActivity extends BaseActivity implements OnPageChangeLi
 		dots.add(iv1);
 		dots.add(iv2);
 		dots.add(iv3);
+		iv3.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+			}
+		});
 	}
 
 	@Override

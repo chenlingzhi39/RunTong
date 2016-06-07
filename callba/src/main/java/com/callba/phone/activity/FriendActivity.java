@@ -84,6 +84,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         userList.getErrorView().setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                Log.i("error","click");
                 userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),CalldaGlobalConfig.getInstance().getLatitude(),CalldaGlobalConfig.getInstance().getLongitude(),100000);
                 userList.setHeaderRefreshing(true);
             }
