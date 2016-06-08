@@ -39,7 +39,6 @@
                 android:id="@+id/address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="账户绑定号码(江苏移动)"
                 />
         </LinearLayout>
 

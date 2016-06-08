@@ -80,6 +80,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"/>
         <activity
             android:name="com.alipay.sdk.app.H5PayActivity"
             android:configChanges="orientation|keyboardHidden|navigation"
@@ -92,6 +93,9 @@
             android:exported="false"
             android:screenOrientation="behind"
             android:theme="@android:style/Theme.Light.NoTitleBar"/>
+        <activity
+            android:name=".phone.activity.CropActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name="me.iwf.photopicker.PhotoPickerActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />

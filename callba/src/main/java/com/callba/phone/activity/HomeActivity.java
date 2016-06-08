@@ -19,6 +19,7 @@ import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.activity.recharge.RechargeActivity2;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Task;
+import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.LoginController;
@@ -32,7 +33,10 @@ import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.BannerLayout;
 
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,6 +82,7 @@ public class HomeActivity extends BaseActivity {
     private ProgressDialog progressDialog;
     private String username;
     private String password;
+    private UserDao userDao;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -180,6 +185,31 @@ public class HomeActivity extends BaseActivity {
         localImages.add(R.drawable.ad2);
         localImages.add(R.drawable.ad3);
         banner.setViewRes(localImages);
+        userDao=new UserDao(this, new UserDao.PostListener() {
+            @Override
+            public void start() {
+
+            }
+
+            @Override
+            public void success(String msg) {
+                String[] result = msg.split("\\|");
+                if (result[0].equals("0")) {
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");//获取当前时间
+                    String date = formatter.format(new Date(System.currentTimeMillis()));
+                    String[] dates = result[1].split(",");
+                    if(!date.equals(dates[dates.length-1]))
+                    { Intent intent=new Intent(HomeActivity.this,SignInActivity.class);
+                    startActivity(intent);
+                    }
+                }
+            }
+
+            @Override
+            public void failure(String msg) {
+
+            }
+        });
     }
 
     @Override
@@ -408,7 +438,11 @@ public class HomeActivity extends BaseActivity {
                         LoginController.parseLoginSuccessResult(
                                 HomeActivity.this, username, password,
                                 resultInfo);
-
+                        String year=Calendar.getInstance().get(Calendar.YEAR)+"";
+                        String month=Calendar.getInstance().get(Calendar.MONTH)+1+"";
+                        if(month.length()==1)
+                            month="0"+month;
+                        userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year+month);
 
 
 

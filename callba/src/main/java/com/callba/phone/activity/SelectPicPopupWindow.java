@@ -12,7 +12,10 @@ import android.widget.Toast;
 
 
 import com.callba.R;
+import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.Utils;
+
+import java.io.File;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -46,8 +49,11 @@ boolean isCrop;
 
                 Intent intent = new Intent(
                         MediaStore.ACTION_IMAGE_CAPTURE);
+            if(!new File(Constant.PHOTO_PATH).exists())
+                new File(Constant.PHOTO_PATH).mkdirs();
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(Constant.PHOTO_PATH,"camera.jpg")));
 
-                startActivityForResult(intent, 2);
+            startActivityForResult(intent, 2);
 
         } else {
             Toast.makeText(SelectPicPopupWindow.this, "没有储存卡", Toast.LENGTH_SHORT)
@@ -103,7 +109,13 @@ boolean isCrop;
             case 1:
                 if (data != null) {
                     if(isCrop)
-                    startPhotoZoom(data.getData());
+                    //startPhotoZoom(data.getData());
+                    {
+                        Intent intent = new Intent(SelectPicPopupWindow.this, CropActivity.class);
+                        intent.putExtra("uri",data.getData());
+                        startActivityForResult(intent,3);
+                    }
+
                     else {
                         Intent intent = new Intent();
                      /*   Uri originalUri=data.getData();
@@ -128,11 +140,16 @@ boolean isCrop;
             case 2:
                 if(data!=null) {
                     if (isCrop)
-                        startPhotoZoom(data.getData());
+                        //startPhotoZoom(data.getData());
+                    {
+                        Intent intent = new Intent(SelectPicPopupWindow.this, CropActivity.class);
+                        intent.putExtra("uri",Uri.fromFile(new File(Constant.PHOTO_PATH,"camera.jpg")));
+                        startActivityForResult(intent,3);
+                    }
                     else
                     {
                         Intent intent = new Intent();
-                        Uri originalUri=data.getData();
+                       /* Uri originalUri=data.getData();
                         String[] proj =  { MediaStore.Images.Media.DATA };
                         //好像是android多媒体数据库的封装接口，具体的看Android文档
                         Cursor cursor = getContentResolver().query(originalUri, proj, null, null, null);
@@ -141,8 +158,8 @@ boolean isCrop;
                         //将光标移至开头 ，这个很重要，不小心很容易引起越界
                         cursor.moveToFirst();
                         //最后根据索引值获取图片路径
-                        String path = cursor.getString(column_index);
-
+                        String path = cursor.getString(column_index);*/
+                        String path= Utils.getPath(this,data);
                         intent.putExtra("path",path);
                         setResult(RESULT_OK, intent);
                         finish();
@@ -154,20 +171,22 @@ boolean isCrop;
             case 3:
 
                 if (data != null) {
-                    Bundle extras = data.getExtras();
+                    setResult(RESULT_OK, data);
+                    finish();
+                    /*Bundle extras = data.getExtras();
                     if (extras != null) {
                         // photo_item = extras.getParcelable("data");
 //                 Drawable drawable = new BitmapDrawable(photo_item);
 
-                        /**
+                        *//**
 
                          * 下面注释的方法是将裁剪之后的图片以Base64Coder的字符方式上
 
                          * 传到服务器，QQ头像上传采用的方法跟这个类似
 
-                         */
+                         *//*
 
-                 /*ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                 *//*ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
                  photo_item.compress(Bitmap.CompressFormat.JPEG, 60, stream);
 
@@ -193,14 +212,14 @@ boolean isCrop;
 
                  Drawable drawable = new BitmapDrawable(dBitmap);
 
-                 */
+                 *//*
                         //  head.setImageBitmap(photo_item);
 
                         Intent intent = new Intent();
                         intent.putExtra("photo_item", extras);
                         setResult(RESULT_OK, intent);
                         finish();
-                    }
+                    }*/
                 }
 
                 break;
@@ -210,5 +229,17 @@ boolean isCrop;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
+    /**
+     * 检查存储卡是否插入
+     * @return
+     */
+    public static boolean isHasSdcard()
+    {
+        String status = Environment.getExternalStorageState();
+        if (status.equals(Environment.MEDIA_MOUNTED)){
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

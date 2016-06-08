@@ -3,8 +3,10 @@ package com.callba.phone.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,13 +21,17 @@ import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.BitmapUtil;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CircleTextView;
+import com.umeng.socialize.utils.Log;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import me.iwf.photopicker.PhotoPickerActivity;
+import me.iwf.photopicker.utils.PhotoPickerIntent;
 
 /**
  * Created by PC-20160514 on 2016/5/19.
@@ -49,7 +55,6 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     TextView signature;
     @InjectView(R.id.change_signature)
     RelativeLayout changeSignature;
-    private Bitmap photo;
     private File f;
     private UserDao userDao;
     private ProgressDialog dialog;
@@ -95,8 +100,13 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
 
     @OnClick(R.id.change_head)
     public void change_head(){
-        Intent intent=new Intent(ChangeInfoActivity.this,SelectPicPopupWindow.class);
+        /*Intent intent=new Intent(ChangeInfoActivity.this,SelectPicPopupWindow.class);
         intent.putExtra("isCrop",true);
+        startActivityForResult(intent, 0);*/
+        PhotoPickerIntent intent = new PhotoPickerIntent(ChangeInfoActivity.this);
+        intent.setPhotoCount(1);
+        intent.setShowCamera(true);
+        intent.setShowGif(true);
         startActivityForResult(intent, 0);
     }
     @OnClick(R.id.change_nickname)
@@ -119,16 +129,30 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (resultCode) {
+      /*  switch (resultCode) {
             case RESULT_OK:
-                Bundle b = data.getBundleExtra("photo_item");
-                photo = b.getParcelable("data");
-                head.setImageBitmap(photo);
-                f= BitmapUtil.saveBitmap(ChangeInfoActivity.this, photo, Constant.PHOTO_PATH, "head.jpg");
+                Log.i("path",data.getStringExtra("path"));
+                head.setImageBitmap(BitmapUtil.getLoacalBitmap(data.getStringExtra("path")));
+                f= new File(data.getStringExtra("path"));
                 break;
             default:
                 break;
 
+        }*/
+        if (resultCode == RESULT_OK && requestCode == 0) {
+            if (data != null) {
+                ArrayList<String> photos =
+                        data.getStringArrayListExtra(PhotoPickerActivity.KEY_SELECTED_PHOTOS);
+                Intent intent = new Intent(ChangeInfoActivity.this, CropActivity.class);
+                intent.putExtra("uri", Uri.fromFile(new File(photos.get(0))));
+                startActivityForResult(intent,1);
+            }
+        }
+        if (resultCode == RESULT_OK && requestCode == 1) {
+            if (data != null) {
+                head.setImageBitmap(BitmapUtil.getLoacalBitmap(data.getStringExtra("path")));
+                f= new File(data.getStringExtra("path"));
+            }
         }
     }
 

@@ -54,7 +54,6 @@ public class UserDao {
     public UserDao() {
         httpUtils = new HttpUtils(6 * 1000);
         httpUtils.configRequestRetryCount(3);
-        Log.i("userdao","无参");
     }
 
     public UserDao(Context context, Handler handler) {
@@ -389,7 +388,7 @@ public class UserDao {
 
             @Override
             public void onLoading(long total, long current, boolean isUploading) {
-
+             uploadListener.loading(total, current, isUploading);
             }
         });
     }

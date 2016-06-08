@@ -2,11 +2,13 @@ package com.callba.phone.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.view.View;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,5 +46,20 @@ public  class BitmapUtil {
         Canvas canvas = new Canvas(bitmap);
         v.draw(canvas);
         return bitmap;
+    }
+    /**
+     * 加载本地图片
+     * http://bbs.3gstdy.com
+     * @param url
+     * @return
+     */
+    public static Bitmap getLoacalBitmap(String url) {
+        try {
+            FileInputStream fis = new FileInputStream(url);
+            return BitmapFactory.decodeStream(fis);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

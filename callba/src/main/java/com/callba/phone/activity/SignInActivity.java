@@ -191,7 +191,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
             public void onCalendarDateChanged(int year, int month) {
                 popupwindow_calendar_month
                         .setText(year + "年" + month + "月");
-                if (!monthList.contains(month))
+
                     query();
             }
         });
@@ -265,13 +265,14 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 isinput = true;
             }
         }*/
-        Log.i("year",calendar.getCalendarYear()+"");
+        if (!monthList.contains(calendar.getCalendarMonth())&&calendar.getCalendarMonth()<=cal.get(Calendar.MONTH)+1)
+        { Log.i("year",calendar.getCalendarYear()+"");
         Log.i("month",calendar.getCalendarMonth()+"");
         String year=calendar.getCalendarYear()+"";
         String month=calendar.getCalendarMonth()+"";
         if(month.length()==1)
             month="0"+month;
-        userDao1.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year+month);
+        userDao1.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year+month);}
 
     }
 

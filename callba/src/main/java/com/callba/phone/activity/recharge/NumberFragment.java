@@ -57,7 +57,7 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
         String address = NumberAddressService.getAddress(
                 CalldaGlobalConfig.getInstance().getUsername(), Constant.DB_PATH,
                 getActivity());
-        tv_address.setText(address);
+        tv_address.setHint(address);
         userDao = new UserDao(getActivity(), this);
 
        card.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -156,7 +156,7 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
                                     getActivity());
                             //if (!address.equals("")) {
                                 number.setText(helper.getNumber());
-                                tv_address.setText(address);
+                                tv_address.setHint(address);
                            /* } else
                                 toast("请输入正确的手机号!");*/
                         } else

@@ -41,12 +41,6 @@ public class FunIntroduceActivity extends BaseActivity implements OnPageChangeLi
 		dots.add(iv1);
 		dots.add(iv2);
 		dots.add(iv3);
-		iv3.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-
-			}
-		});
 	}
 
 	@Override
@@ -105,7 +99,15 @@ public class FunIntroduceActivity extends BaseActivity implements OnPageChangeLi
 			v1.setBackgroundResource(R.drawable.introduce_bg1);
 			v2.setBackgroundResource(R.drawable.introduce_bg2);
 			v3.setBackgroundResource(R.drawable.introduce_bg3);
-			
+			v3.setClickable(true);
+			v3.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(FunIntroduceActivity.this, GuideActivity.class);
+					startActivity(intent);
+					finish();
+				}
+			});
 			views.add(v1);
 			views.add(v2);
 			views.add(v3);

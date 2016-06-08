@@ -176,7 +176,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         String address = NumberAddressService.getAddress(
                 CalldaGlobalConfig.getInstance().getUsername(), Constant.DB_PATH,
                 getActivity());
-        tv_address.setText(address);
+        tv_address.setHint(address);
         userDao = new UserDao(getActivity(), this);
         subject="39元套餐";
         body="包月畅聊";
@@ -283,7 +283,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                                     getActivity());
                             //if (!address.equals("")) {
                             number.setText(helper.getNumber());
-                            tv_address.setText(address);
+                            tv_address.setHint(address);
                           /*  } else
                                 toast("请输入正确的手机号!");*/
                         } else
