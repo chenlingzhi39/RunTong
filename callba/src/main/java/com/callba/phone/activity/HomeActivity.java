@@ -201,13 +201,13 @@ public class HomeActivity extends BaseActivity {
                     if(!date.equals(dates[dates.length-1]))
                     { Intent intent=new Intent(HomeActivity.this,SignInActivity.class);
                     startActivity(intent);
-                    }
-                }
+                    }else mPreferenceUtil.putBoolean("is_sign",true,true);
+                }else{toast(result[1]);}
             }
 
             @Override
             public void failure(String msg) {
-
+              toast(msg);
             }
         });
     }
@@ -438,12 +438,13 @@ public class HomeActivity extends BaseActivity {
                         LoginController.parseLoginSuccessResult(
                                 HomeActivity.this, username, password,
                                 resultInfo);
-                        String year=Calendar.getInstance().get(Calendar.YEAR)+"";
-                        String month=Calendar.getInstance().get(Calendar.MONTH)+1+"";
-                        if(month.length()==1)
-                            month="0"+month;
-                        userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year+month);
-
+                        if(!mPreferenceUtil.getBoolean("is_sign",false)) {
+                            String year = Calendar.getInstance().get(Calendar.YEAR) + "";
+                            String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
+                            if (month.length() == 1)
+                                month = "0" + month;
+                            userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
+                        }
 
 
                         // 查询余额

@@ -13,6 +13,7 @@ import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CircleTextView;
 import com.callba.phone.widget.signcalendar.DBManager;
 import com.callba.phone.widget.signcalendar.SignCalendar;
@@ -207,7 +208,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     @Override
     public void success(String msg) {
         toast(msg);
-
+        SharedPreferenceUtil.getInstance(this).putBoolean("is_sign",true,true);
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
            /* calendar.removeAllMarks();
            list.add(df.format(today));
