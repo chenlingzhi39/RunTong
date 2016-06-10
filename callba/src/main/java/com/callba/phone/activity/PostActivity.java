@@ -1,10 +1,12 @@
 package com.callba.phone.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -17,6 +19,7 @@ import com.callba.phone.BaseActivity;
 import com.callba.phone.adapter.PhotoAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.view.AlwaysMarqueeTextView;
 
@@ -36,7 +39,7 @@ import me.iwf.photopicker.utils.PhotoPickerIntent;
         navigationId = R.drawable.press_back,
         menuId = R.menu.menu_post
 )
-public class PostActivity extends BaseActivity {
+public class PostActivity extends BaseActivity implements UserDao.UploadListener{
     @InjectView(R.id.content)
     EditText content;
     @InjectView(R.id.photos)
@@ -48,7 +51,8 @@ public class PostActivity extends BaseActivity {
     private PhotoAdapter photoAdapter;
     private View footerView;
     private ArrayList<String> photoList;
-
+    private UserDao userDao;
+    private ProgressDialog dialog;
     @Override
     public void init() {
 
@@ -102,6 +106,37 @@ public class PostActivity extends BaseActivity {
         });
         photos.setLayoutManager(new GridLayoutManager(this, 5));
         photos.setAdapter(photoAdapter);
+        userDao=new UserDao(this,this);
+    }
+
+    @Override
+    public void failure(String msg) {
+        toast(msg);
+        dialog.dismiss();
+    }
+
+    @Override
+    public void start() {
+        dialog = new ProgressDialog(PostActivity.this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        dialog.setTitle("上传中...");
+        dialog.setIndeterminate(false);
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+    }
+
+    @Override
+    public void success(String msg) {
+        toast(msg);
+        dialog.dismiss();
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    @Override
+    public void loading(long total, long current, boolean isUploading) {
+        dialog.setProgress((int)(current/total)*100);
     }
 
     @Override
@@ -126,5 +161,15 @@ public class PostActivity extends BaseActivity {
                     footerView.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.post:
+                userDao.sendMood(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),content.getText().toString(),(ArrayList<String>) photoAdapter.getData());
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

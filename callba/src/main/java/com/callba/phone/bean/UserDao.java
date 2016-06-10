@@ -21,6 +21,7 @@ import com.callba.phone.util.Interfaces;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by PC-20160514 on 2016/5/19.
@@ -433,7 +434,7 @@ public class UserDao {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 result=responseInfo.result.split("\\|");
-                Log.i("get_meal",responseInfo.result);
+                Log.i("get_suits",responseInfo.result);
                 if(result[0].equals("0"))
                 { if(result.length>1)
                     postListener.success(result[1]);
@@ -489,6 +490,60 @@ public class UserDao {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 postListener.success(responseInfo.result);
+            }
+        });
+    }
+    public void getMoods(String loginName,String password,String page,String pageSize){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("page",page);
+        params.addBodyParameter("pagezize",pageSize);
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_MOODS, params, new RequestCallBack<String>(){
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                postListener.failure(context.getString(R.string.network_error));
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Log.i("moods",responseInfo.result);
+              postListener.success(responseInfo.result);
+            }
+        });
+    }
+    public void sendMood(String loginName,String password,String content,ArrayList<String> files){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("content",content);
+        params.addBodyParameter("htmlUrl","");
+        for(String path:files)
+            params.addBodyParameter("file",new File(path));
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.SEND_MOODS, params, new RequestCallBack<String>(){
+            @Override
+            public void onStart() {
+                uploadListener.start();
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                error.printStackTrace();
+                uploadListener.failure(context.getString(R.string.network_error));
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                result=responseInfo.result.split("\\|");
+                if(result[0].equals("0"))
+                    uploadListener.success(result[1]);
+                else
+                    uploadListener.failure(result[1]);
+            }
+
+            @Override
+            public void onLoading(long total, long current, boolean isUploading) {
+                 uploadListener.loading(total,current,isUploading);
             }
         });
     }

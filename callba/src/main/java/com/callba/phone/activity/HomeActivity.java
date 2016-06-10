@@ -83,10 +83,13 @@ public class HomeActivity extends BaseActivity {
     private String username;
     private String password;
     private UserDao userDao;
+    private String date;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");//获取当前时间
+        date = formatter.format(new Date(System.currentTimeMillis()));
         mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
         mPreferenceUtil.putBoolean(Constant.IS_FROMGUIDE, false, true);
         mPreferenceUtil.commit();
@@ -195,13 +198,12 @@ public class HomeActivity extends BaseActivity {
             public void success(String msg) {
                 String[] result = msg.split("\\|");
                 if (result[0].equals("0")) {
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");//获取当前时间
-                    String date = formatter.format(new Date(System.currentTimeMillis()));
                     String[] dates = result[1].split(",");
                     if(!date.equals(dates[dates.length-1]))
-                    { Intent intent=new Intent(HomeActivity.this,SignInActivity.class);
+                    {mPreferenceUtil.putBoolean(date,false,true);
+                        Intent intent=new Intent(HomeActivity.this,SignInActivity.class);
                     startActivity(intent);
-                    }else mPreferenceUtil.putBoolean("is_sign",true,true);
+                    }else mPreferenceUtil.putBoolean(date,true,true);
                 }else{toast(result[1]);}
             }
 
@@ -438,11 +440,12 @@ public class HomeActivity extends BaseActivity {
                         LoginController.parseLoginSuccessResult(
                                 HomeActivity.this, username, password,
                                 resultInfo);
-                        if(!mPreferenceUtil.getBoolean("is_sign",false)) {
-                            String year = Calendar.getInstance().get(Calendar.YEAR) + "";
-                            String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
-                            if (month.length() == 1)
-                                month = "0" + month;
+                        String year = Calendar.getInstance().get(Calendar.YEAR) + "";
+                        String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
+                        if (month.length() == 1)
+                            month = "0" + month;
+                        if(!mPreferenceUtil.getBoolean(date,false)) {
+
                             userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
                         }
 

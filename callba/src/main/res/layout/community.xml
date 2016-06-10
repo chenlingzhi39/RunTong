@@ -1,41 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <include layout="@layout/toolbar"/>
-<RelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:background="@color/white"
-    >
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/head"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_centerHorizontal="true"
-        android:layout_toLeftOf="@+id/more1"
-        android:src="@drawable/head"
-        android:layout_marginTop="20dp"
-        />
-    <TextView
-        android:id="@+id/number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/head"
-        android:text="15861656821"
-        android:layout_marginTop="10dp"
-        android:textSize="20sp"/>
-     <TextView
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_below="@+id/number"
-         android:layout_marginTop="20dp"
-         android:layout_centerHorizontal="true"
-         android:text="个性签名"
-         android:textSize="18sp"/>
-</RelativeLayout>
+    android:layout_height="match_parent"
+    android:background="@color/white">
+    <include layout="@layout/toolbar"/>
+
     <com.callba.phone.widget.refreshlayout.EasyRecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:id="@+id/list"
+        app:layout_empty="@layout/view_empty"
+        app:layout_error="@layout/view_error"
+        app:layout_progress="@layout/view_progress"/>
 </LinearLayout>

@@ -95,14 +95,14 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
 
     @Override
     public void loading(long total, long current, boolean isUploading) {
-       dialog.setProgress((int)(current/total));
+       dialog.setProgress((int)(current/total)*100);
     }
 
     @OnClick(R.id.change_head)
     public void change_head(){
         /*Intent intent=new Intent(ChangeInfoActivity.this,SelectPicPopupWindow.class);
         intent.putExtra("isCrop",true);
-        startActivityForResult(intent, 0);*/
+        startActivityForResult(intent, 1);*/
         PhotoPickerIntent intent = new PhotoPickerIntent(ChangeInfoActivity.this);
         intent.setPhotoCount(1);
         intent.setShowCamera(true);
@@ -160,10 +160,12 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.save:
-                if(f.exists())
+                if(f!=null)
                 userDao.changeHead(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(),f);
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }

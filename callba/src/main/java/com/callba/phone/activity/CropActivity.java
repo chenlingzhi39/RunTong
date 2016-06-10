@@ -54,11 +54,11 @@ public class CropActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Log.i("omclick","home");
+                Log.i("onclick","home");
                 finish();
                 break;
             case R.id.ok:
-                Log.i("omclick","ok");
+                Log.i("onclick","ok");
                 cropImageView.setOnGetCroppedImageCompleteListener(new CropImageView.OnGetCroppedImageCompleteListener() {
                     @Override
                     public void onGetCroppedImageComplete(CropImageView view, Bitmap bitmap, Exception error) {

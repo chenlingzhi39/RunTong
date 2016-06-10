@@ -182,6 +182,14 @@ public interface Interfaces {
 	 * 上传头像
 	 */
 	String CHANGE_HEAD=BASIC_URL+"/user_head.jsp";
+	/**
+	 * 获取动态
+	 */
+	String GET_MOODS="http://inter.boboit.cn/inter/circle/getmood.jsp";
+	/**
+	 * 发心情
+	 */
+    String SEND_MOODS="http://inter.boboit.cn/inter/circle/sendmood.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

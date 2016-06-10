@@ -77,7 +77,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         circle.setDensity(mDensity);
         popupwindow_calendar_month.setText(calendar.getCalendarYear() + "年"
                 + calendar.getCalendarMonth() + "月");
-        if (null != date) {
+      /*  if (null != date) {
             int years = Integer.parseInt(date.substring(0,
                     date.indexOf("-")));
             int month = Integer.parseInt(date.substring(
@@ -87,8 +87,9 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
             calendar.showCalendar(years, month);
             calendar.setCalendarDayBgColor(date,
                     R.drawable.calendar_date_focused);
-        }
-
+        }*/
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");//获取当前时间
+        date = sf.format(new Date(System.currentTimeMillis()));
         /*add("2015-11-10");
         add("2015-11-02");
         add("2015-12-02");*/
@@ -208,7 +209,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     @Override
     public void success(String msg) {
         toast(msg);
-        SharedPreferenceUtil.getInstance(this).putBoolean("is_sign",true,true);
+        SharedPreferenceUtil.getInstance(this).putBoolean(date,true,true);
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
            /* calendar.removeAllMarks();
            list.add(df.format(today));
@@ -224,7 +225,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         btn_signIn.setBackgroundResource(R.drawable.button_gray);
         btn_signIn.setEnabled(false);
         try {
-            if (today.getTime() - df.parse(list.get(list.size() - 1)).getTime() < 2 * 24 * 60 * 60 * 1000) {
+            if (today.getTime() - df.parse(list.get(list.size() - 1)).getTime() <= 24 * 60 * 60 * 1000) {
                 constant += 1;
                 circle.setConstant(constant);
             }

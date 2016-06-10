@@ -402,7 +402,7 @@ public void setProgressViewOffset(boolean scale, int start, int end){
         mPtrLayout.setHeaderColorSchemeResources(colRes1, colRes2, colRes3, colRes4);
     }
 
-    public void setFooterRefrehingColorResources(@ColorRes int colRes1, @ColorRes int colRes2, @ColorRes int colRes3, @ColorRes int colRes4) {
+    public void setFooterRefreshingColorResources(@ColorRes int colRes1, @ColorRes int colRes2, @ColorRes int colRes3, @ColorRes int colRes4) {
         mPtrLayout.setFooterColorSchemeResources(colRes1, colRes2, colRes3, colRes4);
     }
 

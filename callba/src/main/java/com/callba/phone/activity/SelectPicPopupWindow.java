@@ -3,6 +3,7 @@ package com.callba.phone.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.util.BitmapUtil;
 import com.callba.phone.util.Utils;
 
 import java.io.File;
@@ -109,12 +111,8 @@ boolean isCrop;
             case 1:
                 if (data != null) {
                     if(isCrop)
-                    //startPhotoZoom(data.getData());
-                    {
-                        Intent intent = new Intent(SelectPicPopupWindow.this, CropActivity.class);
-                        intent.putExtra("uri",data.getData());
-                        startActivityForResult(intent,3);
-                    }
+                    startPhotoZoom(data.getData());
+
 
                     else {
                         Intent intent = new Intent();
@@ -140,12 +138,8 @@ boolean isCrop;
             case 2:
                 if(data!=null) {
                     if (isCrop)
-                        //startPhotoZoom(data.getData());
-                    {
-                        Intent intent = new Intent(SelectPicPopupWindow.this, CropActivity.class);
-                        intent.putExtra("uri",Uri.fromFile(new File(Constant.PHOTO_PATH,"camera.jpg")));
-                        startActivityForResult(intent,3);
-                    }
+                        startPhotoZoom(data.getData());
+
                     else
                     {
                         Intent intent = new Intent();
@@ -171,6 +165,10 @@ boolean isCrop;
             case 3:
 
                 if (data != null) {
+                    Bundle extras = data.getExtras();
+                    File f=BitmapUtil.saveBitmap(SelectPicPopupWindow.this,(Bitmap)extras.getParcelable("data"), Constant.PHOTO_PATH, "head.jpg");
+                    Intent intent=new Intent();
+                    intent.putExtra("path",f.getPath());
                     setResult(RESULT_OK, data);
                     finish();
                     /*Bundle extras = data.getExtras();
