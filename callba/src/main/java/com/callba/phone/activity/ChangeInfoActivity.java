@@ -82,6 +82,8 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
             @Override
             public void success(String msg) {
             toast(msg);
+                CalldaGlobalConfig.getInstance().setNickname(nickName.getHint().toString());
+                CalldaGlobalConfig.getInstance().setSignature(signature.getHint().toString());
             }
 
             @Override
@@ -184,7 +186,9 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
             case R.id.save:
                 if(f!=null)
                 userDao.changeHead(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(),f);
-                    userDao1.changeInfo(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(),!nickName.getHint().toString().equals(CalldaGlobalConfig.getInstance().getNickname())?nickName.getHint().toString():null,!(signature.getHint().toString()).equals(CalldaGlobalConfig.getInstance().getNickname())?signature.getHint().toString():null);
+                Log.i("nickname",nickName.getHint().toString().equals(CalldaGlobalConfig.getInstance().getNickname())+"");
+                Log.i("sign",signature.getHint().toString().equals(CalldaGlobalConfig.getInstance().getSignature())+"");
+                    userDao1.changeInfo(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(),!nickName.getHint().toString().equals(CalldaGlobalConfig.getInstance().getNickname())?nickName.getHint().toString():null,!signature.getHint().toString().equals(CalldaGlobalConfig.getInstance().getSignature())?signature.getHint().toString():null);
                 break;
         }
         return super.onOptionsItemSelected(item);

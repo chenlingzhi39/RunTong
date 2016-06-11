@@ -3,10 +3,12 @@ package com.callba.phone.activity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ExpandableListView;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.adapter.HelpAdapter;
+import com.callba.phone.adapter.HelpListAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Help;
 import com.callba.phone.widget.DividerItemDecoration;
@@ -26,14 +28,28 @@ import butterknife.InjectView;
 )
 public class HelpActivity extends BaseActivity {
     @InjectView(R.id.list)
-    RecyclerView list;
+    ExpandableListView list;
     private HelpAdapter helpAdapter;
+    private HelpListAdapter helpListAdapter;
     ArrayList<Help> helps;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        helpAdapter=new HelpAdapter(this);
+        helpListAdapter=new HelpListAdapter(this);
+        list.setGroupIndicator(null);
+        list.setAdapter(helpListAdapter);
+        list.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                for (int i = 0; i < helpListAdapter.getGroupCount(); i++) {
+                    if (groupPosition != i) {
+                        list.collapseGroup(i);
+                    }
+                }
+            }
+        });
+       /* helpAdapter=new HelpAdapter(this);
         helps=new ArrayList<>();
         helps.add(new Help("使用Call吧要换卡吗？","    亲，Call是新一代网络通讯技术，不需要换卡！有WIFI或者4G网络就行！"));
         helps.add(new Help("使用Call吧有月租、漫游费么？","    亲，那是黑心三大运营商干的事，我们无月租、无漫游费、不分长短途！就四个字：随便打！"));
@@ -46,7 +62,7 @@ public class HelpActivity extends BaseActivity {
         helpAdapter.addAll(helps);
         list.setAdapter(helpAdapter);
         list.addItemDecoration(new DividerItemDecoration(
-                this, DividerItemDecoration.VERTICAL_LIST));
+                this, DividerItemDecoration.VERTICAL_LIST));*/
     }
 
     @Override

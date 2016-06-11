@@ -21,6 +21,7 @@ import android.os.Message;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -255,6 +256,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 						RegisterActivity.this);
 				if(!address.equals(""))
 				{*/
+				Log.i("key",key);
 					try {
 						sendRegisterRequest(username, password,DesUtil.encrypt(code,key));
 					}catch(Exception e){}
