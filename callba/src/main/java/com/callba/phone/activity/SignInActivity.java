@@ -60,6 +60,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     Calendar cal;
     Date today;
     ArrayList<Integer> monthList=new ArrayList<>();
+    SimpleDateFormat df;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,8 +89,8 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
             calendar.setCalendarDayBgColor(date,
                     R.drawable.calendar_date_focused);
         }*/
-        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");//获取当前时间
-        date = sf.format(new Date(System.currentTimeMillis()));
+        df = new SimpleDateFormat("yyyyMMdd");
+        date = df.format(new Date(System.currentTimeMillis()));
         /*add("2015-11-10");
         add("2015-11-02");
         add("2015-12-02");*/
@@ -121,7 +122,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                         }
                         list.add(date);
                     }
-                    SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+
                     if(calendar.getCalendarMonth()==cal.get(Calendar.MONTH)+1)
                     if (dates.length > 0) {
                         try {
@@ -225,7 +226,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         btn_signIn.setBackgroundResource(R.drawable.button_gray);
         btn_signIn.setEnabled(false);
         try {
-            if (today.getTime() - df.parse(list.get(list.size() - 1)).getTime() <= 24 * 60 * 60 * 1000) {
+            if (today.getTime() - df.parse(list.get(list.size() - 1)).getTime() <2* 24 * 60 * 60 * 1000) {
                 constant += 1;
                 circle.setConstant(constant);
             }

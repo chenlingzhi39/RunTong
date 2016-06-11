@@ -77,7 +77,8 @@
             android:layout_toLeftOf="@+id/more2"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:singleLine="true"/>
     </RelativeLayout>
     <View
         android:layout_width="match_parent"
@@ -109,11 +110,11 @@
             android:id="@+id/signature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="nuonuo"
             android:layout_toLeftOf="@+id/more3"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:singleLine="true"/>
     </RelativeLayout>
     <View
         android:layout_width="match_parent"

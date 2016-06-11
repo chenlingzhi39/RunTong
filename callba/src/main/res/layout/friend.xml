@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingBottom="10dp"
-        android:paddingLeft="20dp"
+        android:paddingLeft="10dp"
         android:paddingRight="20dp"
         android:paddingTop="10dp">
 
@@ -43,6 +43,7 @@
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"  />
     </LinearLayout>
+
     <com.callba.phone.widget.refreshlayout.EasyRecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

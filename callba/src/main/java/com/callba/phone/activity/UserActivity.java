@@ -30,10 +30,7 @@ import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
-import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,35 +48,45 @@ import de.hdodenhof.circleimageview.CircleImageView;
         toolbarTitle = R.string.center
 )
 public class UserActivity extends BaseActivity {
-    @InjectView(R.id.logout)
-    RelativeLayout logout;
-    @InjectView(R.id.change_info)
-    RelativeLayout change_info;
+    @InjectView(R.id.user_head)
+    CircleImageView userHead;
     @InjectView(R.id.number)
     TextView number;
-    @InjectView(R.id.retrieve)
-    RelativeLayout retrieve;
+    @InjectView(R.id.word)
+    TextView word;
     @InjectView(R.id.account)
     RelativeLayout account;
+    @InjectView(R.id.change_info)
+    RelativeLayout changeInfo;
     @InjectView(R.id.change_password)
     RelativeLayout changePassword;
-    @InjectView(R.id.user_head)
-    CircleImageView circleImageView;
+    @InjectView(R.id.retrieve)
+    RelativeLayout retrieve;
+    @InjectView(R.id.about)
+    RelativeLayout about;
+    @InjectView(R.id.help)
+    RelativeLayout help;
+    @InjectView(R.id.update)
+    RelativeLayout update;
+    @InjectView(R.id.logout)
+    RelativeLayout logout;
     private SharedPreferenceUtil mSharedPreferenceUtil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         number.setText(CalldaGlobalConfig.getInstance().getUsername());
-        if(!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
-            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(circleImageView);
+        if (!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
+            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(userHead);
+        Log.i("head", CalldaGlobalConfig.getInstance().getUserhead());
         mSharedPreferenceUtil = SharedPreferenceUtil.getInstance(this);
     }
 
     @Override
     protected void onResume() {
-        if(!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
-            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(circleImageView);
+        if (!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
+            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(userHead);
         super.onResume();
     }
 
@@ -89,12 +96,12 @@ public class UserActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.account, R.id.change_info, R.id.change_password, R.id.retrieve, R.id.logout,R.id.update})
+    @OnClick({R.id.account, R.id.change_info, R.id.change_password, R.id.retrieve, R.id.logout, R.id.about, R.id.help, R.id.update})
     public void onClick(View view) {
         Intent intent;
         switch (view.getId()) {
             case R.id.account:
-                intent=new Intent(UserActivity.this,AccountActivity.class);
+                intent = new Intent(UserActivity.this, AccountActivity.class);
                 startActivity(intent);
                 break;
             case R.id.change_info:
@@ -125,12 +132,21 @@ public class UserActivity extends BaseActivity {
                 }
                 startActivity(intent);
                 break;
+            case R.id.about:
+                intent = new Intent(UserActivity.this, AboutActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.help:
+                intent = new Intent(UserActivity.this, HelpActivity.class);
+                startActivity(intent);
+                break;
             case R.id.update:
-                Log.i("click","update");
+                Log.i("click", "update");
                 sendGetVersionTask();
                 break;
         }
     }
+
     /**
      * 发送获取版本信息任务
      *
@@ -157,7 +173,7 @@ public class UserActivity extends BaseActivity {
 
     @Override
     public void refresh(Object... params) {
-        Log.i("user","refresh");
+        Log.i("user", "refresh");
         Message verionMessage = (Message) params[0];
         // 解析版本返回数据
         AppVersionChecker.AppVersionBean appVersionBean = AppVersionChecker.parseVersionInfo(
@@ -199,6 +215,7 @@ public class UserActivity extends BaseActivity {
             }
         }
     }
+
     /**
      * 检查升级
      */
@@ -222,7 +239,7 @@ public class UserActivity extends BaseActivity {
                                 e.printStackTrace();
 
 							/*	CalldaToast calldaToast = new CalldaToast();
-								calldaToast.showToast(getApplicationContext(),
+                                calldaToast.showToast(getApplicationContext(),
 										R.string.upgrade_openfailed);*/
                                 toast(getString(R.string.upgrade_openfailed));
                             }
@@ -268,7 +285,7 @@ public class UserActivity extends BaseActivity {
                                     startActivity(intent);
                                 } catch (ActivityNotFoundException e) {
                                     e.printStackTrace();
-									/*CalldaToast calldaToast = new CalldaToast();
+                                    /*CalldaToast calldaToast = new CalldaToast();
 									calldaToast.showToast(
 											getApplicationContext(),
 											R.string.upgrade_openfailed);*/

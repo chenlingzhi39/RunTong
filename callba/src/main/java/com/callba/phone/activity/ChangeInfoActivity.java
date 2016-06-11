@@ -1,12 +1,16 @@
 package com.callba.phone.activity;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,6 +23,7 @@ import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.BitmapUtil;
+import com.callba.phone.util.NumberAddressService;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CircleTextView;
 import com.umeng.socialize.utils.Log;
@@ -56,7 +61,7 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     @InjectView(R.id.change_signature)
     RelativeLayout changeSignature;
     private File f;
-    private UserDao userDao;
+    private UserDao userDao,userDao1;
     private ProgressDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +70,25 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         if(!CalldaGlobalConfig.getInstance().getUserhead().equals("")){
             Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(head);
         }
-        nickName.setText(CalldaGlobalConfig.getInstance().getNickname());
+        nickName.setHint(CalldaGlobalConfig.getInstance().getNickname());
+        signature.setHint(CalldaGlobalConfig.getInstance().getSignature());
         userDao=new UserDao(this,this);
+        userDao1=new UserDao(this, new UserDao.PostListener() {
+            @Override
+            public void start() {
+
+            }
+
+            @Override
+            public void success(String msg) {
+            toast(msg);
+            }
+
+            @Override
+            public void failure(String msg) {
+             toast(msg);
+            }
+        });
     }
 
     @Override
@@ -111,11 +133,11 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     }
     @OnClick(R.id.change_nickname)
     public void change_nickname(){
-
+    shownNicknameDialog();
     }
     @OnClick(R.id.change_signature)
     public void change_signature(){
-
+    shownSignatureDialog();
     }
     @Override
     public void init() {
@@ -162,10 +184,85 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
             case R.id.save:
                 if(f!=null)
                 userDao.changeHead(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(),f);
+                    userDao1.changeInfo(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(),!nickName.getHint().toString().equals(CalldaGlobalConfig.getInstance().getNickname())?nickName.getHint().toString():null,!(signature.getHint().toString()).equals(CalldaGlobalConfig.getInstance().getNickname())?signature.getHint().toString():null);
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
+    public class DialogHelper implements DialogInterface.OnDismissListener {
+        private Dialog mDialog;
+        private View mView;
+        private EditText change;
 
+        public DialogHelper(int id) {
+            mView = getLayoutInflater().inflate(id, null);
+            change = (EditText) mView.findViewById(R.id.et_change);
+        }
+
+        private String getText() {
+            return change.getText().toString();
+        }
+        public void setText(String s){change.setText(s);}
+        @Override
+        public void onDismiss(DialogInterface dialogInterface) {
+            mDialog = null;
+        }
+
+        public void setDialog(Dialog mDialog) {
+            this.mDialog = mDialog;
+        }
+
+        public View getView() {
+            return mView;
+        }
+
+    }
+
+    public void shownNicknameDialog() {
+        final DialogHelper helper = new DialogHelper(R.layout.dialog_change_number);
+        Dialog dialog = new AlertDialog.Builder(this)
+                .setView(helper.getView()).setTitle(getString(R.string.nick_name))
+                .setOnDismissListener(helper)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                     if(!helper.getText().equals("")){
+                         nickName.setHint(helper.getText());
+                     }
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        helper.setText(nickName.getHint().toString());
+        helper.setDialog(dialog);
+        dialog.show();
+    }
+    public void shownSignatureDialog() {
+        final DialogHelper helper = new DialogHelper(R.layout.dialog_change_signature);
+        Dialog dialog = new AlertDialog.Builder(this)
+                .setView(helper.getView()).setTitle(getString(R.string.signature))
+                .setOnDismissListener(helper)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(!helper.getText().equals("")){
+                            signature.setHint(helper.getText());
+                        }
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        helper.setText(signature.getHint().toString());
+        helper.setDialog(dialog);
+        dialog.show();
+    }
 
 }

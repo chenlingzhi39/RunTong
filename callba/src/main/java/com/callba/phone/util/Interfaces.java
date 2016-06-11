@@ -183,6 +183,10 @@ public interface Interfaces {
 	 */
 	String CHANGE_HEAD=BASIC_URL+"/user_head.jsp";
 	/**
+	 * 修改信息
+	 */
+	String CHANGE_INFO=BASIC_URL+"/user_info_update.jsp";
+	/**
 	 * 获取动态
 	 */
 	String GET_MOODS="http://inter.boboit.cn/inter/circle/getmood.jsp";

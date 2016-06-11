@@ -91,7 +91,7 @@ public class AccountActivity extends BaseActivity {
                         meals.add(meal);
                     }
                     showDialog(meals);
-                }
+                }else toast("无套餐");
             }
 
             @Override

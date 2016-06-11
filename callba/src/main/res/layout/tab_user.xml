@@ -243,7 +243,8 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:padding="10dp"
-            android:clickable="true">
+            android:clickable="true"
+            android:id="@+id/about">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -276,7 +277,8 @@
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
             android:padding="10dp"
-            android:clickable="true">
+            android:clickable="true"
+            android:id="@+id/help">
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

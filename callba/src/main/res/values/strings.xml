@@ -10,7 +10,7 @@
     <string name="home">主页</string>
     <string name="recharge">话费充值</string>
     <string name="recharge2">立即充值</string>
-    <string name="input_card">请输入充值卡号+密码</string>
+    <string name="input_card">请输入充值卡密码</string>
     <string name="input_number">请输入手机号码</string>
     <string name="bind_number">账户绑定号码</string>
     <string name="on_recharge">正在充值</string>

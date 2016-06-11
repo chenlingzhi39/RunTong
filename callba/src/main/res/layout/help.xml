@@ -2,12 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-<EditText
-    android:layout_margin="20dp"
+    android:fitsSystemWindows="true">
+    <include layout="@layout/toolbar"/>
+<android.support.v7.widget.RecyclerView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/et_change"
-    android:singleLine="true"
-    android:maxLength="20"/>
+    android:background="@color/white"
+    android:layout_margin="10dp"
+    android:id="@+id/list"/>
+
 </LinearLayout>

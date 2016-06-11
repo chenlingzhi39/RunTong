@@ -106,7 +106,7 @@ public class CommunityActivity extends BaseActivity implements UserDao.PostListe
                 number.setHint(CalldaGlobalConfig.getInstance().getUsername());
             }
         });
-        moodAdapter.setError(R.layout.view_error).setOnClickListener(new View.OnClickListener() {
+        moodAdapter.setError(R.layout.view_more_error).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 userDao.getMoods(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),page+"",pageSize+"");

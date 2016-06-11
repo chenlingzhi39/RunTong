@@ -547,4 +547,35 @@ public class UserDao {
             }
         });
     }
+    public void changeInfo(String loginName,String password,String nickName,String sign){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        if(nickName!=null)
+        params.addBodyParameter("nickname",nickName);
+        if(sign!=null)
+        params.addBodyParameter("sign",sign);
+        if(nickName!=null||sign!=null)
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.CHANGE_INFO, params, new RequestCallBack<String>(){
+            @Override
+            public void onStart() {
+                postListener.start();
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                result=responseInfo.result.split("\\|");
+                if(result[0].equals("0"))
+                    postListener.success(result[1]);
+                else postListener.failure(result[1]);
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                postListener.failure(context.getString(R.string.network_error));
+            }
+
+
+        });
+    }
 }

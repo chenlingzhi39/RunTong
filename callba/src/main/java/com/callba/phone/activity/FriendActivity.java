@@ -6,6 +6,8 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amap.api.location.AMapLocationClient;
@@ -67,6 +69,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         gson = new Gson();
+        location.setTextColor(getResources().getColor(R.color.black_2f));
         location.setText(CalldaGlobalConfig.getInstance().getAddress());
         userDao=new UserDao(this,this);
         userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),CalldaGlobalConfig.getInstance().getLatitude(),CalldaGlobalConfig.getInstance().getLongitude(),100000);
@@ -87,6 +90,19 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                 Log.i("error","click");
                 userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),CalldaGlobalConfig.getInstance().getLatitude(),CalldaGlobalConfig.getInstance().getLongitude(),100000);
                 userList.setHeaderRefreshing(true);
+            }
+        });
+        final View view=getLayoutInflater().inflate(R.layout.ad,null);
+        nearByUserAdapter=new NearByUserAdapter(this);
+        nearByUserAdapter.addHeader(new RecyclerArrayAdapter.ItemView() {
+            @Override
+            public View onCreateView(ViewGroup parent) {
+                return view;
+            }
+
+            @Override
+            public void onBindView(View headerView) {
+
             }
         });
         userList.showProgress();
@@ -130,7 +146,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             Log.i("size",list.size()+"");
             if(list.size()==0)
         userList.showEmpty();
-        else{ nearByUserAdapter=new NearByUserAdapter(this);
+        else{
         nearByUserAdapter.addAll(list);
         userList.setAdapter(nearByUserAdapter);
         userList.showRecycler();

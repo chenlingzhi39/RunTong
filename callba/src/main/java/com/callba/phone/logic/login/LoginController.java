@@ -136,12 +136,13 @@ public class LoginController {
 	 * @param resultInfo
 	 */
 	public static void parseLoginSuccessResult(Context context, String username, String password, String[] resultInfo) {
-		if(resultInfo != null) {;
+		if(resultInfo != null) {
 			CalldaGlobalConfig.getInstance().setLoginToken(resultInfo[2]);
 			CalldaGlobalConfig.getInstance().setUsername(username);
 			CalldaGlobalConfig.getInstance().setSipIP(resultInfo[4]);
-			CalldaGlobalConfig.getInstance().setNickname(resultInfo[5]);
 			CalldaGlobalConfig.getInstance().setUserhead(resultInfo[6]);
+			CalldaGlobalConfig.getInstance().setNickname(resultInfo[7]);
+			CalldaGlobalConfig.getInstance().setSignature(resultInfo[8]);
     		Logger.v("处理登录成功信息", "当前SIP"+CalldaGlobalConfig.getInstance().getSipIP());
 			try {
 				String encryptPwd = DesUtil.encrypt(password,
@@ -217,8 +218,8 @@ public class LoginController {
 			switch (taskResultCode) {
 			case Task.TASK_SUCCESS:
 				try {
-					String[] result = ((String)msg.obj).split("\\|",7);
-					Log.i("resultsize",result.length+"");
+					String[] result = ((String)msg.obj).split("\\|",10);
+					Log.i("result",(String)msg.obj);
 					if("0".equals(result[0])) {
 						loginState = true;
 						loginListener.loginSuccess(result);
