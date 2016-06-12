@@ -17,6 +17,22 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="@string/gold"
+        android:layout_margin="15dp"
+        android:textColor="@color/white"
+        android:id="@+id/gold"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/earn_gold"
+        android:textColor="@color/white"
+        android:layout_below="@+id/circle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
 </RelativeLayout>
     <LinearLayout
         android:id="@+id/ll_popup"

@@ -49,6 +49,15 @@ public class CalldaGlobalConfig {
 	private String userhead;
     private String nickname;
 	private String signature;
+    private int gold;
+
+	public int getGold() {
+		return gold;
+	}
+
+	public void setGold(int gold) {
+		this.gold = gold;
+	}
 
 	public String getSignature() {
 		return signature;

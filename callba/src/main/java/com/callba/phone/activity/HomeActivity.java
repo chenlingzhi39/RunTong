@@ -302,8 +302,6 @@ public class HomeActivity extends BaseActivity {
         TextView tv_yue;
         @InjectView(R.id.gold)
         TextView gold;
-        @InjectView(R.id.time)
-        TextView time;
         private View mView;
         private Dialog mDialog;
 
@@ -313,6 +311,7 @@ public class HomeActivity extends BaseActivity {
             number.setText(number.getText().toString() + "   " + CalldaGlobalConfig.getInstance().getUsername());
             if (!yue.equals(""))
                 tv_yue.setText(tv_yue.getText().toString() + "   " + yue);
+            gold.setText(gold.getText().toString()+ "   " +CalldaGlobalConfig.getInstance().getGold()+"");
         }
 
         @OnClick(R.id.recharge)

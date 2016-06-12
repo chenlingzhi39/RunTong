@@ -95,6 +95,7 @@ public class QueryCalllogActivity extends BaseActivity implements
 				.setCallBack(this)
 				.build();
 		queryCalllog(time);
+
 	}
 
 	@Override
@@ -107,6 +108,7 @@ public class QueryCalllogActivity extends BaseActivity implements
 		SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
 		time=simpleDateFormat.format(new Date(millseconds));
 		bt_date.setText(time);
+		data.clear();
 		queryCalllog(time);
 			refreshLayout.setRefreshing(true);
 	}

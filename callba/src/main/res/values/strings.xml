@@ -22,6 +22,7 @@
     <string name="user">帐号</string>
     <string name="yue">余额</string>
     <string name="gold">金币</string>
+    <string name="earn_gold">签到赚金币+3</string>
     <string name="time">到期时间</string>
     <string name="friend">左邻右舍</string>
     <string name="location">我的位置:</string>

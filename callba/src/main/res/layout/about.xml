@@ -3,6 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/white"
     >
 <include layout="@layout/toolbar"/>
 <ImageView
@@ -34,11 +35,20 @@
             android:text="邀请更多好友加入"
             android:layout_marginBottom="20dp"
             android:textColor="?attr/colorAccent"
+            android:clickable="true"
+            android:background="?attr/selectableItemBackground"
+            android:id="@+id/invite"
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="江苏博波特科技有限公司 版权所有"
+            android:layout_marginBottom="20dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="招商电话：400-807-8255"
             android:layout_marginBottom="20dp"
             />
         <TextView
@@ -50,7 +60,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="China Callba Corporatin"
+            android:hint="China Callba Corporation"
 
             />
     <TextView

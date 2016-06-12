@@ -11,6 +11,8 @@
     android:clickable="true"
     android:background="?attr/selectableItemBackground"
     android:id="@+id/ask"
+    android:drawableLeft="@drawable/ask"
+    android:drawablePadding="5dp"
     />
     <TextView
         android:layout_width="match_parent"
