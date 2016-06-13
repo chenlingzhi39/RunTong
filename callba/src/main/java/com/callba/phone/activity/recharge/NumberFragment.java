@@ -4,13 +4,17 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.callba.R;
@@ -41,6 +45,8 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
     Button recharge;
     @InjectView(R.id.change_number)
     LinearLayout change;
+    @InjectView(R.id.relative)
+    RelativeLayout relative;
     private UserDao userDao;
     private String address;
 
@@ -60,7 +66,7 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
         tv_address.setHint(address);
         userDao = new UserDao(getActivity(), this);
 
-       card.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        card.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
@@ -69,10 +75,11 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
             }
 
             private void hideKeyboard(View v) {
-                InputMethodManager imm = ( InputMethodManager ) v.getContext( ).getSystemService( Context.INPUT_METHOD_SERVICE );
-                if ( imm.isActive( ) ) {
-                    imm.hideSoftInputFromWindow( v.getApplicationWindowToken( ) , 0 );
-                }}
+                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm.isActive()) {
+                    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+                }
+            }
         });
 
     }
@@ -94,17 +101,17 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
         if (progressDialog != null) progressDialog.dismiss();
     }
 
-    @OnClick(R.id.change_number)
+    @OnClick(R.id.relative)
     public void change() {
         showDialog();
     }
 
     @OnClick(R.id.recharge)
     public void recharge() {
-        if(card.getText().toString().equals(("")))
+        if (card.getText().toString().equals(("")))
             toast(getString(R.string.input_card));
-            else
-        userDao.recharge(number.getText().toString(), card.getText().toString(), CalldaGlobalConfig.getInstance().getUsername());
+        else
+            userDao.recharge(number.getText().toString(), card.getText().toString(), CalldaGlobalConfig.getInstance().getUsername());
     }
 
 
@@ -113,6 +120,15 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
         super.onDestroyView();
         ButterKnife.reset(this);
     }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        ButterKnife.inject(this, rootView);
+        return rootView;
+    }
+
 
     public class DialogHelper implements DialogInterface.OnDismissListener {
         private Dialog mDialog;
@@ -155,8 +171,8 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
                                     helper.getNumber(), Constant.DB_PATH,
                                     getActivity());
                             //if (!address.equals("")) {
-                                number.setText(helper.getNumber());
-                                tv_address.setHint(address);
+                            number.setText(helper.getNumber());
+                            tv_address.setHint(address);
                            /* } else
                                 toast("请输入正确的手机号!");*/
                         } else
@@ -177,12 +193,12 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
     @Override
     public void onStop() {
         super.onStop();
-        Log.i("number","onStop");
+        Log.i("number", "onStop");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.i("number","onPause");
+        Log.i("number", "onPause");
     }
 }

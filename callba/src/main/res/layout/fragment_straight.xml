@@ -6,7 +6,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:padding="20dp"
+        android:background="?attr/selectableItemBackground"
+        android:id="@+id/relative">
 
 
         <LinearLayout
@@ -14,8 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:orientation="vertical"
-            android:id="@+id/change_number"
-            android:clickable="true">
+            android:id="@+id/change_number">
 
             <TextView
                 android:id="@+id/number"
@@ -23,8 +24,7 @@
                 android:layout_height="wrap_content"
                 android:text="156-5698-8945"
                 android:textSize="20sp"
-                android:background="@android:color/transparent"
-                android:hint="@string/input_number"/>
+                android:hint="@string/input_number" />
 
             <TextView
                 android:id="@+id/address"

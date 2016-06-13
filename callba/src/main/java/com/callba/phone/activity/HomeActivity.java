@@ -2,15 +2,26 @@ package com.callba.phone.activity;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.callba.R;
@@ -31,7 +42,6 @@ import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.BannerLayout;
-
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -72,6 +82,12 @@ public class HomeActivity extends BaseActivity {
     TextView signIn;
     @InjectView(R.id.banner)
     BannerLayout banner;
+    @InjectView(R.id.ad)
+    WebView webView;
+    @InjectView(R.id.progressBar)
+    ProgressBar progressBar;
+    @InjectView(R.id.relative)
+    RelativeLayout relative;
     private String yue;
     /* @InjectView(R.id.view_pager)
      AutoScrollViewPager viewPager;
@@ -84,6 +100,7 @@ public class HomeActivity extends BaseActivity {
     private String password;
     private UserDao userDao;
     private String date;
+    ADReceiver receiver;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +110,10 @@ public class HomeActivity extends BaseActivity {
         mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
         mPreferenceUtil.putBoolean(Constant.IS_FROMGUIDE, false, true);
         mPreferenceUtil.commit();
+        IntentFilter filter = new IntentFilter(
+                "com.callba.getad");
+        receiver = new ADReceiver();
+        registerReceiver(receiver, filter);
         // 判断是否自动启动
         if (savedInstanceState == null
                 && CalldaGlobalConfig.getInstance().isAutoLogin()
@@ -110,86 +131,17 @@ public class HomeActivity extends BaseActivity {
             String password = CalldaGlobalConfig.getInstance().getPassword();
             if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
                 // 重新打开
-               gotoWelcomePage();
+                gotoWelcomePage();
             }
         }
 
-      /*  WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        webSettings.setSupportZoom(true);
-        webSettings.setUseWideViewPort(true);
-        String[] urls = CalldaGlobalConfig.getInstance().getAdvertisements();
-        if (urls != null) {
-            webSettings.setJavaScriptEnabled(true);
-            webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-            webSettings.setUseWideViewPort(true);//关键点
-            webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-            if (Build.VERSION.SDK_INT >= 11)
-                webSettings.setDisplayZoomControls(false);
-            webSettings.setJavaScriptEnabled(true); // 设置支持javascript脚本
-            webSettings.setAllowFileAccess(true); // 允许访问文件
-            webSettings.setBuiltInZoomControls(true); // 设置显示缩放按钮
-            webSettings.setSupportZoom(true); // 支持缩放
-            webSettings.setLoadWithOverviewMode(true);
-            DisplayMetrics metrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(metrics);
-            int mDensity = metrics.densityDpi;
-            Log.d("maomao", "densityDpi = " + mDensity);
-            if (mDensity == 240) {
-                webSettings.setDefaultZoom(WebSettings.ZoomDensity.FAR);
-            } else if (mDensity == 160) {
-                webSettings.setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
-            } else if (mDensity == 120) {
-                webSettings.setDefaultZoom(WebSettings.ZoomDensity.CLOSE);
-            } else if (mDensity == DisplayMetrics.DENSITY_XHIGH) {
-                webSettings.setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
-            } else if (mDensity == DisplayMetrics.DENSITY_TV) {
-                webSettings.setDefaultZoom(WebSettings.ZoomDensity.FAR);
-            } else {
-                webSettings.setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
-            }
 
-            *//**
-         * 用WebView显示图片，可使用这个参数 设置网页布局类型： 1、LayoutAlgorithm.NARROW_COLUMNS ：
-         * 适应内容大小 2、LayoutAlgorithm.SINGLE_COLUMN:适应屏幕，内容将自动缩放
-         *//*
-            webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
-            //WebView加载web资源
-            *//*if(urls[2]!=null)
-            webView.loadUrl(urls[2]);*//*
-            //覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
-            webView.setWebViewClient(new WebViewClient() {
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    // TODO Auto-generated method stub
-                    //返回值是true的时候控制去WebView打开，为false调用系统浏览器或第三方浏览器
-                    view.loadUrl(url);
-                    return true;
-                }
-            });
-            webView.setWebChromeClient(new WebChromeClient() {
-                @Override
-                public void onProgressChanged(WebView view, int newProgress) {
-                    // TODO Auto-generated method stub
-                    if (newProgress == 100) {
-                        // 网页加载完成
-                        progressBar.setVisibility(View.GONE);
-                        Log.i("height", webView.getHeight() + "");
-                    } else {
-                        // 加载中
-                        progressBar.setVisibility(View.VISIBLE);
-                    }
-
-                }
-            });
-        }*/
         localImages.add(R.drawable.ad4);
         localImages.add(R.drawable.ad5);
         localImages.add(R.drawable.ad6);
         banner.setViewRes(localImages);
         banner.setSliderTransformDuration(2000);
-        userDao=new UserDao(this, new UserDao.PostListener() {
+        userDao = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void start() {
 
@@ -200,17 +152,19 @@ public class HomeActivity extends BaseActivity {
                 String[] result = msg.split("\\|");
                 if (result[0].equals("0")) {
                     String[] dates = result[1].split(",");
-                    if(!date.equals(dates[dates.length-1]))
-                    {mPreferenceUtil.putBoolean(date,false,true);
-                        Intent intent=new Intent(HomeActivity.this,SignInActivity.class);
-                    startActivity(intent);
-                    }else mPreferenceUtil.putBoolean(date,true,true);
-                }else{toast(result[1]);}
+                    if (!date.equals(dates[dates.length - 1])) {
+                        mPreferenceUtil.putBoolean(date, false, true);
+                        Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
+                        startActivity(intent);
+                    } else mPreferenceUtil.putBoolean(date, true, true);
+                } else {
+                    toast(result[1]);
+                }
             }
 
             @Override
             public void failure(String msg) {
-              toast(msg);
+                toast(msg);
             }
         });
     }
@@ -219,6 +173,7 @@ public class HomeActivity extends BaseActivity {
     public void init() {
 
     }
+
     // 跳转到起始页
     private void gotoWelcomePage() {
         Intent intent = new Intent();
@@ -228,6 +183,7 @@ public class HomeActivity extends BaseActivity {
         // 关闭主tab页面
         ActivityUtil.finishMainTabPages();
     }
+
     @Override
     public void refresh(Object... params) {
         Message msg = (Message) params[0];
@@ -312,7 +268,7 @@ public class HomeActivity extends BaseActivity {
             number.setText(number.getText().toString() + "   " + CalldaGlobalConfig.getInstance().getUsername());
             if (!yue.equals(""))
                 tv_yue.setText(tv_yue.getText().toString() + "   " + yue);
-            gold.setText(gold.getText().toString()+ "   " +CalldaGlobalConfig.getInstance().getGold()+"");
+            gold.setText(gold.getText().toString() + "   " + CalldaGlobalConfig.getInstance().getGold() + "");
         }
 
         @OnClick(R.id.recharge)
@@ -370,6 +326,7 @@ public class HomeActivity extends BaseActivity {
 
         MainService.newTask(task);
     }
+
     /**
      * 自动登录
      */
@@ -378,7 +335,7 @@ public class HomeActivity extends BaseActivity {
         password = mPreferenceUtil.getString(Constant.LOGIN_PASSWORD);
 
         if ("".equals(CalldaGlobalConfig.getInstance().getSecretKey())) {
-             Log.i("home","nosecret");
+            Log.i("home", "nosecret");
             // 跳转到起始页
             gotoWelcomePage();
             return;
@@ -444,7 +401,7 @@ public class HomeActivity extends BaseActivity {
                         String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
                         if (month.length() == 1)
                             month = "0" + month;
-                        if(!mPreferenceUtil.getBoolean(date,false)) {
+                        if (!mPreferenceUtil.getBoolean(date, false)) {
 
                             userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
                         }
@@ -481,6 +438,63 @@ public class HomeActivity extends BaseActivity {
         // 关闭主tab页面
         ActivityUtil.finishMainTabPages();
     }
+class ADReceiver extends BroadcastReceiver{
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        webSettings.setUseWideViewPort(true);
+        String[] urls = CalldaGlobalConfig.getInstance().getAdvertisements();
+        if (urls != null) {
+            webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+            webSettings.setUseWideViewPort(true);//关键点
+            webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+            if (Build.VERSION.SDK_INT >= 11)
+                webSettings.setDisplayZoomControls(false);
+            webSettings.setJavaScriptEnabled(true); // 设置支持javascript脚本
+            webSettings.setAllowFileAccess(true); // 允许访问文件
+            webSettings.setBuiltInZoomControls(false); // 设置显示缩放按钮
+            webSettings.setSupportZoom(true); // 支持缩放
+            webSettings.setLoadWithOverviewMode(true);
 
 
+
+
+            //WebView加载web资源
+            if (urls[2] != null)
+                webView.loadUrl(urls[2]);
+            //覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
+            webView.setWebViewClient(new WebViewClient() {
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    // TODO Auto-generated method stub
+                    //返回值是true的时候控制去WebView打开，为false调用系统浏览器或第三方浏览器
+                    view.loadUrl(url);
+                    return true;
+                }
+            });
+            webView.setWebChromeClient(new WebChromeClient() {
+                @Override
+                public void onProgressChanged(WebView view, int newProgress) {
+                    // TODO Auto-generated method stub
+                    if (newProgress == 100) {
+                        // 网页加载完成
+                        progressBar.setVisibility(View.GONE);
+                        Log.i("height", webView.getHeight() + "");
+                    } else {
+                        // 加载中
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
+
+                }
+            });
+        }
+    }
+}
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(receiver);
+        super.onDestroy();
+    }
 }

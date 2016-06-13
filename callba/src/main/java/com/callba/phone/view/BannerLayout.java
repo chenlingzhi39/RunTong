@@ -62,7 +62,7 @@ public class BannerLayout extends RelativeLayout {
     private int unSelectedIndicatorWidth = 6;
 
     private Position indicatorPosition = Position.centerBottom;
-    private int autoPlayDuration = 4000;
+    private int autoPlayDuration = 2000;
     private int scrollDuration = 900;
 
     private int indicatorSpace = 3;

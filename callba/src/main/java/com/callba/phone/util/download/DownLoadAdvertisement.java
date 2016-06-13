@@ -106,6 +106,8 @@ public class DownLoadAdvertisement {
 				msg.obj = result.replace("\n", "").replace("\r", "");
 				String[] result1=result.split("\\|");
 				CalldaGlobalConfig.getInstance().setAdvertisements(result1[1].split(","));
+				Intent intent=new Intent("com.callba.getad");
+				mContext.sendBroadcast(intent);
 			} else {
 				// 无网络连接
 				msg.what = Task.TASK_NETWORK_ERROR;

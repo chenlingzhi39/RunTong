@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,10 +68,12 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     LinearLayout change;
     @InjectView(R.id.group)
     RadioGroup group;
+    @InjectView(R.id.relative)
+    RelativeLayout relative;
     private UserDao userDao;
     private String address;
     private int size;
-    private String subject,body,price;
+    private String subject, body, price;
     // 商户PID
     public static final String PARTNER = "2088221931971814";
     // 商户收款账号
@@ -178,22 +181,22 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                 getActivity());
         tv_address.setHint(address);
         userDao = new UserDao(getActivity(), this);
-        subject="39元套餐";
-        body="包月畅聊";
-        price="39";
+        subject = "39元套餐";
+        body = "包月畅聊";
+        price = "39";
         group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
+                switch (checkedId) {
                     case R.id.price1:
-                        subject="39元套餐";
-                        body="包月畅聊";
-                        price="39";
+                        subject = "39元套餐";
+                        body = "包月畅聊";
+                        price = "39";
                         break;
                     case R.id.price2:
-                        subject="399元套餐";
-                        body="包年畅聊";
-                        price="399";
+                        subject = "399元套餐";
+                        body = "包年畅聊";
+                        price = "399";
                         break;
                 }
             }
@@ -216,7 +219,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
 
     }
 
-    @OnClick(R.id.change_number)
+    @OnClick(R.id.relative)
     public void change() {
         showDialog();
     }
@@ -306,7 +309,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
      */
     public void pay() {
 
-        String orderInfo = getOrderInfo(subject,body, price);
+        String orderInfo = getOrderInfo(subject, body, price);
 
         /**
          * 特别注意，这里的签名逻辑需要放在服务端，切勿将私钥泄露在代码中！
