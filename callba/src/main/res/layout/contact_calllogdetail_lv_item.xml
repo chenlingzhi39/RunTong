@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/shape_square_bg"
     android:orientation="vertical"
-    android:padding="8dp" 
-    android:id="@+id/contactdetail_log_item">
+    android:id="@+id/contactdetail_log_item"
+    android:background="?attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/tv_phonelist_calltime"
@@ -14,13 +13,17 @@
         android:layout_marginLeft="9dp"
         android:text="5月10日 09:33"
         android:textColor="@color/black_3f"
-        android:textSize="21sp" />
+        android:textSize="18sp"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:padding="8dp"
+        >
 
         <TextView
             android:id="@+id/tv_phonelist_num"
@@ -44,5 +47,9 @@
             android:textColor="@color/black_3f"
             android:textSize="16sp" />
     </LinearLayout>
-
+<View
+    android:layout_width="match_parent"
+    android:layout_height="1px"
+    android:background="@color/light_black"
+    />
 </LinearLayout>

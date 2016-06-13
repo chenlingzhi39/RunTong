@@ -9,6 +9,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.callba.R;
@@ -58,13 +59,14 @@ public class ContactDetailListAdapter extends BaseAdapter {
 				.findViewById(R.id.iv_phonelist_call);
 		TextView tv_phoneNum = (TextView) view
 				.findViewById(R.id.tv_phonelist_number);
+		LinearLayout root=(LinearLayout) view.findViewById(R.id.root);
 		// ImageView iv_sms = (ImageView)
 		// view.findViewById(R.id.iv_phonelist_sms);
 		String phoneNum = phones.get(position);
 		// 查询到该号码的所有通话记录
 		tv_phoneNum.setText(phoneNum);
 
-		tv_phoneNum.setOnClickListener(new OnClickListener() {
+		root.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				String phoneNum = phones.get(position);

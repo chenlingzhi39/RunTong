@@ -4,7 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="53dp">
+    android:layout_marginBottom="53dp"
+    android:background="@color/white">
     <include layout="@layout/toolbar_padding"
         />
 
@@ -30,8 +31,7 @@
     <com.callba.phone.view.BannerLayout
         android:id="@+id/banner"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_height="250dp"
         app:autoPlayDuration="8000"
         app:indicatorMargin="10dp"
         app:indicatorShape="oval"
@@ -105,16 +105,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/mall"
-            android:drawableTop="@drawable/mall"
+            android:id="@+id/community"
+            android:drawableTop="@drawable/community"
             android:layout_weight="1"
-            android:text="@string/mall"
+            android:text="@string/community"
             android:drawablePadding="10dp"
             android:padding="10dp"
             android:gravity="center"
             android:clickable="true"
             android:background="?attr/selectableItemBackground"
             android:textSize="12sp"/>
+
     </LinearLayout>
     <View
         android:layout_width="match_parent"
@@ -129,10 +130,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/finance"
-            android:drawableTop="@drawable/finance"
+            android:id="@+id/mall"
+            android:drawableTop="@drawable/mall"
             android:layout_weight="1"
-            android:text="@string/finance"
+            android:text="@string/mall"
             android:drawablePadding="10dp"
             android:padding="10dp"
             android:gravity="center"
@@ -147,10 +148,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/community"
-            android:drawableTop="@drawable/community"
+            android:id="@+id/finance"
+            android:drawableTop="@drawable/finance"
             android:layout_weight="1"
-            android:text="@string/community"
+            android:text="@string/finance"
             android:drawablePadding="10dp"
             android:padding="10dp"
             android:gravity="center"

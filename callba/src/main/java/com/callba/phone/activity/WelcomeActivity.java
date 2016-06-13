@@ -127,7 +127,7 @@ public class WelcomeActivity extends BaseActivity {
 		numbers.add("15779822103");
 		numbers.add("15779829730");
 		numbers.add("18296464481");
-		if(ContactsAccessPublic.hasName(this,"Call吧电话"))
+		if(!ContactsAccessPublic.hasName(this,"Call吧电话"))
 		ContactsAccessPublic.insertPhoneContact(this,contactData,numbers);
 		rootView=(LinearLayout) findViewById(R.id.root);
 		AlphaAnimation alphaAnimation=new AlphaAnimation(0.0f,1.0f);

@@ -1395,7 +1395,7 @@ public class MainService extends Service implements Runnable{
 		public void onReceive(Context context, Intent intent) {
 			Log.i("location",intent.getStringExtra("action"));
 			if(intent.getStringExtra("action").equals("login")){
-				EMClient.getInstance().login(SharedPreferenceUtil.getInstance(context).getString(Constant.LOGIN_USERNAME),SharedPreferenceUtil.getInstance(context).getString(Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
+				EMClient.getInstance().login(SharedPreferenceUtil.getInstance(context).getString(Constant.LOGIN_USERNAME)+"-callba",SharedPreferenceUtil.getInstance(context).getString(Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
 					@Override
 					public void onSuccess() {
 

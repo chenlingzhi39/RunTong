@@ -93,7 +93,7 @@ public class LoginController {
 	public synchronized void userLogin(final Context context, final Task task, final UserLoginListener loginListener) {
 		Logger.d(TAG, "LoginController startLogin.");
 		//设置超时重试次数为0
-		currentLoginTime = 0;
+		currentLoginTime = 3;
 		
 		if(loginListener == null) {
 			throw new IllegalArgumentException("UserLoginListener 为空");

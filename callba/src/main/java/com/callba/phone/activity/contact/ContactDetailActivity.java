@@ -117,7 +117,6 @@ public class ContactDetailActivity extends BaseActivity implements
 			String name = bean.getDisplayName();
 			tv_contactName.setText(bean.getDisplayName());
 			List<String> phoneNums = bean.getContactPhones();
-
 			ContactDetailListAdapter adapter = new ContactDetailListAdapter(
 					this, phoneNums, name);
 			lv_phoneNums.setAdapter(adapter);

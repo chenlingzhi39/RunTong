@@ -184,10 +184,11 @@ public class HomeActivity extends BaseActivity {
                 }
             });
         }*/
-        localImages.add(R.drawable.ad1);
-        localImages.add(R.drawable.ad2);
-        localImages.add(R.drawable.ad3);
+        localImages.add(R.drawable.ad4);
+        localImages.add(R.drawable.ad5);
+        localImages.add(R.drawable.ad6);
         banner.setViewRes(localImages);
+        banner.setSliderTransformDuration(2000);
         userDao=new UserDao(this, new UserDao.PostListener() {
             @Override
             public void start() {

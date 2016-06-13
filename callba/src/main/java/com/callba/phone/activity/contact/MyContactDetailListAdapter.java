@@ -50,10 +50,12 @@ public class MyContactDetailListAdapter extends BaseAdapter {
 	public View getView(final int position, View convertView, ViewGroup parent) {
 //		View view = View
 //				.inflate(context, R.layout.contact_detail_lv_item, null);
-		View view = View
-				.inflate(context, R.layout.contact_calllogdetail_lv_item, null);
+		View view =null;
 		DataAnalysis dataAnalysis=new DataAnalysis();
 		data=dataAnalysis.getData(context,bean);
+		Map<String, Object> map = (Map<String, Object>) data.get(position);
+		 view = View
+				.inflate(context, R.layout.contact_calllogdetail_lv_item, null);
 		callUtils=new CallUtils();
 		LinearLayout lv_item=(LinearLayout)view.findViewById(R.id.contactdetail_log_item);
 		TextView tv_phoneNum = (TextView) view
@@ -66,7 +68,7 @@ public class MyContactDetailListAdapter extends BaseAdapter {
 //		String type = bean.get(position).getCallLogType()+"";
 //		String time = bean.get(position).getCallLogNumber();
 		
-		 Map<String, Object> map = (Map<String, Object>) data.get(position);
+
 		final String phoneNum = (String)map.get("phoneNum");
 		tv_phoneType.setText((String)map.get("calltype"));
 		tv_phoneNum.setText((String)map.get("phoneNum"));
@@ -87,6 +89,7 @@ public class MyContactDetailListAdapter extends BaseAdapter {
 			}
 			
 		});
+
 		return view;
 	}
 

@@ -107,14 +107,10 @@ public class HelpListAdapter implements ExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ChildViewHolder holder = null;
-        if (convertView == null) {
             convertView = mInflater.inflate(R.layout.item_child, null);
             holder = new ChildViewHolder(convertView);
             holder.answer.setText(answers[groupPosition]);
             convertView.setTag(holder);
-        } else {
-            holder = (ChildViewHolder) convertView.getTag();
-        }
         return convertView;
     }
 

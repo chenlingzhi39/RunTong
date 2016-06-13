@@ -1,6 +1,7 @@
 package com.callba.phone.activity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -97,7 +98,6 @@ public class CalllogListAdapter extends BaseAdapter {
 						"phoneNum");
 				String location = (String) data.get(position).get(
 						"phoneLocation");
-
 				contactMutliNumBean.setDisplayName(contactName);
 				contactMutliNumBean.setLocation(location);
 
