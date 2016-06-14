@@ -44,12 +44,15 @@ import com.callba.phone.service.MainService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.AppVersionChecker.AppVersionBean;
+import com.callba.phone.util.BitmapUtil;
 import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.ZipUtil;
 import com.umeng.socialize.utils.Log;
+
+import me.iwf.photopicker.PhotoPickerActivity;
 
 @ActivityFragmentInject(
 		contentViewId = R.layout.welcome_page
@@ -492,10 +495,7 @@ public class WelcomeActivity extends BaseActivity {
 								public void onClick(DialogInterface dialog,
 										int which) {
 									try {
-
-										Intent intent = new Intent();
-										intent.setAction(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
-										startActivity(intent);
+										startActivityForResult(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS), 0);
 									} catch (Exception e) {
 										// TODO: handle exception
 									}
@@ -521,7 +521,20 @@ public class WelcomeActivity extends BaseActivity {
 
 		}
 	}
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == RESULT_OK && requestCode == 0) {
+			isNetworkAvail = NetworkDetector.detect(WelcomeActivity.this);
+			alertNetWork(isNetworkAvail);
+			if (isNetworkAvail) {
+				currentGetVersionTime = 0;
+				// 获取版本信息
+				sendGetVersionTask();
+			}
+		}
 
+	}
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
