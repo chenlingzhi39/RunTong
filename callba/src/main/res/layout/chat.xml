@@ -6,13 +6,16 @@
     android:orientation="vertical">
 
     <include layout="@layout/toolbar" />
-
-    <com.callba.phone.widget.refreshlayout.EasyRecyclerView
+    <com.hyphenate.easeui.widget.EaseChatMessageList
+        android:id="@+id/message_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+   <!-- <com.callba.phone.widget.refreshlayout.EasyRecyclerView
         android:id="@+id/messages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/input_menu"
-        android:layout_below="@+id/mToolbarContainer" />
+        android:layout_below="@+id/mToolbarContainer" />-->
     <!--    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"

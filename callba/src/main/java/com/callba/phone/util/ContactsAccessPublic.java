@@ -166,17 +166,17 @@ public class ContactsAccessPublic {
     }
 
     public static boolean hasName(Context context, String name) {
-        String[] projection = { ContactsContract.PhoneLookup.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.NUMBER };
+        String[] projection = {};
 
         // 将自己添加到 msPeers 中
         Cursor cursor = context.getContentResolver().query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 projection, // Which columns to return.
-                Phone.DISPLAY_NAME + " = '"
-                        + name + "'", // WHERE clause.
+                Phone.DISPLAY_NAME + " LIKE '%"
+                        + name + "%'", // WHERE clause.
                 null, // WHERE clause value substitution
                 null); // Sort order.
+
         return cursor!=null;
     }
 
@@ -201,7 +201,8 @@ public class ContactsAccessPublic {
         values.clear();
         values.put(Data.RAW_CONTACT_ID,rawContactId);
         values.put(Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE);//内容类型
-        values.put(StructuredName.GIVEN_NAME,contact.getContactName());
+       // values.put(StructuredName.GIVEN_NAME,contact.getContactName());
+        values.put(StructuredName.DISPLAY_NAME,contact.getContactName());
         rcUri = context.getContentResolver().insert(android.provider.ContactsContract.Data.CONTENT_URI,values);
         for(int i=1;i<=numbers.size();i++)
         if(rcUri != null){

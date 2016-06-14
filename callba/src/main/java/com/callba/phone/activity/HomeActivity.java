@@ -7,10 +7,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
+import android.telephony.gsm.GsmCellLocation;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -29,6 +33,10 @@ import com.callba.phone.BaseActivity;
 import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.activity.recharge.RechargeActivity2;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.bean.Advertisement;
+import com.callba.phone.bean.ContactData;
+import com.callba.phone.bean.NearByUser;
+import com.callba.phone.bean.SystemNumber;
 import com.callba.phone.bean.Task;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
@@ -38,16 +46,20 @@ import com.callba.phone.logic.login.UserLoginErrorMsg;
 import com.callba.phone.logic.login.UserLoginListener;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.BannerLayout;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.ButterKnife;
@@ -94,13 +106,18 @@ public class HomeActivity extends BaseActivity {
      @InjectView(R.id.indicator)
      CirclePageIndicator indicator;*/
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
+    private ArrayList<String> webImages=new ArrayList<>();
     private SharedPreferenceUtil mPreferenceUtil;
     private ProgressDialog progressDialog;
     private String username;
     private String password;
-    private UserDao userDao;
+    private UserDao userDao,userDao1;
     private String date;
     ADReceiver receiver;
+    private Gson gson;
+    private String[] result;
+    List<SystemNumber> list;
+    List<Advertisement> advertisements;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,7 +157,6 @@ public class HomeActivity extends BaseActivity {
         localImages.add(R.drawable.ad5);
         localImages.add(R.drawable.ad6);
         banner.setViewRes(localImages);
-        banner.setSliderTransformDuration(2000);
         userDao = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void start() {
@@ -167,6 +183,44 @@ public class HomeActivity extends BaseActivity {
                 toast(msg);
             }
         });
+        userDao1=new UserDao(this, new UserDao.PostListener() {
+            @Override
+            public void start() {
+
+            }
+
+            @Override
+            public void success(String msg) {
+                Log.i("system_result",msg);
+             result=msg.split("\\|");
+             if(result[0].equals("0")){
+                 gson=new Gson();
+                 list = new ArrayList<>();
+                 try {
+                     list = gson.fromJson(result[1], new TypeToken<List<SystemNumber>>() {
+                     }.getType());
+                 } catch (Exception e) {
+
+                 }
+                 ArrayList<String> numbers=new ArrayList<>();
+                 ContactData contactData=new ContactData();
+                 contactData.setContactName("Call吧电话");
+                 for (SystemNumber user:list){
+                     numbers.add(user.getPhoneNumber());
+                     Log.i("phonenumber",user.getPhoneNumber());
+                 }
+                     ContactsAccessPublic.insertPhoneContact(HomeActivity.this,contactData,numbers);
+             }else{
+
+             }
+            }
+
+            @Override
+            public void failure(String msg) {
+            toast(msg);
+            }
+        });
+
     }
 
     @Override
@@ -224,21 +278,23 @@ public class HomeActivity extends BaseActivity {
             case R.id.search:
                 Log.i("home", "search_yue");
                 queryUserBalance();
-
                 break;
             case R.id.friend:
                 Intent intent1 = new Intent(HomeActivity.this, FriendActivity.class);
                 startActivity(intent1);
                 break;
             case R.id.mall:
+                toast("正在建设中");
                 break;
             case R.id.finance:
+                toast("正在建设中");
                 break;
             case R.id.community:
                 Intent intent0 = new Intent(HomeActivity.this, CommunityActivity.class);
                 startActivity(intent0);
                 break;
             case R.id.game:
+                toast("正在建设中");
                 break;
             case R.id.sign_in:
                 Intent intent2 = new Intent(HomeActivity.this, SignInActivity.class);
@@ -392,11 +448,12 @@ public class HomeActivity extends BaseActivity {
 
                         }
 
-
                         // 处理登录成功返回信息
                         LoginController.parseLoginSuccessResult(
                                 HomeActivity.this, username, password,
                                 resultInfo);
+
+
                         String year = Calendar.getInstance().get(Calendar.YEAR) + "";
                         String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
                         if (month.length() == 1)
@@ -406,7 +463,10 @@ public class HomeActivity extends BaseActivity {
                             userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
                         }
 
-
+                        Log.i("home","get_number");
+                        Log.i("has_name", ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话")+"");
+                        if(!ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话"))
+                            userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
                         // 查询余额
                         //queryUserBalance();
                     }
@@ -441,54 +501,19 @@ public class HomeActivity extends BaseActivity {
 class ADReceiver extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent) {
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        webSettings.setUseWideViewPort(true);
-        String[] urls = CalldaGlobalConfig.getInstance().getAdvertisements();
-        if (urls != null) {
-            webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-            webSettings.setUseWideViewPort(true);//关键点
-            webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-            if (Build.VERSION.SDK_INT >= 11)
-                webSettings.setDisplayZoomControls(false);
-            webSettings.setJavaScriptEnabled(true); // 设置支持javascript脚本
-            webSettings.setAllowFileAccess(true); // 允许访问文件
-            webSettings.setBuiltInZoomControls(false); // 设置显示缩放按钮
-            webSettings.setSupportZoom(true); // 支持缩放
-            webSettings.setLoadWithOverviewMode(true);
-
-
-
-
-            //WebView加载web资源
-            if (urls[2] != null)
-                webView.loadUrl(urls[2]);
-            //覆盖WebView默认使用第三方或系统默认浏览器打开网页的行为，使网页用WebView打开
-            webView.setWebViewClient(new WebViewClient() {
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                    // TODO Auto-generated method stub
-                    //返回值是true的时候控制去WebView打开，为false调用系统浏览器或第三方浏览器
-                    view.loadUrl(url);
-                    return true;
-                }
-            });
-            webView.setWebChromeClient(new WebChromeClient() {
-                @Override
-                public void onProgressChanged(WebView view, int newProgress) {
-                    // TODO Auto-generated method stub
-                    if (newProgress == 100) {
-                        // 网页加载完成
-                        progressBar.setVisibility(View.GONE);
-                        Log.i("height", webView.getHeight() + "");
-                    } else {
-                        // 加载中
-                        progressBar.setVisibility(View.VISIBLE);
-                    }
-
-                }
-            });
+        advertisements=CalldaGlobalConfig.getInstance().getAdvertisements();
+        for(Advertisement advertisement : advertisements){
+            webImages.add(advertisement.getImage());
         }
+      banner.setViewUrls(webImages);
+      banner.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
+          @Override
+          public void onItemClick(int position) {
+              Intent intent1 = new Intent(Intent.ACTION_VIEW);
+              intent1.setData(Uri.parse(advertisements.get(position).getAdurl()));
+              startActivity(intent1);
+          }
+      });
     }
 }
 
@@ -497,4 +522,5 @@ class ADReceiver extends BroadcastReceiver{
         unregisterReceiver(receiver);
         super.onDestroy();
     }
+
 }

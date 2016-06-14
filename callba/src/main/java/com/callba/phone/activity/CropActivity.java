@@ -1,8 +1,11 @@
 package com.callba.phone.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +15,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.callba.R;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.BitmapUtil;
@@ -21,10 +26,22 @@ import com.umeng.socialize.utils.Log;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import me.iwf.photopicker.PhotoPickerActivity;
+import rx.Subscription;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 /**
  * Created by PC-20160514 on 2016/6/8.
  */
@@ -34,6 +51,8 @@ public class CropActivity extends AppCompatActivity {
     @InjectView(R.id.cropImageView)
     CropImageView cropImageView;
     Uri uri;
+    public Subscription subscription;
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,14 +66,35 @@ public class CropActivity extends AppCompatActivity {
         cropImageView.setImageUriAsync(uri);
         cropImageView.setFixedAspectRatio(true);
         cropImageView.setAspectRatio(1,1);
+
         cropImageView.setOnGetCroppedImageCompleteListener(new CropImageView.OnGetCroppedImageCompleteListener() {
             @Override
-            public void onGetCroppedImageComplete(CropImageView view, Bitmap bitmap, Exception error) {
-                        File f=BitmapUtil.saveBitmap(CropActivity.this, comp(bitmap), Constant.PHOTO_PATH, "head.jpg");
+            public void onGetCroppedImageComplete(CropImageView view, final Bitmap bitmap, Exception error) {
+               progressDialog = ProgressDialog.show(CropActivity.this, null, "正在压缩图片");
+                subscription=Observable.create(new Observable.OnSubscribe<Bitmap>() {
+                    @Override
+                    public void call(Subscriber<? super Bitmap> subscriber) {
+                        if(bitmap.getHeight()>480||bitmap.getWidth()>480)
+                        {Bitmap image=ThumbnailUtils.extractThumbnail(bitmap, 480, 480);
+                        subscriber.onNext(image);}
+                        else subscriber.onNext(bitmap);
+                    }
+                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+                    @Override
+                    public void call(Bitmap bitmap) {
+                        progressDialog.dismiss();
+                        File f=BitmapUtil.saveBitmap(CropActivity.this,bitmap, Constant.PHOTO_PATH, "head.jpg");
                         Intent intent=new Intent();
                         intent.putExtra("path",f.getPath());
                         setResult(RESULT_OK,intent);
                         finish();
+                    }
+                });
+               /* File f=BitmapUtil.saveBitmap(CropActivity.this,bitmap, Constant.PHOTO_PATH, "head.jpg");
+                Intent intent=new Intent();
+                intent.putExtra("path",f.getPath());
+                setResult(RESULT_OK,intent);
+                finish();*/
             }
         });
 
@@ -86,52 +126,10 @@ public class CropActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private Bitmap compressImage(Bitmap image) {
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
-        int options = 100;
-        while ( baos.toByteArray().length / 1024>100) {  //循环判断如果压缩后图片是否大于100kb,大于继续压缩
-            baos.reset();//重置baos即清空baos
-            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
-            options -= 10;//每次都减少10
-        }
-        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//把压缩后的数据baos存放到ByteArrayInputStream中
-        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//把ByteArrayInputStream数据生成图片
-        return bitmap;
-    }
-    private Bitmap comp(Bitmap image) {
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        if( baos.toByteArray().length / 1024>1024) {//判断如果图片大于1M,进行压缩避免在生成图片（BitmapFactory.decodeStream）时溢出
-            baos.reset();//重置baos即清空baos
-            image.compress(Bitmap.CompressFormat.JPEG, 50, baos);//这里压缩50%，把压缩后的数据存放到baos中
-        }
-        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());
-        BitmapFactory.Options newOpts = new BitmapFactory.Options();
-        //开始读入图片，此时把options.inJustDecodeBounds 设回true了
-        newOpts.inJustDecodeBounds = true;
-        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, newOpts);
-        newOpts.inJustDecodeBounds = false;
-        int w = newOpts.outWidth;
-        int h = newOpts.outHeight;
-        //现在主流手机比较多是800*480分辨率，所以高和宽我们设置为
-        float hh = 150f;//这里设置高度为800f
-        float ww = 150f;//这里设置宽度为480f
-        //缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
-        int be = 1;//be=1表示不缩放
-        if (w > h && w > ww) {//如果宽度大的话根据宽度固定大小缩放
-            be = (int) (newOpts.outWidth / ww);
-        } else if (w < h && h > hh) {//如果高度高的话根据宽度固定大小缩放
-            be = (int) (newOpts.outHeight / hh);
-        }
-        if (be <= 0)
-            be = 1;
-        newOpts.inSampleSize = be;//设置缩放比例
-        //重新读入图片，注意此时已经把options.inJustDecodeBounds 设回false了
-        isBm = new ByteArrayInputStream(baos.toByteArray());
-        bitmap = BitmapFactory.decodeStream(isBm, null, newOpts);
-        return compressImage(bitmap);//压缩好比例大小后再进行质量压缩
+    @Override
+    protected void onDestroy() {
+        subscription.unsubscribe();
+        super.onDestroy();
     }
 }

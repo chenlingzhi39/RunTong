@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
     <include layout="@layout/toolbar_padding"/>
 
-    <RelativeLayout
+   <!-- <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_search"
@@ -24,9 +24,19 @@
             android:layout_height="wrap_content"
             android:src="@drawable/search"
             android:layout_toLeftOf="@+id/text"/>
+    </RelativeLayout>-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="正在建设中"/>
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/conversation_list" />
     </RelativeLayout>
-<android.support.v7.widget.RecyclerView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/conversation_list"/>
+
 </LinearLayout>

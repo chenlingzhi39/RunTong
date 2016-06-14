@@ -8,6 +8,7 @@ import android.widget.EditText;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import butterknife.ButterKnife;
@@ -52,7 +53,7 @@ public class PostMessageActivity extends BaseActivity {
     public void onClick() {
         if(content.getText().toString().equals(""))
            return;
-        if(number.getText().toString().equals(""))
+        if(number.getText().toString().equals("")||number.getText().toString().equals(CalldaGlobalConfig.getInstance().getUsername()))
             return;
         EMMessage message = EMMessage.createTxtSendMessage(content.getText().toString(),number.getText().toString());
 //发送消息

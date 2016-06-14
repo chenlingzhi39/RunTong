@@ -578,4 +578,64 @@ public class UserDao {
 
         });
     }
+    public void getSystemPhoneNumber(String loginName,String password){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_SYSTEM_PHONE_NUMBER, params, new RequestCallBack<String>(){
+            @Override
+            public void onFailure(HttpException error, String msg) {
+              postListener.failure(context.getString(R.string.network_error));
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                postListener.success(responseInfo.result);
+            }
+        });
+    }
+    public void setOrder(String loginName,String password,String payMoney,String payMethod,String suiteName){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("payMoney",payMoney);
+        params.addBodyParameter("payMethod",payMethod);
+        params.addBodyParameter("suiteName",suiteName);
+        params.addBodyParameter("softType","android");
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.SET_ORDER, params, new RequestCallBack<String>(){
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                postListener.failure(context.getString(R.string.network_error));
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Log.i("order_result",responseInfo.result);
+                result=responseInfo.result.split("\\|");
+                if(result[0].equals("0")){
+                    postListener.success(result[1]);
+                }else{
+                    postListener.failure(result[1]);
+                }
+            }
+        });
+    }
+    public void pay(String loginName,String password,String orderNumber,String payResult){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("orderNumber",orderNumber);
+        params.addBodyParameter("payResult",payResult);
+        httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.PAY_SUCCESS, params, new RequestCallBack<String>(){
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                postListener.failure(msg);
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                postListener.success(responseInfo.result);
+            }
+        });
+    }
 }

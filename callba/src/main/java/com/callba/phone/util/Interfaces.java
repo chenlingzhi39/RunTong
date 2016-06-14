@@ -165,7 +165,7 @@ public interface Interfaces {
 	/**
 	 * 获取广告
 	 */
-	String GET_ADVERTICEMENT = BASIC_URL+"/user_ad_url.jsp";
+	String GET_ADVERTICEMENT ="http://inter.boboit.cn/inter/ad/ad1.jsp";
 	/**
 	 * 附近的人
 	 */
@@ -194,6 +194,18 @@ public interface Interfaces {
 	 * 发心情
 	 */
     String SEND_MOODS="http://inter.boboit.cn/inter/circle/sendmood.jsp";
+	/**
+	 * 获取Call吧号码
+	 */
+	String GET_SYSTEM_PHONE_NUMBER="http://inter.boboit.cn/inter/basic/systemphonebook.jsp";
+	/**
+	 * 下订单
+	 */
+	String SET_ORDER="http://inter.boboit.cn/inter/pay/pay_online_order.jsp";
+	/**
+	 * 支付完成
+	 */
+	String PAY_SUCCESS="http://inter.boboit.cn/inter/pay/app_notify_url.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

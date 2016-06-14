@@ -6,12 +6,15 @@ import java.util.Map;
 import org.apache.http.conn.ConnectTimeoutException;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -56,7 +59,7 @@ public class CallbackDisplayActivity extends BaseActivity {
 	private BitmapUtils bitmapUtils;
     private Button cancel;
 	private BitmapDisplayConfig bigPicDisplayConfig;
-
+	private MediaPlayer mp;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		//loadADImage();
@@ -204,6 +207,7 @@ public class CallbackDisplayActivity extends BaseActivity {
 		tv_num.setText(number);
 		// tv_status.setText(number);
 		calllogService = new CalllogService(this, null);
+		playSound();
 		callback();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			Window window = getWindow();
@@ -259,5 +263,60 @@ public class CallbackDisplayActivity extends BaseActivity {
 			}
 		};
 		bitmapUtils.display(iv_ad, imgUrl, bigPicDisplayConfig, callback);
+	}
+	/**
+	 * 播放声音
+	 */
+	private void playSound() {
+		 mp= MediaPlayer.create(this, R.raw.call);
+
+				mp.setLooping(true);
+		try{
+				mp.prepare();}catch (Exception e){
+
+		}
+				mp.start();
+
+	}
+	private void stopMusic() {
+		try {
+			if (mp != null) {
+				mp.stop();
+				mp.release();
+				mp = null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		/* 当MediaPlayer.OnErrorListener会运行的Listener */
+		if (mp != null) {
+			mp.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+				@Override
+				public boolean onError(MediaPlayer arg0, int arg1, int arg2) {
+					try {
+						/* 发生错误时也解除资源与MediaPlayer的赋值 */
+						mp.stop();
+						mp.release();
+						mp = null;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return false;
+				}
+			});
+		}
+	}
+	@Override
+	protected void onPause() {
+		stopMusic();
+//		try {
+//			if (mPhoneStateReceiver != null) {
+//				unregisterReceiver(mPhoneStateReceiver);
+//				mPhoneStateReceiver = null;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		super.onPause();
 	}
 }

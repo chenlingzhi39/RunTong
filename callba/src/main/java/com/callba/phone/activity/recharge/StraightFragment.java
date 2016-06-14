@@ -70,10 +70,11 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     RadioGroup group;
     @InjectView(R.id.relative)
     RelativeLayout relative;
-    private UserDao userDao;
+    private UserDao userDao,userDao1;
     private String address;
     private int size;
     private String subject, body, price;
+    private String outTradeNo;
     // 商户PID
     public static final String PARTNER = "2088221931971814";
     // 商户收款账号
@@ -114,6 +115,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
+                        userDao1.pay(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),outTradeNo,"success");
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
                         // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
@@ -123,7 +125,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                         } else {
                             // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
                             Toast.makeText(getActivity(), "支付失败", Toast.LENGTH_SHORT).show();
-
+                            userDao1.pay(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),outTradeNo,"failure");
                         }
                     }
                     break;
@@ -181,6 +183,25 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                 getActivity());
         tv_address.setHint(address);
         userDao = new UserDao(getActivity(), this);
+        userDao1=new UserDao(getActivity(), new UserDao.PostListener() {
+            @Override
+            public void start() {
+
+            }
+
+            @Override
+            public void success(String msg) {
+             String[] result=msg.split("\\|");
+                if(result[0].equals("0"))
+                    toast(result[1]);
+                else toast(result[1]);
+            }
+
+            @Override
+            public void failure(String msg) {
+            toast(msg);
+            }
+        });
         subject = "39元套餐";
         body = "包月畅聊";
         price = "39";
@@ -201,6 +222,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                 }
             }
         });
+
         //userDao.getRechargeMeal(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
     }
 
@@ -211,11 +233,13 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
 
     @Override
     public void success(String msg) {
-
+        outTradeNo=msg;
+        pay();
     }
 
     @Override
     public void failure(String msg) {
+      toast(msg);
 
     }
 
@@ -226,7 +250,8 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
 
     @OnClick(R.id.recharge)
     public void recharge() {
-        pay();
+        userDao.setOrder(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),price,"0","callback-unlimit-"+price);
+
     }
 
 
@@ -309,7 +334,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
      */
     public void pay() {
 
-        String orderInfo = getOrderInfo(subject, body, price);
+        String orderInfo = getOrderInfo(subject, body, "0.01");
 
         /**
          * 特别注意，这里的签名逻辑需要放在服务端，切勿将私钥泄露在代码中！
@@ -363,7 +388,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         orderInfo += "&seller_id=" + "\"" + SELLER + "\"";
 
         // 商户网站唯一订单号
-        orderInfo += "&out_trade_no=" + "\"" + getOutTradeNo() + "\"";
+        orderInfo += "&out_trade_no=" + "\"" + outTradeNo + "\"";
 
         // 商品名称
         orderInfo += "&subject=" + "\"" + subject + "\"";

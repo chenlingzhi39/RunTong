@@ -10,7 +10,7 @@
     android:layout_width="100dp"
     android:layout_height="100dp"
     android:src="@drawable/logo"
-    android:layout_marginTop="200dp"
+    android:layout_marginTop="150dp"
     android:id="@+id/logo"
     android:layout_centerHorizontal="true"/>
     <TextView
@@ -64,23 +64,6 @@
             android:hint="招商电话：400-807-8255"
             android:layout_marginBottom="20dp"
             />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Copyright(©)2015-2019"
 
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="China Callba Corporation"
-
-            />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="All Rights Reserved"
-        android:layout_centerHorizontal="true"
-        />
     </LinearLayout>
 </RelativeLayout>

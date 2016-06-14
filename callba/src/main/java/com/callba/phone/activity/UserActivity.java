@@ -82,7 +82,7 @@ public class UserActivity extends BaseActivity {
         Log.i("head", CalldaGlobalConfig.getInstance().getUserhead());
         if(!CalldaGlobalConfig.getInstance().getNickname().equals(""))
         {
-            word.setText(CalldaGlobalConfig.getInstance().getNickname());
+            word.setText(CalldaGlobalConfig.getInstance().getSignature());
         }
         mSharedPreferenceUtil = SharedPreferenceUtil.getInstance(this);
     }
@@ -93,7 +93,7 @@ public class UserActivity extends BaseActivity {
             Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(userHead);
         if(!CalldaGlobalConfig.getInstance().getNickname().equals(""))
         {
-            word.setText(CalldaGlobalConfig.getInstance().getNickname());
+            word.setText(CalldaGlobalConfig.getInstance().getSignature());
         }
         super.onResume();
     }

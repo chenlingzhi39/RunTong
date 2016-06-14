@@ -59,5 +59,10 @@
         <attr name="bigEmojiconRows" format="integer"/>
         <attr name="emojiconColumns" format="integer"/>
     </declare-styleable>
-
+    <declare-styleable name="EaseChatMessageList">
+        <attr name="msgListMyBubbleBackground" format="reference"/>
+        <attr name="msgListOtherBubbleBackground" format="reference"/>
+        <attr name="msgListShowUserAvatar" format="boolean"/>
+        <attr name="msgListShowUserNick" format="boolean"/>
+    </declare-styleable>
 </resources>

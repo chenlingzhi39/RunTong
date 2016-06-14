@@ -10,23 +10,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.ClipboardManager;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,10 +28,13 @@ import com.callba.phone.adapter.ChatAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.EaseEmojicon;
 import com.callba.phone.util.EaseCommonUtils;
+import com.callba.phone.widget.EaseAlertDialog;
+import com.callba.phone.widget.EaseAlertDialog.AlertDialogUser;
 import com.callba.phone.widget.EaseChatExtendMenu;
 import com.callba.phone.widget.EaseChatInputMenu;
 import com.callba.phone.widget.EaseChatInputMenu.ChatInputMenuListener;
-import com.callba.phone.widget.refreshlayout.EasyRecyclerView;
+import com.callba.phone.widget.EaseChatMessageList;
+import com.callba.phone.widget.chatrow.EaseCustomChatRowProvider;
 import com.callba.phone.widget.refreshlayout.RefreshLayout;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
@@ -51,7 +45,6 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 
 /**
  * Created by PC-20160514 on 2016/5/27.
@@ -65,9 +58,10 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
     TextView title;
     @InjectView(R.id.input_menu)
     EaseChatInputMenu inputMenu;
-    @InjectView(R.id.messages)
-    EasyRecyclerView list;
-
+    @InjectView(R.id.message_list)
+    EaseChatMessageList messageList;
+    protected ListView listView;
+    protected SwipeRefreshLayout swipeRefreshLayout;
     private ChatAdapter chatAdapter;
     private ArrayList<EMMessage> messages;
     private String userName;
@@ -79,33 +73,35 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
     protected static final int REQUEST_CODE_MAP = 1;
     protected static final int REQUEST_CODE_CAMERA = 2;
     protected static final int REQUEST_CODE_LOCAL = 3;
-    protected int[] itemStrings = { R.string.attach_take_pic, R.string.attach_picture, R.string.attach_location };
-    protected int[] itemdrawables = { R.drawable.ease_chat_takepic_selector, R.drawable.ease_chat_image_selector,
-            R.drawable.ease_chat_location_selector };
-    protected int[] itemIds = { ITEM_TAKE_PICTURE, ITEM_PICTURE, ITEM_LOCATION };
+    protected int[] itemStrings = {R.string.attach_take_pic, R.string.attach_picture, R.string.attach_location};
+    protected int[] itemdrawables = {R.drawable.ease_chat_takepic_selector, R.drawable.ease_chat_image_selector,
+            R.drawable.ease_chat_location_selector};
+    protected int[] itemIds = {ITEM_TAKE_PICTURE, ITEM_PICTURE, ITEM_LOCATION};
     protected EaseChatFragmentListener chatFragmentListener;
     protected MyItemClickListener extendMenuItemClickListener;
     protected String toChatUsername;
     protected int chatType;
     protected InputMethodManager inputManager;
     protected ClipboardManager clipboard;
+    protected boolean isMessageListInited;
+    protected EMMessage contextMenuMessage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         chatAdapter = new ChatAdapter(this);
-        list.setLayoutManager(new LinearLayoutManager(this));
+        /*list.setLayoutManager(new LinearLayoutManager(this));
         list.setRefreshEnabled(true);
-        list.setFooterEnabled(false);
+        list.setFooterEnabled(false);*/
         userName = getIntent().getStringExtra("username");
-        toChatUsername=userName;
+        toChatUsername = userName;
         title.setText(userName);
-        list.setAdapter(chatAdapter);
+        //list.setAdapter(chatAdapter);
         messages = (ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
-        chatAdapter.addAll(messages);
+      /*  chatAdapter.addAll(messages);
         list.showRecycler();
         list.scrollToPosition(messages.size() - 1);
-        list.setRefreshListener(this);
+        list.setRefreshListener(this);*/
         IntentFilter filter = new IntentFilter(
                 "com.callba.chat");
         chatReceiver = new ChatReceiver();
@@ -143,9 +139,81 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
                 sendBigExpressionMessage(emojicon.getName(), emojicon.getIdentityCode());
             }
         });
+        onMessageListInit();
+        swipeRefreshLayout = messageList.getSwipeRefreshLayout();
+        swipeRefreshLayout.setColorSchemeResources(R.color.holo_blue_bright, R.color.holo_green_light,
+                R.color.holo_orange_light, R.color.holo_red_light);
         inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
+    protected void onMessageListInit(){
+        messageList.init(toChatUsername, chatType, chatFragmentListener != null ?
+                chatFragmentListener.onSetCustomChatRowProvider() : null);
+        //设置list item里的控件的点击事件
+        setListItemClickListener();
+
+        messageList.getListView().setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                hideKeyboard();
+                inputMenu.hideExtendMenuContainer();
+                return false;
+            }
+        });
+
+        isMessageListInited = true;
+    }
+    protected void setListItemClickListener() {
+        messageList.setItemClickListener(new EaseChatMessageList.MessageListItemClickListener() {
+
+            @Override
+            public void onUserAvatarClick(String username) {
+                if(chatFragmentListener != null){
+                    chatFragmentListener.onAvatarClick(username);
+                }
+            }
+
+            @Override
+            public void onResendClick(final EMMessage message) {
+                new EaseAlertDialog(ChatActivity.this, R.string.resend, R.string.confirm_resend, null, new EaseAlertDialog.AlertDialogUser() {
+                    @Override
+                    public void onResult(boolean confirmed, Bundle bundle) {
+                        if (!confirmed) {
+                            return;
+                        }
+                        resendMessage(message);
+                    }
+                }, true).show();
+            }
+
+            @Override
+            public void onBubbleLongClick(EMMessage message) {
+                contextMenuMessage = message;
+                if(chatFragmentListener != null){
+                    chatFragmentListener.onMessageBubbleLongClick(message);
+                }
+            }
+
+            @Override
+            public boolean onBubbleClick(EMMessage message) {
+                if(chatFragmentListener != null){
+                    return chatFragmentListener.onMessageBubbleClick(message);
+                }
+                return false;
+            }
+        });
+    }
+    /**
+     * 隐藏软键盘
+     */
+    protected void hideKeyboard() {
+        if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+            if (getCurrentFocus() != null)
+                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
     //发送消息方法
     //==========================================================================
@@ -155,7 +223,7 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         sendMessage(message);
     }
 
-    protected void sendBigExpressionMessage(String name, String identityCode){
+    protected void sendBigExpressionMessage(String name, String identityCode) {
         EMMessage message = EaseCommonUtils.createExpressionMessage(toChatUsername, name, identityCode);
         sendMessage(message);
     }
@@ -185,18 +253,18 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         sendMessage(message);
     }
 
-    protected void sendMessage(EMMessage message){
+    protected void sendMessage(EMMessage message) {
         if (message == null) {
             return;
         }
-        if(chatFragmentListener != null){
+        if (chatFragmentListener != null) {
             //设置扩展属性
             chatFragmentListener.onSetMessageAttributes(message);
         }
         // 如果是群聊，设置chattype,默认是单聊
-        if (chatType == EaseConstant.CHATTYPE_GROUP){
+        if (chatType == EaseConstant.CHATTYPE_GROUP) {
             message.setChatType(EMMessage.ChatType.GroupChat);
-        }else if(chatType == EaseConstant.CHATTYPE_CHATROOM){
+        } else if (chatType == EaseConstant.CHATTYPE_CHATROOM) {
             message.setChatType(EMMessage.ChatType.ChatRoom);
         }
         //发送消息
@@ -207,13 +275,13 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         }*/
 
 
-        chatAdapter.addAll(message);
+    /*    chatAdapter.addAll(message);
         chatAdapter.notifyItemChanged(chatAdapter.getCount() - 1);
-        list.scrollToPosition(chatAdapter.getCount() - 1);
+        list.scrollToPosition(chatAdapter.getCount() - 1);*/
     }
 
 
-    public void resendMessage(EMMessage message){
+    public void resendMessage(EMMessage message) {
         message.setStatus(EMMessage.Status.CREATE);
         EMClient.getInstance().chatManager().sendMessage(message);
         //messageList.refresh();
@@ -228,7 +296,7 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
      * @param selectedImage
      */
     protected void sendPicByUri(Uri selectedImage) {
-        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
         Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
         if (cursor != null) {
             cursor.moveToFirst();
@@ -260,12 +328,13 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
 
     /**
      * 根据uri发送文件
+     *
      * @param uri
      */
-    protected void sendFileByUri(Uri uri){
+    protected void sendFileByUri(Uri uri) {
         String filePath = null;
         if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
             Cursor cursor = null;
 
             try {
@@ -292,13 +361,14 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         }
         sendFileMessage(filePath);
     }
+
     @Override
     public void onHeaderRefresh() {
         messages = (ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
-        chatAdapter.clear();
+       /* chatAdapter.clear();
         chatAdapter.addAll(messages);
         list.scrollToPosition(messages.size() - 1);
-        list.setHeaderRefreshing(false);
+        list.setHeaderRefreshing(false);*/
     }
 
     @Override
@@ -342,30 +412,31 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         public void onReceive(Context context, Intent intent) {
             if (intent.getStringExtra("username").equals((userName))) {
                 messages = (ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
-                chatAdapter.clear();
+              /*  chatAdapter.clear();
                 chatAdapter.addAll(messages);
-                list.scrollToPosition(messages.size() - 1);
+                list.scrollToPosition(messages.size() - 1);*/
             }
         }
     }
+
     /**
      * 注册底部菜单扩展栏item; 覆盖此方法时如果不覆盖已有item，item的id需大于3
      */
-    protected void registerExtendMenuItem(){
-        for(int i = 0; i < itemStrings.length; i++){
+    protected void registerExtendMenuItem() {
+        for (int i = 0; i < itemStrings.length; i++) {
             inputMenu.registerExtendMenuItem(itemStrings[i], itemdrawables[i], itemIds[i], extendMenuItemClickListener);
         }
     }
+
     /**
      * 扩展菜单栏item点击事件
-     *
      */
-    class MyItemClickListener implements EaseChatExtendMenu.EaseChatExtendMenuItemClickListener{
+    class MyItemClickListener implements EaseChatExtendMenu.EaseChatExtendMenuItemClickListener {
 
         @Override
         public void onClick(int itemId, View view) {
-            if(chatFragmentListener != null){
-                if(chatFragmentListener.onExtendMenuItemClick(itemId, view)){
+            if (chatFragmentListener != null) {
+                if (chatFragmentListener.onExtendMenuItemClick(itemId, view)) {
                     return;
                 }
             }
@@ -377,14 +448,15 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
                     selectPicFromLocal(); // 图库选择图片
                     break;
                 case ITEM_LOCATION: // 位置
-                   // startActivityForResult(new Intent(this, EaseBaiduMapActivity.class), REQUEST_CODE_MAP);
+                    // startActivityForResult(new Intent(this, EaseBaiduMapActivity.class), REQUEST_CODE_MAP);
                     break;
 
                 default:
                     break;
             }
         }
-}
+    }
+
     /**
      * 照相获取图片
      */
@@ -412,11 +484,12 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
             intent.setType("image/*");
 
         } else {
-            intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         }
         startActivityForResult(intent, REQUEST_CODE_LOCAL);
     }
-    public interface EaseChatFragmentListener{
+
+    public interface EaseChatFragmentListener {
         /**
          * 设置消息扩展属性
          */
@@ -429,6 +502,7 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
 
         /**
          * 用户头像点击事件
+         *
          * @param username
          */
         void onAvatarClick(String username);
@@ -445,6 +519,7 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
 
         /**
          * 扩展输入栏item点击事件,如果要覆盖EaseChatFragment已有的点击事件，return true
+         *
          * @param view
          * @param itemId
          * @return
@@ -455,8 +530,9 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
          * 设置自定义chatrow提供者
          * @return
          */
-        //EaseCustomChatRowProvider onSetCustomChatRowProvider();
+       EaseCustomChatRowProvider onSetCustomChatRowProvider();
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

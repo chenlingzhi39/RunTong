@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.os.Bundle;
 
+import com.callba.phone.bean.Advertisement;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 
 /** 
@@ -41,7 +42,7 @@ public class CalldaGlobalConfig {
 	private long lastInterceptCallTime;	//最后拦截呼叫时间
 	private String ivPath;//键盘广告路径
 	private String ivPathBack;//回拨广告路径
-	private String[] advertisements;
+	private ArrayList<Advertisement> advertisements;
 	private double latitude;
 	private double longitude;
 	private String address;
@@ -115,11 +116,11 @@ public class CalldaGlobalConfig {
 		this.longitude = longitude;
 	}
 
-	public String[] getAdvertisements() {
+	public ArrayList<Advertisement> getAdvertisements() {
 		return advertisements;
 	}
 
-	public void setAdvertisements(String[] advertisements) {
+	public void setAdvertisements(ArrayList<Advertisement> advertisements) {
 		this.advertisements = advertisements;
 	}
 

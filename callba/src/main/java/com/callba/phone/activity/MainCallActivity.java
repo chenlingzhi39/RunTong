@@ -38,6 +38,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.callba.phone.bean.Advertisement;
 import com.callba.phone.view.BannerLayout;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.ViewUtils;
@@ -167,6 +168,9 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     private TextView tv_location;
     private BannerLayout iv_ad;
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
+    private ArrayList<String> webImages=new ArrayList<>();
+    List<Advertisement> advertisements;
+    ADReceiver adReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -199,7 +203,10 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.ACTION_TAB_ONRESUME);
         registerReceiver(mainTabOnResumeReceiver, filter);
-
+        IntentFilter filter1 = new IntentFilter(
+                "com.callba.getad");
+        adReceiver = new ADReceiver();
+        registerReceiver(adReceiver, filter);
 
     }
 
@@ -235,6 +242,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 super.onLoadCompleted(container, uri, bitmap, config, from);
             }
         };
+
         //bitmapUtils.display(iv_ad, imgUrl, bigPicDisplayConfig, callback);
     }
 
@@ -303,7 +311,8 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             localImages.add(getResId("ad" + position, R.drawable.class));
 
         iv_ad.setViewRes(localImages);
-
+        if(CalldaGlobalConfig.getInstance().getAdvertisements()!=null)
+            initAdvertisement();
         ll_delete.setOnClickListener(this);
         //dialnumdelete = (ImageView) this.findViewById(R.id.dialnumdelete);
         //dialnumdelete.setOnClickListener(this);
@@ -1025,6 +1034,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         try {
             unregisterReceiver(receiver);
             unregisterReceiver(mainTabOnResumeReceiver);
+            unregisterReceiver(adReceiver);
         } catch (Exception e) {
         }
     }
@@ -1267,5 +1277,26 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         LocalBroadcastManager.getInstance(this).unregisterReceiver(
                 mMessageReceiver);
         super.onPause();
+    }
+    class ADReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            initAdvertisement();
+        }
+    }
+    public void initAdvertisement(){
+        advertisements=CalldaGlobalConfig.getInstance().getAdvertisements();
+        for(Advertisement advertisement : advertisements){
+            webImages.add(advertisement.getImage());
+        }
+        iv_ad.setViewUrls(webImages);
+        iv_ad.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                intent1.setData(Uri.parse(advertisements.get(position).getAdurl()));
+                startActivity(intent1);
+            }
+        });
     }
 }

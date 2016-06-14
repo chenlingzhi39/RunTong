@@ -1,5 +1,6 @@
 package com.callba.phone.util.download;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.callba.phone.activity.MainCallActivity;
+import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.AdvertisementBean;
+import com.callba.phone.bean.SystemNumber;
 import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
@@ -24,6 +27,8 @@ import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetWorkUtil;
 import com.callba.phone.util.download.AdvertisementUtil.AdvertisementListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class DownLoadAdvertisement {
 	private static final String TAG = DownLoadAdvertisement.class
@@ -105,7 +110,11 @@ public class DownLoadAdvertisement {
 				Log.i("ad",result);
 				msg.obj = result.replace("\n", "").replace("\r", "");
 				String[] result1=result.split("\\|");
-				CalldaGlobalConfig.getInstance().setAdvertisements(result1[1].split(","));
+				Gson gson=new Gson();
+				ArrayList<Advertisement> list;
+				list = gson.fromJson(result1[1], new TypeToken<List<Advertisement>>() {
+				}.getType());
+				CalldaGlobalConfig.getInstance().setAdvertisements(list);
 				Intent intent=new Intent("com.callba.getad");
 				mContext.sendBroadcast(intent);
 			} else {

@@ -118,17 +118,6 @@ public class WelcomeActivity extends BaseActivity {
 	public void init() {
 		startService(new Intent(WelcomeActivity.this, MainService.class));
 		mHandler = new Handler();
-		ContactData contactData=new ContactData();
-		contactData.setContactName("Call吧电话");
-		ArrayList<String> numbers=new ArrayList<>();
-		numbers.add("076938804856");
-		numbers.add("076938940500");
-		numbers.add("15779828631");
-		numbers.add("15779822103");
-		numbers.add("15779829730");
-		numbers.add("18296464481");
-		if(!ContactsAccessPublic.hasName(this,"Call吧电话"))
-		ContactsAccessPublic.insertPhoneContact(this,contactData,numbers);
 		rootView=(LinearLayout) findViewById(R.id.root);
 		AlphaAnimation alphaAnimation=new AlphaAnimation(0.0f,1.0f);
 		alphaAnimation.setDuration(2000);
