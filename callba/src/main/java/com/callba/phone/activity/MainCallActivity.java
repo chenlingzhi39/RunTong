@@ -1281,6 +1281,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     class ADReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals("com.callba.getad"))
             initAdvertisement();
         }
     }

@@ -463,7 +463,7 @@ public class HomeActivity extends BaseActivity {
                             userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
                         }
 
-                        Log.i("home","get_number");
+                      Log.i("home","get_number");
                         Log.i("has_name", ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话")+"");
                         if(!ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话"))
                             userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
@@ -501,6 +501,7 @@ public class HomeActivity extends BaseActivity {
 class ADReceiver extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent) {
+        if(intent.getAction().equals("com.callba.getad")){
         advertisements=CalldaGlobalConfig.getInstance().getAdvertisements();
         for(Advertisement advertisement : advertisements){
             webImages.add(advertisement.getImage());
@@ -513,7 +514,7 @@ class ADReceiver extends BroadcastReceiver{
               intent1.setData(Uri.parse(advertisements.get(position).getAdurl()));
               startActivity(intent1);
           }
-      });
+      });}
     }
 }
 

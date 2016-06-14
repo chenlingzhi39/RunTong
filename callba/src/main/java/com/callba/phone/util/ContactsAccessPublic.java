@@ -166,18 +166,20 @@ public class ContactsAccessPublic {
     }
 
     public static boolean hasName(Context context, String name) {
-        String[] projection = {};
+        String[] projection = {Phone._ID};
 
         // 将自己添加到 msPeers 中
         Cursor cursor = context.getContentResolver().query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                ContactsContract.Data.CONTENT_URI,
                 projection, // Which columns to return.
-                Phone.DISPLAY_NAME + " LIKE '%"
-                        + name + "%'", // WHERE clause.
-                null, // WHERE clause value substitution
+                Data.DISPLAY_NAME + " =?", // WHERE clause.
+                new String[]{name}, // WHERE clause value substitution
                 null); // Sort order.
-
-        return cursor!=null;
+        if(cursor.getCount()==0)
+        {cursor.close();
+            return false;}
+        else {cursor.close();
+            return true;}
     }
 
 
@@ -191,8 +193,8 @@ public class ContactsAccessPublic {
 
 //            ContentResolver resolver = context.getContentResolver();
         //首先向RawContacts.CONTENT_URI执行一个空值插入，目的是获取系统返回的rawContactId
-        values.put(RawContacts.ACCOUNT_NAME, "null");
-        values.put(RawContacts.ACCOUNT_TYPE, "null");
+       /* values.put(RawContacts.ACCOUNT_NAME, "null");
+        values.put(RawContacts.ACCOUNT_TYPE, "null");*/
         Uri rawContactUri =context.getContentResolver().insert(RawContacts.CONTENT_URI, values);
         long rawContactId = ContentUris.parseId(rawContactUri);
         contact.setId(rawContactId+"");
@@ -210,8 +212,8 @@ public class ContactsAccessPublic {
             values.clear();
             values.put(Data.RAW_CONTACT_ID,rawContactId);
             values.put(Data.MIMETYPE,Phone.CONTENT_ITEM_TYPE);
-            values.put(Phone.NUMBER,numbers.get(i-1));
             values.put(Phone.TYPE,Phone.TYPE_MOBILE);
+            values.put(Phone.NUMBER,numbers.get(i-1));
             rcUri = context.getContentResolver().insert(android.provider.ContactsContract.Data.CONTENT_URI,values);
 
         }
