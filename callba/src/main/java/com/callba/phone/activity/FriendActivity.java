@@ -93,7 +93,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             @Override
             public void onClick(View v) {
                 userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),CalldaGlobalConfig.getInstance().getLatitude(),CalldaGlobalConfig.getInstance().getLongitude(),100000);
-                userList.setHeaderRefreshing(true);
+                userList.showProgress();
             }
         });
         userList.getErrorView().setOnClickListener(new View.OnClickListener(){
@@ -101,7 +101,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             public void onClick(View v) {
                 Log.i("error","click");
                 userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),CalldaGlobalConfig.getInstance().getLatitude(),CalldaGlobalConfig.getInstance().getLongitude(),100000);
-                userList.setHeaderRefreshing(true);
+                userList.showProgress();
             }
         });
         final View view=getLayoutInflater().inflate(R.layout.banner,null);

@@ -548,7 +548,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 					String regEx = "[^0-9]";
 					Pattern p = Pattern.compile(regEx);
 					Matcher m = p.matcher(content);
-                     et_yzm.setText(m.replaceAll("").trim().toString());
+                     et_yzm.setText(m.toString());
 				}
 			}
 
