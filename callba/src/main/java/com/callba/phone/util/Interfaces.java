@@ -107,11 +107,11 @@ public interface Interfaces {
 	/**
 	 * 查询用户套餐
 	 */
-	String QUERY_MEAL = "http://bointer.aihuzhongchou.com/inter/suite/user_suites.jsp";
+	String QUERY_MEAL = "http://inter.boboit.cn/inter/suite/user_suites.jsp";
 	/**
 	 * 查询用户通话记录
 	 */
-	String QUERY_CALLLOG = "http://bointer.aihuzhongchou.com/inter/callrecord/callrecord.jsp";
+	String QUERY_CALLLOG = "http://inter.boboit.cn/inter/callrecord/callrecord.jsp";
 	/**
 	 * 获取子账户个数
 	 */
@@ -145,7 +145,7 @@ public interface Interfaces {
 	/**
 	 * 回拨
 	 */
-	String DIAL_CALLBACK = "http://bointer.aihuzhongchou.com/inter/call/callbacking.jsp";
+	String DIAL_CALLBACK = "http://inter.boboit.cn/inter/call/callbacking.jsp";
 	/**
 	 * 易宝支付
 	 */
@@ -153,7 +153,7 @@ public interface Interfaces {
 	/**
 	 * 闰通卡支付
 	 */
-	String CALLDA_PAY = "http://bointer.aihuzhongchou.com/inter/pay/pay_card.jsp";
+	String CALLDA_PAY = "http://inter.boboit.cn/inter/pay/pay_card.jsp";
 	/**
 	 * 闰通余额支付
 	 */
