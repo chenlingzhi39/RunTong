@@ -533,9 +533,10 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
             case R.id.dialcall:
                 // dialCallback();
-                callNum = et_number.getText().toString().trim();
+                if(Float.parseFloat(CalldaGlobalConfig.getInstance().getAccountBalance())>0.00)
+                {callNum = et_number.getText().toString().trim();
                 et_number.setText("");
-                callUtils.judgeCallMode(this, callNum);
+                callUtils.judgeCallMode(this, callNum);}else toast(R.string.no_balance);
                 break;
 
             case R.id.bn_textoperate_1:
@@ -1229,15 +1230,17 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 if (CalldaGlobalConfig.getInstance().getKeyBoardSetting()) {
                     // 键盘音开
                     num1.setImageResource(R.drawable.call_1);
-                    CalldaToast calldaToast = new CalldaToast();
+                    toast(R.string.keyboard_tone_on);
+                   /* CalldaToast calldaToast = new CalldaToast();
                     calldaToast.showImageToast(context, R.string.keyboard_tone_on,
-                            R.drawable.keyboard_setting_icon);
+                            R.drawable.keyboard_setting_icon);*/
                 } else {
                     // 键盘音关
                     num1.setImageResource(R.drawable.call_1);
-                    CalldaToast calldaToast = new CalldaToast();
+                    toast(R.string.keyboard_tone_off);
+                   /* CalldaToast calldaToast = new CalldaToast();
                     calldaToast.showImageToast(context, R.string.keyboard_tone_off,
-                            R.drawable.keyboard_setting_off_icon);
+                            R.drawable.keyboard_setting_off_icon);*/
                 }
                 break;
 

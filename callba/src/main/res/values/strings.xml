@@ -5,6 +5,7 @@
     <string name="add_contact">新建联系人</string>
     <string name="send_message">发送短信</string>
     <string name="save_contact">保存到已有联系人</string>
+    <string name="no_balance">余额不足</string>
     <string name="list">通讯录</string>
     <string name="invite">邀请</string>
     <string name="home">主页</string>

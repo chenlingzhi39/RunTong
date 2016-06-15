@@ -55,7 +55,7 @@ public class PostMessageActivity extends BaseActivity {
            return;
         if(number.getText().toString().equals("")||number.getText().toString().equals(CalldaGlobalConfig.getInstance().getUsername()))
             return;
-        EMMessage message = EMMessage.createTxtSendMessage(content.getText().toString(),number.getText().toString());
+        EMMessage message = EMMessage.createTxtSendMessage(content.getText().toString(),number.getText().toString()+"-callba");
 //发送消息
         EMClient.getInstance().chatManager().sendMessage(message);
         Intent intent=new Intent(PostMessageActivity.this,ChatActivity.class);

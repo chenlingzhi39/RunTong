@@ -80,6 +80,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- 显示下载大图页面 -->
+        <activity
+            android:name="com.callba.phone.widget.chatrow.EaseShowBigImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/horizontal_slide" />
         <activity android:name=".phone.activity.HelpActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

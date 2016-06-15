@@ -33,7 +33,7 @@
         android:id="@+id/banner"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        app:autoPlayDuration="8000"
+        app:autoPlayDuration="2000"
         app:indicatorMargin="10dp"
         app:indicatorShape="oval"
         app:indicatorSpace="2dp"

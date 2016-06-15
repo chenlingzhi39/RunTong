@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import com.callba.phone.bean.SearchSortKeyBean;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.util.Logger;
 import com.callba.phone.util.PinYinUtil;
 import com.callba.phone.util.SharedPreferenceUtil;
 
@@ -69,6 +70,7 @@ public class QueryContacts {
 				cursor.moveToFirst();
 				for (int i = 0; i < cursor.getCount(); i++) {
 					cursor.moveToPosition(i);
+
 //					String _id = cursor.getString(0);
 					String name = cursor.getString(1);
 					String number = cursor.getString(2);
@@ -80,7 +82,7 @@ public class QueryContacts {
 					if(TextUtils.isEmpty(number)) {
 						continue;
 					}
-					
+
 					ContactPersonEntity cb = new ContactPersonEntity();
 					cb.set_id(lookUpKey);
 					cb.setDisplayName(name);
@@ -116,7 +118,7 @@ public class QueryContacts {
 					callback.queryCompleted(contactLists);
 				}
 				CalldaGlobalConfig.getInstance().setContactBeans(contactLists);
-				
+				Logger.i("contact_size",contactLists.size()+"");
 				//保存本地联系人个数
 				SharedPreferenceUtil mPreferenceUtil = SharedPreferenceUtil.getInstance(mContext);
 				int contactsSize = contactLists.size(); 

@@ -9,6 +9,8 @@ import android.text.TextUtils;
 
 import com.callba.phone.activity.contact.ContactMutliNumBean;
 import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.util.Logger;
+import com.umeng.socialize.utils.Log;
 
 /** 
  * 联系人业务逻辑管理
@@ -59,9 +61,28 @@ public class ContactController {
 	public List<ContactEntity> getFilterListContactEntitiesNoDuplicate() {
 		List<ContactMutliNumBean> personEntities = new ArrayList<ContactMutliNumBean>();
 		String lastName = "";
-		for(ContactPersonEntity contactPersonEntity : mAllContactPersonEntities) {
+		List<String> contactPhones=new ArrayList<>();
+		Logger.i("contact_size",mAllContactPersonEntities.size()+"");
+		for(int i=0;i<mAllContactPersonEntities.size();i++){
+			if(i==0)
+			{personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0)));
+				contactPhones.add(mAllContactPersonEntities.get(0).getPhoneNumber());
+			continue;}
+			if(!mAllContactPersonEntities.get(i).getDisplayName().equals(mAllContactPersonEntities.get(i-1).getDisplayName())){
+				personEntities.get(personEntities.size()-1).setContactPhones(contactPhones);
+				contactPhones=new ArrayList<>();
+				contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
+				personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(i)));
+			}else{
+				contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
+				}
+		}
+		/*for(ContactPersonEntity contactPersonEntity : mAllContactPersonEntities) {
+
 			if(!TextUtils.isEmpty(lastName) && lastName.equals(contactPersonEntity.getDisplayName())) {
+				Logger.i("name_number",contactPersonEntity.getDisplayName()+contactPersonEntity.getPhoneNumber());
 				if(personEntities.size() > 1) {
+
 					List<String> contactPhones = personEntities.get(personEntities.size() - 1).getContactPhones();
 					contactPhones.add(contactPersonEntity.getPhoneNumber());
 				}
@@ -71,7 +92,7 @@ public class ContactController {
 			lastName = contactPersonEntity.getDisplayName();
 			
 			personEntities.add(new ContactMutliNumBean(contactPersonEntity));
-		}
+		}*/
 		return sortContactByLetter(personEntities);
 	}
 	

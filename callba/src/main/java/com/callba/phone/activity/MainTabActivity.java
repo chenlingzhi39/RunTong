@@ -385,8 +385,9 @@ public class MainTabActivity extends TabActivity {
         PendingIntent contentIntent = PendingIntent.getActivity(
                 getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            mBuilder.setFullScreenIntent(contentIntent, true);
+      /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            mBuilder.setFullScreenIntent(contentIntent, true);*/
+        mBuilder.setTicker(content);
         Notification notification = mBuilder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
         notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

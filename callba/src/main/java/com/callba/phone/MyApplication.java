@@ -21,7 +21,9 @@ import com.callba.R;
 import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.activity.WelcomeActivity;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.controller.EaseUI;
 import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.Logger;
 import com.callba.phone.util.StorageUtils;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMError;
@@ -63,12 +65,13 @@ public class MyApplication extends Application {
 // 默认添加好友时，是不需要验证的，改成需要验证
         options.setAcceptInvitationAlways(false);
         options.setAutoLogin(false);
-//初始化
+        EaseUI.getInstance().init(this,options);
+/*//初始化
         EMClient.getInstance().init(this, options);
 //在做打包混淆时，关闭debug模式，避免消耗不必要的资源
         EMClient.getInstance().setDebugMode(true);
 //注册一个监听连接状态的listener
-        EMClient.getInstance().addConnectionListener(new MyConnectionListener());
+        EMClient.getInstance().addConnectionListener(new MyConnectionListener());*/
 
 
        /* Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {

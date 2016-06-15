@@ -38,6 +38,7 @@ import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalSetting;
+import com.callba.phone.controller.EaseUI;
 import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.service.MainService;
@@ -524,7 +525,7 @@ public class WelcomeActivity extends BaseActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode == RESULT_OK && requestCode == 0) {
+		if (resultCode == RESULT_CANCELED && requestCode == 0) {
 			isNetworkAvail = NetworkDetector.detect(WelcomeActivity.this);
 			alertNetWork(isNetworkAvail);
 			if (isNetworkAvail) {

@@ -133,14 +133,14 @@ public abstract class EaseChatRow extends LinearLayout {
         }
         
         if(ackedView != null){
-            if (message.isAcked()) {
+          /*  if (message.isAcked()) {
                 if (deliveredView != null) {
                     deliveredView.setVisibility(View.INVISIBLE);
                 }
                 ackedView.setVisibility(View.VISIBLE);
             } else {
                 ackedView.setVisibility(View.INVISIBLE);
-            }
+            }*/
         }
         
 

@@ -209,7 +209,9 @@ public class HomeActivity extends BaseActivity {
                      numbers.add(user.getPhoneNumber());
                      Log.i("phonenumber",user.getPhoneNumber());
                  }
+                 if(!ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话"))
                      ContactsAccessPublic.insertPhoneContact(HomeActivity.this,contactData,numbers);
+                 else ContactsAccessPublic.updatePhoneContact(HomeActivity.this,"Call吧电话",numbers);
              }else{
 
              }
@@ -462,8 +464,6 @@ public class HomeActivity extends BaseActivity {
 
                             userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
                         }
-
-                      Log.i("home","get_number");
                         Log.i("has_name", ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话")+"");
                         if(!ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话"))
                             userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());

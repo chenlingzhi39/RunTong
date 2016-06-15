@@ -7,6 +7,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.callba.R;
+import com.callba.phone.util.Logger;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.HttpUtils;
@@ -267,7 +268,7 @@ public class UserDao {
 
     public void getNearBy(String loginName, String password, double latitude, double longitude, int radius) {
         final RequestParams params = new RequestParams();
-        Log.i("password", password);
+        Logger.i("nearby_url",Interfaces.GET_NEARBY+"?"+"loginName="+loginName+"&loginPwd="+password+"&latitude="+latitude+"&longitude="+longitude+"&radius="+radius);
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
         params.addBodyParameter("latitude", latitude + "");
@@ -276,6 +277,7 @@ public class UserDao {
         httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_NEARBY, params, new RequestCallBack<String>() {
             @Override
             public void onFailure(HttpException error, String msg) {
+                error.printStackTrace();
                 postListener.failure(context.getString(R.string.network_error));
             }
 
@@ -287,7 +289,6 @@ public class UserDao {
 
             @Override
             public void onStart() {
-                Log.i("url", Interfaces.GET_NEARBY);
                 postListener.start();
             }
 

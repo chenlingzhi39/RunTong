@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.ClipboardManager;
@@ -27,6 +28,7 @@ import com.callba.phone.EaseConstant;
 import com.callba.phone.adapter.ChatAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.EaseEmojicon;
+import com.callba.phone.controller.EaseUI;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.widget.EaseAlertDialog;
 import com.callba.phone.widget.EaseAlertDialog.AlertDialogUser;
@@ -36,12 +38,16 @@ import com.callba.phone.widget.EaseChatInputMenu.ChatInputMenuListener;
 import com.callba.phone.widget.EaseChatMessageList;
 import com.callba.phone.widget.chatrow.EaseCustomChatRowProvider;
 import com.callba.phone.widget.refreshlayout.RefreshLayout;
+import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
+import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.util.PathUtil;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -53,7 +59,7 @@ import butterknife.InjectView;
         contentViewId = R.layout.chat,
         navigationId = R.drawable.press_back
 )
-public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefreshListener {
+public class ChatActivity extends BaseActivity {
     @InjectView(R.id.title)
     TextView title;
     @InjectView(R.id.input_menu)
@@ -73,6 +79,10 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
     protected static final int REQUEST_CODE_MAP = 1;
     protected static final int REQUEST_CODE_CAMERA = 2;
     protected static final int REQUEST_CODE_LOCAL = 3;
+    private static final int REQUEST_CODE_SELECT_VIDEO = 11;
+    private static final int REQUEST_CODE_SELECT_FILE = 12;
+    private static final int REQUEST_CODE_GROUP_DETAIL = 13;
+    private static final int REQUEST_CODE_CONTEXT_MENU = 14;
     protected int[] itemStrings = {R.string.attach_take_pic, R.string.attach_picture, R.string.attach_location};
     protected int[] itemdrawables = {R.drawable.ease_chat_takepic_selector, R.drawable.ease_chat_image_selector,
             R.drawable.ease_chat_location_selector};
@@ -85,10 +95,15 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
     protected ClipboardManager clipboard;
     protected boolean isMessageListInited;
     protected EMMessage contextMenuMessage;
+    protected EMConversation conversation;
+    protected int pagesize = 20;
+    protected boolean isloading;
+    protected boolean haveMoreData = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
+        listView = messageList.getListView();
         chatAdapter = new ChatAdapter(this);
         /*list.setLayoutManager(new LinearLayoutManager(this));
         list.setRefreshEnabled(true);
@@ -97,7 +112,7 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         toChatUsername = userName;
         title.setText(userName);
         //list.setAdapter(chatAdapter);
-        messages = (ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
+       // messages = (ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
       /*  chatAdapter.addAll(messages);
         list.showRecycler();
         list.scrollToPosition(messages.size() - 1);
@@ -141,11 +156,90 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         });
         onMessageListInit();
         swipeRefreshLayout = messageList.getSwipeRefreshLayout();
+        setRefreshLayoutListener();
         swipeRefreshLayout.setColorSchemeResources(R.color.holo_blue_bright, R.color.holo_green_light,
                 R.color.holo_orange_light, R.color.holo_red_light);
         inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(isMessageListInited)
+            messageList.refresh();
+        EMClient.getInstance().chatManager().addMessageListener(msgListener);
+    }
+    EMMessageListener msgListener=new EMMessageListener() {
+        @Override
+        public void onMessageReceived(List<EMMessage> list) {
+            for (EMMessage message : messages) {
+                String username = null;
+                // 群组消息
+                if (message.getChatType() == EMMessage.ChatType.GroupChat || message.getChatType() == EMMessage.ChatType.ChatRoom) {
+                    username = message.getTo();
+                } else {
+                    // 单聊消息
+                    username = message.getFrom();
+                }
+
+                // 如果是当前会话的消息，刷新聊天页面
+                if (username.equals(toChatUsername)) {
+                    messageList.refreshSelectLast();
+                    // 声音和震动提示有新消息
+                    EaseUI.getInstance().getNotifier().viberateAndPlayTone(message);
+                } else {
+                    // 如果消息不是和当前聊天ID的消息
+                    EaseUI.getInstance().getNotifier().onNewMsg(message);
+                }
+            }
+        }
+
+        @Override
+        public void onCmdMessageReceived(List<EMMessage> list) {
+
+        }
+
+        @Override
+        public void onMessageReadAckReceived(List<EMMessage> list) {
+            if(isMessageListInited) {
+                messageList.refresh();
+            }
+        }
+
+        @Override
+        public void onMessageDeliveryAckReceived(List<EMMessage> list) {
+            if(isMessageListInited) {
+                messageList.refresh();
+            }
+        }
+
+        @Override
+        public void onMessageChanged(EMMessage emMessage, Object o) {
+            if(isMessageListInited) {
+                messageList.refresh();
+            }
+        }
+    };
+    protected void onConversationInit(){
+        // 获取当前conversation对象
+
+        conversation = EMClient.getInstance().chatManager().getConversation(toChatUsername, EaseCommonUtils.getConversationType(chatType), true);
+        // 把此会话的未读数置为0
+        conversation.markAllMessagesAsRead();
+        // 初始化db时，每个conversation加载数目是getChatOptions().getNumberOfMessagesLoaded
+        // 这个数目如果比用户期望进入会话界面时显示的个数不一样，就多加载一些
+        final List<EMMessage> msgs = conversation.getAllMessages();
+        int msgCount = msgs != null ? msgs.size() : 0;
+        if (msgCount < conversation.getAllMsgCount() && msgCount < pagesize) {
+            String msgId = null;
+            if (msgs != null && msgs.size() > 0) {
+                msgId = msgs.get(0).getMsgId();
+            }
+            conversation.loadMoreMsgFromDB(msgId, pagesize - msgCount);
+        }
+
     }
     protected void onMessageListInit(){
         messageList.init(toChatUsername, chatType, chatFragmentListener != null ?
@@ -164,6 +258,50 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         });
 
         isMessageListInited = true;
+    }
+    protected void setRefreshLayoutListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (listView.getFirstVisiblePosition() == 0 && !isloading && haveMoreData) {
+                            List<EMMessage> messages;
+                            try {
+                                if (chatType == EaseConstant.CHATTYPE_SINGLE) {
+                                    messages = conversation.loadMoreMsgFromDB(messageList.getItem(0).getMsgId(),
+                                            pagesize);
+                                } else {
+                                    messages = conversation.loadMoreMsgFromDB(messageList.getItem(0).getMsgId(),
+                                            pagesize);
+                                }
+                            } catch (Exception e1) {
+                                swipeRefreshLayout.setRefreshing(false);
+                                return;
+                            }
+                            if (messages.size() > 0) {
+                                messageList.refreshSeekTo(messages.size() - 1);
+                                if (messages.size() != pagesize) {
+                                    haveMoreData = false;
+                                }
+                            } else {
+                                haveMoreData = false;
+                            }
+
+                            isloading = false;
+
+                        } else {
+                            Toast.makeText(ChatActivity.this, getResources().getString(R.string.no_more_messages),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 600);
+            }
+        });
     }
     protected void setListItemClickListener() {
         messageList.setItemClickListener(new EaseChatMessageList.MessageListItemClickListener() {
@@ -268,7 +406,10 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
             message.setChatType(EMMessage.ChatType.ChatRoom);
         }
         //发送消息
-        EMClient.getInstance().chatManager().sendMessage(message);
+        EMClient.getInstance().chatManager().sendMessage(message); //刷新ui
+        if(isMessageListInited) {
+            messageList.refreshSelectLast();
+        }
         //刷新ui
       /*  if(isMessageListInited) {
             messageList.refreshSelectLast();
@@ -284,7 +425,7 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
     public void resendMessage(EMMessage message) {
         message.setStatus(EMMessage.Status.CREATE);
         EMClient.getInstance().chatManager().sendMessage(message);
-        //messageList.refresh();
+        messageList.refresh();
     }
 
     //===================================================================================
@@ -362,19 +503,7 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         sendFileMessage(filePath);
     }
 
-    @Override
-    public void onHeaderRefresh() {
-        messages = (ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
-       /* chatAdapter.clear();
-        chatAdapter.addAll(messages);
-        list.scrollToPosition(messages.size() - 1);
-        list.setHeaderRefreshing(false);*/
-    }
 
-    @Override
-    public void onFooterRefresh() {
-
-    }
 
     @Override
     public void init() {
@@ -411,7 +540,7 @@ public class ChatActivity extends BaseActivity implements RefreshLayout.OnRefres
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getStringExtra("username").equals((userName))) {
-                messages = (ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
+                //messages = (ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
               /*  chatAdapter.clear();
                 chatAdapter.addAll(messages);
                 list.scrollToPosition(messages.size() - 1);*/

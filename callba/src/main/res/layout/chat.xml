@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <include layout="@layout/toolbar" />
-    <com.hyphenate.easeui.widget.EaseChatMessageList
+    <com.callba.phone.widget.EaseChatMessageList
         android:id="@+id/message_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
    <!-- <com.callba.phone.widget.refreshlayout.EasyRecyclerView
         android:id="@+id/messages"
         android:layout_width="match_parent"
@@ -50,5 +52,5 @@
         android:id="@+id/input_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
-</RelativeLayout>
+    />
+</LinearLayout>

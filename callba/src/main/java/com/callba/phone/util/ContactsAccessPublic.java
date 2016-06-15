@@ -166,8 +166,7 @@ public class ContactsAccessPublic {
     }
 
     public static boolean hasName(Context context, String name) {
-        String[] projection = {Phone._ID};
-
+        String[] projection = { Data.RAW_CONTACT_ID};
         // 将自己添加到 msPeers 中
         Cursor cursor = context.getContentResolver().query(
                 ContactsContract.Data.CONTENT_URI,
@@ -175,13 +174,36 @@ public class ContactsAccessPublic {
                 Data.DISPLAY_NAME + " =?", // WHERE clause.
                 new String[]{name}, // WHERE clause value substitution
                 null); // Sort order.
+
         if(cursor.getCount()==0)
         {cursor.close();
             return false;}
-        else {cursor.close();
+        else {
+            cursor.moveToFirst();
+            Logger.i("raw_contact_id",cursor.getString(0));
+            cursor.close();
             return true;}
     }
-
+public static void updatePhoneContact(Context context,String name,ArrayList<String> numbers){
+    String[] projection = { Data.RAW_CONTACT_ID};
+    // 将自己添加到 msPeers 中
+    Cursor cursor = context.getContentResolver().query(
+            ContactsContract.Data.CONTENT_URI,
+            projection, // Which columns to return.
+            Data.DISPLAY_NAME + " =?", // WHERE clause.
+            new String[]{name}, // WHERE clause value substitution
+            null); // Sort order.
+      if(cursor.moveToFirst()){
+          ContentValues values = new ContentValues();
+          for(int i=1;i<=numbers.size();i++)
+          { values.clear();
+          values.put(Data.RAW_CONTACT_ID,cursor.getString(0));
+          values.put(Data.MIMETYPE,Phone.CONTENT_ITEM_TYPE);
+          values.put(Phone.TYPE,Phone.TYPE_MOBILE);
+          values.put(Phone.NUMBER,numbers.get(i-1));
+         context.getContentResolver().insert(android.provider.ContactsContract.Data.CONTENT_URI,values);}
+      }else return;
+}
 
     public static boolean insertPhoneContact(Context context, ContactData contact,ArrayList<String> numbers){
         /**
