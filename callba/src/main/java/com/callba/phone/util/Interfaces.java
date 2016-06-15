@@ -8,7 +8,7 @@ public interface Interfaces {
 	/**
 	 * 根路径"http://inter.runtong77.com/inter/basic"
 	 */
-	String BASIC_URL = "http://bointer.aihuzhongchou.com/inter/basic";
+	String BASIC_URL = "http://inter.boboit.cn/inter/basic";
 	
 	String AgentSign = "";
 	
@@ -169,15 +169,15 @@ public interface Interfaces {
 	/**
 	 * 附近的人
 	 */
-	String GET_NEARBY="http://bointer.aihuzhongchou.com/inter/nearby/nearby.jsp";
+	String GET_NEARBY="http://inter.boboit.cn/inter/nearby/nearby.jsp";
 	/**
 	 * 保存位置
 	 */
-	String SAVE_LOCATION="http://bointer.aihuzhongchou.com/inter/savelocation/savelocation.jsp";
+	String SAVE_LOCATION="http://inter.boboit.cn/inter/savelocation/savelocation.jsp";
 	/**
 	 * 获取签到日期
 	 */
-	String GET_MARKS="http://bointer.aihuzhongchou.com/inter/getmarks/getmarks.jsp";
+	String GET_MARKS="http://inter.boboit.cn/inter/getmarks/getmarks.jsp";
 	/**
 	 * 上传头像
 	 */
