@@ -502,6 +502,11 @@ public class UserDao {
         params.addBodyParameter("pagezize",pageSize);
         httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_MOODS, params, new RequestCallBack<String>(){
             @Override
+            public void onStart() {
+                postListener.start();
+            }
+
+            @Override
             public void onFailure(HttpException error, String msg) {
                 postListener.failure(context.getString(R.string.network_error));
             }

@@ -109,7 +109,7 @@ public class CommunityActivity extends BaseActivity implements UserDao.PostListe
         moodAdapter.setError(R.layout.view_more_error).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userDao.getMoods(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),page+"",pageSize+"");
+               moodAdapter.resumeMore();
             }
         });
         moodAdapter.setMore(R.layout.view_more, this);
