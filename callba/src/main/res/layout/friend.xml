@@ -43,7 +43,10 @@
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"  />
     </LinearLayout>
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
     <com.callba.phone.widget.refreshlayout.EasyRecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -51,4 +54,5 @@
         app:layout_empty="@layout/view_empty"
         app:layout_error="@layout/view_error"
         app:layout_progress="@layout/view_progress"/>
+    </RelativeLayout>
 </LinearLayout>

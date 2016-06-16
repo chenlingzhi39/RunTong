@@ -226,6 +226,18 @@
                     android:textSize="18sp"
                     android:layout_margin="20dp" />
             </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/private_clause"
+                android:layout_marginTop="20dp"
+                android:textColor="?attr/colorAccent"
+                android:clickable="true"
+                android:background="?attr/selectableItemBackground"
+                android:id="@+id/private_clause"
+                />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

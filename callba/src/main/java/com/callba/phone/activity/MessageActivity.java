@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import com.callba.R;
@@ -16,15 +17,18 @@ import com.callba.phone.BaseActivity;
 import com.callba.phone.adapter.ConversationAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
+import com.umeng.socialize.utils.Log;
 
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -84,6 +88,10 @@ public class MessageActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
+        String language = Locale.getDefault().getLanguage();
+        Log.i("language",language);
+        Locale.setDefault(new Locale("zh"));
+        Log.i("language",Locale.getDefault().getLanguage());
         conversationList.addAll(loadConversationList());
         conversationListview.addItemDecoration(new DividerItemDecoration(
                 this, DividerItemDecoration.VERTICAL_LIST));
@@ -206,5 +214,17 @@ public class MessageActivity extends BaseActivity {
             adapter.clear();
             adapter.addAll(conversationList);
         }
+    }
+    /**
+     * 重写onkeyDown 捕捉返回键
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // 转到后台运行
+            ActivityUtil.moveAllActivityToBack();
+            return true;
+        }
+        return false;
     }
 }

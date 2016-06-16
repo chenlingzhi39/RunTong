@@ -1,6 +1,7 @@
 package com.callba.phone.activity;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.MyApplication;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
@@ -28,6 +30,8 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.greenrobot.dao.Mark;
+import de.greenrobot.dao.MarkDao;
 
 /**
  * Created by PC-20160514 on 2016/5/24.
@@ -59,19 +63,21 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     Calendar cal;
     Date today;
     ArrayList<Integer> monthList = new ArrayList<>();
-    SimpleDateFormat df;
-
+    SimpleDateFormat df,formatter;
+    private MarkDao markDao;
+    private Cursor cursor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         // 初始化DBManager
         // dbManager = new DBManager(this);
+        markDao= MyApplication.getInstance().getDaoSession().getMarkDao();
         gold.setText(getString(R.string.gold)+":"+CalldaGlobalConfig.getInstance().getGold());
         list = new ArrayList<>();
         cal = Calendar.getInstance();
         today = calendar.getThisday();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");//获取当前时间
+        formatter = new SimpleDateFormat("yyyy-MM-dd");//获取当前时间
         date1 = formatter.format(calendar.getThisday());
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -108,6 +114,13 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 if (result[0].equals("0")) {
                     String[] dates = result[1].split(",");
                     for (String date : dates) {
+                        Mark mark=new Mark();
+                        try {
+                            mark.setDate(df.parse(date));
+                        }catch (Exception e){e.printStackTrace();}
+                        mark.setUsername(CalldaGlobalConfig.getInstance().getUsername());
+                        mark.setMonth(calendar.getCalendarMonth());
+                        markDao.insert(mark);
                         date = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
                         Log.i("date", date);
                         if (date1.equals(date)) {
@@ -121,6 +134,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                             if (calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1)
                                 constant = 0;
                         }
+
                         list.add(date);
                     }
 
@@ -218,6 +232,15 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
            calendar.addMarks(list, 0);*/
         //将当前日期标示出来
         //add(df.format(today));
+        Mark mark=new Mark();
+        mark.setUsername(CalldaGlobalConfig.getInstance().getUsername());
+        mark.setMonth(cal.get(Calendar.MONTH) + 1);
+        try{
+        mark.setDate(formatter.parse(date1));}
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        markDao.insert(mark);
         calendar.addMark(today, 0);
         //query();
         HashMap<String, Integer> bg = new HashMap<String, Integer>();
@@ -270,6 +293,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 isinput = true;
             }
         }*/
+        if(!getLocalMarks(calendar.getCalendarMonth()))
         if (!monthList.contains(calendar.getCalendarMonth()) && calendar.getCalendarMonth() <= cal.get(Calendar.MONTH) + 1) {
             Log.i("year", calendar.getCalendarYear() + "");
             Log.i("month", calendar.getCalendarMonth() + "");
@@ -301,5 +325,32 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+    public boolean getLocalMarks(int month){
+        String where=MarkDao.Properties.Month.columnName+" = "+month+" and "+MarkDao.Properties.Username.columnName+" = '"+CalldaGlobalConfig.getInstance().getUsername()+"'";
+        String orderBy = MarkDao.Properties.Date.columnName + " DESC";
+        cursor = MyApplication.getInstance().getDb().query(markDao.getTablename(), markDao.getAllColumns(), where, null, null, null,orderBy);
+        Log.i("mark_size",cursor.getCount()+"");
+        if(cursor.getCount()==0)
+        { cursor.close();
+            return false;}
+        ArrayList<Long> millis=new ArrayList<>();
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            Mark mark=new Mark();
+            markDao.readEntity(cursor,mark,0);
+            calendar.addMark(mark.getDate(), 0);
+            millis.add(mark.getDate().getTime());
+        }
+        if(calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1)
+        { if(millis.get(0)==today.getTime())
+            constant=1;
+        if(millis.size()>=2)
+        for(int i=1;i<millis.size();i++){
+            if(millis.get(i)-millis.get(i-1)==24*60*60*1000)
+            constant+=1;
+            else break;
+        }
+        circle.setConstant(constant);}
+        return true;
     }
 }

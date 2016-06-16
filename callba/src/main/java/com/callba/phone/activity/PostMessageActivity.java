@@ -59,7 +59,7 @@ public class PostMessageActivity extends BaseActivity {
 //发送消息
         EMClient.getInstance().chatManager().sendMessage(message);
         Intent intent=new Intent(PostMessageActivity.this,ChatActivity.class);
-        intent.putExtra("username",number.getText().toString());
+        intent.putExtra("username",number.getText().toString()+"-callba");
         Intent intent1=new Intent("com.callba.chat");
         sendBroadcast(intent1);
         startActivity(intent);

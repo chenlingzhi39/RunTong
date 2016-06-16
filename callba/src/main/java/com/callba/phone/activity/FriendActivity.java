@@ -105,6 +105,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             }
         });
         final View view=getLayoutInflater().inflate(R.layout.banner,null);
+        final View view1=getLayoutInflater().inflate(R.layout.ad,null);
         banner=(BannerLayout) view.findViewById(R.id.banner);
         for (int position = 1; position <= 3; position++)
             localImages.add(getResId("ad" + position, R.drawable.class));
@@ -116,7 +117,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         nearByUserAdapter.addHeader(new RecyclerArrayAdapter.ItemView() {
             @Override
             public View onCreateView(ViewGroup parent) {
-                return view;
+                return view1;
             }
 
             @Override
@@ -136,6 +137,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
 
     @Override
     public void onHeaderRefresh() {
+        nearByUserAdapter.clear();
         userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),CalldaGlobalConfig.getInstance().getLatitude(),CalldaGlobalConfig.getInstance().getLongitude(),100000);
     }
 

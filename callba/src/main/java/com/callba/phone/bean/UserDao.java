@@ -69,6 +69,7 @@ public class UserDao {
         this.context = context;
         this.postListener = postListener;
         httpUtils = new HttpUtils(6 * 1000);
+        httpUtils.configSoTimeout(12000);
         httpUtils.configRequestRetryCount(3);
     }
 

@@ -81,6 +81,11 @@
             </intent-filter>
         </activity>
         <!-- 显示下载大图页面 -->
+        <activity android:name=".phone.activity.ClauseActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            />
         <activity
             android:name="com.callba.phone.widget.chatrow.EaseShowBigImageActivity"
             android:screenOrientation="portrait"
@@ -466,7 +471,7 @@
             android:screenOrientation="portrait"
             android:taskAffinity="com.runtong.call"
             android:theme="@style/dialog_no_title">
-            <intent-filter>
+         <!--  <intent-filter>
                 <action android:name="android.intent.action.CALL_BUTTON" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -499,7 +504,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="tel" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
 
         <receiver android:name="com.callba.phone.activity.CallChooserBroadCast">

@@ -32,6 +32,7 @@ import com.callba.phone.widget.chatrow.EaseChatRowBigExpression;
 import com.callba.phone.widget.chatrow.EaseChatRowFile;
 import com.callba.phone.widget.chatrow.EaseChatRowImage;
 import com.callba.phone.widget.chatrow.EaseChatRowText;
+import com.callba.phone.widget.chatrow.EaseChatRowVoice;
 import com.callba.phone.widget.chatrow.EaseCustomChatRowProvider;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
@@ -245,7 +246,7 @@ public class EaseMessageAdapter extends BaseAdapter {
             chatRow = new EaseChatRowImage(context, message, position, this);
             break;
         case VOICE:
-           // chatRow = new EaseChatRowVoice(context, message, position, this);
+            chatRow = new EaseChatRowVoice(context, message, position, this);
             break;
         case VIDEO:
            // chatRow = new EaseChatRowVideo(context, message, position, this);

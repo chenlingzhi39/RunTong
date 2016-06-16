@@ -6,12 +6,24 @@
     android:orientation="vertical">
 
     <include layout="@layout/toolbar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    <com.callba.phone.widget.EaseVoiceRecorderView
+        android:id="@+id/voice_recorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="invisible" />
     <com.callba.phone.widget.EaseChatMessageList
         android:id="@+id/message_list"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+
         />
+    </RelativeLayout>
    <!-- <com.callba.phone.widget.refreshlayout.EasyRecyclerView
         android:id="@+id/messages"
         android:layout_width="match_parent"

@@ -137,12 +137,6 @@ public interface Interfaces {
 	 */
 	String DELETE_SUBACCOUNT = "http://inter.runtong77.com/inter/child/user_child_del.jsp";
 	/**
-	 * 帮助中心
-	 */
-	String HELP_CENTER = "http://inter.runtong77.com/inter/help/help_android.html";
-
-
-	/**
 	 * 回拨
 	 */
 	String DIAL_CALLBACK = "http://inter.boboit.cn/inter/call/callbacking.jsp";
@@ -206,6 +200,10 @@ public interface Interfaces {
 	 * 支付完成
 	 */
 	String PAY_SUCCESS="http://inter.boboit.cn/inter/pay/app_notify_url.jsp";
+	/**
+	 * 帮助中心
+	 */
+	String HELP_CENTER = "http://inter.boboit.cn/inter/help/help_android.html";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

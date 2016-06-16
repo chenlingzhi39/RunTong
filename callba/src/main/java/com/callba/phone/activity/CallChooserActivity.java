@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.cfg.CalldaGlobalConfig;
@@ -54,9 +55,9 @@ public class CallChooserActivity extends Activity implements OnClickListener {
 				e.printStackTrace();
 			} finally {
 				if(TextUtils.isEmpty(phoneNumber)) {
-					CalldaToast calldaToast = new CalldaToast();
-					calldaToast.showToast(getApplicationContext(), R.string.call_choose_num_null);
-					
+					/*CalldaToast calldaToast = new CalldaToast();
+					calldaToast.showToast(getApplicationContext(), R.string.call_choose_num_null);*/
+					Toast.makeText(this,getString(R.string.call_choose_num_null),Toast.LENGTH_SHORT);
 					finish();
 					
 					return;

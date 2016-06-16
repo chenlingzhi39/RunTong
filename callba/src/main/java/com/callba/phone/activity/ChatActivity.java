@@ -36,6 +36,8 @@ import com.callba.phone.widget.EaseChatExtendMenu;
 import com.callba.phone.widget.EaseChatInputMenu;
 import com.callba.phone.widget.EaseChatInputMenu.ChatInputMenuListener;
 import com.callba.phone.widget.EaseChatMessageList;
+import com.callba.phone.widget.EaseVoiceRecorderView;
+import com.callba.phone.widget.EaseVoiceRecorderView.EaseVoiceRecorderCallback;
 import com.callba.phone.widget.chatrow.EaseCustomChatRowProvider;
 import com.callba.phone.widget.refreshlayout.RefreshLayout;
 import com.hyphenate.EMMessageListener;
@@ -99,10 +101,12 @@ public class ChatActivity extends BaseActivity {
     protected int pagesize = 20;
     protected boolean isloading;
     protected boolean haveMoreData = true;
+    private EaseVoiceRecorderView voiceRecorderView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
+        voiceRecorderView = (EaseVoiceRecorderView) findViewById(R.id.voice_recorder);
         listView = messageList.getListView();
         chatAdapter = new ChatAdapter(this);
         /*list.setLayoutManager(new LinearLayoutManager(this));
@@ -137,15 +141,15 @@ public class ChatActivity extends BaseActivity {
 
             @Override
             public boolean onPressToSpeakBtnTouch(View v, MotionEvent event) {
-               /* return voiceRecorderView.onPressToSpeakBtnTouch(v, event, new EaseVoiceRecorderCallback() {
+                return voiceRecorderView.onPressToSpeakBtnTouch(v, event, new EaseVoiceRecorderCallback() {
 
                     @Override
                     public void onVoiceRecordComplete(String voiceFilePath, int voiceTimeLength) {
                         // 发送语音消息
                         sendVoiceMessage(voiceFilePath, voiceTimeLength);
                     }
-                });*/
-                return false;
+                });
+
             }
 
             @Override

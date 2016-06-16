@@ -3,6 +3,7 @@ package com.callba.phone;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -10,6 +11,7 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Process;
 
 import com.bumptech.glide.Glide;
@@ -17,6 +19,7 @@ import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
+import com.callba.BuildConfig;
 import com.callba.R;
 import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.activity.WelcomeActivity;
@@ -31,91 +34,69 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 import com.umeng.socialize.utils.Log;
 
+import de.greenrobot.dao.DaoMaster;
+import de.greenrobot.dao.DaoSession;
+import de.greenrobot.dao.query.QueryBuilder;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class MyApplication extends Application {
     /**
      * 保存所有打开的Activity
      */
+    private static MyApplication myApplication;
+    public static MyApplication getInstance(){
+        return myApplication;
+    }
     public static List<Activity> activities = new ArrayList<Activity>();
 //	private PushAgent mPushAgent;
 
     private long lastRestartTimeMillis = System.currentTimeMillis();
-    //实现ConnectionListener接口
-    private class MyConnectionListener implements EMConnectionListener {
-        @Override
-        public void onConnected() {
-        }
-        @Override
-        public void onDisconnected(final int error) {
 
-            if (error == EMError.USER_REMOVED) {
-                Log.i("user","removed");
-                onCurrentAccountRemoved();
-            }else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
-                Log.i("user","another");
-                onConnectionConflict();
-            }
-        }}
+    //实现ConnectionListener接口
+    private DaoSession mDaoSession;
+    private SQLiteDatabase db;
     @Override
     public void onCreate() {
         super.onCreate();
+        myApplication = this;
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/STXIHEI.TTF").setFontAttrId(R.attr.fontPath).build());
         EMOptions options = new EMOptions();
 // 默认添加好友时，是不需要验证的，改成需要验证
         options.setAcceptInvitationAlways(false);
         options.setAutoLogin(false);
         EaseUI.getInstance().init(this,options);
-/*//初始化
-        EMClient.getInstance().init(this, options);
-//在做打包混淆时，关闭debug模式，避免消耗不必要的资源
-        EMClient.getInstance().setDebugMode(true);
-//注册一个监听连接状态的listener
-        EMClient.getInstance().addConnectionListener(new MyConnectionListener());*/
-
-
-       /* Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread thread, Throwable ex) {
-                try {
-                    ex.printStackTrace();
-                    //如果开发者调用 Process.kill 或者 System.exit 之类的方法杀死进程，请务必在此之前调用此方法，用来保存统计数据
-                    MobclickAgent.reportError(MyApplication.this, ex);
-                    MobclickAgent.onKillProcess(MyApplication.this);
-
-                    //避免软件出现问题后，不停的重复启动
-                    if (System.currentTimeMillis() - lastRestartTimeMillis > 30 * 1000) {
-                        //重启应用
-                        restartAppcation();
-                    }
-
-                    ActivityUtil.finishAllActivity();
-                    Process.killProcess(Process.myPid());
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });*/
-      /*  EMChat.getInstance().init(this);
-
-*//**
- * debugMode == true 时为打开，SDK会在log里输入调试信息
- * @param debugMode
- * 在做代码混淆的时候需要设置成false
- */
-        /*
-        EMChat.getInstance().setDebugMode(true);*/
         GlideBuilder builder = new GlideBuilder(this);
         builder.setMemoryCache(new LruResourceCache(5 * 1024 * 1024));
         Glide.get(this).setMemoryCategory(MemoryCategory.HIGH);
         builder.setDiskCache(
                 new ExternalCacheDiskCacheFactory(this, StorageUtils.getCacheDirectory(getApplicationContext()).getPath(), 10 * 1024 * 1024));
         initUmengAnalytics();
-
-//		initUmengPush();
+        String language = Locale.getDefault().getLanguage();
+        Log.i("language",language);
+        setupDatabase();
+    }
+    private void setupDatabase() {
+        // // 官方推荐将获取 DaoMaster 对象的方法放到 Application 层，这样将避免多次创建生成 Session 对象
+        // 通过 DaoMaster 的内部类 DevOpenHelper，你可以得到一个便利的 SQLiteOpenHelper 对象。
+        // 可能你已经注意到了，你并不需要去编写「CREATE TABLE」这样的 SQL 语句，因为 greenDAO 已经帮你做了。
+        // 注意：默认的 DaoMaster.DevOpenHelper 会在数据库升级时，删除所有的表，意味着这将导致数据的丢失。
+        // 所以，在正式的项目中，你还应该做一层封装，来实现数据库的安全升级。
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "callba_db", null);
+        db = helper.getWritableDatabase();
+        // 注意：该数据库连接属于 DaoMaster，所以多个 Session 指的是相同的数据库连接。
+        DaoMaster daoMaster = new DaoMaster(db);
+        mDaoSession = daoMaster.newSession();
+        // 在 QueryBuilder 类中内置两个 Flag 用于方便输出执行的 SQL 语句与传递参数的值
+        QueryBuilder.LOG_SQL = BuildConfig.DEBUG;
+        QueryBuilder.LOG_VALUES = BuildConfig.DEBUG;
+    }
+    public DaoSession getDaoSession() {
+        return mDaoSession;
     }
 
+    public SQLiteDatabase getDb() {
+        return db;
+    }
     /**
      * 重启应用程序
      *
@@ -176,23 +157,5 @@ public class MyApplication extends Application {
         //设置时间间隔为5分钟
         MobclickAgent.setSessionContinueMillis(5 * 60 * 1000);*/
     }
-    /**
-     * 账号在别的设备登录
-     */
-    protected void onConnectionConflict(){
-        Intent intent = new Intent(getApplicationContext(), MainTabActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(Constant.ACCOUNT_CONFLICT, true);
-        getApplicationContext().startActivity(intent);
-    }
 
-    /**
-     * 账号被移除
-     */
-    protected void onCurrentAccountRemoved(){
-        Intent intent = new Intent(getApplicationContext(), MainTabActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(Constant.ACCOUNT_REMOVED, true);
-        getApplicationContext().startActivity(intent);
-    }
 }

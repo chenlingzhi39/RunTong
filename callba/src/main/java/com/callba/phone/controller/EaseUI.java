@@ -3,12 +3,17 @@ package com.callba.phone.controller;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.bean.EaseEmojicon;
 import com.callba.phone.bean.EaseNotifier;
 import com.callba.phone.bean.EaseUser;
+import com.callba.phone.cfg.Constant;
+import com.hyphenate.EMConnectionListener;
+import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
@@ -120,11 +125,45 @@ public final class EaseUI {
         if(settingsProvider == null){
             settingsProvider = new DefaultSettingsProvider();
         }
-        
+
+        EMClient.getInstance().addConnectionListener(new MyConnectionListener());
         sdkInited = true;
         return true;
     }
-    
+    private class MyConnectionListener implements EMConnectionListener {
+        @Override
+        public void onConnected() {
+        }
+        @Override
+        public void onDisconnected(final int error) {
+
+            if (error == EMError.USER_REMOVED) {
+                com.umeng.socialize.utils.Log.i("user","removed");
+                onCurrentAccountRemoved();
+            }else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
+                com.umeng.socialize.utils.Log.i("user","another");
+                onConnectionConflict();
+            }
+        }}
+    /**
+     * 账号在别的设备登录
+     */
+    protected void onConnectionConflict(){
+        Intent intent = new Intent(appContext, MainTabActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Constant.ACCOUNT_CONFLICT, true);
+        appContext.startActivity(intent);
+    }
+
+    /**
+     * 账号被移除
+     */
+    protected void onCurrentAccountRemoved(){
+        Intent intent = new Intent(appContext, MainTabActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(Constant.ACCOUNT_REMOVED, true);
+        appContext.startActivity(intent);
+    }
     protected EMOptions initChatOptions(){
         Log.d(TAG, "init HuanXin Options");
         

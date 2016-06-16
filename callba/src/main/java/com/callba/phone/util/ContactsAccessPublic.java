@@ -174,15 +174,14 @@ public class ContactsAccessPublic {
                 Data.DISPLAY_NAME + " =?", // WHERE clause.
                 new String[]{name}, // WHERE clause value substitution
                 null); // Sort order.
-
-        if(cursor.getCount()==0)
-        {cursor.close();
-            return false;}
+        if(cursor!=null)
+        { if(cursor.getCount()==0)
+        {return false;}
         else {
             cursor.moveToFirst();
             Logger.i("raw_contact_id",cursor.getString(0));
-            cursor.close();
-            return true;}
+            return true;}}else return false;
+
     }
 public static void updatePhoneContact(Context context,String name,ArrayList<String> numbers){
     String[] projection = { Data.RAW_CONTACT_ID};

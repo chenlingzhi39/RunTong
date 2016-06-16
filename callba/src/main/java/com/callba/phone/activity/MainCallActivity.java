@@ -533,10 +533,9 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
             case R.id.dialcall:
                 // dialCallback();
-                if(Float.parseFloat(CalldaGlobalConfig.getInstance().getAccountBalance())>0.00)
-                {callNum = et_number.getText().toString().trim();
+             callNum = et_number.getText().toString().trim();
                 et_number.setText("");
-                callUtils.judgeCallMode(this, callNum);}else toast(R.string.no_balance);
+                callUtils.judgeCallMode(this, callNum);
                 break;
 
             case R.id.bn_textoperate_1:

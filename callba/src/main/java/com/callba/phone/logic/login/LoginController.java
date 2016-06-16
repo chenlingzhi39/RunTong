@@ -143,7 +143,9 @@ public class LoginController {
 			CalldaGlobalConfig.getInstance().setUserhead(resultInfo[6]);
 			CalldaGlobalConfig.getInstance().setNickname(resultInfo[7]);
 			CalldaGlobalConfig.getInstance().setSignature(resultInfo[8]);
+			if(!resultInfo[9].equals(""))
 			CalldaGlobalConfig.getInstance().setGold(Integer.parseInt(resultInfo[9]));
+			else CalldaGlobalConfig.getInstance().setGold(0);
     		Logger.v("处理登录成功信息", "当前SIP"+CalldaGlobalConfig.getInstance().getSipIP());
 			try {
 				String encryptPwd = DesUtil.encrypt(password,

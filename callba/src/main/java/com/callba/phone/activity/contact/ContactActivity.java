@@ -232,4 +232,5 @@ public class ContactActivity extends BaseActivity implements OnClickListener,
 		getContentResolver().update(ContactsContract.Data.CONTENT_URI, values,
 				where, selectionArgs);
 	}
+
 }

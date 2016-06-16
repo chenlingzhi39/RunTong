@@ -64,18 +64,20 @@ public class ContactController {
 		List<String> contactPhones=new ArrayList<>();
 		Logger.i("contact_size",mAllContactPersonEntities.size()+"");
 		for(int i=0;i<mAllContactPersonEntities.size();i++){
+			Logger.i("contact_number",mAllContactPersonEntities.get(i).getPhoneNumber());
 			if(i==0)
 			{personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0)));
 				contactPhones.add(mAllContactPersonEntities.get(0).getPhoneNumber());
+				personEntities.get(0).setContactPhones(contactPhones);
 			continue;}
 			if(!mAllContactPersonEntities.get(i).getDisplayName().equals(mAllContactPersonEntities.get(i-1).getDisplayName())){
-				personEntities.get(personEntities.size()-1).setContactPhones(contactPhones);
 				contactPhones=new ArrayList<>();
 				contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
 				personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(i)));
 			}else{
 				contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
 				}
+			personEntities.get(personEntities.size()-1).setContactPhones(contactPhones);
 		}
 		/*for(ContactPersonEntity contactPersonEntity : mAllContactPersonEntities) {
 

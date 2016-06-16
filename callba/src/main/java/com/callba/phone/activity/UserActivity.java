@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -328,5 +329,17 @@ public class UserActivity extends BaseActivity {
                 toast(R.string.upgrade_no);
             }
         }
+    }
+    /**
+     * 重写onkeyDown 捕捉返回键
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // 转到后台运行
+            ActivityUtil.moveAllActivityToBack();
+            return true;
+        }
+        return false;
     }
 }
