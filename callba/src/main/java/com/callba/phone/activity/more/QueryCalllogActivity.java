@@ -100,6 +100,7 @@ public class QueryCalllogActivity extends BaseActivity implements
 
 	@Override
 	public void onRefresh() {
+
 		queryCalllog(time);
 	}
 
@@ -179,7 +180,7 @@ public class QueryCalllogActivity extends BaseActivity implements
 			calldaToast.showToast(getApplicationContext(), R.string.no_dail_calllog);*/
 			return;
 		}
-
+        data.clear();
 		for (int i = 0; i < jArray.length(); i++) {
 			JSONObject jObject = jArray.getJSONObject(i);
 
