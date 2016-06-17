@@ -585,10 +585,12 @@ public class UserDao {
 
         });
     }
-    public void getSystemPhoneNumber(String loginName,String password){
+    public void getSystemPhoneNumber(String loginName,String password,String count){
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("phoneNumberCount",count);
+        Logger.i("phoneNumberCount",count);
         httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_SYSTEM_PHONE_NUMBER, params, new RequestCallBack<String>(){
             @Override
             public void onFailure(HttpException error, String msg) {

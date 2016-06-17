@@ -10,10 +10,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
+import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.activity.contact.ContactDetailActivity;
@@ -69,7 +71,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     private String[] result;
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
     private ArrayList<String> webImages = new ArrayList<>();
-
+    private ImageView imageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,13 +80,13 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         location.setTextColor(getResources().getColor(R.color.black_2f));
         location.setText(CalldaGlobalConfig.getInstance().getAddress());
         userDao = new UserDao(this, this);
-        //userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), CalldaGlobalConfig.getInstance().getLatitude(), CalldaGlobalConfig.getInstance().getLongitude(), 100000);
+
         initRefreshLayout();
         userList.setLayoutManager(new LinearLayoutManager(this));
         userList.setLoadingMoreEnabled(false);
         final View view = getLayoutInflater().inflate(R.layout.banner, null);
         final View view1 = getLayoutInflater().inflate(R.layout.ad, null);
-
+        imageView=(ImageView) view1.findViewById(R.id.image);
         banner = (BannerLayout) view.findViewById(R.id.banner);
         for (int position = 1; position <= 3; position++)
             localImages.add(getResId("ad" + position, R.drawable.class));
@@ -106,8 +108,9 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                 final ArrayList<Advertisement> list;
                 list = gson.fromJson(msg, new TypeToken<List<Advertisement>>() {
                 }.getType());
-                CalldaGlobalConfig.getInstance().setAdvertisements1(list);
-                for (Advertisement advertisement : list) {
+                Glide.with(FriendActivity.this).load(list.get(0).getImage()).into(imageView);
+               CalldaGlobalConfig.getInstance().setAdvertisements2(list);
+              /*  for (Advertisement advertisement : list) {
                     webImages.add(advertisement.getImage());
                 }
                 banner.setViewUrls(webImages);
@@ -118,10 +121,12 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                         intent1.setData(Uri.parse(list.get(position).getAdurl()));
                         startActivity(intent1);
                     }
-                });
+                });*/
             }
         });
-        userDao1.getAd(3, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+        if(CalldaGlobalConfig.getInstance().getAdvertisements2()!=null)
+            Glide.with(FriendActivity.this).load(CalldaGlobalConfig.getInstance().getAdvertisements3().get(0).getImage()).into(imageView);
+      else  userDao1.getAd(2, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
 
        /* nearByUserAdapter.addHeader(new RecyclerArrayAdapter.ItemView() {
             @Override

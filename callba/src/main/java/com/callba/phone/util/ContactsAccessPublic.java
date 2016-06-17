@@ -165,7 +165,7 @@ public class ContactsAccessPublic {
         }
     }
 
-    public static boolean hasName(Context context, String name) {
+    public static String hasName(Context context, String name) {
         String[] projection = { Data.RAW_CONTACT_ID};
         // 将自己添加到 msPeers 中
         Cursor cursor = context.getContentResolver().query(
@@ -176,12 +176,24 @@ public class ContactsAccessPublic {
                 null); // Sort order.
         if(cursor!=null)
         { if(cursor.getCount()==0)
-        {return false;}
+        {return "0";}
         else {
             cursor.moveToFirst();
             Logger.i("raw_contact_id",cursor.getString(0));
-            return true;}}else return false;
+            return cursor.getCount()-1+"";}}else return "0";
 
+    }
+    public static String getId(Context context, String name){
+        String[] projection = { Data.RAW_CONTACT_ID};
+        // 将自己添加到 msPeers 中
+        Cursor cursor = context.getContentResolver().query(
+                ContactsContract.Data.CONTENT_URI,
+                projection, // Which columns to return.
+                Data.DISPLAY_NAME + " =?", // WHERE clause.
+                new String[]{name}, // WHERE clause value substitution
+                null); // Sort order.
+        cursor.moveToFirst();
+        return  cursor.getString(0);
     }
 public static void updatePhoneContact(Context context,String name,ArrayList<String> numbers){
     String[] projection = { Data.RAW_CONTACT_ID};

@@ -394,7 +394,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 gson=new Gson();
                 list = gson.fromJson(msg, new TypeToken<List<Advertisement>>() {
                 }.getType());
-                CalldaGlobalConfig.getInstance().setAdvertisements1(list);
+                CalldaGlobalConfig.getInstance().setAdvertisements3(list);
                 for(Advertisement advertisement : list){
                     webImages.add(advertisement.getImage());
                 }

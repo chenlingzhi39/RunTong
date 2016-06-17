@@ -152,10 +152,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 			systemBarTintManager.setStatusBarTintResource(R.color.gray_status);}
 		}
 		if(Build.VERSION.SDK_INT==Build.VERSION_CODES.KITKAT){
-			if(Build.MANUFACTURER.equals("Xiaomi"))
+			if(this.getClass()!= UserActivity.class)
+			{if(Build.MANUFACTURER.equals("Xiaomi"))
 				ActivityUtil.MIUISetStatusBarLightMode(getWindow(),true);
 			if(Build.MANUFACTURER.equals("Meizu"))
-				ActivityUtil.FlymeSetStatusBarLightMode(getWindow(),true);
+				ActivityUtil.FlymeSetStatusBarLightMode(getWindow(),true);}
 		}
 		Log.i("manufacturer",Build.MANUFACTURER);
 
