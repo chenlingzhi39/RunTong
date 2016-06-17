@@ -98,6 +98,7 @@
         android:textSize="20sp"
         android:layout_marginLeft="10dp"
         android:textColor="@color/black"
+        android:id="@+id/tv_sign"
        />
         <ImageView
             android:id="@+id/more3"
@@ -114,7 +115,11 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:textSize="18sp"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxLength="10"
+            android:layout_toRightOf="@+id/tv_sign"
+            android:layout_marginLeft="10dp"/>
     </RelativeLayout>
     <View
         android:layout_width="match_parent"

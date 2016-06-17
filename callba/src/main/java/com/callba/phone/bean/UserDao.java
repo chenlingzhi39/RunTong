@@ -636,12 +636,48 @@ public class UserDao {
         httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.PAY_SUCCESS, params, new RequestCallBack<String>(){
             @Override
             public void onFailure(HttpException error, String msg) {
-                postListener.failure(msg);
+                postListener.failure(context.getString(R.string.network_error));
             }
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 postListener.success(responseInfo.result);
+            }
+        });
+    }
+    public void getAd(int index,String loginName,String password){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("softType","android");
+        String url="";
+        switch (index){
+            case 1:
+                url=Interfaces.GET_ADVERTICEMENT1;
+                break;
+            case 2:
+                url=Interfaces.GET_ADVERTICEMENT2;
+                break;
+            case 3:
+                url=Interfaces.GET_ADVERTICEMENT3;
+                break;
+        }
+        Logger.i("add_url",url);
+        httpUtils.send(HttpRequest.HttpMethod.POST,url, params, new RequestCallBack<String>(){
+            @Override
+            public void onFailure(HttpException error, String msg) {
+              postListener.failure(context.getString(R.string.network_error));
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Logger.i("ad_result",responseInfo.result);
+                String[] result=responseInfo.result.split("\\|");
+                if(result[0].equals("0")){
+                    postListener.success(result[1]);
+                }else{
+                    postListener.failure(result[1]);
+                }
             }
         });
     }

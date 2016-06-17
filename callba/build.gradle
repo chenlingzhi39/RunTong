@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.callba"
-        minSdkVersion 10
+        minSdkVersion 11
         targetSdkVersion 22
         multiDexEnabled true
     }
@@ -31,7 +31,6 @@ dependencies {
     compile 'com.android.support:design:23.4.0'
     compile 'com.jakewharton:butterknife:5.1.1'
     compile 'com.google.code.gson:gson:2.2.4'
-    compile 'com.nineoldandroids:library:2.4.0'
     compile 'io.reactivex:rxjava:1.0.14'
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
@@ -50,9 +49,9 @@ dependencies {
     compile files('libs/alipaySdk-20160516.jar')
     compile 'com.theartofdev.edmodo:android-image-cropper:2.2.+'
     compile 'com.google.dagger:dagger:2.4'
-    apt 'com.google.dagger:dagger-compiler:2.4'
+     apt 'com.google.dagger:dagger-compiler:2.4'
     compile 'org.glassfish:javax.annotation:10.0-b28'
     compile 'com.android.support:cardview-v7:23.4.0'
-    compile 'com.haulmont.thirdparty:poi:3.9.20130515'
+    compile 'com.jcodecraeer:xrecyclerview:1.2.7'
     compile('de.greenrobot:greendao:2.0.0')
 }

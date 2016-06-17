@@ -119,7 +119,7 @@ public class AccountActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.calllog_search,R.id.meal_search})
+    @OnClick({R.id.calllog_search,R.id.meal_search,R.id.balance})
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.calllog_search:
@@ -128,6 +128,9 @@ public class AccountActivity extends BaseActivity {
                 break;
             case R.id.meal_search:
                 userDao.getSuits(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+                break;
+            case R.id.balance:
+                userDao1.getBalance(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
                 break;
         }
 

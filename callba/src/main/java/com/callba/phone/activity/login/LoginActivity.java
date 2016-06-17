@@ -161,9 +161,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 			
 			@Override
 			public void loginSuccess(String[] resultInfo) {
-				if(progressDialog != null&&progressDialog.isShowing()) {
-					progressDialog.dismiss();
-				}
+
 				//处理登录成功返回信息
 				LoginController.parseLoginSuccessResult(LoginActivity.this, username, password, resultInfo);
 				
@@ -191,6 +189,9 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 	 * 跳转到主页面
 	 */
 	private void gotoMainActivity() {
+		if(progressDialog != null&&progressDialog.isShowing()) {
+			progressDialog.dismiss();
+		}
 		Intent intent = new Intent(LoginActivity.this, MainTabActivity.class);
 		this.startActivity(intent);
 	}

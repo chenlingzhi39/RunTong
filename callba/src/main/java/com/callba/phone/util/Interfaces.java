@@ -157,9 +157,17 @@ public interface Interfaces {
 	 */
 	String PAY_NOTIFY_URL = "http://inter.runtong77.com/inter/pay/alipay_notify_url.jsp";
 	/**
-	 * 获取广告
+	 * 获取广告1
 	 */
-	String GET_ADVERTICEMENT ="http://inter.boboit.cn/inter/ad/ad1.jsp";
+	String GET_ADVERTICEMENT1 ="http://inter.boboit.cn/inter/ad/ad1.jsp";
+	/**
+	 * 获取广告2
+	 */
+	String GET_ADVERTICEMENT2 ="http://inter.boboit.cn/inter/ad/ad2.jsp";
+	/**
+	 * 获取广告3
+	 */
+	String GET_ADVERTICEMENT3 ="http://inter.boboit.cn/inter/ad/ad3.jsp";
 	/**
 	 * 附近的人
 	 */

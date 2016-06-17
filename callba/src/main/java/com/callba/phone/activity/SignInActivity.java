@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.MyApplication;
+import com.callba.phone.activity.more.ShareActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
@@ -322,7 +323,9 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Callba分享"); // 分享的主题
                 intent.putExtra(Intent.EXTRA_TEXT, "我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！"); // 分享的内容
-                startActivity(Intent.createChooser(intent, "选择分享"));// 目标应用选择对话框的标题*/
+                startActivityForResult(Intent.createChooser(intent, "选择分享"),0);// 目标应用选择对话框的标题
+                /*Intent intent=new Intent(SignInActivity.this, ShareActivity.class);
+                startActivity(intent);*/
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -366,5 +369,11 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         Log.i("mark_size",millis.size()+"");
         cursor.close();
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+       Logger.i("result_code",resultCode+"");
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -42,7 +42,9 @@ public class CalldaGlobalConfig {
 	private long lastInterceptCallTime;	//最后拦截呼叫时间
 	private String ivPath;//键盘广告路径
 	private String ivPathBack;//回拨广告路径
-	private ArrayList<Advertisement> advertisements;
+	private ArrayList<Advertisement> advertisements1;
+	private ArrayList<Advertisement> advertisements2;
+	private ArrayList<Advertisement> advertisements3;
 	private double latitude;
 	private double longitude;
 	private String address;
@@ -116,12 +118,28 @@ public class CalldaGlobalConfig {
 		this.longitude = longitude;
 	}
 
-	public ArrayList<Advertisement> getAdvertisements() {
-		return advertisements;
+	public ArrayList<Advertisement> getAdvertisements1() {
+		return advertisements1;
 	}
 
-	public void setAdvertisements(ArrayList<Advertisement> advertisements) {
-		this.advertisements = advertisements;
+	public void setAdvertisements1(ArrayList<Advertisement> advertisements) {
+		this.advertisements1 = advertisements1;
+	}
+
+	public ArrayList<Advertisement> getAdvertisements2() {
+		return advertisements2;
+	}
+
+	public void setAdvertisements2(ArrayList<Advertisement> advertisements2) {
+		this.advertisements2 = advertisements2;
+	}
+
+	public ArrayList<Advertisement> getAdvertisements3() {
+		return advertisements3;
+	}
+
+	public void setAdvertisements3(ArrayList<Advertisement> advertisements3) {
+		this.advertisements3 = advertisements3;
 	}
 
 	public boolean getKeyBoardSetting() {

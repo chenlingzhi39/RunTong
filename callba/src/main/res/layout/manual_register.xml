@@ -237,6 +237,8 @@
                 android:clickable="true"
                 android:background="?attr/selectableItemBackground"
                 android:id="@+id/private_clause"
+                android:drawableLeft="@drawable/private_clause"
+                android:drawablePadding="10dp"
                 />
         </LinearLayout>
     </ScrollView>

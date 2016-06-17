@@ -15,6 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -39,7 +40,10 @@ import android.widget.TextView;
 
 
 import com.callba.phone.bean.Advertisement;
+import com.callba.phone.bean.UserDao;
 import com.callba.phone.view.BannerLayout;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.bitmap.BitmapCommonUtils;
@@ -169,8 +173,9 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     private BannerLayout iv_ad;
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
     private ArrayList<String> webImages=new ArrayList<>();
-    List<Advertisement> advertisements;
-    ADReceiver adReceiver;
+    private UserDao userDao;
+    private Gson gson;
+    private LoginReceiver loginReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -203,10 +208,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.ACTION_TAB_ONRESUME);
         registerReceiver(mainTabOnResumeReceiver, filter);
-        IntentFilter filter1 = new IntentFilter(
-                "com.callba.getad");
-        adReceiver = new ADReceiver();
-        registerReceiver(adReceiver, filter);
+      //  userDao.getAd(3,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
 
     }
 
@@ -311,8 +313,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             localImages.add(getResId("ad" + position, R.drawable.class));
 
         iv_ad.setViewRes(localImages);
-        if(CalldaGlobalConfig.getInstance().getAdvertisements()!=null)
-            initAdvertisement();
+
         ll_delete.setOnClickListener(this);
         //dialnumdelete = (ImageView) this.findViewById(R.id.dialnumdelete);
         //dialnumdelete.setOnClickListener(this);
@@ -372,6 +373,49 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
         String s = getResources().getConfiguration().locale.getCountry();
         Logger.v("语言环境", s);
+        IntentFilter filter1 = new IntentFilter(
+                "com.callba.login");
+        loginReceiver=new LoginReceiver();
+        registerReceiver(loginReceiver,filter1);
+        userDao=new UserDao(this,new UserDao.PostListener(){
+            @Override
+            public void failure(String msg) {
+                toast(msg);
+            }
+
+            @Override
+            public void start() {
+
+            }
+
+            @Override
+            public void success(String msg) {
+                final ArrayList<Advertisement> list;
+                gson=new Gson();
+                list = gson.fromJson(msg, new TypeToken<List<Advertisement>>() {
+                }.getType());
+                CalldaGlobalConfig.getInstance().setAdvertisements1(list);
+                for(Advertisement advertisement : list){
+                    webImages.add(advertisement.getImage());
+                }
+                Handler handler=new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        iv_ad.setViewUrls(webImages);
+                    }
+                },500);
+                iv_ad.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                        intent1.setData(Uri.parse(list.get(position).getAdurl()));
+                        startActivity(intent1);
+                    }
+                });
+            }
+        });
+
     }
 
 
@@ -392,6 +436,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 num1.setImageResource(R.drawable.call_1);
             }
         }
+
         super.onResume();
     }
 
@@ -1029,12 +1074,14 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
     @Override
     protected void onDestroy() {
+        Logger.i("maincall","destroy");
+        unregisterReceiver(loginReceiver);
         super.onDestroy();
         // 取消广播监听
         try {
             unregisterReceiver(receiver);
             unregisterReceiver(mainTabOnResumeReceiver);
-            unregisterReceiver(adReceiver);
+
         } catch (Exception e) {
         }
     }
@@ -1273,33 +1320,17 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         }
 
     }
-
+    public class LoginReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+                userDao.getAd(3,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
+        }
+    }
     @Override
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(
                 mMessageReceiver);
         super.onPause();
     }
-    class ADReceiver extends BroadcastReceiver{
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals("com.callba.getad"))
-            initAdvertisement();
-        }
-    }
-    public void initAdvertisement(){
-        advertisements=CalldaGlobalConfig.getInstance().getAdvertisements();
-        for(Advertisement advertisement : advertisements){
-            webImages.add(advertisement.getImage());
-        }
-        iv_ad.setViewUrls(webImages);
-        iv_ad.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                intent1.setData(Uri.parse(advertisements.get(position).getAdurl()));
-                startActivity(intent1);
-            }
-        });
-    }
+
 }

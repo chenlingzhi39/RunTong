@@ -34,15 +34,30 @@
             android:layout_weight="1"
             android:hint="@string/input_text"
             android:maxLength="200"
+            android:background="@drawable/bg_edittext"
+            android:singleLine="true"
+            android:padding="5dp"
             />
-        <Button
+        <ImageButton
+            android:id="@+id/submit_image"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minWidth="40dp"
+            android:layout_weight="0"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/ic_image_grey600_24dp"
+            android:textColor="?attr/colorAccent"
+            android:textSize="16sp"
+            android:background="?attr/selectableItemBackground"
+            />
+        <ImageButton
             android:id="@+id/submit"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:minWidth="80dp"
+            android:minWidth="40dp"
             android:layout_weight="0"
             android:layout_marginLeft="5dp"
-            android:text="发送"
+            android:src="@drawable/ic_send_grey600_24dp"
             android:textColor="?attr/colorAccent"
             android:textSize="16sp"
             android:background="?attr/selectableItemBackground"

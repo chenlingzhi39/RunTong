@@ -103,7 +103,7 @@ public class DownLoadAdvertisement {
 //		String results = null;
 		try {
 			if (NetWorkUtil.detect(mContext.getApplicationContext())) {
-				String result = HttpUtils.getDataFromHttpPost(
+				/*String result = HttpUtils.getDataFromHttpPost(
 						Interfaces.GET_ADVERTICEMENT, taskParams);
 //				Logger.i(TAG, result);
 				msg.arg1 = Task.TASK_SUCCESS;
@@ -116,7 +116,7 @@ public class DownLoadAdvertisement {
 				}.getType());
 				CalldaGlobalConfig.getInstance().setAdvertisements(list);
 				Intent intent=new Intent("com.callba.getad");
-				mContext.sendBroadcast(intent);
+				mContext.sendBroadcast(intent);*/
 			} else {
 				// 无网络连接
 				msg.what = Task.TASK_NETWORK_ERROR;

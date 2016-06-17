@@ -112,26 +112,91 @@ public class HomeActivity extends BaseActivity {
     private ProgressDialog progressDialog;
     private String username;
     private String password;
-    private UserDao userDao,userDao1;
+    private UserDao userDao,userDao1,userDao2;
     private String date;
-    ADReceiver receiver;
     private Gson gson;
     private String[] result;
     List<SystemNumber> list;
-    List<Advertisement> advertisements;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
+        gson=new Gson();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");//获取当前时间
         date = formatter.format(new Date(System.currentTimeMillis()));
         mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
         mPreferenceUtil.putBoolean(Constant.IS_FROMGUIDE, false, true);
         mPreferenceUtil.commit();
-        IntentFilter filter = new IntentFilter(
-                "com.callba.getad");
-        receiver = new ADReceiver();
-        registerReceiver(receiver, filter);
+        userDao1=new UserDao(this, new UserDao.PostListener() {
+            @Override
+            public void start() {
+
+            }
+
+            @Override
+            public void success(String msg) {
+                Log.i("system_result",msg);
+                result=msg.split("\\|");
+                if(result[0].equals("0")){
+                    list = new ArrayList<>();
+                    try {
+                        list = gson.fromJson(result[1], new TypeToken<List<SystemNumber>>() {
+                        }.getType());
+                    } catch (Exception e) {
+
+                    }
+                    ArrayList<String> numbers=new ArrayList<>();
+                    ContactData contactData=new ContactData();
+                    contactData.setContactName("Call吧电话");
+                    for (SystemNumber user:list){
+                        numbers.add(user.getPhoneNumber());
+                        Log.i("phonenumber",user.getPhoneNumber());
+                    }
+                    if(!ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话"))
+                        ContactsAccessPublic.insertPhoneContact(HomeActivity.this,contactData,numbers);
+                    else ContactsAccessPublic.updatePhoneContact(HomeActivity.this,"Call吧电话",numbers);
+                }else{
+
+                }
+            }
+
+            @Override
+            public void failure(String msg) {
+                toast(msg);
+            }
+        });
+        userDao2=new UserDao(this,new UserDao.PostListener(){
+            @Override
+            public void failure(String msg) {
+                toast(msg);
+            }
+
+            @Override
+            public void start() {
+
+            }
+
+            @Override
+            public void success(String msg) {
+                final ArrayList<Advertisement> list;
+                list = gson.fromJson(msg, new TypeToken<List<Advertisement>>() {
+                }.getType());
+                CalldaGlobalConfig.getInstance().setAdvertisements1(list);
+                for(Advertisement advertisement : list){
+                    webImages.add(advertisement.getImage());
+                }
+                banner.setViewUrls(webImages);
+                banner.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                        intent1.setData(Uri.parse(list.get(position).getAdurl()));
+                        startActivity(intent1);
+                    }
+                });
+            }
+        });
+
         // 判断是否自动启动
         if (savedInstanceState == null
                 && CalldaGlobalConfig.getInstance().isAutoLogin()
@@ -143,7 +208,6 @@ public class HomeActivity extends BaseActivity {
 
         } else {
 
-
             // 检查内存数据是否正常
             String username = CalldaGlobalConfig.getInstance().getUsername();
             String password = CalldaGlobalConfig.getInstance().getPassword();
@@ -151,6 +215,9 @@ public class HomeActivity extends BaseActivity {
                 // 重新打开
                 gotoWelcomePage();
             }
+            if(!ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话"))
+                userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
+            userDao2.getAd(1,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
         }
 
 
@@ -170,10 +237,10 @@ public class HomeActivity extends BaseActivity {
                 if (result[0].equals("0")) {
                     String[] dates = result[1].split(",");
                     if (!date.equals(dates[dates.length - 1])) {
-                        mPreferenceUtil.putBoolean(date, false, true);
+                        mPreferenceUtil.putString(CalldaGlobalConfig.getInstance().getUsername(), date, true);
                         Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
                         startActivity(intent);
-                    } else mPreferenceUtil.putBoolean(date, true, true);
+                    } else   mPreferenceUtil.putString(CalldaGlobalConfig.getInstance().getUsername(), dates[dates.length - 1], true);
                 } else {
                     toast(result[1]);
                 }
@@ -182,45 +249,6 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void failure(String msg) {
                 toast(msg);
-            }
-        });
-        userDao1=new UserDao(this, new UserDao.PostListener() {
-            @Override
-            public void start() {
-
-            }
-
-            @Override
-            public void success(String msg) {
-                Log.i("system_result",msg);
-             result=msg.split("\\|");
-             if(result[0].equals("0")){
-                 gson=new Gson();
-                 list = new ArrayList<>();
-                 try {
-                     list = gson.fromJson(result[1], new TypeToken<List<SystemNumber>>() {
-                     }.getType());
-                 } catch (Exception e) {
-
-                 }
-                 ArrayList<String> numbers=new ArrayList<>();
-                 ContactData contactData=new ContactData();
-                 contactData.setContactName("Call吧电话");
-                 for (SystemNumber user:list){
-                     numbers.add(user.getPhoneNumber());
-                     Log.i("phonenumber",user.getPhoneNumber());
-                 }
-                 if(!ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话"))
-                     ContactsAccessPublic.insertPhoneContact(HomeActivity.this,contactData,numbers);
-                 else ContactsAccessPublic.updatePhoneContact(HomeActivity.this,"Call吧电话",numbers);
-             }else{
-
-             }
-            }
-
-            @Override
-            public void failure(String msg) {
-            toast(msg);
             }
         });
 
@@ -461,13 +489,14 @@ public class HomeActivity extends BaseActivity {
                         String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
                         if (month.length() == 1)
                             month = "0" + month;
-                        if (!mPreferenceUtil.getBoolean(date, false)) {
+                        if (!mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()).equals(date)) {
 
                             userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
                         }
                         Log.i("has_name", ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话")+"");
                         if(!ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话"))
                             userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
+                        userDao2.getAd(1,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
                         // 查询余额
                         //queryUserBalance();
                     }
@@ -499,29 +528,11 @@ public class HomeActivity extends BaseActivity {
         // 关闭主tab页面
         ActivityUtil.finishMainTabPages();
     }
-class ADReceiver extends BroadcastReceiver{
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        if(intent.getAction().equals("com.callba.getad")){
-        advertisements=CalldaGlobalConfig.getInstance().getAdvertisements();
-        for(Advertisement advertisement : advertisements){
-            webImages.add(advertisement.getImage());
-        }
-      banner.setViewUrls(webImages);
-      banner.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
-          @Override
-          public void onItemClick(int position) {
-              Intent intent1 = new Intent(Intent.ACTION_VIEW);
-              intent1.setData(Uri.parse(advertisements.get(position).getAdurl()));
-              startActivity(intent1);
-          }
-      });}
-    }
-}
+
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(receiver);
+        Logger.i("home","destroy");
         super.onDestroy();
     }
     /**

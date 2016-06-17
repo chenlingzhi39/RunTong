@@ -262,8 +262,8 @@
 	
 	<string name="alc_tieshi">　　　联系人备份到服务器或从服务器下载到新手机。丢换手机从此无忧~_~</string>
 	
-	<string name="share_title">闰通网络电话</string>
-	<string name="share_content">我最近用闰通网络电话，话费省了不少呀，注册就能免费打电话哦，你也去下载一个吧。http://wap.callda.com/</string>
+	<string name="share_title">Call吧电话</string>
+	<string name="share_content">我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！</string>
 	
 	<string name="remote_call_failed">调用远程服务失败</string>
     <string name="confirm_install_hint">"安装提示"</string>

@@ -75,7 +75,8 @@
                     android:text="在CALL吧,享受无限畅聊"
                     android:textColor="@color/white"
                     android:textSize="16sp"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:layout_marginRight="10dp"/>
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

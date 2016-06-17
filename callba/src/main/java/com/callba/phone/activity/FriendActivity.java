@@ -1,18 +1,15 @@
 package com.callba.phone.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amap.api.location.AMapLocationClient;
@@ -30,14 +27,12 @@ import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.view.AlwaysMarqueeTextView;
 import com.callba.phone.view.BannerLayout;
 import com.callba.phone.widget.DividerItemDecoration;
-import com.callba.phone.widget.refreshlayout.EasyRecyclerView;
 import com.callba.phone.widget.refreshlayout.RefreshLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.umeng.socialize.utils.Log;
-
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +48,7 @@ import butterknife.InjectView;
         toolbarTitle = R.string.friend,
         navigationId = R.drawable.press_back
 )
-public class FriendActivity extends BaseActivity implements UserDao.PostListener,RefreshLayout.OnRefreshListener {
+public class FriendActivity extends BaseActivity implements UserDao.PostListener {
     @InjectView(R.id.title)
     TextView title;
     @InjectView(R.id.toolbar)
@@ -63,9 +58,9 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     @InjectView(R.id.location)
     AlwaysMarqueeTextView location;
     @InjectView(R.id.list)
-    EasyRecyclerView userList;
+    XRecyclerView userList;
     private BannerLayout banner;
-    private UserDao userDao;
+    private UserDao userDao, userDao1;
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
     private NearByUserAdapter nearByUserAdapter;
@@ -73,9 +68,8 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     List<NearByUser> list;
     private String[] result;
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
-    private ArrayList<String> webImages=new ArrayList<>();
-    List<Advertisement> advertisements;
-    ADReceiver receiver;
+    private ArrayList<String> webImages = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,38 +77,53 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         gson = new Gson();
         location.setTextColor(getResources().getColor(R.color.black_2f));
         location.setText(CalldaGlobalConfig.getInstance().getAddress());
-        userDao=new UserDao(this,this);
-        userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),CalldaGlobalConfig.getInstance().getLatitude(),CalldaGlobalConfig.getInstance().getLongitude(),100000);
+        userDao = new UserDao(this, this);
+        //userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), CalldaGlobalConfig.getInstance().getLatitude(), CalldaGlobalConfig.getInstance().getLongitude(), 100000);
         initRefreshLayout();
-        userList.setRefreshEnabled(true);
-        userList.setFooterEnabled(false);
         userList.setLayoutManager(new LinearLayoutManager(this));
-        userList.getEmptyView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),CalldaGlobalConfig.getInstance().getLatitude(),CalldaGlobalConfig.getInstance().getLongitude(),100000);
-                userList.showProgress();
-            }
-        });
-        userList.getErrorView().setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Log.i("error","click");
-                userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),CalldaGlobalConfig.getInstance().getLatitude(),CalldaGlobalConfig.getInstance().getLongitude(),100000);
-                userList.showProgress();
-            }
-        });
-        final View view=getLayoutInflater().inflate(R.layout.banner,null);
-        final View view1=getLayoutInflater().inflate(R.layout.ad,null);
-        banner=(BannerLayout) view.findViewById(R.id.banner);
+        userList.setLoadingMoreEnabled(false);
+        final View view = getLayoutInflater().inflate(R.layout.banner, null);
+        final View view1 = getLayoutInflater().inflate(R.layout.ad, null);
+
+        banner = (BannerLayout) view.findViewById(R.id.banner);
         for (int position = 1; position <= 3; position++)
             localImages.add(getResId("ad" + position, R.drawable.class));
 
         banner.setViewRes(localImages);
-        if(CalldaGlobalConfig.getInstance().getAdvertisements()!=null)
-            initAdvertisement();
-        nearByUserAdapter=new NearByUserAdapter(this);
-        nearByUserAdapter.addHeader(new RecyclerArrayAdapter.ItemView() {
+        userDao1 = new UserDao(this, new UserDao.PostListener() {
+            @Override
+            public void failure(String msg) {
+                toast(msg);
+            }
+
+            @Override
+            public void start() {
+
+            }
+
+            @Override
+            public void success(String msg) {
+                final ArrayList<Advertisement> list;
+                list = gson.fromJson(msg, new TypeToken<List<Advertisement>>() {
+                }.getType());
+                CalldaGlobalConfig.getInstance().setAdvertisements1(list);
+                for (Advertisement advertisement : list) {
+                    webImages.add(advertisement.getImage());
+                }
+                banner.setViewUrls(webImages);
+                banner.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                        intent1.setData(Uri.parse(list.get(position).getAdurl()));
+                        startActivity(intent1);
+                    }
+                });
+            }
+        });
+        userDao1.getAd(3, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+
+       /* nearByUserAdapter.addHeader(new RecyclerArrayAdapter.ItemView() {
             @Override
             public View onCreateView(ViewGroup parent) {
                 return view1;
@@ -124,66 +133,82 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             public void onBindView(View headerView) {
 
             }
+        });*/
+        userList.addHeaderView(view1);
+       userList.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+                //refresh data here
+                userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), CalldaGlobalConfig.getInstance().getLatitude(), CalldaGlobalConfig.getInstance().getLongitude(), 100000);
+            }
+
+            @Override
+            public void onLoadMore() {
+                // load more data here
+            }
         });
-        userList.showProgress();
+        userList.setAdapter(new RecyclerView.Adapter() {
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return null;
+            }
 
-        userList.addItemDecoration(new DividerItemDecoration(
-                this, DividerItemDecoration.VERTICAL_LIST));
-        IntentFilter filter = new IntentFilter(
-                "com.callba.getad");
-        receiver = new ADReceiver();
-        registerReceiver(receiver, filter);
+            @Override
+            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+            }
+
+            @Override
+            public int getItemCount() {
+                return 0;
+            }
+        });
+        userList.setRefreshing(true);
     }
 
-    @Override
-    public void onHeaderRefresh() {
-        nearByUserAdapter.clear();
-        userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),CalldaGlobalConfig.getInstance().getLatitude(),CalldaGlobalConfig.getInstance().getLongitude(),100000);
-    }
 
-    @Override
-    public void onFooterRefresh() {
-
-    }
 
     @Override
     public void failure(String msg) {
-            userList.showError();
-        userList.setHeaderRefreshing(false);
+        userList.refreshComplete();
+        toast(msg);
     }
 
     @Override
     public void start() {
 
     }
+
     @Override
     public void success(String msg) {
-        userList.setHeaderRefreshing(false);
-        result=msg.split("\\|");
-        Log.i("friend_result",msg);
-        if(result[0].equals("0"))
-        { list = new ArrayList<>();
-        try {
-            list = gson.fromJson(result[1], new TypeToken<List<NearByUser>>() {
-            }.getType());
-        } catch (Exception e) {
+        userList.refreshComplete();
+        result = msg.split("\\|");
+        Log.i("friend_result", msg);
+        if (result[0].equals("0")) {
+            list = new ArrayList<>();
+            try {
+                list = gson.fromJson(result[1], new TypeToken<List<NearByUser>>() {
+                }.getType());
+            } catch (Exception e) {
 
+            }
+            Log.i("size", list.size() + "");
+            if (list.size() == 0) {
+            } else {
+                nearByUserAdapter = new NearByUserAdapter(this);
+                nearByUserAdapter.addAll(list);
+                userList.setAdapter(nearByUserAdapter);
+                nearByUserAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        Intent intent = new Intent(FriendActivity.this, ContactDetailActivity.class);
+
+                    }
+                });
+            }
+        } else {
         }
-            Log.i("size",list.size()+"");
-            if(list.size()==0)
-        userList.showEmpty();
-        else{
-        nearByUserAdapter.addAll(list);
-        userList.setAdapter(nearByUserAdapter);
-        userList.showRecycler();
-            nearByUserAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(int position) {
-                    Intent intent=new Intent(FriendActivity.this, ContactDetailActivity.class);
-
-                }
-            });
-            }}else userList.showEmpty();
+        ;
     }
 
     @Override
@@ -198,37 +223,11 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(receiver);
         super.onDestroy();
     }
 
     public void initRefreshLayout() {
-        userList.setRefreshListener(this);
-        userList.setHeaderRefreshingColorResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+
     }
-    class ADReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals("com.callba.getad"))
-                initAdvertisement();
-        }
-    }
-    public void initAdvertisement(){
-        advertisements=CalldaGlobalConfig.getInstance().getAdvertisements();
-        for(Advertisement advertisement : advertisements){
-            webImages.add(advertisement.getImage());
-        }
-        banner.setViewUrls(webImages);
-        banner.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                intent1.setData(Uri.parse(advertisements.get(position).getAdurl()));
-                startActivity(intent1);
-            }
-        });
-    }
+
 }

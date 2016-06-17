@@ -166,13 +166,14 @@ public class LoginController {
 			Intent intent=new Intent("com.callba.location");
 			intent.putExtra("action","login");
 			context.sendBroadcast(intent);
+			context.sendBroadcast(new Intent("com.callba.login"));
 		}
 		
-		String callSetting = CalldaGlobalConfig.getInstance().getCallSetting();
+	/*	String callSetting = CalldaGlobalConfig.getInstance().getCallSetting();
 		Task task = new Task(Task.TASK_DOWNLOAD_AD);
 		Map<String, Object> taskParams = new HashMap<String, Object>();
 		task.setTaskParams(taskParams);
-		DownLoadAdvertisement.getInstance().downloadAD(context, task, null);
+		DownLoadAdvertisement.getInstance().downloadAD(context, task, null);*/
 	}
 	
 	/**

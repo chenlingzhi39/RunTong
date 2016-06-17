@@ -370,7 +370,7 @@
             android:name="com.callba.phone.activity.more.ShareActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name="com.callba.phone.activity.more.PreferentialActivity"
             android:launchMode="singleTop"

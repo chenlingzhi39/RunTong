@@ -109,18 +109,9 @@ public class ChatActivity extends BaseActivity {
         voiceRecorderView = (EaseVoiceRecorderView) findViewById(R.id.voice_recorder);
         listView = messageList.getListView();
         chatAdapter = new ChatAdapter(this);
-        /*list.setLayoutManager(new LinearLayoutManager(this));
-        list.setRefreshEnabled(true);
-        list.setFooterEnabled(false);*/
         userName = getIntent().getStringExtra("username");
         toChatUsername = userName;
         title.setText(userName);
-        //list.setAdapter(chatAdapter);
-       // messages = (ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
-      /*  chatAdapter.addAll(messages);
-        list.showRecycler();
-        list.scrollToPosition(messages.size() - 1);
-        list.setRefreshListener(this);*/
         IntentFilter filter = new IntentFilter(
                 "com.callba.chat");
         chatReceiver = new ChatReceiver();
@@ -414,6 +405,7 @@ public class ChatActivity extends BaseActivity {
         if(isMessageListInited) {
             messageList.refreshSelectLast();
         }
+        sendBroadcast(new Intent("com.callba.chat"));
         //刷新ui
       /*  if(isMessageListInited) {
             messageList.refreshSelectLast();
@@ -543,12 +535,11 @@ public class ChatActivity extends BaseActivity {
     class ChatReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getStringExtra("username").equals((userName))) {
                 //messages = (ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
               /*  chatAdapter.clear();
                 chatAdapter.addAll(messages);
                 list.scrollToPosition(messages.size() - 1);*/
-            }
+            messageList.refresh();
         }
     }
 
@@ -582,6 +573,7 @@ public class ChatActivity extends BaseActivity {
                     break;
                 case ITEM_LOCATION: // 位置
                     // startActivityForResult(new Intent(this, EaseBaiduMapActivity.class), REQUEST_CODE_MAP);
+                    toast("暂不开放");
                     break;
 
                 default:
