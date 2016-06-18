@@ -69,8 +69,8 @@ public class UserDao {
         this.context = context;
         this.postListener = postListener;
         httpUtils = new HttpUtils(6 * 1000);
-        httpUtils.configSoTimeout(12000);
         httpUtils.configRequestRetryCount(3);
+        httpUtils.configResponseTextCharset("utf-8");
     }
 
     public UserDao(Context context, UploadListener uploadListener) {

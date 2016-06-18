@@ -3,6 +3,7 @@ package com.callba.phone.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.NearByUser;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.util.Logger;
 import com.callba.phone.view.AlwaysMarqueeTextView;
 import com.callba.phone.view.BannerLayout;
 import com.callba.phone.widget.DividerItemDecoration;
@@ -72,6 +74,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
     private ArrayList<String> webImages = new ArrayList<>();
     private ImageView imageView;
+    private View footer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,9 +127,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                 });*/
             }
         });
-        if(CalldaGlobalConfig.getInstance().getAdvertisements2()!=null)
-            Glide.with(FriendActivity.this).load(CalldaGlobalConfig.getInstance().getAdvertisements3().get(0).getImage()).into(imageView);
-      else  userDao1.getAd(2, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+
 
        /* nearByUserAdapter.addHeader(new RecyclerArrayAdapter.ItemView() {
             @Override
@@ -139,7 +140,10 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
 
             }
         });*/
+        nearByUserAdapter = new NearByUserAdapter(this);
         userList.addHeaderView(view1);
+        footer=new View(this);
+        userList.addFootView(footer);
        userList.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
@@ -168,6 +172,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                 return 0;
             }
         });
+        userList.setAdapter(nearByUserAdapter);
         userList.setRefreshing(true);
     }
 
@@ -200,9 +205,8 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             Log.i("size", list.size() + "");
             if (list.size() == 0) {
             } else {
-                nearByUserAdapter = new NearByUserAdapter(this);
+               nearByUserAdapter.clear();
                 nearByUserAdapter.addAll(list);
-                userList.setAdapter(nearByUserAdapter);
                 nearByUserAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(int position) {
@@ -214,6 +218,22 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         } else {
         }
         ;
+    }
+
+    @Override
+    protected void onResume() {
+        if(CalldaGlobalConfig.getInstance().getAdvertisements2()!=null)
+        {Logger.i("ad_image",CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getImage());
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    Glide.with(FriendActivity.this).load(CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getImage()).into(imageView);
+                }
+            });
+
+        }
+        else  userDao1.getAd(2, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+        super.onResume();
     }
 
     @Override
