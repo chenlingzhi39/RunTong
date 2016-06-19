@@ -41,6 +41,7 @@ import android.widget.TextView;
 
 import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.UserDao;
+import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -398,8 +399,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 for(Advertisement advertisement : list){
                     webImages.add(advertisement.getImage());
                 }
-                Handler handler=new Handler();
-                handler.postDelayed(new Runnable() {
+                SimpleHandler.getInstance().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         iv_ad.setViewUrls(webImages);

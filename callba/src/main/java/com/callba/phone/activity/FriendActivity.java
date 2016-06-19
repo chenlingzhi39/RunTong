@@ -28,6 +28,7 @@ import com.callba.phone.bean.NearByUser;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.AlwaysMarqueeTextView;
 import com.callba.phone.view.BannerLayout;
 import com.callba.phone.widget.DividerItemDecoration;
@@ -111,7 +112,12 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                 final ArrayList<Advertisement> list;
                 list = gson.fromJson(msg, new TypeToken<List<Advertisement>>() {
                 }.getType());
-                Glide.with(FriendActivity.this).load(list.get(0).getImage()).into(imageView);
+                SimpleHandler.getInstance().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Glide.with(FriendActivity.this).load(list.get(0).getImage()).into(imageView);
+                    }
+                },500);
                CalldaGlobalConfig.getInstance().setAdvertisements2(list);
               /*  for (Advertisement advertisement : list) {
                     webImages.add(advertisement.getImage());
@@ -210,7 +216,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                 nearByUserAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(int position) {
-                        Intent intent = new Intent(FriendActivity.this, ContactDetailActivity.class);
+
 
                     }
                 });
@@ -224,12 +230,12 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     protected void onResume() {
         if(CalldaGlobalConfig.getInstance().getAdvertisements2()!=null)
         {Logger.i("ad_image",CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getImage());
-            new Handler().post(new Runnable() {
+            SimpleHandler.getInstance().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     Glide.with(FriendActivity.this).load(CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getImage()).into(imageView);
                 }
-            });
+            },500);
 
         }
         else  userDao1.getAd(2, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());

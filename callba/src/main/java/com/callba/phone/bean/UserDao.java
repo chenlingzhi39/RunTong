@@ -70,7 +70,7 @@ public class UserDao {
         this.postListener = postListener;
         httpUtils = new HttpUtils(6 * 1000);
         httpUtils.configRequestRetryCount(3);
-        httpUtils.configResponseTextCharset("utf-8");
+        httpUtils.configSoTimeout(20000);
     }
 
     public UserDao(Context context, UploadListener uploadListener) {
