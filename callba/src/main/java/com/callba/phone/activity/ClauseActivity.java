@@ -66,7 +66,7 @@ public class ClauseActivity extends BaseActivity {
         textView7.setTextSize(15);
         page.addView(textView7);
         TextView textView8=new TextView(this);
-        textView8.setText("四．关于通告");
+        textView8.setText("五．关于法律");
         textView8.setTextSize(15);
         textView8.getPaint().setFakeBoldText(true);
         page.addView(textView8);

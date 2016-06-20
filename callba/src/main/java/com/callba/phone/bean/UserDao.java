@@ -70,7 +70,7 @@ public class UserDao {
         this.postListener = postListener;
         httpUtils = new HttpUtils(6 * 1000);
         httpUtils.configRequestRetryCount(3);
-        httpUtils.configSoTimeout(20000);
+        httpUtils.configSoTimeout(30000);
     }
 
     public UserDao(Context context, UploadListener uploadListener) {
@@ -492,6 +492,11 @@ public class UserDao {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 postListener.success(responseInfo.result);
+            }
+
+            @Override
+            public void onStart() {
+                postListener.start();
             }
         });
     }

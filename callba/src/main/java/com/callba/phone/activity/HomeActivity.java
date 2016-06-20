@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
@@ -42,6 +43,7 @@ import com.callba.phone.bean.Task;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.logic.login.UserLoginErrorMsg;
 import com.callba.phone.logic.login.UserLoginListener;
@@ -107,27 +109,28 @@ public class HomeActivity extends BaseActivity {
      @InjectView(R.id.indicator)
      CirclePageIndicator indicator;*/
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
-    private ArrayList<String> webImages=new ArrayList<>();
+    private ArrayList<String> webImages = new ArrayList<>();
     private SharedPreferenceUtil mPreferenceUtil;
     private ProgressDialog progressDialog;
     private String username;
     private String password;
-    private UserDao userDao,userDao1,userDao2;
+    private UserDao userDao, userDao1, userDao2;
     private String date;
     private Gson gson;
     private String[] result;
     List<SystemNumber> list;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        gson=new Gson();
+        gson = new Gson();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");//获取当前时间
         date = formatter.format(new Date(System.currentTimeMillis()));
         mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
         mPreferenceUtil.putBoolean(Constant.IS_FROMGUIDE, false, true);
         mPreferenceUtil.commit();
-        userDao1=new UserDao(this, new UserDao.PostListener() {
+        userDao1 = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void start() {
 
@@ -135,9 +138,9 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void success(String msg) {
-                Log.i("system_result",msg);
-                result=msg.split("\\|");
-                if(result[0].equals("0")){
+                Log.i("system_result", msg);
+                result = msg.split("\\|");
+                if (result[0].equals("0")) {
                     list = new ArrayList<>();
                     try {
                         list = gson.fromJson(result[1], new TypeToken<List<SystemNumber>>() {
@@ -145,21 +148,21 @@ public class HomeActivity extends BaseActivity {
                     } catch (Exception e) {
 
                     }
-                    ArrayList<String> numbers=new ArrayList<>();
-                    ContactData contactData=new ContactData();
+                    ArrayList<String> numbers = new ArrayList<>();
+                    ContactData contactData = new ContactData();
                     contactData.setContactName("Call吧电话");
-                    for (SystemNumber user:list){
+                    for (SystemNumber user : list) {
                         numbers.add(user.getPhoneNumber());
-                        Log.i("phonenumber",user.getPhoneNumber());
+                        Log.i("phonenumber", user.getPhoneNumber());
                     }
-                    if(ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话").equals("0"))
-                        ContactsAccessPublic.insertPhoneContact(HomeActivity.this,contactData,numbers);
+                    if (ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话").equals("0"))
+                        ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
                     else {
                         ContactsAccessPublic.deletePhoneContact(HomeActivity.this, "Call吧电话", ContactsAccessPublic.getId(HomeActivity.this, "Call吧电话"));
-                        ContactsAccessPublic.insertPhoneContact(HomeActivity.this,contactData,numbers);
+                        ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
                     }
                     //ContactsAccessPublic.updatePhoneContact(HomeActivity.this,"Call吧电话",numbers);
-                }else{
+                } else {
 
                 }
             }
@@ -169,7 +172,7 @@ public class HomeActivity extends BaseActivity {
                 toast(msg);
             }
         });
-        userDao2=new UserDao(this,new UserDao.PostListener(){
+        userDao2 = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void failure(String msg) {
                 toast(msg);
@@ -186,7 +189,7 @@ public class HomeActivity extends BaseActivity {
                 list = gson.fromJson(msg, new TypeToken<List<Advertisement>>() {
                 }.getType());
                 CalldaGlobalConfig.getInstance().setAdvertisements1(list);
-                for(Advertisement advertisement : list){
+                for (Advertisement advertisement : list) {
                     webImages.add(advertisement.getImage());
                 }
                 banner.setViewUrls(webImages);
@@ -219,8 +222,9 @@ public class HomeActivity extends BaseActivity {
                 // 重新打开
                 gotoWelcomePage();
             }
-                userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话"));
-            userDao2.getAd(1,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
+            sendBroadcast(new Intent("com.callba.login"));
+            userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+            userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
         }
 
 
@@ -243,7 +247,8 @@ public class HomeActivity extends BaseActivity {
                         mPreferenceUtil.putString(CalldaGlobalConfig.getInstance().getUsername(), date, true);
                         Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
                         startActivity(intent);
-                    } else   mPreferenceUtil.putString(CalldaGlobalConfig.getInstance().getUsername(), dates[dates.length - 1], true);
+                    } else
+                        mPreferenceUtil.putString(CalldaGlobalConfig.getInstance().getUsername(), dates[dates.length - 1], true);
                 } else {
                     toast(result[1]);
                 }
@@ -496,10 +501,10 @@ public class HomeActivity extends BaseActivity {
 
                             userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
                         }
-                        Log.i("has_name", ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话")+"");
+                        Log.i("has_name", ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话") + "");
 
-                            userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),ContactsAccessPublic.hasName(HomeActivity.this,"Call吧电话"));
-                        userDao2.getAd(1,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
+                        userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+                        userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
                         // 查询余额
                         //queryUserBalance();
                     }
@@ -535,9 +540,10 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        Logger.i("home","destroy");
+        Logger.i("home", "destroy");
         super.onDestroy();
     }
+
     /**
      * 重写onkeyDown 捕捉返回键
      */

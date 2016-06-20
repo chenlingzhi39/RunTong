@@ -1323,6 +1323,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     public class LoginReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
+            Logger.i("maincall","getad");
                 userDao.getAd(3,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
         }
     }

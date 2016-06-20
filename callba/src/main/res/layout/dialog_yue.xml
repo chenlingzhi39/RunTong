@@ -63,6 +63,7 @@
             android:background="@drawable/dialog_btn_bg"
             android:layout_marginLeft="20dp"
             android:textSize="18sp"
+            android:enabled="false"
             />
     </LinearLayout>
     </LinearLayout>

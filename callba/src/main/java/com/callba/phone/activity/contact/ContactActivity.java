@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -36,6 +39,7 @@ import com.callba.phone.logic.contact.ContactListAdapter;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.logic.contact.ContactSerarchWatcher;
 import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.Logger;
 import com.callba.phone.view.QuickSearchBar;
 @ActivityFragmentInject(
 		contentViewId = R.layout.tab_contact,
@@ -45,7 +49,7 @@ import com.callba.phone.view.QuickSearchBar;
 public class ContactActivity extends BaseActivity implements OnClickListener,
 		OnItemClickListener,OnItemLongClickListener {
 	
-	;
+
 	private EditText et_search; // 联系人搜索框
 	
 	//联系人界面整体
@@ -57,11 +61,15 @@ public class ContactActivity extends BaseActivity implements OnClickListener,
 	private List<ContactEntity> mContactListData; // 填充ListView的数据
 	private QuickSearchBar mQuickSearchBar;	//侧边快速检索控件
 	private ContactListAdapter mContactListAdapter;	//联系人适配器
-	
+	private ContactBroadcastReceiver broadcastReceiver;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		initContactListView();
+		IntentFilter intentFilter=new IntentFilter("com.callba.contact");
+		broadcastReceiver=new ContactBroadcastReceiver();
+		registerReceiver(broadcastReceiver,intentFilter);
+
 	}
 
 	@Override
@@ -89,6 +97,8 @@ public class ContactActivity extends BaseActivity implements OnClickListener,
 	@Override
 	public void refresh(Object... params) {
 	}
+
+
 
 	@Override
 	public void onClick(View v) {
@@ -233,4 +243,17 @@ public class ContactActivity extends BaseActivity implements OnClickListener,
 				where, selectionArgs);
 	}
 
+	@Override
+	protected void onDestroy() {
+		unregisterReceiver(broadcastReceiver);
+		super.onDestroy();
+	}
+
+	class ContactBroadcastReceiver extends BroadcastReceiver{
+	@Override
+	public void onReceive(Context context, Intent intent) {
+		Logger.i("contact","change");
+		initContactListView();
+	}
+}
 }

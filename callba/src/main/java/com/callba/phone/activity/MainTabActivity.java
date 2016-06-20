@@ -259,6 +259,8 @@ public class MainTabActivity extends TabActivity {
                  }
                     if(message.getType() == EMMessage.Type.IMAGE)
                         sendNotification1(ChatActivity.class, "你有一条新消息", message.getFrom() + ":[图片]" , message.getFrom());
+                    if(message.getType()==EMMessage.Type.VOICE)
+                        sendNotification1(ChatActivity.class, "你有一条新消息", message.getFrom() + ":[语音]" , message.getFrom());
                     Intent intent = new Intent("com.callba.chat");
                     intent.putExtra("username", message.getFrom());
                     sendBroadcast(intent);

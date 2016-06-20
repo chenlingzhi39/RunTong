@@ -3,23 +3,23 @@ package com.callba.phone.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
-import com.callba.phone.activity.contact.ContactDetailActivity;
 import com.callba.phone.adapter.NearByUserAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -31,11 +31,8 @@ import com.callba.phone.util.Logger;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.AlwaysMarqueeTextView;
 import com.callba.phone.view.BannerLayout;
-import com.callba.phone.widget.DividerItemDecoration;
-import com.callba.phone.widget.refreshlayout.RefreshLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.umeng.socialize.utils.Log;
 
@@ -44,6 +41,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * Created by PC-20160514 on 2016/5/21.
@@ -64,6 +62,8 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     AlwaysMarqueeTextView location;
     @InjectView(R.id.list)
     XRecyclerView userList;
+    @InjectView(R.id.progressBar)
+    ProgressBar progressBar;
     private BannerLayout banner;
     private UserDao userDao, userDao1;
     private AMapLocationClient locationClient = null;
@@ -76,13 +76,16 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     private ArrayList<String> webImages = new ArrayList<>();
     private ImageView imageView;
     private View footer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         gson = new Gson();
         location.setTextColor(getResources().getColor(R.color.black_2f));
+        if(!CalldaGlobalConfig.getInstance().getAddress().equals(""))
         location.setText(CalldaGlobalConfig.getInstance().getAddress());
+        else location.setText("网络错误，点击重试");
         userDao = new UserDao(this, this);
 
         initRefreshLayout();
@@ -90,11 +93,19 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         userList.setLoadingMoreEnabled(false);
         final View view = getLayoutInflater().inflate(R.layout.banner, null);
         final View view1 = getLayoutInflater().inflate(R.layout.ad, null);
-        imageView=(ImageView) view1.findViewById(R.id.image);
+        imageView = (ImageView) view1.findViewById(R.id.image);
         banner = (BannerLayout) view.findViewById(R.id.banner);
         for (int position = 1; position <= 3; position++)
             localImages.add(getResId("ad" + position, R.drawable.class));
-
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                intent1.setData(Uri.parse(CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getAdurl()));
+                if(CalldaGlobalConfig.getInstance().getAdvertisements2() != null)
+                startActivity(intent1);
+            }
+        });
         banner.setViewRes(localImages);
         userDao1 = new UserDao(this, new UserDao.PostListener() {
             @Override
@@ -115,10 +126,10 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                 SimpleHandler.getInstance().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Glide.with(FriendActivity.this).load(list.get(0).getImage()).into(imageView);
+                        Glide.with(getApplicationContext()).load(list.get(0).getImage()).into(imageView);
                     }
-                },500);
-               CalldaGlobalConfig.getInstance().setAdvertisements2(list);
+                }, 500);
+                CalldaGlobalConfig.getInstance().setAdvertisements2(list);
               /*  for (Advertisement advertisement : list) {
                     webImages.add(advertisement.getImage());
                 }
@@ -148,14 +159,14 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         });*/
         nearByUserAdapter = new NearByUserAdapter(this);
         userList.addHeaderView(view1);
-        footer=new View(this);
+        footer = new View(this);
         userList.addFootView(footer);
-       userList.setLoadingListener(new XRecyclerView.LoadingListener() {
+        userList.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
                 //refresh data here
                 userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), CalldaGlobalConfig.getInstance().getLatitude(), CalldaGlobalConfig.getInstance().getLongitude(), 100000);
-            }
+             }
 
             @Override
             public void onLoadMore() {
@@ -180,8 +191,61 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         });
         userList.setAdapter(nearByUserAdapter);
         userList.setRefreshing(true);
-    }
+        locationClient = new AMapLocationClient(this);
+        locationOption = new AMapLocationClientOption();
+        // 设置是否需要显示地址信息
+        locationOption.setNeedAddress(true);
+        /**
+         * 设置是否优先返回GPS定位结果，如果30秒内GPS没有返回定位结果则进行网络定位
+         * 注意：只有在高精度模式下的单次定位有效，其他方式无效
+         */
+        locationOption.setGpsFirst(false);
+        // 设置定位模式为高精度模式
+        locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        // locationOption.setInterval(CalldaGlobalConfig.getInstance().getInterval());
+        locationOption.setOnceLocation(true);
+        locationClient.setLocationOption(locationOption);
+        // 设置定位监听
+        locationClient.setLocationListener(new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                progressBar.setVisibility(View.GONE);
+                location.setVisibility(View.VISIBLE);
+                StringBuilder sb = new StringBuilder();
+                if (aMapLocation.getErrorCode() == 0) {
+                    Logger.i("address", aMapLocation.getAddress());
+                    Logger.i("latitude", aMapLocation.getLatitude() + "");
+                    Logger.i("longitude", aMapLocation.getLongitude() + "");
+                    CalldaGlobalConfig.getInstance().setAddress(aMapLocation.getAddress());
+                    CalldaGlobalConfig.getInstance().setLatitude(aMapLocation.getLatitude());
+                    CalldaGlobalConfig.getInstance().setLongitude(aMapLocation.getLongitude());
+                    userDao.saveLocation(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                    location.setText(aMapLocation.getAddress());
+                } else {
+                    //定位失败
+                    sb.append("定位失败" + "\n");
+                    sb.append("错误码:" + aMapLocation.getErrorCode() + "\n");
+                    sb.append("错误信息:" + aMapLocation.getErrorInfo() + "\n");
+                    sb.append("错误描述:" + aMapLocation.getLocationDetail() + "\n");
+                    Logger.i("error", sb.toString());
+                    location.setText("网络错误，点击重试");
+                }
 
+            }
+        });
+        if (CalldaGlobalConfig.getInstance().getAdvertisements2() != null) {
+            Logger.i("ad_image", CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getImage());
+            SimpleHandler.getInstance().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Glide.with(getApplicationContext()).load(CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getImage()).into(imageView);
+                }
+            }, 500);
+
+        } else
+            userDao1.getAd(2, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+
+    }
 
 
     @Override
@@ -211,7 +275,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             Log.i("size", list.size() + "");
             if (list.size() == 0) {
             } else {
-               nearByUserAdapter.clear();
+                nearByUserAdapter.clear();
                 nearByUserAdapter.addAll(list);
                 nearByUserAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
                     @Override
@@ -222,23 +286,14 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                 });
             }
         } else {
+            toast(msg);
         }
-        ;
+
     }
 
     @Override
     protected void onResume() {
-        if(CalldaGlobalConfig.getInstance().getAdvertisements2()!=null)
-        {Logger.i("ad_image",CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getImage());
-            SimpleHandler.getInstance().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Glide.with(FriendActivity.this).load(CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getImage()).into(imageView);
-                }
-            },500);
 
-        }
-        else  userDao1.getAd(2, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
         super.onResume();
     }
 
@@ -261,4 +316,10 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
 
     }
 
+    @OnClick(R.id.location)
+    public void onClick() {
+        location.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        locationClient.startLocation();
+    }
 }

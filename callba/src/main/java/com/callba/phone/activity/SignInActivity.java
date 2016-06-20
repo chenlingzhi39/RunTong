@@ -1,5 +1,6 @@
 package com.callba.phone.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -69,6 +70,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     SimpleDateFormat df,formatter;
     private MarkDao markDao;
     private Cursor cursor;
+    private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +109,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         userDao1 = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void start() {
-
+                btn_signIn.setEnabled(false);
             }
 
             @Override
@@ -168,7 +170,8 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
 
             @Override
             public void failure(String msg) {
-
+             toast(msg);
+                btn_signIn.setEnabled(true);
             }
         });
         query();
@@ -222,13 +225,15 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
 
     @Override
     public void start() {
-
+        progressDialog = ProgressDialog.show(this,null,
+                "正在获取签到信息");
     }
 
     @Override
     public void success(String msg) {
+        progressDialog.dismiss();
         toast(msg);
-        SharedPreferenceUtil.getInstance(this).putBoolean(date, true, true);
+        SharedPreferenceUtil.getInstance(this).putString(CalldaGlobalConfig.getInstance().getUsername(), date, true);
            /* calendar.removeAllMarks();
            list.add(df.format(today));
            calendar.addMarks(list, 0);*/
@@ -265,6 +270,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     @Override
     public void failure(String msg) {
         toast(msg);
+        progressDialog.dismiss();
     }
 
     @Override

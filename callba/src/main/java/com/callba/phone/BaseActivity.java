@@ -375,7 +375,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	@Override
 	protected void onResume() {
 		if (isSendNotification) {
-			showBackRunNotification();
+			//showBackRunNotification();
 		}
 	//	MobclickAgent.onResume(this);
 		super.onResume();

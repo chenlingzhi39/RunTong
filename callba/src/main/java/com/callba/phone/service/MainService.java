@@ -2,6 +2,7 @@ package com.callba.phone.service;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,10 +14,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
@@ -48,6 +51,9 @@ import com.callba.phone.bean.Task;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.logic.contact.ContactPersonEntity;
+import com.callba.phone.logic.contact.QueryContactCallback;
+import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.HttpUtils;
@@ -80,7 +86,21 @@ public class MainService extends Service implements Runnable{
 	private AMapLocationClientOption locationOption = null;
 	UserDao userDao;
 	LocationReceiver receiver;
+	//监听联系人数据的监听对象
+	private  ContentObserver mObserver = new ContentObserver(
+			new Handler()) {
+		@Override
+		public void onChange(boolean selfChange) {
+			// 当联系人表发生变化时进行相应的操作
+			new QueryContacts(new QueryContactCallback() {
+				@Override
+				public void queryCompleted(List<ContactPersonEntity> contacts) {
+					sendBroadcast(new Intent("com.callba.contact"));
+				}
+			}).loadContact(MainService.this);
 
+		}
+	};
 	/**
 	 * 新建任务
 	 * 
@@ -106,7 +126,8 @@ public class MainService extends Service implements Runnable{
 				"com.callba.location");
 		receiver = new LocationReceiver();
 		registerReceiver(receiver, filter);
-
+		getContentResolver().registerContentObserver(
+				ContactsContract.Contacts.CONTENT_URI, true, mObserver);
 
 	}
 
@@ -1364,6 +1385,7 @@ public class MainService extends Service implements Runnable{
 		synchronized (calldaTaskList) {
 			calldaTaskList.notify();
 		}
+		getContentResolver().unregisterContentObserver(mObserver);
 		unregisterReceiver(receiver);
 		if (null != locationClient) {
 			/**
@@ -1430,7 +1452,7 @@ public class MainService extends Service implements Runnable{
 				locationOption.setInterval(CalldaGlobalConfig.getInstance().getInterval());
 				// 设置定位监听
 				locationClient.setLocationListener(this);
-				locationOption.setOnceLocation(true);
+				//locationOption.setOnceLocation(true);
 				locationClient.setLocationOption(locationOption);
 				fixedThreadPool.execute(new Runnable() {
 					@Override
@@ -1479,9 +1501,9 @@ public class MainService extends Service implements Runnable{
 		public void onLocationChanged(AMapLocation aMapLocation) {
 			StringBuilder sb = new StringBuilder();
 			if (aMapLocation.getErrorCode() == 0) {
-				Log.i("address", aMapLocation.getAddress());
-				Log.i("latitude",aMapLocation.getLatitude()+"");
-				Log.i("longitude",aMapLocation.getLongitude()+"");
+				Logger.i("address", aMapLocation.getAddress());
+				Logger.i("latitude",aMapLocation.getLatitude()+"");
+				Logger.i("longitude",aMapLocation.getLongitude()+"");
 				CalldaGlobalConfig.getInstance().setAddress(aMapLocation.getAddress());
 				CalldaGlobalConfig.getInstance().setLatitude(aMapLocation.getLatitude());
 				CalldaGlobalConfig.getInstance().setLongitude(aMapLocation.getLongitude());
@@ -1492,7 +1514,7 @@ public class MainService extends Service implements Runnable{
 				sb.append("错误码:" + aMapLocation.getErrorCode() + "\n");
 				sb.append("错误信息:" + aMapLocation.getErrorInfo() + "\n");
 				sb.append("错误描述:" + aMapLocation.getLocationDetail() + "\n");
-				Log.i("error", sb.toString());
+				Logger.i("error", sb.toString());
 
 			}
 		}
