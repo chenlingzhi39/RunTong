@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.MyApplication;
-import com.callba.phone.activity.more.ShareActivity;
+import com.callba.phone.activity.recharge.RechargeActivity2;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
@@ -34,6 +34,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import de.greenrobot.dao.Mark;
 import de.greenrobot.dao.MarkDao;
 
@@ -43,8 +44,7 @@ import de.greenrobot.dao.MarkDao;
 @ActivityFragmentInject(
         contentViewId = R.layout.sign_in,
         toolbarTitle = R.string.sign_in,
-        navigationId = R.drawable.press_back,
-        menuId = R.menu.menu_sign
+        navigationId = R.drawable.press_back
 )
 public class SignInActivity extends BaseActivity implements UserDao.PostListener {
     @InjectView(R.id.circle)
@@ -57,6 +57,12 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     Button btn_signIn;
     @InjectView(R.id.gold)
     TextView gold;
+    @InjectView(R.id.to_play)
+    Button toPlay;
+    @InjectView(R.id.to_recharge)
+    Button toRecharge;
+    @InjectView(R.id.to_share)
+    Button toShare;
     private String date = null;// 设置默认选中的日期  格式为 “2014-04-05” 标准DATE格式
     private List<String> list = new ArrayList<String>(); //设置标记列表
     // DBManager dbManager;
@@ -67,18 +73,19 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     Calendar cal;
     Date today;
     ArrayList<Integer> monthList = new ArrayList<>();
-    SimpleDateFormat df,formatter;
+    SimpleDateFormat df, formatter;
     private MarkDao markDao;
     private Cursor cursor;
     private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         // 初始化DBManager
         // dbManager = new DBManager(this);
-        markDao= MyApplication.getInstance().getDaoSession().getMarkDao();
-        gold.setText(getString(R.string.gold)+":"+CalldaGlobalConfig.getInstance().getGold());
+        markDao = MyApplication.getInstance().getDaoSession().getMarkDao();
+        gold.setText(getString(R.string.gold) + ":" + CalldaGlobalConfig.getInstance().getGold());
         list = new ArrayList<>();
         cal = Calendar.getInstance();
         today = calendar.getThisday();
@@ -110,6 +117,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
             @Override
             public void start() {
                 btn_signIn.setEnabled(false);
+                circle.setEnabled(false);
             }
 
             @Override
@@ -119,10 +127,12 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 if (result[0].equals("0")) {
                     String[] dates = result[1].split(",");
                     for (String date : dates) {
-                        Mark mark=new Mark();
+                        Mark mark = new Mark();
                         try {
                             mark.setDate(df.parse(date));
-                        }catch (Exception e){e.printStackTrace();}
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         mark.setUsername(CalldaGlobalConfig.getInstance().getUsername());
                         mark.setMonth(calendar.getCalendarMonth());
                         markDao.insert(mark);
@@ -135,12 +145,14 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                             btn_signIn.setText("今日已签，明日继续");
                             btn_signIn.setBackgroundResource(R.drawable.button_gray);
                             btn_signIn.setEnabled(false);
+                            circle.setIs_sign(true);
+                            circle.setEnabled(false);
                         } else {
                             if (calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1)
                                 constant = 0;
                         }
                         if (calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1)
-                        list.add(date);
+                            list.add(date);
                     }
 
                     if (calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1)
@@ -170,13 +182,21 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
 
             @Override
             public void failure(String msg) {
-             toast(msg);
+                toast(msg);
                 btn_signIn.setEnabled(true);
+                circle.setEnabled(true);
             }
         });
         query();
 
         btn_signIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userDao.getSign(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+
+            }
+        });
+        circle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 userDao.getSign(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
@@ -225,7 +245,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
 
     @Override
     public void start() {
-        progressDialog = ProgressDialog.show(this,null,
+        progressDialog = ProgressDialog.show(this, null,
                 "正在获取签到信息");
     }
 
@@ -239,24 +259,26 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
            calendar.addMarks(list, 0);*/
         //将当前日期标示出来
         //add(df.format(today));
-        Mark mark=new Mark();
+        Mark mark = new Mark();
         mark.setUsername(CalldaGlobalConfig.getInstance().getUsername());
         mark.setMonth(cal.get(Calendar.MONTH) + 1);
-        try{
-        mark.setDate(formatter.parse(date1));}
-        catch (Exception e){
+        try {
+            mark.setDate(formatter.parse(date1));
+        } catch (Exception e) {
             e.printStackTrace();
         }
         markDao.insert(mark);
         calendar.addMark(today, 0);
         //query();
         HashMap<String, Integer> bg = new HashMap<String, Integer>();
-        CalldaGlobalConfig.getInstance().setGold(CalldaGlobalConfig.getInstance().getGold()+3);
-        gold.setText(getString(R.string.gold)+":"+CalldaGlobalConfig.getInstance().getGold());
+        CalldaGlobalConfig.getInstance().setGold(CalldaGlobalConfig.getInstance().getGold() + 3);
+        gold.setText(getString(R.string.gold) + ":" + CalldaGlobalConfig.getInstance().getGold());
         calendar.setCalendarDayBgColor(today, R.drawable.bg_sign_today);
         btn_signIn.setText("今日已签，明日继续");
         btn_signIn.setBackgroundResource(R.drawable.button_gray);
         btn_signIn.setEnabled(false);
+        circle.setIs_sign(true);
+        circle.setEnabled(false);
         try {
             if (today.getTime() - formatter.parse(list.get(list.size() - 1)).getTime() < 2 * 24 * 60 * 60 * 1000) {
                 constant += 1;
@@ -301,16 +323,16 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 isinput = true;
             }
         }*/
-        if(!monthList.contains(calendar.getCalendarMonth())&& calendar.getCalendarMonth() <= cal.get(Calendar.MONTH) + 1)
-        if(!getLocalMarks(calendar.getCalendarMonth())) {
-            Log.i("year", calendar.getCalendarYear() + "");
-            Log.i("month", calendar.getCalendarMonth() + "");
-            String year = calendar.getCalendarYear() + "";
-            String month = calendar.getCalendarMonth() + "";
-            if (month.length() == 1)
-                month = "0" + month;
-            userDao1.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
-        }
+        if (!monthList.contains(calendar.getCalendarMonth()) && calendar.getCalendarMonth() <= cal.get(Calendar.MONTH) + 1)
+            if (!getLocalMarks(calendar.getCalendarMonth())) {
+                Log.i("year", calendar.getCalendarYear() + "");
+                Log.i("month", calendar.getCalendarMonth() + "");
+                String year = calendar.getCalendarYear() + "";
+                String month = calendar.getCalendarMonth() + "";
+                if (month.length() == 1)
+                    month = "0" + month;
+                userDao1.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
+            }
 
     }
 
@@ -329,57 +351,84 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Callba分享"); // 分享的主题
                 intent.putExtra(Intent.EXTRA_TEXT, "我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！"); // 分享的内容
-                startActivityForResult(Intent.createChooser(intent, "选择分享"),0);// 目标应用选择对话框的标题
+                startActivityForResult(Intent.createChooser(intent, "选择分享"), 0);// 目标应用选择对话框的标题
                 /*Intent intent=new Intent(SignInActivity.this, ShareActivity.class);
                 startActivity(intent);*/
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
-    public boolean getLocalMarks(int month){
-        String where=MarkDao.Properties.Month.columnName+" = "+month+" and "+MarkDao.Properties.Username.columnName+" = '"+CalldaGlobalConfig.getInstance().getUsername()+"'";
+
+    public boolean getLocalMarks(int month) {
+        String where = MarkDao.Properties.Month.columnName + " = " + month + " and " + MarkDao.Properties.Username.columnName + " = '" + CalldaGlobalConfig.getInstance().getUsername() + "'";
         String orderBy = MarkDao.Properties.Date.columnName + " DESC";
-        cursor = MyApplication.getInstance().getDb().query(markDao.getTablename(), markDao.getAllColumns(), where, null, null, null,orderBy);
-        if(cursor.getCount()==0||cursor==null)
+        cursor = MyApplication.getInstance().getDb().query(markDao.getTablename(), markDao.getAllColumns(), where, null, null, null, orderBy);
+        if (cursor.getCount() == 0 || cursor == null)
             return false;
-        ArrayList<Long> millis=new ArrayList<>();
+        ArrayList<Long> millis = new ArrayList<>();
         monthList.add(month);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            Mark mark=new Mark();
-            markDao.readEntity(cursor,mark,0);
+            Mark mark = new Mark();
+            markDao.readEntity(cursor, mark, 0);
             calendar.addMark(mark.getDate(), 0);
-            Logger.i("date",formatter.format(mark.getDate()));
+            Logger.i("date", formatter.format(mark.getDate()));
             millis.add(mark.getDate().getTime());
             if (calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1)
-            list.add(formatter.format(mark.getDate()));
+                list.add(formatter.format(mark.getDate()));
         }
         if (calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1)
-        Collections.reverse(list);
+            Collections.reverse(list);
         cursor.close();
-        if(calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1)
-        {
+        if (calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1) {
             try {
-                if (millis.get(0) == formatter.parse(date1).getTime())
-                {constant=1;
+                if (millis.get(0) == formatter.parse(date1).getTime()) {
+                    constant = 1;
                     btn_signIn.setText("今日已签，明日继续");
                     btn_signIn.setBackgroundResource(R.drawable.button_gray);
-                    btn_signIn.setEnabled(false);}
-            }catch (Exception e){}
-        if(millis.size()>=2)
-        for(int i=1;i<millis.size();i++){
-            if(millis.get(i-1)-millis.get(i)==24*60*60*1000)
-            constant+=1;
-            else break;
+                    btn_signIn.setEnabled(false);
+                    circle.setIs_sign(true);
+                    circle.setEnabled(false);
+                }
+            } catch (Exception e) {
+            }
+            if (millis.size() >= 2)
+                for (int i = 1; i < millis.size(); i++) {
+                    if (millis.get(i - 1) - millis.get(i) == 24 * 60 * 60 * 1000)
+                        constant += 1;
+                    else break;
+                }
+            circle.setConstant(constant);
         }
-        circle.setConstant(constant);}
-        Log.i("mark_size",millis.size()+"");
+        Log.i("mark_size", millis.size() + "");
         cursor.close();
         return true;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-       Logger.i("result_code",resultCode+"");
+        Logger.i("result_code", resultCode + "");
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @OnClick({R.id.to_play, R.id.to_recharge, R.id.to_share})
+    public void onClick(View view) {
+        Intent intent;
+        switch (view.getId()) {
+            case R.id.to_play:
+                toast("暂未开放");
+                break;
+            case R.id.to_recharge:
+                intent=new Intent(SignInActivity.this, RechargeActivity2.class);
+                startActivity(intent);
+                break;
+            case R.id.to_share:
+                intent = new Intent(Intent.ACTION_SEND); // 启动分享发送的属性
+                intent.setType("text/plain"); // 分享发送的数据类型
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Callba分享"); // 分享的主题
+                intent.putExtra(Intent.EXTRA_TEXT, "我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！"); // 分享的内容
+                startActivityForResult(Intent.createChooser(intent, "选择分享"), 0);
+                break;
+        }
     }
 }

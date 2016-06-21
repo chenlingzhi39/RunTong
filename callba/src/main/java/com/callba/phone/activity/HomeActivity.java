@@ -309,35 +309,38 @@ public class HomeActivity extends BaseActivity {
 
     @OnClick({R.id.recharge, R.id.search, R.id.friend, R.id.mall, R.id.finance, R.id.community, R.id.game, R.id.sign_in})
     public void onClick(View view) {
+        Intent intent;
         switch (view.getId()) {
             case R.id.recharge:
-                Intent intent = new Intent(HomeActivity.this, RechargeActivity2.class);
+                intent = new Intent(HomeActivity.this, RechargeActivity2.class);
                 startActivity(intent);
                 break;
             case R.id.search:
                 Log.i("home", "search_yue");
-                queryUserBalance();
+                //queryUserBalance();
+                intent=new Intent(HomeActivity.this,AccountActivity.class);
+                startActivity(intent);
                 break;
             case R.id.friend:
-                Intent intent1 = new Intent(HomeActivity.this, FriendActivity.class);
-                startActivity(intent1);
+                intent = new Intent(HomeActivity.this, FriendActivity.class);
+                startActivity(intent);
                 break;
             case R.id.mall:
-                toast("正在建设中");
+                toast("暂未开放");
                 break;
             case R.id.finance:
-                toast("正在建设中");
+                toast("暂未开放");
                 break;
             case R.id.community:
-                Intent intent0 = new Intent(HomeActivity.this, CommunityActivity.class);
-                startActivity(intent0);
+                intent = new Intent(HomeActivity.this, CommunityActivity.class);
+                startActivity(intent);
                 break;
             case R.id.game:
-                toast("正在建设中");
+                toast("暂未开放");
                 break;
             case R.id.sign_in:
-                Intent intent2 = new Intent(HomeActivity.this, SignInActivity.class);
-                startActivity(intent2);
+                intent = new Intent(HomeActivity.this, SignInActivity.class);
+                startActivity(intent);
                 break;
         }
     }

@@ -34,7 +34,6 @@
         </LinearLayout>
 
         <RelativeLayout
-            android:id="@+id/umeng_common_app"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:clickable="true"

@@ -19,9 +19,19 @@ public class CircleTextView extends TextView{
     int density,size,size1,size2,size3,width1,width2;
     private Paint paint1,paint2,paint3,paint4;
     private int constant;
+    private boolean is_sign=false;
     public CircleTextView(Context context) {
         super(context);
 
+    }
+
+    public boolean is_sign() {
+        return is_sign;
+    }
+
+    public void setIs_sign(boolean is_sign) {
+        invalidate();
+        this.is_sign = is_sign;
     }
 
     public CircleTextView(Context context, AttributeSet attrs) {
@@ -128,7 +138,7 @@ public class CircleTextView extends TextView{
         int baseline = (targetRect.bottom + targetRect.top - fontMetrics.bottom - fontMetrics.top) / 2;
         int baseline1=(targetRect1.bottom + targetRect1.top - fontMetrics.bottom - fontMetrics.top) / 2;
         paint4.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText("签到", targetRect.centerX(), baseline, paint4);
+        canvas.drawText(is_sign?"已签到":"签到", targetRect.centerX(), baseline, paint4);
         paint4.setTextSize(3*size/4);
         canvas.drawText("连续"+constant+"天",targetRect1.centerX(), baseline1, paint4);
         super.draw(canvas);

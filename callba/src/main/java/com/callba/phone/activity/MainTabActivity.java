@@ -38,6 +38,7 @@ import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.MyApplication;
 import com.callba.phone.activity.contact.ContactActivity;
+import com.callba.phone.activity.contact.ContactActivity2;
 import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
@@ -74,7 +75,7 @@ public class MainTabActivity extends TabActivity {
     private boolean isAccountRemovedDialogShow;
     @SuppressWarnings("rawtypes")
     private Class[] mTabClassArray = {MainCallActivity.class,
-            ContactActivity.class, HomeActivity.class,
+            ContactActivity2.class, HomeActivity.class,
             MessageActivity.class, UserActivity.class};
 
     private int[] mTabImageArray = {R.drawable.menu1_selector,

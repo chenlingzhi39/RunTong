@@ -33,6 +33,8 @@ import com.callba.phone.activity.MessageActivity;
 import com.callba.phone.activity.UserActivity;
 import com.callba.phone.activity.WelcomeActivity;
 import com.callba.phone.activity.contact.ContactActivity;
+import com.callba.phone.activity.contact.ContactActivity2;
+import com.callba.phone.activity.contact.ContactDetailActivity;
 import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.activity.login.OnekeyRegisterAcitvity;
 import com.callba.phone.activity.login.RegisterActivity;
@@ -145,6 +147,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 		}if(Build.VERSION.SDK_INT==Build.VERSION_CODES.LOLLIPOP||Build.VERSION.SDK_INT==Build.VERSION_CODES.LOLLIPOP_MR1){
 			if(this.getClass()==MainCallActivity.class||
 					this.getClass()==ContactActivity.class||
+					this.getClass()==ContactActivity2.class||
 					this.getClass()==HomeActivity.class||
 					this.getClass()==MessageActivity.class)
 			{SystemBarTintManager systemBarTintManager=new SystemBarTintManager(this);

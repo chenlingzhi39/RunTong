@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
     <include layout="@layout/toolbar" />
 
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="10dp"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
         </RelativeLayout>
 
         <View
@@ -83,76 +83,113 @@
                 android:textSize="16sp" />
 
             <Button
+                android:id="@+id/balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/bg_yue"
-                android:textColor="@color/white"
-                android:id="@+id/balance"/>
+                android:textColor="@color/white" />
 
 
         </LinearLayout>
 
+        <View
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:background="@color/light_black" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gold"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/gold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/bg_yue"
+                android:textColor="@color/white" />
+
+
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/white">
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/light_black" />
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:id="@+id/meal_search">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:textColor="?attr/colorAccent"
-                android:text="@string/meal_search"
-                android:textSize="16sp"/>
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/orang_more"/>
-        </RelativeLayout>
+        android:background="@color/white"
+        android:orientation="vertical">
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:background="@color/light_black" />
 
         <RelativeLayout
+            android:id="@+id/meal_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
-            android:id="@+id/calllog_search">
+            android:padding="10dp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:text="@string/meal_search"
                 android:textColor="?attr/colorAccent"
-                android:text="@string/calllog_search"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/orang_more"/>
+                android:src="@drawable/orang_more" />
         </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/light_black" />
+
+        <RelativeLayout
+            android:id="@+id/calllog_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/calllog_search"
+                android:textColor="?attr/colorAccent"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/orang_more" />
+        </RelativeLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/mToolbarContainer"
@@ -16,15 +15,17 @@
         app:theme="@style/ToolBarStyle"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title=""
-        android:layout_gravity="center">
+        android:paddingTop="@dimen/status_bar_height"
+       >
         <android.support.design.widget.TabLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="?attr/actionBarSize"
             android:id="@+id/layout_tab"
             android:background="?attr/colorPrimary"
             app:tabIndicatorColor="@color/orange"
             app:tabSelectedTextColor="?attr/colorAccent"
             app:tabTextColor="@color/black"
+            android:layout_gravity="center"
             />
     </android.support.v7.widget.Toolbar>
 </android.support.design.widget.AppBarLayout>

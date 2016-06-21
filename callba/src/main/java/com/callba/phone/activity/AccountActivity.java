@@ -50,6 +50,8 @@ public class AccountActivity extends BaseActivity {
     RelativeLayout calllogSearch;
     @InjectView(R.id.meal_search)
     RelativeLayout mealSearch;
+    @InjectView(R.id.gold)
+    Button gold;
 
     @Override
     public void init() {
@@ -80,7 +82,7 @@ public class AccountActivity extends BaseActivity {
                 if (msg != null) {
                     String[] result = msg.split("&");
                     ArrayList<Meal> meals = new ArrayList<>();
-                    Log.i("mealaccount",result.length+"");
+                    Log.i("mealaccount", result.length + "");
                     for (String str : result) {
                         String[] element = str.split(",");
                         Meal meal = new Meal();
@@ -91,7 +93,7 @@ public class AccountActivity extends BaseActivity {
                         meals.add(meal);
                     }
                     showDialog(meals);
-                }else toast("无套餐");
+                } else toast("无套餐");
             }
 
             @Override
@@ -116,15 +118,15 @@ public class AccountActivity extends BaseActivity {
             }
         });
         userDao1.getBalance(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
-
+        gold.setText(CalldaGlobalConfig.getInstance().getGold()+"");
     }
 
-    @OnClick({R.id.calllog_search,R.id.meal_search,R.id.balance})
+    @OnClick({R.id.calllog_search, R.id.meal_search, R.id.balance})
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.calllog_search:
-            Intent intent = new Intent(AccountActivity.this, QueryCalllogActivity.class);
-            startActivity(intent);
+                Intent intent = new Intent(AccountActivity.this, QueryCalllogActivity.class);
+                startActivity(intent);
                 break;
             case R.id.meal_search:
                 userDao.getSuits(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
@@ -135,7 +137,6 @@ public class AccountActivity extends BaseActivity {
         }
 
     }
-
 
 
     public class DialogHelper implements DialogInterface.OnDismissListener {

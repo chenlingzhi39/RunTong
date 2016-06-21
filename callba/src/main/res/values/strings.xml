@@ -40,6 +40,15 @@
     <string name="share">分享</string>
     <string name="message">信息</string>
     <string name="post_message">发送信息</string>
+    <string name="play_game_plus">玩游戏+3</string>
+    <string name="play_game_hint">完成游戏任务可获金币</string>
+    <string name="play_game">玩游戏</string>
+    <string name="recharge_plus">话费充值+2</string>
+    <string name="recharge_hint">完成话费充值可获金币</string>
+    <string name="to_recharge">去充值</string>
+    <string name="share_plus">推荐好友+5</string>
+    <string name="share_hint">推荐好友可获金币，每周一次</string>
+    <string name="to_share">去推荐</string>
     <string name="search">搜索</string>
     <string name="edit">编辑</string>
     <string name="receiver">收件人</string>

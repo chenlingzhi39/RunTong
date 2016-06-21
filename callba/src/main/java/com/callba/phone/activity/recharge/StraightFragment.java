@@ -194,7 +194,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
              String[] result=msg.split("\\|");
                 if(result[0].equals("0"))
                     toast(result[1]);
-                else toast(result[1]);
+                else if(result.length>1)toast(result[1]);
             }
 
             @Override
@@ -261,13 +261,6 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         ButterKnife.reset(this);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.inject(this, rootView);
-        return rootView;
-    }
 
     public class DialogHelper implements DialogInterface.OnDismissListener {
         private Dialog mDialog;
