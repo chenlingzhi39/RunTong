@@ -55,7 +55,9 @@ public class WebContactFragment extends BaseFragment {
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
         listView=contactListLayout.getListView();
-
+        new Thread(){
+            @Override
+            public void run(){
         try{
         usernames = EMClient.getInstance().contactManager().getAllContactsFromServer();
             for (String username : usernames) {
@@ -64,9 +66,9 @@ public class WebContactFragment extends BaseFragment {
                 contactsMap.put(username, user);
             }}
 
-        catch(Exception e){
+         catch(Exception e){
 
-        }
+        }}}.start();
         contactList = new ArrayList<EaseUser>();
         getContactList();
         contactListLayout.init(contactList);
