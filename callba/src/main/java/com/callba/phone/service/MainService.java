@@ -27,6 +27,7 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.callba.R;
+import com.callba.phone.DemoHelper;
 import com.callba.phone.activity.HomeActivity;
 import com.callba.phone.activity.UserActivity;
 import com.callba.phone.activity.WelcomeActivity;
@@ -1465,7 +1466,27 @@ public class MainService extends Service implements Runnable{
 				});
 
 			}else{
-				EMClient.getInstance().logout(false, new EMCallBack() {
+			/*	EMClient.getInstance().logout(false, new EMCallBack() {
+
+					@Override
+					public void onSuccess() {
+						// TODO Auto-generated method stub
+						Log.d("main", "退出聊天服务器成功！");
+					}
+
+					@Override
+					public void onProgress(int progress, String status) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onError(int code, String message) {
+						// TODO Auto-generated method stub
+						Log.d("main", "退出聊天服务器失败！");
+					}
+				});*/
+				DemoHelper.getInstance().logout(false,new EMCallBack() {
 
 					@Override
 					public void onSuccess() {

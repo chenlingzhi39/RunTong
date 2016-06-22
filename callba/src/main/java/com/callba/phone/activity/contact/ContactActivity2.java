@@ -1,6 +1,7 @@
 package com.callba.phone.activity.contact;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -17,6 +19,7 @@ import android.view.WindowManager;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.SystemBarTintManager;
+import com.callba.phone.activity.AddContactActivity;
 import com.callba.phone.activity.HomeActivity;
 import com.callba.phone.activity.MainCallActivity;
 import com.callba.phone.activity.MessageActivity;
@@ -41,7 +44,7 @@ public class ContactActivity2 extends BaseActivity {
     TabLayout layoutTab;
     @InjectView(R.id.viewpager)
     ViewPager viewpager;
-
+    private int index;
     @Override
     public void init() {
 
@@ -67,13 +70,7 @@ public class ContactActivity2 extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
-             switch (position){
-                 case 0:
-
-                     break;
-                 case 1:
-                     break;
-             }
+             index=position;
             }
 
             @Override
@@ -133,5 +130,25 @@ public class ContactActivity2 extends BaseActivity {
                     ActivityUtil.FlymeSetStatusBarLightMode(getWindow(),true);
             }
         super.onResume();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.add:
+                if(index==0){
+                Intent intent = new Intent(Intent.ACTION_INSERT);
+                intent.setType("vnd.android.cursor.dir/person");
+                intent.setType("vnd.android.cursor.dir/contact");
+                intent.setType("vnd.android.cursor.dir/raw_contact");
+                if(!isIntentAvailable(this, intent)) {
+                    return true;
+                }else{
+                    startActivity(intent);
+                }}else{
+                    startActivity(new Intent(ContactActivity2.this, AddContactActivity.class));
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

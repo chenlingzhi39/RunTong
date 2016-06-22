@@ -7,9 +7,11 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TabActivity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
@@ -17,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
@@ -36,12 +39,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+
 import com.callba.phone.MyApplication;
 import com.callba.phone.activity.contact.ContactActivity;
 import com.callba.phone.activity.contact.ContactActivity2;
 import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.cfg.CalldaGlobalConfig;
-import com.callba.phone.cfg.Constant;
+import com.callba.phone.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.SharedPreferenceUtil;
@@ -85,7 +89,8 @@ public class MainTabActivity extends TabActivity {
     NotificationManager mNotificationManager;
     private static final int FLING_MIN_DISTANCE = 100;
     private static final int FLING_MIN_VELOCITY = 0;
-
+    private BroadcastReceiver broadcastReceiver;
+    private LocalBroadcastManager broadcastManager;
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -294,7 +299,7 @@ public class MainTabActivity extends TabActivity {
         } else if (getIntent().getBooleanExtra(Constant.ACCOUNT_REMOVED, false) && !isAccountRemovedDialogShow) {
             showAccountRemovedDialog();
         }
-
+        registerBroadcastReceiver();
     }
 
 
@@ -345,7 +350,7 @@ public class MainTabActivity extends TabActivity {
             @Override
             public void run() {
                 Intent intent = new Intent();
-                intent.setAction(Constant.ACTION_TAB_ONRESUME);
+                intent.setAction(com.callba.phone.cfg.Constant.ACTION_TAB_ONRESUME);
                 sendBroadcast(intent);
             }
         }, 300);
@@ -363,6 +368,7 @@ public class MainTabActivity extends TabActivity {
         if (mNotificationManager != null)
             mNotificationManager.cancel(10);
         EMClient.getInstance().chatManager().removeMessageListener(msgListener);
+        unregisterBroadcastReceiver();
         super.onDestroy();
     }
 
@@ -472,7 +478,7 @@ public class MainTabActivity extends TabActivity {
                 CalldaGlobalConfig.getInstance().setPassword("");
                 CalldaGlobalConfig.getInstance().setIvPath("");
                 LoginController.getInstance().setUserLoginState(false);
-                SharedPreferenceUtil.getInstance(MainTabActivity.this).putString(Constant.LOGIN_PASSWORD, "", true);
+                SharedPreferenceUtil.getInstance(MainTabActivity.this).putString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD, "", true);
                 Intent intent0 = new Intent("com.callba.location");
                 intent0.putExtra("action", "logout");
                 sendBroadcast(intent0);
@@ -503,7 +509,7 @@ public class MainTabActivity extends TabActivity {
                 CalldaGlobalConfig.getInstance().setPassword("");
                 CalldaGlobalConfig.getInstance().setIvPath("");
                 LoginController.getInstance().setUserLoginState(false);
-                SharedPreferenceUtil.getInstance(MainTabActivity.this).putString(Constant.LOGIN_PASSWORD, "", true);
+                SharedPreferenceUtil.getInstance(MainTabActivity.this).putString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD, "", true);
                 Intent intent0 = new Intent("com.callba.location");
                 intent0.putExtra("action", "logout");
                 sendBroadcast(intent0);
@@ -542,8 +548,24 @@ public class MainTabActivity extends TabActivity {
             }
         });
     }
+    private void registerBroadcastReceiver() {
+        broadcastManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Constant.ACTION_CONTACT_CHANAGED);
+        broadcastReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
 
 
+
+            }
+        };
+        broadcastManager.registerReceiver(broadcastReceiver, intentFilter);
+    }
+    private void unregisterBroadcastReceiver(){
+        broadcastManager.unregisterReceiver(broadcastReceiver);
+    }
 
 
 }

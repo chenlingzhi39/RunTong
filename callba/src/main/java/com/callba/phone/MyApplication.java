@@ -60,11 +60,12 @@ public class MyApplication extends Application {
         super.onCreate();
         myApplication = this;
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/STXIHEI.TTF").setFontAttrId(R.attr.fontPath).build());
-        EMOptions options = new EMOptions();
+       /* EMOptions options = new EMOptions();
 // 默认添加好友时，是不需要验证的，改成需要验证
         options.setAcceptInvitationAlways(false);
         options.setAutoLogin(false);
-        EaseUI.getInstance().init(this,options);
+        EaseUI.getInstance().init(this,options);*/
+        DemoHelper.getInstance().init(this);
         GlideBuilder builder = new GlideBuilder(this);
         builder.setMemoryCache(new LruResourceCache(5 * 1024 * 1024));
         Glide.get(this).setMemoryCategory(MemoryCategory.HIGH);

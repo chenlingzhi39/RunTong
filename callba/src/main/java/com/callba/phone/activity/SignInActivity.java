@@ -140,7 +140,6 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                         Log.i("date", date);
                         if (date1.equals(date)) {
                             isinput = true;
-                            if (calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1)
                                 constant = 1;
                             btn_signIn.setText("今日已签，明日继续");
                             btn_signIn.setBackgroundResource(R.drawable.button_gray);
@@ -293,6 +292,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     public void failure(String msg) {
         toast(msg);
         progressDialog.dismiss();
+        circle.setEnabled(true);
     }
 
     @Override
@@ -392,8 +392,8 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
             } catch (Exception e) {
             }
             if (millis.size() >= 2)
-                for (int i = 1; i < millis.size(); i++) {
-                    if (millis.get(i - 1) - millis.get(i) == 24 * 60 * 60 * 1000)
+                for (int i = 0; i < millis.size()-1; i++) {
+                    if (millis.get(i) - millis.get(i+1) == 24 * 60 * 60 * 1000)
                         constant += 1;
                     else break;
                 }

@@ -63,6 +63,18 @@
         <activity
             android:name=".phone.activity.SelectPicPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />
+        <activity android:name=".phone.activity.NewFriendsMsgActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            />
+        <activity android:name=".phone.activity.AddContactActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            />
         <activity
             android:name=".phone.activity.ChatActivity"
             android:launchMode="singleTop"

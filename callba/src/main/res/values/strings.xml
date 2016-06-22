@@ -9,6 +9,7 @@
     <string name="list">通讯录</string>
     <string name="select_contact">选择联系人</string>
     <string name="invite">邀请</string>
+    <string name="find">查找</string>
     <string name="home">主页</string>
     <string name="recharge">话费充值</string>
     <string name="recharge2">立即充值</string>
@@ -24,6 +25,7 @@
     <string name="user">帐号</string>
     <string name="yue">余额</string>
     <string name="gold">金币</string>
+    <string name="my_gold">我的金币</string>
     <string name="earn_gold">签到赚金币+3</string>
     <string name="time">到期时间</string>
     <string name="friend">左邻右舍</string>
@@ -58,9 +60,10 @@
     <string name="my_number">我的账号</string>
     <string name="meal">套餐</string>
     <string name="work_date">有效期</string>
-    <string name="total">总余额</string>
+    <string name="total">话费余额</string>
     <string name="give">赠送余额</string>
     <string name="meal_search">套餐查询</string>
+    <string name="good_meal">畅聊套餐</string>
     <string name="recharge_search">充值查询</string>
     <string name="prize_search">奖励查询</string>
     <string name="calllog_search">话单查询</string>

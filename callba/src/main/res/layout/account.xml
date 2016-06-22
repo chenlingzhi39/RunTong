@@ -110,7 +110,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/gold"
+                android:text="@string/my_gold"
                 android:textSize="16sp" />
 
             <Button
@@ -149,7 +149,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="@string/meal_search"
+                android:text="@string/good_meal"
                 android:textColor="?attr/colorAccent"
                 android:textSize="16sp" />
 

@@ -72,7 +72,7 @@ public class RechargeActivity2 extends BaseActivity{
     public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
         final int PAGE_COUNT = 2;
-        private String tabTitles[] = new String[]{"卡号充值", "话费直充"};
+        private String tabTitles[] = new String[]{"卡号充值", "畅聊套餐"};
         private Context context;
 
         public SimpleFragmentPagerAdapter(FragmentManager fm, Context context) {

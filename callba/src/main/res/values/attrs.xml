@@ -73,4 +73,8 @@
         <attr name="ctsListInitialLetterBg" format="reference|color"/>
         <attr name="ctsListInitialLetterColor" format="color"/>
     </declare-styleable>
+    <declare-styleable name="ContactItemView">
+        <attr name="contactItemImage" format="reference"/>
+        <attr name="contactItemName" format="string"/>
+    </declare-styleable>
 </resources>
