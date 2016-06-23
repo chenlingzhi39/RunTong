@@ -9,10 +9,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.MyApplication;
+import com.callba.phone.activity.more.ShareActivity;
 import com.callba.phone.activity.recharge.RechargeActivity2;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
@@ -22,7 +24,6 @@ import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CircleTextView;
 import com.callba.phone.widget.signcalendar.SignCalendar;
 import com.callba.phone.widget.signcalendar.sqlit;
-import com.umeng.socialize.utils.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -116,12 +117,17 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         userDao1 = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void start() {
+                progressDialog = ProgressDialog.show(SignInActivity.this, null,
+                        "正在获取签到信息");
                 btn_signIn.setEnabled(false);
                 circle.setEnabled(false);
             }
 
             @Override
             public void success(String msg) {
+                progressDialog.dismiss();
+                btn_signIn.setEnabled(true);
+                circle.setEnabled(true);
                 String[] result = msg.split("\\|");
                 monthList.add(calendar.getCalendarMonth());
                 if (result[0].equals("0")) {
@@ -137,10 +143,10 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                         mark.setMonth(calendar.getCalendarMonth());
                         markDao.insert(mark);
                         date = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
-                        Log.i("date", date);
+                        Logger.i("date", date);
                         if (date1.equals(date)) {
                             isinput = true;
-                                constant = 1;
+                            constant = 1;
                             btn_signIn.setText("今日已签，明日继续");
                             btn_signIn.setBackgroundResource(R.drawable.button_gray);
                             btn_signIn.setEnabled(false);
@@ -163,8 +169,8 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                                     Date newDate = df.parse(dates[i]);
                                     Date oldDate = df.parse(dates[i - 1]);
                                     long l = newDate.getTime() - oldDate.getTime();
-                                    Log.i("newDate", newDate.getTime() + "");
-                                    Log.i("oldDate", oldDate.getTime() + "");
+                                    Logger.i("newDate", newDate.getTime() + "");
+                                    Logger.i("oldDate", oldDate.getTime() + "");
                                     if (l == 24 * 60 * 60 * 1000)
                                         constant += 1;
                                     else break;
@@ -181,6 +187,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
 
             @Override
             public void failure(String msg) {
+                progressDialog.dismiss();
                 toast(msg);
                 btn_signIn.setEnabled(true);
                 circle.setEnabled(true);
@@ -244,13 +251,11 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
 
     @Override
     public void start() {
-        progressDialog = ProgressDialog.show(this, null,
-                "正在获取签到信息");
+
     }
 
     @Override
     public void success(String msg) {
-        progressDialog.dismiss();
         toast(msg);
         SharedPreferenceUtil.getInstance(this).putString(CalldaGlobalConfig.getInstance().getUsername(), date, true);
            /* calendar.removeAllMarks();
@@ -291,7 +296,6 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     @Override
     public void failure(String msg) {
         toast(msg);
-        progressDialog.dismiss();
         circle.setEnabled(true);
     }
 
@@ -325,8 +329,6 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         }*/
         if (!monthList.contains(calendar.getCalendarMonth()) && calendar.getCalendarMonth() <= cal.get(Calendar.MONTH) + 1)
             if (!getLocalMarks(calendar.getCalendarMonth())) {
-                Log.i("year", calendar.getCalendarYear() + "");
-                Log.i("month", calendar.getCalendarMonth() + "");
                 String year = calendar.getCalendarYear() + "";
                 String month = calendar.getCalendarMonth() + "";
                 if (month.length() == 1)
@@ -389,17 +391,20 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                     circle.setIs_sign(true);
                     circle.setEnabled(false);
                 }
+                if (formatter.parse(date1).getTime() - millis.get(0) == 24 * 60 * 60 * 1000) {
+                    constant = 1;
+                }
             } catch (Exception e) {
             }
             if (millis.size() >= 2)
-                for (int i = 0; i < millis.size()-1; i++) {
-                    if (millis.get(i) - millis.get(i+1) == 24 * 60 * 60 * 1000)
+                for (int i = 0; i < millis.size() - 1; i++) {
+                    if (millis.get(i) - millis.get(i + 1) == 24 * 60 * 60 * 1000)
                         constant += 1;
                     else break;
                 }
             circle.setConstant(constant);
         }
-        Log.i("mark_size", millis.size() + "");
+        Logger.i("mark_size", millis.size() + "");
         cursor.close();
         return true;
     }
@@ -408,9 +413,10 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Logger.i("result_code", resultCode + "");
         super.onActivityResult(requestCode, resultCode, data);
+        //UMShareAPI.get( this ).onActivityResult( requestCode, resultCode, data);
     }
 
-    @OnClick({R.id.to_play, R.id.to_recharge, R.id.to_share})
+    @OnClick({R.id.to_play, R.id.to_recharge, R.id.to_share,R.id.previous, R.id.next})
     public void onClick(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -418,7 +424,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 toast("暂未开放");
                 break;
             case R.id.to_recharge:
-                intent=new Intent(SignInActivity.this, RechargeActivity2.class);
+                intent = new Intent(SignInActivity.this, RechargeActivity2.class);
                 startActivity(intent);
                 break;
             case R.id.to_share:
@@ -428,7 +434,37 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Callba分享"); // 分享的主题
                 intent.putExtra(Intent.EXTRA_TEXT, "我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！"); // 分享的内容
                 startActivityForResult(Intent.createChooser(intent, "选择分享"), 0);
+                //startActivity(new Intent(SignInActivity.this, ShareActivity.class));
+                break;
+            case R.id.previous:
+                calendar.lastMonth();
+                break;
+            case R.id.next:
+                calendar.nextMonth();
                 break;
         }
     }
+ /*   private UMShareListener umShareListener = new UMShareListener() {
+        @Override
+        public void onResult(SHARE_MEDIA platform) {
+            Log.d("plat","platform"+platform);
+            if(platform.name().equals("WEIXIN_FAVORITE")){
+                Toast.makeText(SignInActivity.this,platform + " 收藏成功啦",Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(SignInActivity.this, platform + " 分享成功啦", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA platform, Throwable t) {
+            Toast.makeText(SignInActivity.this,platform + " 分享失败啦", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onCancel(SHARE_MEDIA platform) {
+            Toast.makeText(SignInActivity.this,platform + " 分享取消了", Toast.LENGTH_SHORT).show();
+        }
+    };
+*/
+
 }

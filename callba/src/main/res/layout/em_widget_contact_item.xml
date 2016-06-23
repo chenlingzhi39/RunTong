@@ -20,7 +20,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@drawable/ease_mm_listitem"
+        android:background="?attr/selectableItemBackground"
         android:duplicateParentState="true" >
 
         <ImageView
@@ -53,7 +53,7 @@
                     android:layout_marginRight="4dp"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:textColor="#8C8C8C"
+                    android:textColor="@color/black"
                     android:textSize="16sp" />
             </LinearLayout>
 

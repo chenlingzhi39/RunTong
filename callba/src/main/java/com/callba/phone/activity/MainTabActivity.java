@@ -299,7 +299,7 @@ public class MainTabActivity extends TabActivity {
         } else if (getIntent().getBooleanExtra(Constant.ACCOUNT_REMOVED, false) && !isAccountRemovedDialogShow) {
             showAccountRemovedDialog();
         }
-        registerBroadcastReceiver();
+        //registerBroadcastReceiver();
     }
 
 
@@ -368,7 +368,7 @@ public class MainTabActivity extends TabActivity {
         if (mNotificationManager != null)
             mNotificationManager.cancel(10);
         EMClient.getInstance().chatManager().removeMessageListener(msgListener);
-        unregisterBroadcastReceiver();
+        //unregisterBroadcastReceiver();
         super.onDestroy();
     }
 

@@ -69,4 +69,8 @@ android {
 }
 dependencies {
     compile files('libs/Parse-1.9.4.jar')
+    compile files('libs/weiboSDKCore_3.1.4.jar')
+    compile files('libs/SocialSDK_Sina.jar')
+    compile files('libs/mta-sdk-1.6.2.jar')
+    compile files('libs/open_sdk_r5509.jar')
 }

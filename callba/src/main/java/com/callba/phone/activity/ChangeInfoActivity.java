@@ -23,10 +23,11 @@ import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.BitmapUtil;
+import com.callba.phone.util.Logger;
 import com.callba.phone.util.NumberAddressService;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CircleTextView;
-import com.umeng.socialize.utils.Log;
+
 
 import java.io.File;
 import java.util.ArrayList;
@@ -186,8 +187,8 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
             case R.id.save:
                 if(f!=null)
                 userDao.changeHead(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(),f);
-                Log.i("nickname",nickName.getHint().toString().equals(CalldaGlobalConfig.getInstance().getNickname())+"");
-                Log.i("sign",signature.getHint().toString().equals(CalldaGlobalConfig.getInstance().getSignature())+"");
+                Logger.i("nickname",nickName.getHint().toString().equals(CalldaGlobalConfig.getInstance().getNickname())+"");
+                Logger.i("sign",signature.getHint().toString().equals(CalldaGlobalConfig.getInstance().getSignature())+"");
                     userDao1.changeInfo(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(),!nickName.getHint().toString().equals(CalldaGlobalConfig.getInstance().getNickname())?nickName.getHint().toString():null,!signature.getHint().toString().equals(CalldaGlobalConfig.getInstance().getSignature())?signature.getHint().toString():null);
                 break;
         }

@@ -116,6 +116,7 @@ public class ChatActivity extends BaseActivity {
                 "com.callba.chat");
         chatReceiver = new ChatReceiver();
         registerReceiver(chatReceiver, filter);
+        if(EMClient.getInstance().chatManager().getConversation(userName)!=null)
         EMClient.getInstance().chatManager().getConversation(userName).markAllMessagesAsRead();
         Intent intent = new Intent("com.callba.asread");
         sendBroadcast(intent);

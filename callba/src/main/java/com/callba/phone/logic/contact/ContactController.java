@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import com.callba.phone.activity.contact.ContactMutliNumBean;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.util.Logger;
-import com.umeng.socialize.utils.Log;
 
 /** 
  * 联系人业务逻辑管理

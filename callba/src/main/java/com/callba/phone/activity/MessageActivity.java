@@ -18,10 +18,10 @@ import com.callba.phone.adapter.ConversationAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.Logger;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
-import com.umeng.socialize.utils.Log;
 
 
 import java.util.ArrayList;
@@ -89,9 +89,9 @@ public class MessageActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         String language = Locale.getDefault().getLanguage();
-        Log.i("language",language);
+        Logger.i("language",language);
         Locale.setDefault(new Locale("zh"));
-        Log.i("language",Locale.getDefault().getLanguage());
+        Logger.i("language",Locale.getDefault().getLanguage());
         conversationList.addAll(loadConversationList());
         conversationListview.addItemDecoration(new DividerItemDecoration(
                 this, DividerItemDecoration.VERTICAL_LIST));

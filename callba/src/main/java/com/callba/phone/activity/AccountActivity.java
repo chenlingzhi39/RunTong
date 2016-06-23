@@ -21,7 +21,7 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Meal;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
-import com.umeng.socialize.utils.Log;
+import com.callba.phone.util.Logger;
 
 import java.util.ArrayList;
 
@@ -82,7 +82,7 @@ public class AccountActivity extends BaseActivity {
                 if (msg != null) {
                     String[] result = msg.split("&");
                     ArrayList<Meal> meals = new ArrayList<>();
-                    Log.i("mealaccount", result.length + "");
+                    Logger.i("mealaccount", result.length + "");
                     for (String str : result) {
                         String[] element = str.split(",");
                         Meal meal = new Meal();

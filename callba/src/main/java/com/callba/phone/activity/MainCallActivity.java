@@ -40,7 +40,10 @@ import android.widget.TextView;
 
 
 import com.callba.phone.bean.Advertisement;
+import com.callba.phone.bean.ContactData;
+import com.callba.phone.bean.SystemNumber;
 import com.callba.phone.bean.UserDao;
+import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
@@ -177,6 +180,9 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     private UserDao userDao;
     private Gson gson;
     private LoginReceiver loginReceiver;
+    private String[] result;
+    List<SystemNumber> list;
+    private UserDao userDao1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -399,12 +405,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 for(Advertisement advertisement : list){
                     webImages.add(advertisement.getImage());
                 }
-                SimpleHandler.getInstance().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        iv_ad.setViewUrls(webImages);
-                    }
-                },500);
                 iv_ad.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
                     @Override
                     public void onItemClick(int position) {
@@ -413,9 +413,57 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                         startActivity(intent1);
                     }
                 });
+                SimpleHandler.getInstance().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        iv_ad.setViewUrls(webImages);
+                    }
+                },500);
+
             }
         });
+        userDao1 = new UserDao(this, new UserDao.PostListener() {
+            @Override
+            public void start() {
 
+            }
+
+            @Override
+            public void success(String msg) {
+                Log.i("system_result", msg);
+                result = msg.split("\\|");
+                if (result[0].equals("0")) {
+                    list = new ArrayList<>();
+                    try {
+                        list = gson.fromJson(result[1], new TypeToken<List<SystemNumber>>() {
+                        }.getType());
+                    } catch (Exception e) {
+
+                    }
+                    ArrayList<String> numbers = new ArrayList<>();
+                    ContactData contactData = new ContactData();
+                    contactData.setContactName("Call吧电话");
+                    for (SystemNumber user : list) {
+                        numbers.add(user.getPhoneNumber());
+                        Log.i("phonenumber", user.getPhoneNumber());
+                    }
+                    if (ContactsAccessPublic.hasName(MainCallActivity.this, "Call吧电话").equals("0"))
+                        ContactsAccessPublic.insertPhoneContact(MainCallActivity.this, contactData, numbers);
+                    else {
+                        ContactsAccessPublic.deletePhoneContact(MainCallActivity.this, "Call吧电话", ContactsAccessPublic.getId(MainCallActivity.this, "Call吧电话"));
+                        ContactsAccessPublic.insertPhoneContact(MainCallActivity.this, contactData, numbers);
+                    }
+                    //ContactsAccessPublic.updatePhoneContact(HomeActivity.this,"Call吧电话",numbers);
+                } else {
+
+                }
+            }
+
+            @Override
+            public void failure(String msg) {
+                toast(msg);
+            }
+        });
     }
 
 
@@ -436,7 +484,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 num1.setImageResource(R.drawable.call_1);
             }
         }
-
+        userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(MainCallActivity.this, "Call吧电话"));
         super.onResume();
     }
 

@@ -1,5 +1,7 @@
 package com.callba.phone.activity.contact;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,29 +10,40 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseFragment;
 import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
+import com.callba.phone.DemoHelper.*;
+import com.callba.phone.activity.ChatActivity;
 import com.callba.phone.activity.NewFriendsMsgActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.db.InviteMessgeDao;
+import com.callba.phone.db.UserDao;
 import com.callba.phone.util.EaseCommonUtils;
+import com.callba.phone.util.Logger;
 import com.callba.phone.widget.ContactItemView;
 import com.callba.phone.widget.EaseContactList;
 import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMConversation;
+import com.hyphenate.exceptions.HyphenateException;
+import com.hyphenate.util.EMLog;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,7 +81,13 @@ public class WebContactFragment extends BaseFragment {
     private InviteMessgeDao inviteMessgeDao;
     private BroadcastReceiver broadcastReceiver;
     private LocalBroadcastManager broadcastManager;
-
+    private View loadingView;
+    private ContactSyncListener contactSyncListener;
+    private BlackListSyncListener blackListSyncListener;
+    protected EaseUser toBeProcessUser;
+    protected String toBeProcessUsername;
+    private static final String TAG = WebContactFragment.class.getSimpleName();
+    private boolean hidden;
     public static WebContactFragment newInstance(){
         WebContactFragment webContactFragment=new WebContactFragment();
         return webContactFragment;
@@ -84,6 +103,8 @@ public class WebContactFragment extends BaseFragment {
         listView.addHeaderView(headerView);
         applicationItem = (ContactItemView) headerView.findViewById(R.id.application_item);
         applicationItem.setOnClickListener(clickListener);
+        loadingView = LayoutInflater.from(getActivity()).inflate(R.layout.em_layout_loading_data, null);
+        contentContainer.addView(loadingView);
         contactsMap=DemoHelper.getInstance().getContactList();
         contactList = new ArrayList<EaseUser>();
         getContactList();
@@ -122,8 +143,56 @@ public class WebContactFragment extends BaseFragment {
                 return false;
             }
         });
+        contactSyncListener = new ContactSyncListener();
+        DemoHelper.getInstance().addSyncContactListener(contactSyncListener);
+
+        blackListSyncListener = new BlackListSyncListener();
+        DemoHelper.getInstance().addSyncBlackListListener(blackListSyncListener);
+
+
+        if (DemoHelper.getInstance().isContactsSyncedWithServer()) {
+            loadingView.setVisibility(View.GONE);
+        } else if (DemoHelper.getInstance().isSyncingContactsWithServer()) {
+            loadingView.setVisibility(View.VISIBLE);
+        }
+        registerForContextMenu(listView);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent=new Intent(getActivity(), ChatActivity.class);
+                EaseUser user = (EaseUser)listView.getItemAtPosition(position);
+                intent.putExtra("username",user.getUsername());
+                startActivity(intent);
+            }
+        });
+    }
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        toBeProcessUser = (EaseUser) listView.getItemAtPosition(((AdapterView.AdapterContextMenuInfo) menuInfo).position);
+        toBeProcessUsername = toBeProcessUser.getUsername();
+        getActivity().getMenuInflater().inflate(R.menu.em_context_contact_list, menu);
     }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.delete_contact) {
+            try {
+                // 删除此联系人
+                deleteContact(toBeProcessUser);
+                // 删除相关的邀请消息
+                InviteMessgeDao dao = new InviteMessgeDao(getActivity());
+                dao.deleteMessage(toBeProcessUser.getUsername());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return true;
+        }else if(item.getItemId() == R.id.add_to_blacklist){
+            moveToBlacklist(toBeProcessUsername);
+            return true;
+        }
+        return super.onContextItemSelected(item);
+    }
     public void refresh() {
         Map<String, EaseUser> m = DemoHelper.getInstance().getContactList();
         if (m instanceof Hashtable<?, ?>) {
@@ -138,6 +207,8 @@ public class WebContactFragment extends BaseFragment {
         }else{
             applicationItem.hideUnreadMsgView();
         }
+        getContactList();
+        contactListLayout.refresh();
     }
     /**
      * 获取联系人列表，并过滤掉黑名单和排序
@@ -238,14 +309,13 @@ public class WebContactFragment extends BaseFragment {
     }
     private void registerBroadcastReceiver() {
         broadcastManager = LocalBroadcastManager.getInstance(getActivity());
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constant.ACTION_CONTACT_CHANAGED);
+        IntentFilter intentFilter = new IntentFilter(Constant.ACTION_CONTACT_CHANAGED);
         broadcastReceiver = new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
+                Logger.i("webContact",Constant.ACTION_CONTACT_CHANAGED);
                 refresh();
-
 
             }
         };
@@ -253,6 +323,127 @@ public class WebContactFragment extends BaseFragment {
     }
     private void unregisterBroadcastReceiver(){
         broadcastManager.unregisterReceiver(broadcastReceiver);
+    }
+    class ContactSyncListener implements DataSyncListener{
+        @Override
+        public void onSyncComplete(final boolean success) {
+            EMLog.d(TAG, "on contact list sync success:" + success);
+
+                            if(success){
+                                loadingView.setVisibility(View.GONE);
+                                refresh();
+                            }else{
+                                String s1 = getResources().getString(R.string.get_failed_please_check);
+                                Toast.makeText(getActivity(), s1, 1).show();
+                                loadingView.setVisibility(View.GONE);
+                            }
+
+        }
+    }
+
+    class BlackListSyncListener implements DataSyncListener{
+
+        @Override
+        public void onSyncComplete(boolean success) {
+
+                    refresh();
+
+        }
+
+    }
+    /**
+     * 把user移入到黑名单
+     */
+    protected void moveToBlacklist(final String username){
+        final ProgressDialog pd = new ProgressDialog(getActivity());
+        String st1 = getResources().getString(R.string.Is_moved_into_blacklist);
+        final String st2 = getResources().getString(R.string.Move_into_blacklist_success);
+        final String st3 = getResources().getString(R.string.Move_into_blacklist_failure);
+        pd.setMessage(st1);
+        pd.setCanceledOnTouchOutside(false);
+        pd.show();
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    //加入到黑名单
+                    EMClient.getInstance().contactManager().addUserToBlackList(username,false);
+                    getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            pd.dismiss();
+                            Toast.makeText(getActivity(), st2, 0).show();
+                            refresh();
+                        }
+                    });
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                    getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            pd.dismiss();
+                            Toast.makeText(getActivity(), st3, 0).show();
+                        }
+                    });
+                }
+            }
+        }).start();
+
+    }
+    /**
+     * 删除联系人
+     *
+     * @param toDeleteUser
+     */
+    public void deleteContact(final EaseUser tobeDeleteUser) {
+        String st1 = getResources().getString(R.string.deleting);
+        final String st2 = getResources().getString(R.string.Delete_failed);
+        final ProgressDialog pd = new ProgressDialog(getActivity());
+        pd.setMessage(st1);
+        pd.setCanceledOnTouchOutside(false);
+        pd.show();
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    EMClient.getInstance().contactManager().deleteContact(tobeDeleteUser.getUsername());
+                    // 删除db和内存中此用户的数据
+                    UserDao dao = new UserDao(getActivity());
+                    dao.deleteContact(tobeDeleteUser.getUsername());
+                    DemoHelper.getInstance().getContactList().remove(tobeDeleteUser.getUsername());
+                    getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            pd.dismiss();
+                            contactList.remove(tobeDeleteUser);
+                            contactListLayout.refresh();
+
+                        }
+                    });
+                } catch (final Exception e) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        public void run() {
+                            pd.dismiss();
+                            Toast.makeText(getActivity(), st2 + e.getMessage(), 1).show();
+                        }
+                    });
+
+                }
+
+            }
+        }).start();
+
+    }
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        this.hidden = hidden;
+        if (!hidden) {
+            refresh();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!hidden) {
+            refresh();
+        }
     }
 
 }

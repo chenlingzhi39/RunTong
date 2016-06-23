@@ -22,7 +22,6 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMMessage.Direct;
 import com.hyphenate.util.DateUtils;
-import com.umeng.socialize.utils.Log;
 
 import java.util.Date;
 import java.util.Locale;

@@ -32,7 +32,7 @@ import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
-import com.umeng.socialize.utils.Log;
+
 
 import de.greenrobot.dao.DaoMaster;
 import de.greenrobot.dao.DaoSession;
@@ -73,7 +73,7 @@ public class MyApplication extends Application {
                 new ExternalCacheDiskCacheFactory(this, StorageUtils.getCacheDirectory(getApplicationContext()).getPath(), 10 * 1024 * 1024));
         initUmengAnalytics();
         String language = Locale.getDefault().getLanguage();
-        Log.i("language",language);
+        Logger.i("language",language);
         setupDatabase();
     }
     private void setupDatabase() {

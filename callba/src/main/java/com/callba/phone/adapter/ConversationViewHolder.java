@@ -19,7 +19,6 @@ import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.util.DateUtils;
-import com.umeng.socialize.utils.Log;
 
 import java.util.Date;
 

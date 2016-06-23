@@ -203,35 +203,6 @@ public class HomeActivity extends BaseActivity {
                 });
             }
         });
-
-        // 判断是否自动启动
-        if (savedInstanceState == null
-                && CalldaGlobalConfig.getInstance().isAutoLogin()
-                && !LoginController.getInstance().getUserLoginState()) {
-            Log.i("MainCallActivity", "auto");
-            Logger.i("MainCallActivity", "MainCallActivity  oncreate autoLogin");
-            // 登录
-            autoLogin();
-
-        } else {
-
-            // 检查内存数据是否正常
-            String username = CalldaGlobalConfig.getInstance().getUsername();
-            String password = CalldaGlobalConfig.getInstance().getPassword();
-            if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-                // 重新打开
-                gotoWelcomePage();
-            }
-            sendBroadcast(new Intent("com.callba.login"));
-            userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
-            userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
-        }
-
-
-        localImages.add(R.drawable.ad4);
-        localImages.add(R.drawable.ad5);
-        localImages.add(R.drawable.ad6);
-        banner.setViewRes(localImages);
         userDao = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void start() {
@@ -259,6 +230,42 @@ public class HomeActivity extends BaseActivity {
                 toast(msg);
             }
         });
+        // 判断是否自动启动
+        if (savedInstanceState == null
+                && CalldaGlobalConfig.getInstance().isAutoLogin()
+                && !LoginController.getInstance().getUserLoginState()) {
+            Log.i("MainCallActivity", "auto");
+            Logger.i("MainCallActivity", "MainCallActivity  oncreate autoLogin");
+            // 登录
+            autoLogin();
+
+        } else {
+
+            // 检查内存数据是否正常
+            String username = CalldaGlobalConfig.getInstance().getUsername();
+            String password = CalldaGlobalConfig.getInstance().getPassword();
+            if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+                // 重新打开
+                gotoWelcomePage();
+            }
+            sendBroadcast(new Intent("com.callba.login"));
+            if (!mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()).equals(date)) {
+                String year = Calendar.getInstance().get(Calendar.YEAR) + "";
+                String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
+                if (month.length() == 1)
+                    month = "0" + month;
+                userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
+            }
+            userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+            userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+        }
+
+
+        localImages.add(R.drawable.ad4);
+        localImages.add(R.drawable.ad5);
+        localImages.add(R.drawable.ad6);
+        banner.setViewRes(localImages);
+
 
     }
 
@@ -494,18 +501,14 @@ public class HomeActivity extends BaseActivity {
                         LoginController.parseLoginSuccessResult(
                                 HomeActivity.this, username, password,
                                 resultInfo);
-
-
-                        String year = Calendar.getInstance().get(Calendar.YEAR) + "";
-                        String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
-                        if (month.length() == 1)
-                            month = "0" + month;
                         if (!mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()).equals(date)) {
-
+                            String year = Calendar.getInstance().get(Calendar.YEAR) + "";
+                            String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
+                            if (month.length() == 1)
+                                month = "0" + month;
                             userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
                         }
                         Log.i("has_name", ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话") + "");
-
                         userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
                         userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
                         // 查询余额

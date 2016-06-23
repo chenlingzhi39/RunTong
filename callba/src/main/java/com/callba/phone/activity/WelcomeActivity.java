@@ -51,7 +51,6 @@ import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.ZipUtil;
-import com.umeng.socialize.utils.Log;
 
 import me.iwf.photopicker.PhotoPickerActivity;
 
@@ -73,7 +72,7 @@ public class WelcomeActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mSharedPreferenceUtil = SharedPreferenceUtil.getInstance(this);
-		Log.i("welcome","oncreate");
+
 	}
 
 	/**
@@ -468,7 +467,6 @@ public class WelcomeActivity extends BaseActivity {
 				return;
 			}
 			// 自动登陆
-			Log.i("intent","maintab");
 			Intent intent = new Intent(WelcomeActivity.this,
 					MainTabActivity.class);
 			intent.putExtra("frompage", "WelcomeActivity");
@@ -546,7 +544,6 @@ public class WelcomeActivity extends BaseActivity {
 
 	@Override
 	protected void onDestroy() {
-		Log.i("welcome","ondestroy");
 		super.onDestroy();
 	}
 }

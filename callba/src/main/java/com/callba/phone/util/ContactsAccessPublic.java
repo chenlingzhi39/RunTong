@@ -14,7 +14,6 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.text.TextUtils;
 
 import com.callba.phone.bean.ContactData;
-import com.umeng.socialize.utils.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +76,7 @@ public class ContactsAccessPublic {
                 for(int i=0; i<phoneCursor.getColumnCount(); i++){
                     String columnName = phoneCursor.getColumnName(i);
                     String value = phoneCursor.getString(i);
-                    Log.e("","i: "+columnName+" value: "+value);
+                    Logger.i("","i: "+columnName+" value: "+value);
                 }
                 // 得到手机号码
 //     String phoneNumber = phoneCursor.getString(PHONES_NUMBER_INDEX);
@@ -290,11 +289,11 @@ public static void updatePhoneContact(Context context,String name,ArrayList<Stri
     }
 
     public static int deleteSIMContact(Context context,ContactData contact)throws Exception{
-        Log.e("","deleteSIMContact name:"+contact.getContactName()+" id:"+contact.getId());
+        Logger.i("","deleteSIMContact name:"+contact.getContactName()+" id:"+contact.getId());
         Uri uri = Uri.parse("content://icc/adn");
         ContentResolver resolver = context.getContentResolver();
         int rc = resolver.delete(uri, "tag="+contact.getContactName()+" AND number="+contact.getNumber(),null);
-        Log.e("", "rc2 = "+rc);
+        Logger.i("", "rc2 = "+rc);
         return rc;
     }
     public void testUpdate(Context context)throws Exception{

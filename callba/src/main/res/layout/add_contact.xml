@@ -20,8 +20,9 @@
         android:id="@+id/ll_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/ease_mm_listitem"
-        android:visibility="gone" >
+        android:background="?attr/selectableItemBackground"
+        android:visibility="gone"
+        >
 
         <RelativeLayout
             android:layout_width="match_parent"

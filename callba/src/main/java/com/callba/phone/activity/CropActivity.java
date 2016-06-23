@@ -20,8 +20,8 @@ import com.bumptech.glide.request.target.Target;
 import com.callba.R;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.BitmapUtil;
+import com.callba.phone.util.Logger;
 import com.theartofdev.edmodo.cropper.CropImageView;
-import com.umeng.socialize.utils.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -62,7 +62,7 @@ public class CropActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("裁剪图片");
         uri=getIntent().getParcelableExtra("uri");
-        Log.i("path",uri.getPath());
+        Logger.i("path",uri.getPath());
         cropImageView.setImageUriAsync(uri);
         cropImageView.setFixedAspectRatio(true);
         cropImageView.setAspectRatio(1,1);
@@ -109,11 +109,11 @@ public class CropActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Log.i("onclick","home");
+                Logger.i("onclick","home");
                 finish();
                 break;
             case R.id.ok:
-                Log.i("onclick","ok");
+                Logger.i("onclick","ok");
 
                 cropImageView.getCroppedImageAsync();
 

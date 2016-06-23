@@ -12,7 +12,6 @@ import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.SharedPreferenceUtil;
-import com.umeng.socialize.utils.Log;
 
 
 import java.util.regex.Matcher;
@@ -82,8 +81,6 @@ public class ChangePasswordActivity extends BaseActivity implements UserDao.Post
         old_password = oldPassword.getText().toString();
         new_password = newPassword.getText().toString();
         comfirm_new_password=confirmNewPassword.getText().toString();
-        Log.i("password",old_password);
-        Log.i("password",SharedPreferenceUtil.getInstance(this).getString(Constant.LOGIN_PASSWORD));
         if (old_password.equals("")) {
             toast(getString(R.string.input_old_password));
             return;

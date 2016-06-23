@@ -22,12 +22,12 @@ import com.callba.phone.bean.Mood;
 import com.callba.phone.bean.NearByUser;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.util.Logger;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.callba.phone.widget.refreshlayout.EasyRecyclerView;
 import com.callba.phone.widget.refreshlayout.RefreshLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.umeng.socialize.utils.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -157,7 +157,7 @@ public class CommunityActivity extends BaseActivity implements UserDao.PostListe
             } catch (Exception e) {
 
             }
-            Log.i("size",moods.size()+"");
+            Logger.i("size",moods.size()+"");
             if(moods.size()==0)
                 moodAdapter.stopMore();
             if(moods.size()>0&&moodAdapter.getData().size()==0)

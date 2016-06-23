@@ -13,16 +13,16 @@ import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.view.CornerListView;
-import com.umeng.socialize.bean.RequestType;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.bean.SocializeEntity;
+import com.umeng.socialize.controller.RequestType;
 import com.umeng.socialize.controller.UMServiceFactory;
 import com.umeng.socialize.controller.UMSocialService;
 import com.umeng.socialize.controller.listener.SocializeListeners;
+import com.umeng.socialize.media.CircleShareContent;
 import com.umeng.socialize.media.UMImage;
-import com.umeng.socialize.sso.UMSsoHandler;
 import com.umeng.socialize.weixin.controller.UMWXHandler;
-import com.umeng.socialize.weixin.media.CircleShareContent;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,12 +60,11 @@ public class ShareActivity extends BaseActivity implements
 
         shareContent = getString(R.string.share_content)
                 + CalldaGlobalConfig.getInstance().getUsername();
-
-        controller = UMServiceFactory.getUMSocialService("com.umeng.share",
+       controller = UMServiceFactory.getUMSocialService("com.umeng.share",
                 RequestType.SOCIAL);
         // controller.getConfig().setSinaSsoHandler(new SinaSsoHandler());
-        controller.setShareMedia(new UMImage(this, R.drawable.logo));
-        controller.setShareContent(shareContent);
+       controller.setShareMedia(new UMImage(this, R.drawable.logo));
+       controller.setShareContent(shareContent);
         contenturl = contenturl
                 + CalldaGlobalConfig.getInstance().getUsername();
     }
@@ -107,8 +106,8 @@ public class ShareActivity extends BaseActivity implements
         switch (position) {
             case 0:
                 // 微信朋友圈
-                shareWXFriend();
-			/*controller.getConfig()
+                //shareWXFriend();
+			controller.getConfig()
 					.supportWXCirclePlatform(this, appid, contenturl)
 					.setCircleTitle(getString(R.string.share_title));
 			controller.directShare(context, SHARE_MEDIA.WEIXIN_CIRCLE,
@@ -129,7 +128,7 @@ public class ShareActivity extends BaseActivity implements
 							}
 
 						}
-					});*/
+					});
                 break;
 
             case 4:
@@ -160,7 +159,7 @@ public class ShareActivity extends BaseActivity implements
 
             case 3:
                 // 人人网
-                controller.directShare(this, SHARE_MEDIA.RENREN, null);
+               controller.directShare(this, SHARE_MEDIA.RENREN, null);
                 break;
 
             default:
@@ -195,11 +194,11 @@ public class ShareActivity extends BaseActivity implements
         // if (sinaSsoHandler != null
         // && requestCode == UMSsoHandler.DEFAULT_AUTH_ACTIVITY_CODE) {
         // sinaSsoHandler.authorizeCallBack(requestCode, resultCode, data);
-        UMSsoHandler ssoHandler = controller.getConfig().getSsoHandler(
+     /*   UMSsoHandler ssoHandler = controller.getConfig().getSsoHandler(
                 requestCode);
         if (ssoHandler != null) {
             ssoHandler.authorizeCallBack(requestCode, resultCode, data);
-        }
+        }*/
 
         // }
     }

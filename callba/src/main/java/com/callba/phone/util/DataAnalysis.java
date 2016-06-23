@@ -18,7 +18,6 @@ import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.service.CalllogService;
 import com.callba.phone.service.CalllogService.CalldaCalllogListener;
-import com.umeng.socialize.utils.Log;
 
 public class DataAnalysis {
 	private TimeFormatUtil timeFormatUtil;
@@ -31,7 +30,7 @@ public class DataAnalysis {
 		List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
 		Map<String, Object> map;
 		String time="";
-		Log.i("size",allcalllists.size()+"");
+		Logger.i("size",allcalllists.size()+"");
 		for (int i = 0; i < allcalllists.size(); i++) {
 			map = new HashMap<String, Object>();
 			Date date=new Date(allcalllists.get(i).getCallLogTime());

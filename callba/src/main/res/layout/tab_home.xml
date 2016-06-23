@@ -131,10 +131,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/mall"
-            android:drawableTop="@drawable/mall"
+            android:id="@+id/finance"
+            android:drawableTop="@drawable/flow"
             android:layout_weight="1"
-            android:text="@string/mall"
+            android:text="@string/flow"
             android:drawablePadding="10dp"
             android:padding="10dp"
             android:gravity="center"
@@ -149,16 +149,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/finance"
-            android:drawableTop="@drawable/finance"
+            android:id="@+id/mall"
+            android:drawableTop="@drawable/mall"
             android:layout_weight="1"
-            android:text="@string/finance"
+            android:text="@string/mall"
             android:drawablePadding="10dp"
             android:padding="10dp"
             android:gravity="center"
             android:clickable="true"
             android:background="?attr/selectableItemBackground"
             android:textSize="12sp"/>
+
         <View
             android:layout_width="1px"
             android:layout_height="match_parent"

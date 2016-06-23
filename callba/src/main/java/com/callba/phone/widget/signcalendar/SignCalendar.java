@@ -705,6 +705,7 @@ public class SignCalendar extends ViewFlipper implements
    * 
    **********************************************/
   public boolean dispatchTouchEvent(MotionEvent ev) {
+    getParent().requestDisallowInterceptTouchEvent(true);
     if (gd != null) {
       if (gd.onTouchEvent(ev))
         return true;

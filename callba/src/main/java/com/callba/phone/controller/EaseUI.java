@@ -138,10 +138,10 @@ public final class EaseUI {
         public void onDisconnected(final int error) {
 
             if (error == EMError.USER_REMOVED) {
-                com.umeng.socialize.utils.Log.i("user","removed");
+                  Log.i("user","removed");
                 onCurrentAccountRemoved();
             }else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
-                com.umeng.socialize.utils.Log.i("user","another");
+                 Log.i("user","another");
                 onConnectionConflict();
             }
         }}

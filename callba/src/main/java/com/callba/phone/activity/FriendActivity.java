@@ -34,7 +34,6 @@ import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
-import com.umeng.socialize.utils.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,9 +82,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         ButterKnife.inject(this);
         gson = new Gson();
         location.setTextColor(getResources().getColor(R.color.black_2f));
-        if(!CalldaGlobalConfig.getInstance().getAddress().equals(""))
         location.setText(CalldaGlobalConfig.getInstance().getAddress());
-        else location.setText("网络错误，点击重试");
         userDao = new UserDao(this, this);
 
         initRefreshLayout();
@@ -263,7 +260,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     public void success(String msg) {
         userList.refreshComplete();
         result = msg.split("\\|");
-        Log.i("friend_result", msg);
+        Logger.i("friend_result", msg);
         if (result[0].equals("0")) {
             list = new ArrayList<>();
             try {
@@ -272,7 +269,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             } catch (Exception e) {
 
             }
-            Log.i("size", list.size() + "");
+            Logger.i("size", list.size() + "");
             if (list.size() == 0) {
             } else {
                 nearByUserAdapter.clear();

@@ -32,10 +32,10 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.util.Logger;
 import com.callba.phone.util.NumberAddressService;
 import com.callba.phone.util.PayResult;
 import com.callba.phone.util.SignUtils;
-import com.umeng.socialize.utils.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -333,7 +333,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
          * 特别注意，这里的签名逻辑需要放在服务端，切勿将私钥泄露在代码中！
          */
         String sign = sign(orderInfo);
-        Log.i("sign", sign);
+        Logger.i("sign", sign);
         try {
             /**
              * 仅需对sign 做URL编码
