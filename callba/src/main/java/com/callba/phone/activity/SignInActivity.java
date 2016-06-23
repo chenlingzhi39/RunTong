@@ -24,6 +24,14 @@ import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CircleTextView;
 import com.callba.phone.widget.signcalendar.SignCalendar;
 import com.callba.phone.widget.signcalendar.sqlit;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.controller.RequestType;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.sso.QZoneSsoHandler;
+import com.umeng.socialize.sso.SinaSsoHandler;
+import com.umeng.socialize.sso.TencentWBSsoHandler;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -428,13 +436,28 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 startActivity(intent);
                 break;
             case R.id.to_share:
-                intent = new Intent(Intent.ACTION_SEND); // 启动分享发送的属性
+              /*  intent = new Intent(Intent.ACTION_SEND); // 启动分享发送的属性
                 intent.setType("text/plain"); // 分享发送的数据类型
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Callba分享"); // 分享的主题
                 intent.putExtra(Intent.EXTRA_TEXT, "我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！"); // 分享的内容
-                startActivityForResult(Intent.createChooser(intent, "选择分享"), 0);
+                startActivityForResult(Intent.createChooser(intent, "选择分享"), 0);*/
                 //startActivity(new Intent(SignInActivity.this, ShareActivity.class));
+                // 首先在您的Activity中添加如下成员变量
+                final UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.share",
+                        RequestType.SOCIAL);
+// 设置分享内容
+                mController.setShareContent("友盟社会化组件（SDK）让移动应用快速整合社交分享功能，http://www.umeng.com/social");
+// 设置分享图片, 参数2为图片的url地址
+                mController.setShareMedia(new UMImage(this,
+                        "http://www.umeng.com/images/pic/banner_module_social.png"));
+                // 添加新浪和QQ空间的SSO授权支持
+                mController.getConfig().setSsoHandler(new SinaSsoHandler());
+                mController.getConfig().setSsoHandler(
+                        new QZoneSsoHandler(this,"100424468","c7394704798a158208a74ab60104f0ba"));
+                // 添加腾讯微博SSO支持
+                mController.getConfig().setSsoHandler(new TencentWBSsoHandler());
+                mController.openShare(this, false);
                 break;
             case R.id.previous:
                 calendar.lastMonth();
