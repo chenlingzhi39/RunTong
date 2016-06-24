@@ -175,6 +175,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                         Logger.i("date", date);
                         if (calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1)
                             list.add(date);
+                        calendar.addMark(date,0);
                     }
                     if (dates.length > 0 && calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1) {
                         try {
@@ -205,7 +206,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                         }
 
                     }
-                    calendar.addMarks(list, 0);
+
                 } else toast(result[1]);
                 circle.setConstant(constant);
             }
