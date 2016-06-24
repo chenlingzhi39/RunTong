@@ -2,9 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/refresh"
-        android:title="@string/refresh"
-        android:icon="@drawable/ic_sync_green_24dp"
+        android:id="@+id/ring"
+        android:title="@string/close_ring"
         app:showAsAction="always"
         />
 </menu>

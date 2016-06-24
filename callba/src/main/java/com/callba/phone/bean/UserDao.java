@@ -342,7 +342,7 @@ public class UserDao {
         params.addBodyParameter("oldPwd",oldPassword);
         params.addBodyParameter("newPwd",newPassword);
         params.addBodyParameter("softType", "android");
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.CHANGE_HEAD, params, new RequestCallBack<String>() {
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.Change_Pass, params, new RequestCallBack<String>() {
             @Override
             public void onStart() {
                 Log.i("url",Interfaces.Change_Pass);

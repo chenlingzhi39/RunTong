@@ -22,6 +22,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -445,7 +447,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                     contactData.setContactName("Call吧电话");
                     for (SystemNumber user : list) {
                         numbers.add(user.getPhoneNumber());
-                        Log.i("phonenumber", user.getPhoneNumber());
+                        Logger.i("phonenumber", user.getPhoneNumber());
                     }
                     if (ContactsAccessPublic.hasName(MainCallActivity.this, "Call吧电话").equals("0"))
                         ContactsAccessPublic.insertPhoneContact(MainCallActivity.this, contactData, numbers);
@@ -1312,7 +1314,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 break;
 
             case R.id.num1:
-                // 号码1 长按快速开启/关闭键盘音
+               /* // 号码1 长按快速开启/关闭键盘音
                 boolean isKeyboardToneOn = CalldaGlobalConfig.getInstance()
                         .getKeyBoardSetting();
 
@@ -1325,17 +1327,17 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                     // 键盘音开
                     num1.setImageResource(R.drawable.call_1);
                     toast(R.string.keyboard_tone_on);
-                   /* CalldaToast calldaToast = new CalldaToast();
+                   *//* CalldaToast calldaToast = new CalldaToast();
                     calldaToast.showImageToast(context, R.string.keyboard_tone_on,
-                            R.drawable.keyboard_setting_icon);*/
+                            R.drawable.keyboard_setting_icon);*//*
                 } else {
                     // 键盘音关
                     num1.setImageResource(R.drawable.call_1);
                     toast(R.string.keyboard_tone_off);
-                   /* CalldaToast calldaToast = new CalldaToast();
+                   *//* CalldaToast calldaToast = new CalldaToast();
                     calldaToast.showImageToast(context, R.string.keyboard_tone_off,
-                            R.drawable.keyboard_setting_off_icon);*/
-                }
+                            R.drawable.keyboard_setting_off_icon);*//*
+                }*/
                 break;
 
             default:
@@ -1382,4 +1384,34 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         super.onPause();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (CalldaGlobalConfig.getInstance().getKeyBoardSetting())
+            getMenuInflater().inflate(R.menu.menu_open_ring,menu);
+        else getMenuInflater().inflate(R.menu.menu_close_ring,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.ring:
+                    boolean isKeyboardToneOn = CalldaGlobalConfig.getInstance()
+                            .getKeyBoardSetting();
+
+                CalldaGlobalConfig.getInstance().setKeyBoardSetting(
+                        !isKeyboardToneOn);
+                SharedPreferenceUtil.getInstance(this).putBoolean(
+                        Constant.KeyboardSetting, !isKeyboardToneOn, true);
+                if (CalldaGlobalConfig.getInstance().getKeyBoardSetting()) {
+                item.setIcon(R.drawable.open_ring);
+                item.setTitle(R.string.close_ring);
+                }else{
+                    item.setIcon(R.drawable.close_ring);
+                    item.setTitle(R.string.open_ring);
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

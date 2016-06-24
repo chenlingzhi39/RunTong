@@ -102,6 +102,7 @@ public class CommunityActivity extends BaseActivity implements UserDao.PostListe
             public void onBindView(View headerView) {
                 CircleImageView head=(CircleImageView) headerView.findViewById(R.id.head);
                 TextView number=(TextView) headerView.findViewById(R.id.number);
+                if(!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
                 Glide.with(CommunityActivity.this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(head);
                 number.setHint(CalldaGlobalConfig.getInstance().getUsername());
             }

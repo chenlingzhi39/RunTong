@@ -1,10 +1,12 @@
 <resources>
     <string name="text_ack_msg">已读</string>
     <string name="text_delivered_msg">送达</string>
-    <string name="telephone">电话&#160;&#160;&#160;</string>
+    <string name="telephone">&#160;&#160;&#160;&#160;&#160;&#160;电话</string>
     <string name="add_contact">新建联系人</string>
     <string name="send_message">发送短信</string>
     <string name="save_contact">保存到已有联系人</string>
+    <string name="close_ring">关闭铃声</string>
+    <string name="open_ring">开启铃声</string>
     <string name="no_balance">余额不足</string>
     <string name="list">通讯录</string>
     <string name="select_contact">选择联系人</string>
@@ -40,6 +42,7 @@
     <string name="delete">删除</string>
     <string name="game">我的游戏</string>
     <string name="sign_in">我的签到</string>
+    <string name="refresh">刷新</string>
     <string name="share">分享</string>
     <string name="message">信息</string>
     <string name="post_message">发送信息</string>

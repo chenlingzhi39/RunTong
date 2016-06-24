@@ -94,7 +94,7 @@ public class ContactActivity2 extends BaseActivity {
     public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
         final int PAGE_COUNT = 2;
-        private String tabTitles[] = new String[]{"本地", "环信"};
+        private String tabTitles[] = new String[]{"本地", "Call吧"};
         private Context context;
 
         public SimpleFragmentPagerAdapter(FragmentManager fm, Context context) {

@@ -169,11 +169,11 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                 size = 80;
                 break;
         }
-        Spannable spannable = new SpannableString("39元\n\n（包月畅聊）\n原价50元");
+        Spannable spannable = new SpannableString("39元\n\n（包月畅聊）\n原价150元");
         spannable.setSpan(new AbsoluteSizeSpan(size), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannable.setSpan(new AbsoluteSizeSpan(size / 2), 4, spannable.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         price1.setText(spannable);
-        Spannable spannable1 = new SpannableString("399元\n\n（包年畅聊）\n原价500元");
+        Spannable spannable1 = new SpannableString("399元\n\n（包年畅聊）\n原价1500元");
         spannable1.setSpan(new AbsoluteSizeSpan(size), 0, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannable1.setSpan(new AbsoluteSizeSpan(size / 2), 5, spannable1.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         price2.setText(spannable1);
@@ -245,7 +245,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
 
     @OnClick(R.id.relative)
     public void change() {
-        showDialog();
+        //showDialog();
     }
 
     @OnClick(R.id.recharge)

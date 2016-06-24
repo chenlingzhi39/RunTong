@@ -74,6 +74,12 @@
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize"
             />
+        <activity android:name=".phone.activity.SignInActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            />
         <activity android:name=".phone.activity.NewFriendsMsgActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -172,11 +178,6 @@
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.activity.CommunityActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme" />
-        <activity
-            android:name=".phone.activity.SignInActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
@@ -459,13 +460,6 @@
         -->
 
         <activity
-            android:name="com.umeng.socialize.view.ShareActivity"
-            android:configChanges="orientation|keyboard"
-            android:launchMode="singleTask"
-            android:noHistory="true"
-            android:theme="@style/Theme.UMDialog"
-            android:windowSoftInputMode="stateVisible|adjustResize"></activity>
-        <activity
             android:name="com.callba.wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
@@ -689,6 +683,32 @@
             android:name="com.sina.weibo.sdk.net.DownloadService"
             android:exported="false">
         </service>
+        <!-- 腾讯SSO授权的Activity注册 -->
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="tencent100424468" /> <!-- 100498017 -->
+            </intent-filter>
+        </activity>
+        <activity android:name="com.tencent.plus.ImageActivity" />
+        <activity android:name="com.tencent.connect.common.AssistActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.umeng.socialize.view.ShareActivity"
+            android:configChanges="orientation|keyboard"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:theme="@style/Theme.UMDialog"
+            android:windowSoftInputMode="stateVisible|adjustResize" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

@@ -153,7 +153,7 @@ public class HomeActivity extends BaseActivity {
                     contactData.setContactName("Call吧电话");
                     for (SystemNumber user : list) {
                         numbers.add(user.getPhoneNumber());
-                        Log.i("phonenumber", user.getPhoneNumber());
+                        Logger.i("phonenumber", user.getPhoneNumber());
                     }
                     if (ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话").equals("0"))
                         ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
@@ -221,7 +221,7 @@ public class HomeActivity extends BaseActivity {
                     } else
                         mPreferenceUtil.putString(CalldaGlobalConfig.getInstance().getUsername(), dates[dates.length - 1], true);
                 } else {
-                    toast(result[1]);
+                    //toast(result[1]);
                 }
             }
 
@@ -508,7 +508,6 @@ public class HomeActivity extends BaseActivity {
                                 month = "0" + month;
                             userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
                         }
-                        Log.i("has_name", ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话") + "");
                         userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
                         userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
                         // 查询余额

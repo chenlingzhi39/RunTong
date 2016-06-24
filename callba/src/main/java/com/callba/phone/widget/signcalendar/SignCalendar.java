@@ -74,7 +74,7 @@ public class SignCalendar extends ViewFlipper implements
   // res
   // id)
   private Map<String, Integer> dayBgColorMap = new HashMap<String, Integer>(); // 储存某个日子的背景色
-
+  private float x,y;
   public SignCalendar(Context context, AttributeSet attrs) {
     super(context, attrs);
     init();
@@ -705,7 +705,19 @@ public class SignCalendar extends ViewFlipper implements
    * 
    **********************************************/
   public boolean dispatchTouchEvent(MotionEvent ev) {
-    getParent().requestDisallowInterceptTouchEvent(true);
+    switch(ev.getAction()){
+      case MotionEvent.ACTION_DOWN:
+         y=ev.getY();
+         x=ev.getX();
+        break;
+      case MotionEvent.ACTION_MOVE:
+          if(Math.abs(ev.getX()-x)>Math.abs(ev.getY()-y))
+            getParent().requestDisallowInterceptTouchEvent(true);
+        else
+            getParent().requestDisallowInterceptTouchEvent(false);
+        break;
+    }
+
     if (gd != null) {
       if (gd.onTouchEvent(ev))
         return true;

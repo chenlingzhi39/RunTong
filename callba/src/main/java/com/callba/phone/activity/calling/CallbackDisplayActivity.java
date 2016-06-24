@@ -207,7 +207,8 @@ public class CallbackDisplayActivity extends BaseActivity {
 		tv_num.setText(number);
 		// tv_status.setText(number);
 		calllogService = new CalllogService(this, null);
-		playSound();
+		if (CalldaGlobalConfig.getInstance().getKeyBoardSetting())
+			playSound();
 		callback();
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 			Window window = getWindow();
