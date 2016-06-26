@@ -158,7 +158,7 @@ public class HomeActivity extends BaseActivity {
                     if (ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话").equals("0"))
                         ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
                     else {
-                        ContactsAccessPublic.deletePhoneContact(HomeActivity.this, "Call吧电话", ContactsAccessPublic.getId(HomeActivity.this, "Call吧电话"));
+                        ContactsAccessPublic.deleteContact(HomeActivity.this,"Call吧电话");
                         ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
                     }
                     //ContactsAccessPublic.updatePhoneContact(HomeActivity.this,"Call吧电话",numbers);
@@ -214,13 +214,14 @@ public class HomeActivity extends BaseActivity {
                 String[] result = msg.split("\\|");
                 if (result[0].equals("0")) {
                     String[] dates = result[1].split(",");
-                    if (!date.equals(dates[dates.length - 1])) {
+                    if (date.equals(dates[dates.length - 1])) {
                         mPreferenceUtil.putString(CalldaGlobalConfig.getInstance().getUsername(), date, true);
+
+                    } else {
+                        mPreferenceUtil.putString(CalldaGlobalConfig.getInstance().getUsername(), dates[dates.length - 1], true);
                         Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
                         startActivity(intent);
-                    } else
-                        mPreferenceUtil.putString(CalldaGlobalConfig.getInstance().getUsername(), dates[dates.length - 1], true);
-                } else {
+                    }} else {
                     //toast(result[1]);
                 }
             }
@@ -249,6 +250,8 @@ public class HomeActivity extends BaseActivity {
                 gotoWelcomePage();
             }
             sendBroadcast(new Intent("com.callba.login"));
+            Logger.i("date",date);
+            Logger.i("save_date",mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()));
             if (!mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()).equals(date)) {
                 String year = Calendar.getInstance().get(Calendar.YEAR) + "";
                 String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
@@ -501,6 +504,8 @@ public class HomeActivity extends BaseActivity {
                         LoginController.parseLoginSuccessResult(
                                 HomeActivity.this, username, password,
                                 resultInfo);
+                        Logger.i("date",date);
+                        Logger.i("save_date",mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()));
                         if (!mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()).equals(date)) {
                             String year = Calendar.getInstance().get(Calendar.YEAR) + "";
                             String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";

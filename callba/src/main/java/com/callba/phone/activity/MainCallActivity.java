@@ -452,7 +452,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                     if (ContactsAccessPublic.hasName(MainCallActivity.this, "Call吧电话").equals("0"))
                         ContactsAccessPublic.insertPhoneContact(MainCallActivity.this, contactData, numbers);
                     else {
-                        ContactsAccessPublic.deletePhoneContact(MainCallActivity.this, "Call吧电话", ContactsAccessPublic.getId(MainCallActivity.this, "Call吧电话"));
+                        ContactsAccessPublic.deleteContact(MainCallActivity.this,"Call吧电话");
                         ContactsAccessPublic.insertPhoneContact(MainCallActivity.this, contactData, numbers);
                     }
                     //ContactsAccessPublic.updatePhoneContact(HomeActivity.this,"Call吧电话",numbers);

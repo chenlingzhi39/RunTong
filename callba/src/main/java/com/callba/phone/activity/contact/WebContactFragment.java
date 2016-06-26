@@ -291,6 +291,7 @@ public class WebContactFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         unregisterBroadcastReceiver();
+        unregisterForContextMenu(listView);
         ButterKnife.reset(this);
     }
     /**

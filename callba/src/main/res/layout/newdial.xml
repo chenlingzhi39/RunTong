@@ -141,7 +141,7 @@
                 android:fadingEdge="none"
                 android:fastScrollEnabled="false"
                 android:focusable="true"
-                android:listSelector="@drawable/listitem_bk"
+                android:listSelector="?attr/selectableItemBackground"
                 android:scrollbars="none"
                 android:scrollingCache="false"
                 android:visibility="gone" />

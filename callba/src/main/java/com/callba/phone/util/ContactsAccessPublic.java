@@ -1,5 +1,8 @@
 package com.callba.phone.util;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -177,18 +180,6 @@ public  class ContactsAccessPublic {
 
     }
 
-    public static String getId(Context context, String name) {
-        String[] projection = {Data.RAW_CONTACT_ID};
-        // 将自己添加到 msPeers 中
-        Cursor cursor = context.getContentResolver().query(
-                ContactsContract.Data.CONTENT_URI,
-                projection, // Which columns to return.
-                Data.DISPLAY_NAME + " =?", // WHERE clause.
-                new String[]{name}, // WHERE clause value substitution
-                null); // Sort order.
-        cursor.moveToFirst();
-        return cursor.getString(0);
-    }
 
     public static void updatePhoneContact(Context context, String name, ArrayList<String> numbers) {
         String[] projection = {Data.RAW_CONTACT_ID};
@@ -212,20 +203,19 @@ public  class ContactsAccessPublic {
         } else return;
     }
 
-    public static boolean insertPhoneContact(Context context, ContactData contact, ArrayList<String> numbers) {
+    public static boolean insertPhoneContact(final Context context, ContactData contact, final ArrayList<String> numbers) {
         /**
          * 首先向RawContacts.CONTENT_URI执行一个空值插入，目的是获取系统返回的rawContactId
          * 这时后面插入data表的依据，只有执行空值插入，才能使插入的联系人在通讯录里面可见
          */
-        Uri rcUri;
-        ContentValues values = new ContentValues();
 
+        final ContentValues values = new ContentValues();
 //            ContentResolver resolver = context.getContentResolver();
         //首先向RawContacts.CONTENT_URI执行一个空值插入，目的是获取系统返回的rawContactId
        /* values.put(RawContacts.ACCOUNT_NAME, "null");
         values.put(RawContacts.ACCOUNT_TYPE, "null");*/
         Uri rawContactUri = context.getContentResolver().insert(RawContacts.CONTENT_URI, values);
-        long rawContactId = ContentUris.parseId(rawContactUri);
+        final long rawContactId = ContentUris.parseId(rawContactUri);
         contact.setId(rawContactId + "");
 
         //往data表入姓名数据
@@ -234,20 +224,26 @@ public  class ContactsAccessPublic {
         values.put(Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE);//内容类型
         // values.put(StructuredName.GIVEN_NAME,contact.getContactName());
         values.put(StructuredName.DISPLAY_NAME, contact.getContactName());
-        rcUri = context.getContentResolver().insert(android.provider.ContactsContract.Data.CONTENT_URI, values);
-        for (int i = 1; i <= numbers.size(); i++)
-            if (rcUri != null) {
-                //往data表入电话数据
-                values.clear();
-                values.put(Data.RAW_CONTACT_ID, rawContactId);
-                values.put(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE);
-                values.put(Phone.TYPE, Phone.TYPE_MOBILE);
-                values.put(Phone.NUMBER, numbers.get(i - 1));
-                rcUri = context.getContentResolver().insert(android.provider.ContactsContract.Data.CONTENT_URI, values);
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Uri rcUri = context.getContentResolver().insert(android.provider.ContactsContract.Data.CONTENT_URI, values);
+                for (int i = 1; i <= numbers.size(); i++)
+                    if (rcUri != null) {
+                        //往data表入电话数据
+                        values.clear();
+                        values.put(Data.RAW_CONTACT_ID, rawContactId);
+                        values.put(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE);
+                        values.put(Phone.TYPE, Phone.TYPE_MOBILE);
+                        values.put(Phone.NUMBER, numbers.get(i - 1));
+                        rcUri = context.getContentResolver().insert(android.provider.ContactsContract.Data.CONTENT_URI, values);
+                    }
             }
+        }).start();
 
-        return (rcUri != null);
+
+        return false;
     }
 
     public static boolean updatePhoneContact(Context context, ContactData contact) {
@@ -267,23 +263,56 @@ public  class ContactsAccessPublic {
         return (rc1 > 0 || rc2 > 0) ? true : false;
     }
 
+
     /**
-     * 根据contactId删除联系人数据
+     *
+     * @param contact The contact who you get the id from. The name of
+     * the contact should be set.
+     * @return 0 if contact not exist in contacts list. Otherwise return
+     * the id of the contact.
      */
-    public static int deletePhoneContact(Context context, String name, String contactId) {
-        ContentResolver resolver = context.getContentResolver();
-        int rc1 = 0, rc2 = 0;
-        //删除data表中数据
-        String where = ContactsContract.Data.CONTACT_ID + " =?";
-        String[] whereparams = new String[]{contactId};
-        rc1 = resolver.delete(ContactsContract.Data.CONTENT_URI, where, whereparams);
+    public static String getContactID(Context context,String name) {
+        ContentResolver contentResolver = context.getContentResolver();
+        String id = "0";
+        Cursor cursor = contentResolver.query(
+                android.provider.ContactsContract.Contacts.CONTENT_URI,
+                new String[]{android.provider.ContactsContract.Contacts._ID},
+                android.provider.ContactsContract.Contacts.DISPLAY_NAME +
+                        "='" + name + "'", null, null);
+        if(cursor.moveToNext()) {
+            id = cursor.getString(cursor.getColumnIndex(
+                    android.provider.ContactsContract.Contacts._ID));
+        }
+        return id;
+    }
+    /**
+     * Delete contacts who's name equals contact.getName();
+     * @param contact
+     */
+    public static void deleteContact(Context context,String name) {
+        Logger.w(TAG, "**delete start**");
+        ContentResolver contentResolver = context.getContentResolver();
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
-        //删除rawContact表中数据
-        where = ContactsContract.RawContacts.CONTACT_ID + " =?";
-        whereparams = new String[]{contactId};
-        rc2 = resolver.delete(ContactsContract.RawContacts.CONTENT_URI, where, whereparams);
+        String id = getContactID(context,name);
+        //delete contact
+        ops.add(ContentProviderOperation.newDelete(ContactsContract.RawContacts.CONTENT_URI)
+                .withSelection(ContactsContract.RawContacts.CONTACT_ID+"="+id, null)
+                .build());
+        //delete contact information such as phone number,email
+        ops.add(ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                .withSelection(ContactsContract.RawContacts.CONTACT_ID + "=" + id, null)
+                .build());
+        Logger.d(TAG, "delete contact: " + name);
 
-        return (rc1 > 0 && rc2 > 0) ? (rc1 + rc2) : 0;
+        try {
+            contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
+            Logger.d(TAG, "delete contact success");
+        } catch (Exception e) {
+            Logger.d(TAG, "delete contact failed");
+            Logger.e(TAG, e.getMessage());
+        }
+        Logger.w(TAG, "**delete end**");
     }
 
     public static int deleteSIMContact(Context context, ContactData contact) throws Exception {
