@@ -39,10 +39,7 @@ public class BlacklistActivity extends BaseActivity {
 	private ListView listView;
 	private BlacklistAdapater adapter;
 
-	@Override
-	public void init() {
 
-	}
 
 	@Override
 	public void refresh(Object... params) {

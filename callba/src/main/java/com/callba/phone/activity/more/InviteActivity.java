@@ -23,8 +23,7 @@ import com.callba.phone.view.MyProgressDialog;
 public class InviteActivity extends BaseActivity implements OnClickListener {
 	private Button bn_back, bn_invite;
 	private MyProgressDialog progressDialog;
-	
-	@Override
+
 	public void init() {
 		bn_back = (Button) findViewById(R.id.bn_invite_back);
 		bn_invite = (Button) findViewById(R.id.bn_invite_submit);
@@ -64,6 +63,7 @@ public class InviteActivity extends BaseActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.more_invite);
+		init();
 		super.onCreate(savedInstanceState);
 	}
 

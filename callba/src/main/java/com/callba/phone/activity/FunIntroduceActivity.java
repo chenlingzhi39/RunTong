@@ -149,10 +149,6 @@ public class FunIntroduceActivity extends BaseActivity implements OnPageChangeLi
 	}
 
 	@Override
-	public void init() {
-	}
-
-	@Override
 	public void refresh(Object... params) {
 	}
 }

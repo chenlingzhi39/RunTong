@@ -63,23 +63,6 @@ public class MessageActivity extends BaseActivity {
     private EaseConversationListItemClickListener listItemClickListener;
 
     @Override
-    public void init() {
-
-       /* conversationListView.init(conversationList);
-
-        if(listItemClickListener != null){
-            conversationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    EMConversation conversation = conversationListView.getItem(position);
-                    listItemClickListener.onListItemClicked(conversation);
-                }
-            });}*/
-
-    }
-
-    @Override
     public void refresh(Object... params) {
 
     }

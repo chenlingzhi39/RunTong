@@ -34,8 +34,7 @@ public class SendCallActivity extends BaseActivity implements OnClickListener{
 	private LinearLayout ll_hangup;
 	
 	private String phoneNum;
-	
-	@Override
+
 	public void init() {
 		ll_hangup = (LinearLayout) findViewById(R.id.callover);
 		ll_hangup.setOnClickListener(this);
@@ -58,8 +57,10 @@ public class SendCallActivity extends BaseActivity implements OnClickListener{
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		setContentView(R.layout.sendcall); 
+		setContentView(R.layout.sendcall);
+		init();
 		super.onCreate(savedInstanceState);
+
 	}
 
 	@Override

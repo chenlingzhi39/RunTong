@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
-                android:src="@drawable/my_account" />
+                android:src="@drawable/my_balance" />
 
             <TextView
                 android:layout_width="wrap_content"

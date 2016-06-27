@@ -65,25 +65,16 @@ public class ContactActivity extends BaseActivity implements OnClickListener,
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		initContactListView();
-		IntentFilter intentFilter=new IntentFilter("com.callba.contact");
-		broadcastReceiver=new ContactBroadcastReceiver();
-		registerReceiver(broadcastReceiver,intentFilter);
-
-	}
-
-	@Override
-	public void init() {
 		mListView = (ListView) findViewById(R.id.lv_contact_contacts);
 		mListView.setOnItemClickListener(this);
-        mListView.setOnItemLongClickListener(this);
+		mListView.setOnItemLongClickListener(this);
 		ll_tab_contact = (LinearLayout) findViewById(R.id.tab_contact_ll);
 
 
 		et_search = (EditText) findViewById(R.id.et_contact_search);
-		
+
 		mQuickSearchBar = (QuickSearchBar) findViewById(R.id.qsb_contact);
-		
+
 		Intent intent = this.getIntent();
 		Bundle bundle = intent.getExtras();
 		flagFrom = (String) bundle.get("frompage");
@@ -92,6 +83,11 @@ public class ContactActivity extends BaseActivity implements OnClickListener,
 					.getLayoutParams();
 			lp.setMargins(0, 0, 0, 0);
 		}
+		initContactListView();
+		IntentFilter intentFilter=new IntentFilter("com.callba.contact");
+		broadcastReceiver=new ContactBroadcastReceiver();
+		registerReceiver(broadcastReceiver,intentFilter);
+
 	}
 
 	@Override

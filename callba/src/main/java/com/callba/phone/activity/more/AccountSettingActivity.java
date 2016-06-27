@@ -36,7 +36,7 @@ public class AccountSettingActivity extends BaseActivity implements OnClickListe
 	
 	private String username;	//切换登录名
 	private String password;
-	@Override
+
 	public void init() {
 		bn_back = (Button) this.findViewById(R.id.bn_account_back);
 		bn_ok = (Button) this.findViewById(R.id.bn_account_ok);
@@ -60,6 +60,7 @@ public class AccountSettingActivity extends BaseActivity implements OnClickListe
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.more_account_setting);
+		init();
 		super.onCreate(savedInstanceState);
 	}
 

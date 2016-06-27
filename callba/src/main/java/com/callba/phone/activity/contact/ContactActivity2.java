@@ -53,10 +53,6 @@ public class ContactActivity2 extends BaseActivity {
     private LocalBroadcastManager broadcastManager;
     private BroadcastReceiver broadcastReceiver;
     private WebContactFragment webContactFragment;
-    @Override
-    public void init() {
-
-    }
 
     @Override
     public void refresh(Object... params) {

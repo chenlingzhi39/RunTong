@@ -50,11 +50,11 @@ public class RechargeMealActivity extends BaseActivity implements OnItemClickLis
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.recharge_meal);
+		init();
 		super.onCreate(savedInstanceState);
 
 	}
 
-	@Override
 	public void init() {
 		getRechargeMeal();
 //		mProgressDialog = new MyProgressDialog(this, "获取套餐信息");

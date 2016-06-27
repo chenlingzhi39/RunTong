@@ -32,7 +32,6 @@ public class AddSubAccountActivity extends BaseActivity implements OnClickListen
 	private static final String SUB_ACCOUNT_PHONE = "1";
 	private static final String SUB_ACCOUNT_GH = "2";
 	private String language="";
-	@Override
 	public void init() {
 		Locale locale = getResources().getConfiguration().locale;
 		 language = locale.getCountry();
@@ -137,6 +136,7 @@ public class AddSubAccountActivity extends BaseActivity implements OnClickListen
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.more_addsubaccount);
+		init();
 		super.onCreate(savedInstanceState);
 	}
 

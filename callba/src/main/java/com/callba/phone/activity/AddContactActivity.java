@@ -45,10 +45,7 @@ public class AddContactActivity extends BaseActivity {
     LinearLayout searchedUserLayout;
     String toAddUsername;
     ProgressDialog progressDialog;
-    @Override
-    public void init() {
 
-    }
 
     @Override
     public void refresh(Object... params) {

@@ -21,8 +21,7 @@ import com.callba.phone.view.MyProgressDialog;
 public class SignActivity extends BaseActivity implements OnClickListener {
 	private Button bn_back, bn_sign;
 	private MyProgressDialog progressDialog;
-	
-	@Override
+
 	public void init() {
 		bn_back = (Button) findViewById(R.id.bn_sign_back);
 		bn_sign = (Button) findViewById(R.id.bn_sign_submit);
@@ -62,6 +61,7 @@ public class SignActivity extends BaseActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.more_sign);
+		init();
 		super.onCreate(savedInstanceState);
 	}
 

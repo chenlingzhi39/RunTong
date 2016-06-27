@@ -212,6 +212,7 @@ public class WebContactFragment extends BaseFragment {
             applicationItem.hideUnreadMsgView();
         }
         getContactList();
+        if(contactListLayout!=null)
         contactListLayout.refresh();
     }
     /**

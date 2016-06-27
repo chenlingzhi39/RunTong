@@ -57,10 +57,6 @@ public class CommunityActivity extends BaseActivity implements UserDao.PostListe
     private String[] result;
     private MoodAdapter moodAdapter;
     private View headerView;
-    @Override
-    public void init() {
-
-    }
 
     @Override
     public void refresh(Object... params) {

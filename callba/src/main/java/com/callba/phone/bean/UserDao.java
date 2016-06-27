@@ -465,7 +465,7 @@ public class UserDao {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 result=responseInfo.result.split("\\|");
-                Log.i("get_meal",responseInfo.result);
+                Log.i("get_balance",responseInfo.result);
                 if(result[0].equals("0"))
                     postListener.success(result[1]);
                 else postListener.failure(result[1]);

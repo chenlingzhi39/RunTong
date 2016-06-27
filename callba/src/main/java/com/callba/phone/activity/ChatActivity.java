@@ -22,9 +22,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.maps2d.LocationSource;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.EaseConstant;
+import com.callba.phone.LocationSourceActivity;
 import com.callba.phone.adapter.ChatAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.EaseEmojicon;
@@ -502,10 +504,6 @@ public class ChatActivity extends BaseActivity {
 
 
 
-    @Override
-    public void init() {
-
-    }
 
     @Override
     public void refresh(Object... params) {
@@ -573,7 +571,7 @@ public class ChatActivity extends BaseActivity {
                     selectPicFromLocal(); // 图库选择图片
                     break;
                 case ITEM_LOCATION: // 位置
-                    // startActivityForResult(new Intent(this, EaseBaiduMapActivity.class), REQUEST_CODE_MAP);
+                    //startActivityForResult(new Intent(ChatActivity.this, LocationSourceActivity.class), REQUEST_CODE_MAP);
                     toast("暂不开放");
                     break;
 
@@ -673,17 +671,17 @@ public class ChatActivity extends BaseActivity {
                         sendPicByUri(selectedImage);
                     }
                 }
-            }/* else if (requestCode == REQUEST_CODE_MAP) { // 地图
+            } else if (requestCode == REQUEST_CODE_MAP) { // 地图
                 double latitude = data.getDoubleExtra("latitude", 0);
                 double longitude = data.getDoubleExtra("longitude", 0);
                 String locationAddress = data.getStringExtra("address");
                 if (locationAddress != null && !locationAddress.equals("")) {
-                    sendLocationMessage(latitude, longitude, locationAddress);
+                    //sendLocationMessage(latitude, longitude, locationAddress);
                 } else {
-                    Toast.makeText(getActivity(), R.string.unable_to_get_loaction, 0).show();
+                    Toast.makeText(this, R.string.unable_to_get_loaction, 0).show();
                 }
 
-            }*/
+            }
         }
     }
 }

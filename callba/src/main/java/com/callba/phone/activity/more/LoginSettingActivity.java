@@ -75,9 +75,6 @@ public class LoginSettingActivity extends BaseActivity implements OnClickListene
 		}
 	}
 	@Override
-	public void init() {
-	}
-	@Override
 	public void refresh(Object... params) {
 	}
 }

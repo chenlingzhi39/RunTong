@@ -54,9 +54,10 @@ public class MoreInfoActivity extends BaseActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		init();
 	}
 
-	@Override
+
 	public void init() {
 		// 账户
 //		list_acount = (CornerListView) this.findViewById(R.id.more_list_accout);

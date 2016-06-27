@@ -33,7 +33,7 @@ public class ShowNumberActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.more_shownumber);
 		super.onCreate(savedInstanceState);
-
+        init();
 		refreshall();
 	}
 
@@ -53,7 +53,6 @@ public class ShowNumberActivity extends BaseActivity {
 		MainService.newTask(task);
 	}
 
-	@Override
 	public void init() {
 		Locale locale = getResources().getConfiguration().locale;
 		String language = locale.getCountry();

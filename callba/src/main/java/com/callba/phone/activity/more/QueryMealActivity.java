@@ -36,7 +36,6 @@ public class QueryMealActivity extends BaseActivity {
 	private MyProgressDialog progressDialog;
 	private String language="";
 
-	@Override
 	public void init() {
 		Locale locale = getResources().getConfiguration().locale;
 		 language = locale.getCountry();
@@ -168,7 +167,7 @@ public class QueryMealActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.more_querymeal);
 		super.onCreate(savedInstanceState);
-		
+		init();
 		progressDialog = new MyProgressDialog(this, getString(R.string.qm_cxtc));
 		
 		queryUserBalance();

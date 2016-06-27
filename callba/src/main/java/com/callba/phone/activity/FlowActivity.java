@@ -8,10 +8,6 @@ import com.callba.phone.BaseActivity;
  * Created by PC-20160514 on 2016/6/27.
  */
 public class FlowActivity extends BaseActivity{
-    @Override
-    public void init() {
-
-    }
 
     @Override
     public void refresh(Object... params) {

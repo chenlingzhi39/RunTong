@@ -101,7 +101,6 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 		}
 
 	}
-	@Override
 	public void init() {
 		Locale locale = getResources().getConfiguration().locale;
 		 language = locale.getCountry();
@@ -190,6 +189,7 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		init();
 		userDao=new UserDao(this,mHandler);
 	}
 

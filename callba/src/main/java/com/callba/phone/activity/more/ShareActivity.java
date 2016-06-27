@@ -203,11 +203,6 @@ public class ShareActivity extends BaseActivity implements
         // }
     }
 
-    @Override
-    public void init() {
-        // TODO Auto-generated method stub
-
-    }
 
     @Override
     public void refresh(Object... params) {

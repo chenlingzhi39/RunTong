@@ -71,6 +71,7 @@ public class WelcomeActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		init();
 		mSharedPreferenceUtil = SharedPreferenceUtil.getInstance(this);
 
 	}
@@ -117,7 +118,7 @@ public class WelcomeActivity extends BaseActivity {
 		}
 	}
 
-	@Override
+
 	public void init() {
 		startService(new Intent(WelcomeActivity.this, MainService.class));
 		mHandler = new Handler();

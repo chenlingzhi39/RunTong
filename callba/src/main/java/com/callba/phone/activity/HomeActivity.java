@@ -272,11 +272,6 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    @Override
-    public void init() {
-
-    }
-
     // 跳转到起始页
     private void gotoWelcomePage() {
         Intent intent = new Intent();

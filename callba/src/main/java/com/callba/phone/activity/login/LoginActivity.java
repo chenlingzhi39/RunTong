@@ -51,10 +51,6 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	}
-
-	@Override
-	public void init() {
 		bn_login = (Button) this.findViewById(R.id.bn_login_login);
 		bn_retrievePass = (Button) this
 				.findViewById(R.id.bn_login_retrievePass);
@@ -67,7 +63,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 		mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
 		if(getIntent().getStringExtra("number")!=null)
 		{et_username.setText(getIntent().getStringExtra("number"));
-		   et_password.setText(getIntent().getStringExtra("password"));}
+			et_password.setText(getIntent().getStringExtra("password"));}
 		username = mPreferenceUtil.getString(Constant.LOGIN_USERNAME);
 		if (!"".equals(username)) {
 			et_username.setText(username);

@@ -23,10 +23,10 @@
     <string name="recharge_failure">充值失败</string>
     <string name="recharge_success">充值成功</string>
     <string name="recharge1">充值</string>
-    <string name="exchange">金币兑换</string>
+    <string name="exchange">兑换</string>
     <string name="search_yue">查询余额</string>
     <string name="user">帐号</string>
-    <string name="yue">余额</string>
+    <string name="balance">话费余额</string>
     <string name="gold">金币</string>
     <string name="my_gold">我的金币</string>
     <string name="earn_gold">签到赚金币+3</string>
@@ -63,6 +63,7 @@
     <string name="center">个人中心</string>
     <string name="settings">设置</string>
     <string name="my_number">我的账号</string>
+    <string name="my_commission">我的佣金</string>
     <string name="meal">套餐</string>
     <string name="work_date">有效期</string>
     <string name="total">话费余额</string>

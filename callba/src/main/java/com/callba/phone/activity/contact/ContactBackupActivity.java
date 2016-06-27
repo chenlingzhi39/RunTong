@@ -68,11 +68,6 @@ public class ContactBackupActivity extends BaseActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	}
-
-	@Override
-	public void init() {
-
 		lan = activityUtil.language(this);
 		bn_back = (Button) this.findViewById(R.id.back);
 		bn_back.setOnClickListener(this);

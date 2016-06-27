@@ -64,6 +64,37 @@ public class CallbackDisplayActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		//loadADImage();
 		super.onCreate(savedInstanceState);
+		tv_name = (TextView) findViewById(R.id.tv_name);
+		tv_num = (TextView) findViewById(R.id.tv_num);
+		tv_status = (TextView) findViewById(R.id.tv_status);
+		cancel=(Button)findViewById(R.id.cancel);
+		cancel.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
+		Intent intent = this.getIntent();
+		Bundle bundle = intent.getExtras();
+		name = bundle.getString("name");
+		number = bundle.getString("number");
+		tv_name.setText(name);
+		tv_num.setText(number);
+		// tv_status.setText(number);
+		calllogService = new CalllogService(this, null);
+		if (CalldaGlobalConfig.getInstance().getKeyBoardSetting())
+			playSound();
+		callback();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			Window window = getWindow();
+			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+			);
+			window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+					| View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+			window.setStatusBarColor(Color.TRANSPARENT);
+		}
 	}
 	
 	/**
@@ -187,40 +218,7 @@ public class CallbackDisplayActivity extends BaseActivity {
 		
 	}
 
-	@Override
-	public void init() {
-		tv_name = (TextView) findViewById(R.id.tv_name);
-		tv_num = (TextView) findViewById(R.id.tv_num);
-		tv_status = (TextView) findViewById(R.id.tv_status);
-		cancel=(Button)findViewById(R.id.cancel);
-		cancel.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finish();
-			}
-		});
-		Intent intent = this.getIntent();
-		Bundle bundle = intent.getExtras();
-		name = bundle.getString("name");
-		number = bundle.getString("number");
-		tv_name.setText(name);
-		tv_num.setText(number);
-		// tv_status.setText(number);
-		calllogService = new CalllogService(this, null);
-		if (CalldaGlobalConfig.getInstance().getKeyBoardSetting())
-			playSound();
-		callback();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			Window window = getWindow();
-			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
-			);
-			window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-					| View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-			window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
-			window.setStatusBarColor(Color.TRANSPARENT);
-		}
-	}
 
 	@Override
 	public void refresh(Object... params) {

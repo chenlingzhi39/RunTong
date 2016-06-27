@@ -58,6 +58,30 @@ public class NewContactBackupActivity extends BaseActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.contact_backup);
+		lan = activityUtil.language(this);
+		bn_back = (Button) this.findViewById(R.id.back);
+		bn_back.setOnClickListener(this);
+
+		tv_name = (TextView) this.findViewById(R.id.user_name);
+		tv_name.setText(CalldaGlobalConfig.getInstance().getUsername());
+		tv_localCount = (TextView) this.findViewById(R.id.local_contact);
+
+		if (CalldaGlobalConfig.getInstance().getContactBeans() != null)
+			tv_localCount.setText(CalldaGlobalConfig.getInstance()
+					.getContactBeans().size()
+					+ "");
+
+		tv_netcontact = (TextView) findViewById(R.id.net_contact);
+		ll_laytou_net = (LinearLayout) findViewById(R.id.laytou_net);
+
+		ll_backup = (LinearLayout) findViewById(R.id.contact_beifeng);
+		ll_look = (LinearLayout) findViewById(R.id.contact_look);
+		ll_download = (LinearLayout) findViewById(R.id.contact_download);
+		ll_backup.setOnClickListener(this);
+		ll_look.setOnClickListener(this);
+		ll_download.setOnClickListener(this);
+
+		getRemoteContactCount();
 		super.onCreate(savedInstanceState);
 	}
 
@@ -129,35 +153,6 @@ public class NewContactBackupActivity extends BaseActivity implements
 		default:
 			break;
 		}
-	}
-
-	@Override
-	public void init() {
-
-		lan = activityUtil.language(this);
-		bn_back = (Button) this.findViewById(R.id.back);
-		bn_back.setOnClickListener(this);
-
-		tv_name = (TextView) this.findViewById(R.id.user_name);
-		tv_name.setText(CalldaGlobalConfig.getInstance().getUsername());
-		tv_localCount = (TextView) this.findViewById(R.id.local_contact);
-
-		if (CalldaGlobalConfig.getInstance().getContactBeans() != null)
-			tv_localCount.setText(CalldaGlobalConfig.getInstance()
-					.getContactBeans().size()
-					+ "");
-
-		tv_netcontact = (TextView) findViewById(R.id.net_contact);
-		ll_laytou_net = (LinearLayout) findViewById(R.id.laytou_net);
-
-		ll_backup = (LinearLayout) findViewById(R.id.contact_beifeng);
-		ll_look = (LinearLayout) findViewById(R.id.contact_look);
-		ll_download = (LinearLayout) findViewById(R.id.contact_download);
-		ll_backup.setOnClickListener(this);
-		ll_look.setOnClickListener(this);
-		ll_download.setOnClickListener(this);
-
-		getRemoteContactCount();
 	}
 
 	/**

@@ -36,8 +36,7 @@ public class FeeQueryActivity extends BaseActivity implements OnClickListener {
 	private LinearLayout ll_commonFee;
 	
 	private MyProgressDialog progressDialog;
-	
-	@Override
+
 	public void init() {
 		bn_search = (Button) findViewById(R.id.bn_fee_search);
 		bn_back = (Button) findViewById(R.id.bn_fee_back);
@@ -124,6 +123,7 @@ public class FeeQueryActivity extends BaseActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.more_fee);
+		init();
 		super.onCreate(savedInstanceState);
 	}
 

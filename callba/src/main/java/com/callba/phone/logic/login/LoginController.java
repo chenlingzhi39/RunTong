@@ -146,6 +146,7 @@ public class LoginController {
 			if(!resultInfo[9].equals(""))
 			CalldaGlobalConfig.getInstance().setGold(Integer.parseInt(resultInfo[9]));
 			else CalldaGlobalConfig.getInstance().setGold(0);
+			CalldaGlobalConfig.getInstance().setCommission(resultInfo[10]);
     		Logger.v("处理登录成功信息", "当前SIP"+CalldaGlobalConfig.getInstance().getSipIP());
 			try {
 				String encryptPwd = DesUtil.encrypt(password,
@@ -222,7 +223,7 @@ public class LoginController {
 			switch (taskResultCode) {
 			case Task.TASK_SUCCESS:
 				try {
-					String[] result = ((String)msg.obj).split("\\|",10);
+					String[] result = ((String)msg.obj).split("\\|");
 					Log.i("result",(String)msg.obj);
 					if("0".equals(result[0])) {
 						loginState = true;

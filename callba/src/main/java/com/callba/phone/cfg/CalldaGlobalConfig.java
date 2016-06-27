@@ -53,6 +53,15 @@ public class CalldaGlobalConfig {
     private String nickname;
 	private String signature;
     private int gold;
+    private String commission;
+
+	public String getCommission() {
+		return commission;
+	}
+
+	public void setCommission(String commission) {
+		this.commission = commission;
+	}
 
 	public int getGold() {
 		return gold;

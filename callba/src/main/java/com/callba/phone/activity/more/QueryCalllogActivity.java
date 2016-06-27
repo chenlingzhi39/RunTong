@@ -70,7 +70,6 @@ public class QueryCalllogActivity extends BaseActivity implements
 	private SwipeRefreshLayout refreshLayout;
 	String time;
 	private boolean first=true;
-	@Override
 	public void init() {
         bt_date=(Button)findViewById(R.id.date);
         bt_date.setOnClickListener(this);
@@ -199,8 +198,8 @@ public class QueryCalllogActivity extends BaseActivity implements
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		setContentView(R.layout.more_query_calllog);
 		super.onCreate(savedInstanceState);
+		init();
 	}
 
 	/*@Override

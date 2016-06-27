@@ -82,6 +82,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
+        init();
     }
 
     @OnClick(R.id.private_clause)
@@ -162,7 +163,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     private final MyHandler mHandler = new MyHandler(this);
 
 
-    @Override
     public void init() {
         userDao = new UserDao(this, mHandler);
         preferenceUtil = SharedPreferenceUtil.getInstance(this);

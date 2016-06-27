@@ -62,10 +62,11 @@ public class SelectContactActivity extends BaseActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init();
         initContactListView();
     }
 
-    @Override
+
     public void init() {
         mListView = (ListView) findViewById(R.id.lv_contact_contacts);
         mListView.setOnItemClickListener(this);

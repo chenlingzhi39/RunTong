@@ -99,10 +99,6 @@ public class UserActivity extends BaseActivity {
         super.onResume();
     }
 
-    @Override
-    public void init() {
-
-    }
 
 
     @OnClick({R.id.account, R.id.change_info, R.id.change_password, R.id.retrieve, R.id.logout, R.id.about, R.id.help, R.id.update})

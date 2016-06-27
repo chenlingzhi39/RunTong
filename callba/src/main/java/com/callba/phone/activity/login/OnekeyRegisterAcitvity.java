@@ -67,17 +67,11 @@ public class OnekeyRegisterAcitvity extends BaseActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.onekey_register);
-		super.onCreate(savedInstanceState);
-		
-	}
-
-	@Override
-	public void init() {
 		bn_back = (Button) this.findViewById(R.id.bn_onekey_back);
 		bn_manual = (Button) this.findViewById(R.id.bn_onekey_soudong);
 		bn_register = (LinearLayout) this.findViewById(R.id.bn_onekey_register);
 		tv_countdown = (TextView) this.findViewById(R.id.tv_countdown);
-		
+
 		bn_back.setOnClickListener(this);
 		bn_manual.setOnClickListener(this);
 		bn_register.setOnClickListener(this);
@@ -85,10 +79,10 @@ public class OnekeyRegisterAcitvity extends BaseActivity implements
 		currPhoneNumber = tm.getLine1Number();
 
 		mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
-		
+
 		delayHandler = new Handler();
-		
-		
+
+
 		delayHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
@@ -97,10 +91,13 @@ public class OnekeyRegisterAcitvity extends BaseActivity implements
 				}
 			}
 		}, 500);
-		
+
 		Locale locale = getResources().getConfiguration().locale;
-		 language = locale.getCountry();
+		language = locale.getCountry();
+		super.onCreate(savedInstanceState);
+		
 	}
+
 
 	/**
 	 * 验证当前号码是否已注册

@@ -142,10 +142,6 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     public void change_signature(){
     shownSignatureDialog();
     }
-    @Override
-    public void init() {
-
-    }
 
     @Override
     public void refresh(Object... params) {

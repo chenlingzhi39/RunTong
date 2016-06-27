@@ -54,11 +54,6 @@ public class PostMessageActivity extends BaseActivity {
     }
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
     public void refresh(Object... params) {
 
     }

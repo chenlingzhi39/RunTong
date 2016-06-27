@@ -28,8 +28,7 @@ public class NewSMSActivity extends BaseActivity implements OnClickListener {
 	private Button bn_back, bn_title_send, bn_send, bn_contact;
 	private EditText et_contact, et_content;
 	private TextView tv_text, tv_sms;
-	
-	@Override
+
 	public void init() {
 		tv_text = (TextView) findViewById(R.id.tv_textcount);
 		tv_sms = (TextView) findViewById(R.id.tv_smscount);
@@ -80,6 +79,7 @@ public class NewSMSActivity extends BaseActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.new_sms);
+		init();
 		super.onCreate(savedInstanceState);
 	}
 

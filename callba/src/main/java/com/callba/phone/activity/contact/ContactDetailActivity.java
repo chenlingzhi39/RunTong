@@ -49,6 +49,10 @@ public class ContactDetailActivity extends BaseActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		tv_contactName = (TextView) findViewById(R.id.tv_contactdetail_name);
+		tv_location = (TextView) findViewById(R.id.tv_detail_location);
+
+		lv_phoneNums = (ListView) findViewById(R.id.lv_phone_nums);
 		try {
 			fromFlag = getIntent().getStringExtra("activity");
 			bean = (ContactMutliNumBean) getIntent()
@@ -98,16 +102,6 @@ public class ContactDetailActivity extends BaseActivity implements
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void init() {
-
-		tv_contactName = (TextView) findViewById(R.id.tv_contactdetail_name);
-		tv_location = (TextView) findViewById(R.id.tv_detail_location);
-		
-		lv_phoneNums = (ListView) findViewById(R.id.lv_phone_nums);
-
 	}
 
 	private void setDatatoAdapter() {

@@ -34,8 +34,7 @@ public class ChangePasswordActivity extends BaseActivity implements OnClickListe
 	private MyProgressDialog progressDialog;
 	
 	private String confrimPass;	//新密码
-	
-	@Override
+
 	public void init() {
 		bn_back = (Button) this.findViewById(R.id.bn_changepass_back);
 		bn_ok = (Button) this.findViewById(R.id.bn_changepass_ok);
@@ -93,6 +92,7 @@ public class ChangePasswordActivity extends BaseActivity implements OnClickListe
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.more_changepass);
+		init();
 		super.onCreate(savedInstanceState);
 	}
 

@@ -74,10 +74,7 @@ public class GuideActivity extends BaseActivity implements OnClickListener {
 		startActivity(intent);
 	}
 
-	@Override
-	public void init() {
-		
-	}
+
 
 	@Override
 	public void refresh(Object... params) {

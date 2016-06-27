@@ -52,28 +52,6 @@ public class RemoteContactsActvity extends BaseActivity implements
 
 	private MyProgressDialog mProgressDialog;
 
-	@Override
-	public void init() {
-		bn_back = (Button) findViewById(R.id.bn_remotecontact_back);
-		bn_refresh = (Button) findViewById(R.id.bn_remotecontact_refresh);
-		bn_clear = (Button) findViewById(R.id.bn_search_del);
-		bn_back.setOnClickListener(this);
-		bn_refresh.setOnClickListener(this);
-		bn_clear.setOnClickListener(this);
-
-		mQuickSearchBar = (QuickSearchBar) findViewById(R.id.qsb_remote_contact);
-
-		et_search = (EditText) findViewById(R.id.et_search);
-		contactListView = (ListView) findViewById(R.id.lv_remotecontact_contact);
-		
-		mContactController = new ContactController();
-		
-		mContactList = new ArrayList<ContactEntity>();
-		mContactsListAdapter = new RemoteContactsListAdapter(this, mContactList);
-		
-		getRemoteContacts();
-	}
-
 	/**
 	 * 获取远程联系人
 	 */
@@ -186,6 +164,24 @@ public class RemoteContactsActvity extends BaseActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.look_remote_contact);
+		bn_back = (Button) findViewById(R.id.bn_remotecontact_back);
+		bn_refresh = (Button) findViewById(R.id.bn_remotecontact_refresh);
+		bn_clear = (Button) findViewById(R.id.bn_search_del);
+		bn_back.setOnClickListener(this);
+		bn_refresh.setOnClickListener(this);
+		bn_clear.setOnClickListener(this);
+
+		mQuickSearchBar = (QuickSearchBar) findViewById(R.id.qsb_remote_contact);
+
+		et_search = (EditText) findViewById(R.id.et_search);
+		contactListView = (ListView) findViewById(R.id.lv_remotecontact_contact);
+
+		mContactController = new ContactController();
+
+		mContactList = new ArrayList<ContactEntity>();
+		mContactsListAdapter = new RemoteContactsListAdapter(this, mContactList);
+
+		getRemoteContacts();
 		super.onCreate(savedInstanceState);
 	}
 

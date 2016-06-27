@@ -43,20 +43,14 @@ public class AccountActivity extends BaseActivity {
     CircleImageView head;
     @InjectView(R.id.account)
     TextView account;
-    @InjectView(R.id.balance)
-    Button balance;
     UserDao userDao, userDao1;
     @InjectView(R.id.calllog_search)
     RelativeLayout calllogSearch;
     @InjectView(R.id.meal_search)
     RelativeLayout mealSearch;
-    @InjectView(R.id.gold)
-    Button gold;
+    @InjectView(R.id.commission)
+    Button commission;
 
-    @Override
-    public void init() {
-
-    }
 
     @Override
     public void refresh(Object... params) {
@@ -101,27 +95,10 @@ public class AccountActivity extends BaseActivity {
                 toast(msg);
             }
         });
-        userDao1 = new UserDao(this, new UserDao.PostListener() {
-            @Override
-            public void start() {
-
-            }
-
-            @Override
-            public void success(String msg) {
-                balance.setText(msg + "元");
-            }
-
-            @Override
-            public void failure(String msg) {
-
-            }
-        });
-        userDao1.getBalance(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
-        gold.setText(CalldaGlobalConfig.getInstance().getGold()+"");
+      commission.setText(CalldaGlobalConfig.getInstance().getCommission());
     }
 
-    @OnClick({R.id.calllog_search, R.id.meal_search, R.id.balance})
+    @OnClick({R.id.calllog_search, R.id.meal_search,R.id.balance,R.id.gold})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.calllog_search:
@@ -132,7 +109,10 @@ public class AccountActivity extends BaseActivity {
                 userDao.getSuits(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
                 break;
             case R.id.balance:
-                userDao1.getBalance(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+                startActivity(new Intent(AccountActivity.this,BalanceActivity.class));
+                break;
+            case R.id.gold:
+                startActivity(new Intent(AccountActivity.this,GoldActivity.class));
                 break;
         }
 

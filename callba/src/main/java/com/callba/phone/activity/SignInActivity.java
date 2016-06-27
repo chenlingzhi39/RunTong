@@ -332,11 +332,6 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     }
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
     public void refresh(Object... params) {
 
     }

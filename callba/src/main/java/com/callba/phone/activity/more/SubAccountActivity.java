@@ -31,8 +31,7 @@ public class SubAccountActivity extends BaseActivity implements OnClickListener 
 
 	private String language="";
 	private SubAccountListAdapter adapter;	//ListView adapter
-	
-	@Override
+
 	public void init() {
 		Locale locale = getResources().getConfiguration().locale;
 		 language = locale.getCountry();
@@ -209,6 +208,7 @@ public class SubAccountActivity extends BaseActivity implements OnClickListener 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.more_subaccount);
+		init();
 		super.onCreate(savedInstanceState);
 
 		getSubAccountNum();

@@ -188,6 +188,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init();
         registerRedpointReceiver();
         ViewUtils.inject(this);
         //loadADImage();
@@ -259,7 +260,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
 
 
-    @Override
     public void init() {
         // 接受号码输入栏
         ll_number = (LinearLayout) findViewById(R.id.show_title_two);

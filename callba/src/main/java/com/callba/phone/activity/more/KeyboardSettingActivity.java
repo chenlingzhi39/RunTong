@@ -45,10 +45,6 @@ public class KeyboardSettingActivity extends BaseActivity {
 		
 		tb_autoAnswer.setChecked(CalldaGlobalConfig.getInstance().getKeyBoardSetting());
 	}
-	
-	@Override
-	public void init() {
-	}
 
 	@Override
 	public void refresh(Object... params) {

@@ -50,10 +50,10 @@ public class RechargeMealWayActivity extends BaseActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.recharge_meal_way);
+		init();
 		super.onCreate(savedInstanceState);
 	}
 
-	@Override
 	public void init() {
 		tv_account = (TextView) findViewById(R.id.tv_recmealway_account);
 		tv_meal = (TextView) findViewById(R.id.tv_recmealway_meal);

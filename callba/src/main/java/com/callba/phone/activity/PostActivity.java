@@ -53,10 +53,6 @@ public class PostActivity extends BaseActivity implements UserDao.UploadListener
     private ArrayList<String> photoList;
     private UserDao userDao;
     private ProgressDialog dialog;
-    @Override
-    public void init() {
-
-    }
 
     @Override
     public void refresh(Object... params) {

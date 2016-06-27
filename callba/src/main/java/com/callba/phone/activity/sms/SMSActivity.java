@@ -17,8 +17,7 @@ import com.callba.phone.util.ActivityUtil;
 public class SMSActivity extends BaseActivity implements OnClickListener {
 	private Button bn_new;
 	private LinearLayout ll_new, ll_history;
-	
-	@Override
+
 	public void init() {
 		bn_new = (Button) this.findViewById(R.id.bn_sms_new);
 		ll_new = (LinearLayout) this.findViewById(R.id.ll_sms_new);
@@ -38,6 +37,7 @@ public class SMSActivity extends BaseActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.tab_sms);
+		init();
 		super.onCreate(savedInstanceState);
 	}
 

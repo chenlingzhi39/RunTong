@@ -76,7 +76,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	/**
 	 * 初始化界面
 	 */
-	public abstract void init();
+
 
 	/**
 	 * 后台数据处理完毕，回调刷新界面
@@ -163,7 +163,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 		}
 		Log.i("manufacturer",Build.MANUFACTURER);
 
-		init();
+
 	}
 
 	@Override

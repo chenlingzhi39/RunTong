@@ -57,6 +57,7 @@ public class RechargeActivity extends BaseActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.recharge);
+		init();
 		rechargeWay = getIntent().getIntExtra("rechargeWay", 0);
 
 		super.onCreate(savedInstanceState);
@@ -74,7 +75,6 @@ public class RechargeActivity extends BaseActivity implements OnClickListener {
 		}
 	}
 
-	@Override
 	public void init() {
 		ActivityUtil activityUtil=new ActivityUtil();
 		lan=activityUtil.language(RechargeActivity.this);

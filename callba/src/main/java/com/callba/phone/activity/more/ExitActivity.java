@@ -38,10 +38,6 @@ public class ExitActivity extends BaseActivity implements OnClickListener {
 	}
 
 	@Override
-	public void init() {
-	}
-
-	@Override
 	public void refresh(Object... params) {
 	}
 
