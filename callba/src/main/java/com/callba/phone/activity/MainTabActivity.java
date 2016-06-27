@@ -48,6 +48,7 @@ import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
@@ -259,14 +260,7 @@ public class MainTabActivity extends TabActivity {
                 //收到消息
                 for (EMMessage message : messages) {
                     Log.i("get_message", message.getBody().toString());
-                    if(message.getType() == EMMessage.Type.TXT){
-                    EMTextMessageBody txtBody = (EMTextMessageBody) message.getBody();
-                    sendNotification1(ChatActivity.class, "你有一条新消息", message.getFrom() + ":" + txtBody.getMessage(), message.getFrom());
-                 }
-                    if(message.getType() == EMMessage.Type.IMAGE)
-                        sendNotification1(ChatActivity.class, "你有一条新消息", message.getFrom() + ":[图片]" , message.getFrom());
-                    if(message.getType()==EMMessage.Type.VOICE)
-                        sendNotification1(ChatActivity.class, "你有一条新消息", message.getFrom() + ":[语音]" , message.getFrom());
+                    sendNotification1(ChatActivity.class, "你有一条新消息", EaseCommonUtils.getMessageDigest(message,MainTabActivity.this), message.getFrom());
                     Intent intent = new Intent("com.callba.chat");
                     intent.putExtra("username", message.getFrom());
                     sendBroadcast(intent);
@@ -399,7 +393,7 @@ public class MainTabActivity extends TabActivity {
         mBuilder.setTicker(content);
         Notification notification = mBuilder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
-        notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        //notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(10, notification);
     }

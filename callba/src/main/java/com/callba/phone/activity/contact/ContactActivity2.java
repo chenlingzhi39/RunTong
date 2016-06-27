@@ -173,6 +173,7 @@ public class ContactActivity2 extends BaseActivity {
                 SimpleHandler.getInstance().post(new Runnable() {
                     @Override
                     public void run() {
+                        if(webContactFragment!=null)
                         webContactFragment.refresh();
                     }
                 });

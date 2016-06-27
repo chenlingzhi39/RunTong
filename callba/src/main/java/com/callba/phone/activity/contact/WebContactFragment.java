@@ -30,6 +30,7 @@ import com.callba.phone.BaseFragment;
 import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.DemoHelper.*;
+import com.callba.phone.activity.BlacklistActivity;
 import com.callba.phone.activity.ChatActivity;
 import com.callba.phone.activity.NewFriendsMsgActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -77,6 +78,7 @@ public class WebContactFragment extends BaseFragment {
     protected List<EaseUser> contactList;
     Map<String, EaseUser> contactsMap;
     private ContactItemView applicationItem;
+    private ContactItemView blackListItem;
     protected InputMethodManager inputMethodManager;
     private InviteMessgeDao inviteMessgeDao;
     private BroadcastReceiver broadcastReceiver;
@@ -103,6 +105,8 @@ public class WebContactFragment extends BaseFragment {
         listView.addHeaderView(headerView);
         applicationItem = (ContactItemView) headerView.findViewById(R.id.application_item);
         applicationItem.setOnClickListener(clickListener);
+        blackListItem=(ContactItemView)headerView.findViewById(R.id.black_item);
+        blackListItem.setOnClickListener(clickListener);
         loadingView = LayoutInflater.from(getActivity()).inflate(R.layout.em_layout_loading_data, null);
         contentContainer.addView(loadingView);
         contactsMap=DemoHelper.getInstance().getContactList();
@@ -267,6 +271,9 @@ public class WebContactFragment extends BaseFragment {
                 case R.id.application_item:
                     // 进入申请与通知页面
                     startActivity(new Intent(getActivity(), NewFriendsMsgActivity.class));
+                    break;
+                case R.id.black_item:
+                    startActivity(new Intent(getActivity(), BlacklistActivity.class));
                     break;
                /* case R.id.group_item:
                     // 进入群聊列表页面

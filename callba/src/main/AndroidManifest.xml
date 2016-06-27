@@ -68,6 +68,12 @@
         <activity
             android:name=".phone.activity.SelectPicPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />
+        <activity android:name=".phone.activity.BlacklistActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            />
         <activity android:name=".phone.activity.more.ShareActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -78,7 +84,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize"
             />
         <activity android:name=".phone.activity.NewFriendsMsgActivity"
             android:launchMode="singleTop"

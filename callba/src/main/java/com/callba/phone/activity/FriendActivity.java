@@ -162,7 +162,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             @Override
             public void onRefresh() {
                 //refresh data here
-                userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), CalldaGlobalConfig.getInstance().getLatitude(), CalldaGlobalConfig.getInstance().getLongitude(), 100000);
+                userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), CalldaGlobalConfig.getInstance().getLatitude(), CalldaGlobalConfig.getInstance().getLongitude(), 1000);
              }
 
             @Override
