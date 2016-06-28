@@ -10,9 +10,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.activity.parse.UserProfileManager;
 import com.callba.phone.bean.EaseEmojicon;
 import com.callba.phone.bean.EaseNotifier;
 import com.callba.phone.bean.EaseUser;
+import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.controller.EaseUI;
 import com.callba.phone.controller.EaseUI.*;
 import com.callba.phone.db.DemoDBManager;
@@ -24,6 +26,8 @@ import com.callba.phone.db.UserDao;
 import com.callba.phone.domain.RobotUser;
 import com.callba.phone.receiver.CallReceiver;
 import com.callba.phone.util.EaseCommonUtils;
+import com.callba.phone.util.Interfaces;
+import com.callba.phone.util.Logger;
 import com.callba.phone.util.PreferenceManager;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
@@ -43,6 +47,12 @@ import com.hyphenate.chat.EMOptions;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,6 +86,7 @@ public class DemoHelper {
 
 	private Map<String, RobotUser> robotList;
 
+    private UserProfileManager userProManager;
 
 	private static DemoHelper instance = null;
 	
@@ -120,7 +131,7 @@ public class DemoHelper {
     private LocalBroadcastManager broadcastManager;
 
     private boolean isGroupAndContactListenerRegisted;
-
+    private HttpUtils httpUtils;
 	private DemoHelper() {
 	}
 
@@ -149,16 +160,18 @@ public class DemoHelper {
 		    //get easeui instance
 		    easeUI = EaseUI.getInstance();
 		    //调用easeui的api设置providers
-		    //setEaseUIProviders();
+		    setEaseUIProviders();
 			//初始化PreferenceManager
 			PreferenceManager.init(context);
 			//初始化用户管理类
-			//getUserProfileManager().init(context);
+			getUserProfileManager().init(context);
 			
 			//设置全局监听
 			setGlobalListeners();
 			broadcastManager = LocalBroadcastManager.getInstance(appContext);
 	        initDbDao();
+            httpUtils = new HttpUtils(6 * 1000);
+            httpUtils.configRequestRetryCount(3);
 		}
 	}
 
@@ -182,14 +195,14 @@ public class DemoHelper {
         //集成华为推送时需要设置
 //        options.setHuaweiPushAppId("10492024");
         
-       options.allowChatroomOwnerLeave(getModel().isChatroomOwnerLeaveAllowed());
+        options.allowChatroomOwnerLeave(getModel().isChatroomOwnerLeaveAllowed());
         options.setDeleteMessagesAsExitGroup(getModel().isDeleteMessagesAsExitGroup());
         options.setAutoAcceptGroupInvitation(getModel().isAutoAcceptGroupInvitation());
         
         return options;
     }
 
-    /*protected void setEaseUIProviders() {
+    protected void setEaseUIProviders() {
         //需要easeui库显示用户头像和昵称设置此provider
         easeUI.setUserProfileProvider(new EaseUserProfileProvider() {
             
@@ -246,7 +259,7 @@ public class DemoHelper {
                 }
             }
         });
-        //设置表情provider
+     /*   //设置表情provider
         easeUI.setEmojiconInfoProvider(new EaseEmojiconInfoProvider() {
             
             @Override
@@ -330,8 +343,8 @@ public class DemoHelper {
                 }
                 return intent;
             }
-        });
-    }*/
+        });*/
+    }
     
     /**
      * 设置全局事件监听
@@ -373,6 +386,7 @@ public class DemoHelper {
                     }
                     
                     if(!isContactsSyncedWithServer){
+                        Logger.i(TAG,"asyncFetchContactsFromServer");
                         asyncFetchContactsFromServer(null);
                     }
                     
@@ -612,6 +626,22 @@ public class DemoHelper {
 
             //发送好友变动广播
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+            RequestParams params = new RequestParams();
+            params.addBodyParameter("loginName",CalldaGlobalConfig.getInstance().getUsername());
+            params.addBodyParameter("loginPwd", CalldaGlobalConfig.getInstance().getPassword());
+            params.addBodyParameter("phoneNumber",username);
+            httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.DELETE_FRIENDS, params, new RequestCallBack<String>(){
+                @Override
+                public void onFailure(HttpException error, String msg) {
+
+                }
+
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    Logger.i("delete_result",responseInfo.result);
+
+                }
+            });
         }
 
         @Override
@@ -652,6 +682,21 @@ public class DemoHelper {
             msg.setStatus(InviteMesageStatus.BEAGREED);
             notifyNewIviteMessage(msg);
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+            RequestParams params = new RequestParams();
+            params.addBodyParameter("loginName", CalldaGlobalConfig.getInstance().getUsername());
+            params.addBodyParameter("loginPwd", CalldaGlobalConfig.getInstance().getPassword());
+            params.addBodyParameter("phoneNumber",username.substring(0,11));
+            httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.ADD_FRIEND, params, new RequestCallBack<String>(){
+                @Override
+                public void onFailure(HttpException error, String msg) {
+                    error.printStackTrace();
+                }
+
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    Logger.i("add_result",responseInfo.result);
+                }
+            });
         }
 
         @Override
@@ -931,12 +976,12 @@ public class DemoHelper {
          demoModel.saveContactList(mList);
     }
 
-/*	public UserProfileManager getUserProfileManager() {
+	public UserProfileManager getUserProfileManager() {
 		if (userProManager == null) {
 			userProManager = new UserProfileManager();
 		}
 		return userProManager;
-	}*/
+	}
 
 	/*void endCall() {
 		try {
@@ -1108,9 +1153,7 @@ public class DemoHelper {
                    if(isGroupsSyncedWithServer()){
                        notifyForRecevingEvents();
                    }
-                   
-                   
-                   /*getUserProfileManager().asyncFetchContactInfosFromServer(usernames,new EMValueCallBack<List<EaseUser>>() {
+                   getUserProfileManager().asyncFetchContactInfosFromServer(usernames,new EMValueCallBack<List<EaseUser>>() {
 
                        @Override
                        public void onSuccess(List<EaseUser> uList) {
@@ -1121,7 +1164,7 @@ public class DemoHelper {
                        @Override
                        public void onError(int error, String errorMsg) {
                        }
-                   });*/
+                   });
                    if(callback != null){
                        callback.onSuccess(usernames);
                    }
@@ -1231,7 +1274,6 @@ public class DemoHelper {
         // 通知sdk，UI 已经初始化完毕，注册了相应的receiver和listener, 可以接受broadcast了
         alreadyNotified = true;
     }
-	
     synchronized void reset(){
         isSyncingGroupsWithServer = false;
         isSyncingContactsWithServer = false;

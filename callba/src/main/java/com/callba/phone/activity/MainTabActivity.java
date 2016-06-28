@@ -90,8 +90,7 @@ public class MainTabActivity extends TabActivity {
     NotificationManager mNotificationManager;
     private static final int FLING_MIN_DISTANCE = 100;
     private static final int FLING_MIN_VELOCITY = 0;
-    private BroadcastReceiver broadcastReceiver;
-    private LocalBroadcastManager broadcastManager;
+    BroadcastReceiver payReceiver;
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -112,13 +111,13 @@ public class MainTabActivity extends TabActivity {
 
             window.setStatusBarColor(Color.TRANSPARENT);
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M||Build.VERSION.SDK_INT ==Build.VERSION_CODES.KITKAT) {
+
             if (Build.MANUFACTURER.equals("Xiaomi"))
                 ActivityUtil.MIUISetStatusBarLightMode(getWindow(), true);
             if (Build.MANUFACTURER.equals("Meizu"))
                 ActivityUtil.FlymeSetStatusBarLightMode(getWindow(), true);
 
-        }
+
         MyApplication.activities.add(this);
 
         if (savedInstanceState != null) {
@@ -294,6 +293,13 @@ public class MainTabActivity extends TabActivity {
             showAccountRemovedDialog();
         }
         //registerBroadcastReceiver();
+        payReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                mTabhost.setCurrentTab(0);
+            }
+        };
+        registerReceiver(payReceiver,new IntentFilter("com.callba.pay"));
     }
 
 
@@ -362,6 +368,7 @@ public class MainTabActivity extends TabActivity {
         if (mNotificationManager != null)
             mNotificationManager.cancel(10);
         EMClient.getInstance().chatManager().removeMessageListener(msgListener);
+        unregisterReceiver(payReceiver);
         //unregisterBroadcastReceiver();
         super.onDestroy();
     }
@@ -541,24 +548,6 @@ public class MainTabActivity extends TabActivity {
                 Log.d("main", "退出聊天服务器失败！");
             }
         });
-    }
-    private void registerBroadcastReceiver() {
-        broadcastManager = LocalBroadcastManager.getInstance(this);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constant.ACTION_CONTACT_CHANAGED);
-        broadcastReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-
-
-
-            }
-        };
-        broadcastManager.registerReceiver(broadcastReceiver, intentFilter);
-    }
-    private void unregisterBroadcastReceiver(){
-        broadcastManager.unregisterReceiver(broadcastReceiver);
     }
 
 

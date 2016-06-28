@@ -1,10 +1,16 @@
 package com.callba.phone.util;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -176,10 +182,55 @@ public class HttpUtils {
 	 */
 	public static String getDatafFromPostConnClose(String path,
 			Map<String, String> params) throws Exception {
-		return getDataFromHttpPost(path, params, "utf-8", false);
+		//return getDataFromHttpPost(path, params, "utf-8", false);
+		return post(path,params);
 	}
 
-	
+	public static String post(String urlStr,Map<String, String> params) {
+		urlStr=urlStr+"?";
+		for (String key :params.keySet()) {
+			System.out.println("key= "+ key + " and value= " + params.get(key));
+			urlStr=urlStr+key+"="+params.get(key)+"&";
+		}
+		Logger.i("url",urlStr);
+		String content = "";
+		String result = "";
+		URL url = null;
+		URLConnection conn = null;
+		OutputStreamWriter writer = null;
+		try {
+			url = new URL(urlStr);
+			conn = url.openConnection();
+			conn.setDoOutput(true);
+			conn.setRequestProperty("Referer", "inter.boboit.cn");
+			writer = new OutputStreamWriter(conn.getOutputStream());
+			writer.flush();
+			writer.close();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			//Tools.logOfTxt("/root/error_proxy_log.txt", "url:" + urlStr + "?"+ args);
+		} catch (IOException e) {
+			e.printStackTrace();
+			//Tools.logOfTxt("/root/error_proxy_log.txt", "url:" + urlStr + "?"+ args);
+		}
+
+		try {
+			InputStreamReader reder = new InputStreamReader(conn.getInputStream(), "utf-8");
+			BufferedReader breader = new BufferedReader(reder);
+			while ((content = breader.readLine()) != null) {
+				result += content;
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		//System.out.println("result-> "+result);
+		if (result == null || result.equals("")) {
+			result = "|";
+		}
+		return result;
+	}
 	
 	public static byte[] getImage(String path) throws Exception {
 		URL url = new URL(path);

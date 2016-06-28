@@ -3,6 +3,7 @@ package com.callba.phone.activity.recharge;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -116,6 +117,8 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
                         userDao1.pay(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),outTradeNo,"success");
+                        getActivity().finish();
+                        getActivity().sendBroadcast(new Intent("com.callba.pay"));
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
                         // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
@@ -327,7 +330,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
      */
     public void pay() {
 
-        String orderInfo = getOrderInfo(subject, body,price);
+        String orderInfo = getOrderInfo(subject, body, price);
 
         /**
          * 特别注意，这里的签名逻辑需要放在服务端，切勿将私钥泄露在代码中！

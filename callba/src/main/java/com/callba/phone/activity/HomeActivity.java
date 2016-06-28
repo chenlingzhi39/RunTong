@@ -114,7 +114,7 @@ public class HomeActivity extends BaseActivity {
     private ProgressDialog progressDialog;
     private String username;
     private String password;
-    private UserDao userDao, userDao1, userDao2;
+    private UserDao userDao, userDao1, userDao2,userDao3;
     private String date;
     private Gson gson;
     private String[] result;
@@ -165,17 +165,20 @@ public class HomeActivity extends BaseActivity {
                 } else {
 
                 }
+                /*userDao3=new UserDao();
+                userDao3.getFriends(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());*/
+
             }
 
             @Override
             public void failure(String msg) {
-                toast(msg);
+                //toast(msg);
             }
         });
         userDao2 = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void failure(String msg) {
-                toast(msg);
+                //toast(msg);
             }
 
             @Override
@@ -228,7 +231,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void failure(String msg) {
-                toast(msg);
+                //toast(msg);
             }
         });
         // 判断是否自动启动

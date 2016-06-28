@@ -7,6 +7,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.callba.R;
+import com.callba.phone.logic.login.UserLoginErrorMsg;
 import com.callba.phone.util.Logger;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -84,7 +85,35 @@ public class UserDao {
         message = handler.obtainMessage();
         message.what = code;
     }
+    public void login(String loginSign,String loginType){
+       final RequestParams params=new RequestParams();
+        params.addBodyParameter("loginSign", loginSign);
+        params.addBodyParameter("loginType", loginType);
+        params.addBodyParameter("softType","android");
+        params.addBodyParameter("callType", "all");
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.Login, params, new RequestCallBack<String>() {
+            @Override
+            public void onFailure(HttpException error, String msg) {
 
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                try {
+                    String[] result = (responseInfo.result).split("\\|");
+                    Logger.i("new_result",responseInfo.result);
+                    if("0".equals(result[0])) {
+
+                    } else {
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                }
+            }
+        });
+    }
     public void getRegisterKey(final String phoneNumber) {
         final RequestParams params = new RequestParams();
         Log.i("phoneNumber",phoneNumber);
@@ -685,6 +714,57 @@ public class UserDao {
                 }else{
                     postListener.failure(result[1]);
                 }
+            }
+        });
+    }
+    public void addFriend(String loginName,String password,String phoneNumber){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("phoneNumber",phoneNumber);
+        httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.ADD_FRIEND, params, new RequestCallBack<String>(){
+            @Override
+            public void onFailure(HttpException error, String msg) {
+
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+             Logger.i("add_result",responseInfo.result);
+            }
+        });
+    }
+    public void getFriends(String loginName,String password){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.GET_FRIENDS, params, new RequestCallBack<String>(){
+            @Override
+            public void onFailure(HttpException error, String msg) {
+
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Logger.i("get_result",responseInfo.result);
+            }
+        });
+    }
+    public void deleteFriends(String loginName,String password,String phoneNumber){
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("phoneNumber",phoneNumber);
+        httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.DELETE_FRIENDS, params, new RequestCallBack<String>(){
+            @Override
+            public void onFailure(HttpException error, String msg) {
+
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Logger.i("delete_result",responseInfo.result);
+
             }
         });
     }

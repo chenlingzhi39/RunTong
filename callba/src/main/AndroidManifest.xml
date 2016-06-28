@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.callba"
     android:versionCode="103"
-    android:versionName="1.0.4">
+    android:versionName="1.0.6">
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -76,7 +76,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"/>
-        <activity android:name=".phone.LocationSourceActivity"
+        <activity android:name=".phone.GeocoderActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"

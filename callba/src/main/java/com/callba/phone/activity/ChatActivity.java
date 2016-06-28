@@ -22,18 +22,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amap.api.maps2d.LocationSource;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.EaseConstant;
-import com.callba.phone.LocationSourceActivity;
+import com.callba.phone.GeocoderActivity;
 import com.callba.phone.adapter.ChatAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.EaseEmojicon;
+import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.controller.EaseUI;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.widget.EaseAlertDialog;
-import com.callba.phone.widget.EaseAlertDialog.AlertDialogUser;
 import com.callba.phone.widget.EaseChatExtendMenu;
 import com.callba.phone.widget.EaseChatInputMenu;
 import com.callba.phone.widget.EaseChatInputMenu.ChatInputMenuListener;
@@ -41,12 +40,10 @@ import com.callba.phone.widget.EaseChatMessageList;
 import com.callba.phone.widget.EaseVoiceRecorderView;
 import com.callba.phone.widget.EaseVoiceRecorderView.EaseVoiceRecorderCallback;
 import com.callba.phone.widget.chatrow.EaseCustomChatRowProvider;
-import com.callba.phone.widget.refreshlayout.RefreshLayout;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
-import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.util.PathUtil;
 
 import java.io.File;
@@ -571,8 +568,10 @@ public class ChatActivity extends BaseActivity {
                     selectPicFromLocal(); // 图库选择图片
                     break;
                 case ITEM_LOCATION: // 位置
-                    //startActivityForResult(new Intent(ChatActivity.this, LocationSourceActivity.class), REQUEST_CODE_MAP);
-                    toast("暂不开放");
+                    Intent intent=new Intent(ChatActivity.this, GeocoderActivity.class);
+                    intent.putExtra("latitude", CalldaGlobalConfig.getInstance().getLatitude());
+                    intent.putExtra("longitude",CalldaGlobalConfig.getInstance().getLongitude());
+                    startActivityForResult(new Intent(ChatActivity.this, GeocoderActivity.class), REQUEST_CODE_MAP);
                     break;
 
                 default:
@@ -676,7 +675,7 @@ public class ChatActivity extends BaseActivity {
                 double longitude = data.getDoubleExtra("longitude", 0);
                 String locationAddress = data.getStringExtra("address");
                 if (locationAddress != null && !locationAddress.equals("")) {
-                    //sendLocationMessage(latitude, longitude, locationAddress);
+                   sendLocationMessage(latitude, longitude, locationAddress);
                 } else {
                     Toast.makeText(this, R.string.unable_to_get_loaction, 0).show();
                 }

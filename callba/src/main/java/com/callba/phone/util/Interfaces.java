@@ -212,6 +212,18 @@ public interface Interfaces {
 	 * 帮助中心
 	 */
 	String HELP_CENTER = "http://inter.boboit.cn/inter/help/help_android.html";
+	/**
+	 * 添加好友
+	 */
+	String ADD_FRIEND=BASIC_URL+"/addfriend.jsp";
+	/**
+	 * 获取好友列表
+	 */
+	String GET_FRIENDS="http://inter.boboit.cn/inter/friend/friendlist.jsp";
+	/**
+	 * 删除好友
+	 */
+	String DELETE_FRIENDS="http://inter.boboit.cn/inter/friend/deletefriend.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

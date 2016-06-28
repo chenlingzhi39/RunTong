@@ -25,7 +25,7 @@ public class EaseUser extends EMContact {
 	 * 用户头像
 	 */
 	protected String avatar;
-	
+	protected String sign;
 	public EaseUser(String username){
 	    this.username = username;
 	}
@@ -58,6 +58,14 @@ public class EaseUser extends EMContact {
 			return false;
 		}
 		return getUsername().equals(((EaseUser) o).getUsername());
+	}
+
+	public String getSign() {
+		return sign;
+	}
+
+	public void setSign(String sign) {
+		this.sign = sign;
 	}
 
 	@Override
