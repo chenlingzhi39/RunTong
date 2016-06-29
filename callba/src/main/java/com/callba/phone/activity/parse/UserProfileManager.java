@@ -1,7 +1,10 @@
 package com.callba.phone.activity.parse;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
+import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.DemoHelper.*;
 import com.callba.phone.bean.Advertisement;
@@ -50,7 +53,7 @@ public class UserProfileManager {
     private EaseUser currentUser;
     private HttpUtils httpUtils;
     private Gson gson;
-
+    private LocalBroadcastManager broadcastManager;
     public UserProfileManager() {
     }
 
@@ -63,6 +66,7 @@ public class UserProfileManager {
         httpUtils = new HttpUtils(6 * 1000);
         httpUtils.configRequestRetryCount(3);
         gson=new Gson();
+        broadcastManager = LocalBroadcastManager.getInstance(context);
         return true;
     }
 
@@ -117,6 +121,7 @@ public class UserProfileManager {
                     }
                     callback.onSuccess(mList);
                 }
+                broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
             }
         });
         isSyncingContactInfosWithServer = true;

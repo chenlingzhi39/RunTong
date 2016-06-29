@@ -170,7 +170,7 @@ public class DemoHelper {
 			setGlobalListeners();
 			broadcastManager = LocalBroadcastManager.getInstance(appContext);
 	        initDbDao();
-            httpUtils = new HttpUtils(6 * 1000);
+            httpUtils = new HttpUtils(10 * 1000);
             httpUtils.configRequestRetryCount(3);
 		}
 	}
@@ -628,6 +628,7 @@ public class DemoHelper {
                 @Override
                 public void onSuccess(ResponseInfo<String> responseInfo) {
                     Logger.i("add_result",responseInfo.result);
+                    asyncFetchContactsFromServer(null);
                 }
             });
         }
@@ -1110,9 +1111,9 @@ public class DemoHelper {
    }
    
    public void asyncFetchContactsFromServer(final EMValueCallBack<List<String>> callback){
-     /*  if(isSyncingContactsWithServer){
+       if(isSyncingContactsWithServer){
            return;
-       }*/
+       }
        isSyncingContactsWithServer = true;
        
        new Thread(){
