@@ -1,6 +1,6 @@
 package com.callba.phone;
 
-import java.lang.Thread.UncaughtExceptionHandler;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Process;
+import android.support.multidex.MultiDexApplication;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
@@ -21,25 +22,15 @@ import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.callba.BuildConfig;
 import com.callba.R;
-import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.activity.WelcomeActivity;
-import com.callba.phone.cfg.Constant;
-import com.callba.phone.controller.EaseUI;
-import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.StorageUtils;
-import com.hyphenate.EMConnectionListener;
-import com.hyphenate.EMError;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.chat.EMOptions;
-
-
 import de.greenrobot.dao.DaoMaster;
 import de.greenrobot.dao.DaoSession;
 import de.greenrobot.dao.query.QueryBuilder;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
-public class MyApplication extends Application {
+public class MyApplication extends MultiDexApplication {
     /**
      * 保存所有打开的Activity
      */
@@ -61,7 +52,7 @@ public class MyApplication extends Application {
         myApplication = this;
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/STXIHEI.TTF").setFontAttrId(R.attr.fontPath).build());
        /* EMOptions options = new EMOptions();
-// 默认添加好友时，是不需要验证的，改成需要验证
+       // 默认添加好友时，是不需要验证的，改成需要验证
         options.setAcceptInvitationAlways(false);
         options.setAutoLogin(false);
         EaseUI.getInstance().init(this,options);*/

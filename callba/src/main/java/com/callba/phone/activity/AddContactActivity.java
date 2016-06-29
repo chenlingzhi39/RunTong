@@ -86,14 +86,14 @@ public class AddContactActivity extends BaseActivity {
      * @param view
      */
     public void addContact(View view){
-        if(EMClient.getInstance().getCurrentUser().equals(nameText.getText().toString())){
+        if(EMClient.getInstance().getCurrentUser().equals(nameText.getText().toString()+"-callba")){
             new EaseAlertDialog(this, R.string.not_add_myself).show();
             return;
         }
 
-        if(DemoHelper.getInstance().getContactList().containsKey(nameText.getText().toString())){
+        if(DemoHelper.getInstance().getContactList().containsKey(nameText.getText().toString()+"-callba")){
             //提示已在好友列表中(在黑名单列表里)，无需添加
-            if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(nameText.getText().toString())){
+            if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(nameText.getText().toString()+"-callba")){
                 new EaseAlertDialog(this, R.string.user_already_in_contactlist).show();
                 return;
             }
@@ -113,7 +113,7 @@ public class AddContactActivity extends BaseActivity {
                 try {
                     //demo写死了个reason，实际应该让用户手动填入
                     String s = getResources().getString(R.string.Add_a_friend);
-                    EMClient.getInstance().contactManager().addContact(toAddUsername, s);
+                    EMClient.getInstance().contactManager().addContact(toAddUsername+"-callba", s);
                     runOnUiThread(new Runnable() {
                         public void run() {
                             progressDialog.dismiss();

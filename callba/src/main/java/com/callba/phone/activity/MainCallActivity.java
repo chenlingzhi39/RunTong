@@ -389,7 +389,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         userDao=new UserDao(this,new UserDao.PostListener(){
             @Override
             public void failure(String msg) {
-                toast(msg);
+                //toast(msg);
             }
 
             @Override

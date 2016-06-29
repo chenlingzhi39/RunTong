@@ -165,8 +165,8 @@ public class HomeActivity extends BaseActivity {
                 } else {
 
                 }
-                /*userDao3=new UserDao();
-                userDao3.getFriends(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());*/
+                //userDao3=new UserDao();
+                //userDao3.getFriends(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
 
             }
 

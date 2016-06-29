@@ -312,7 +312,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         btn_signIn.setEnabled(false);
         circle.setIs_sign(true);
         circle.setEnabled(false);
-        try {
+      /*  try {
             if (list.size() != 0)
             {if (formatter.parse(date1).getTime() - formatter.parse(list.get(list.size() - 1)).getTime() ==  24 * 60 * 60 * 1000) {
                 constant += 1;
@@ -321,7 +321,9 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
             circle.setConstant(constant);
         } catch (Exception e) {
 
-        }
+        }*/
+        constant += 1;
+        circle.setConstant(constant);
     }
 
     @Override

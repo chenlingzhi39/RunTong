@@ -30,7 +30,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
-
+import java.net.HttpURLConnection;
 public class HttpUtils {
 	private static final int REQUEST_TIMEOUT = 5 * 1000;// 设置请求超时5秒钟
 //	private static final int SO_TIMEOUT = 10 * 1000; // 设置等待数据超时时间10秒钟
@@ -203,6 +203,7 @@ public class HttpUtils {
 			conn = url.openConnection();
 			conn.setDoOutput(true);
 			conn.setRequestProperty("Referer", "inter.boboit.cn");
+			conn.setConnectTimeout(10000);
 			writer = new OutputStreamWriter(conn.getOutputStream());
 			writer.flush();
 			writer.close();

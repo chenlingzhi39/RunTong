@@ -283,7 +283,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                 });
             }
         } else {
-            toast(msg);
+            toast(result[1]);
         }
 
     }

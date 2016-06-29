@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.DemoHelper;
 import com.callba.phone.EaseConstant;
 import com.callba.phone.GeocoderActivity;
 import com.callba.phone.adapter.ChatAdapter;
@@ -110,7 +111,9 @@ public class ChatActivity extends BaseActivity {
         chatAdapter = new ChatAdapter(this);
         userName = getIntent().getStringExtra("username");
         toChatUsername = userName;
-        title.setText(userName);
+        if(DemoHelper.getInstance().getContactList().get(userName)!=null)
+        title.setText(DemoHelper.getInstance().getContactList().get(userName).getNick());
+        else  title.setText(userName);
         IntentFilter filter = new IntentFilter(
                 "com.callba.chat");
         chatReceiver = new ChatReceiver();

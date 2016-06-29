@@ -181,7 +181,7 @@ public class DemoHelper {
         // 获取到EMChatOptions对象
         EMOptions options = new EMOptions();
         // 默认添加好友时，是不需要验证的，改成需要验证
-        options.setAcceptInvitationAlways(false);
+        options.setAcceptInvitationAlways(true);
         // 设置是否需要已读回执
        options.setRequireAck(true);
         // 设置是否需要已送达回执
@@ -212,7 +212,7 @@ public class DemoHelper {
             }
         });
         
-        //不设置，则使用easeui默认的
+       /* //不设置，则使用easeui默认的
         easeUI.setSettingsProvider(new EaseSettingsProvider() {
             
             @Override
@@ -258,7 +258,7 @@ public class DemoHelper {
                     }
                 }
             }
-        });
+        });*/
      /*   //设置表情provider
         easeUI.setEmojiconInfoProvider(new EaseEmojiconInfoProvider() {
             
@@ -614,6 +614,22 @@ public class DemoHelper {
 
            //发送好友变动广播
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+            RequestParams params = new RequestParams();
+            params.addBodyParameter("loginName", CalldaGlobalConfig.getInstance().getUsername());
+            params.addBodyParameter("loginPwd", CalldaGlobalConfig.getInstance().getPassword());
+            params.addBodyParameter("phoneNumber",username.substring(0,11));
+            Logger.i("add_url",Interfaces.ADD_FRIEND+"?loginName="+CalldaGlobalConfig.getInstance().getUsername()+"&loginPwd="+CalldaGlobalConfig.getInstance().getPassword()+"&phoneNumber="+username.substring(0,11));
+            httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.ADD_FRIEND, params, new RequestCallBack<String>(){
+                @Override
+                public void onFailure(HttpException error, String msg) {
+                    error.printStackTrace();
+                }
+
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    Logger.i("add_result",responseInfo.result);
+                }
+            });
         }
 
         @Override
@@ -629,7 +645,8 @@ public class DemoHelper {
             RequestParams params = new RequestParams();
             params.addBodyParameter("loginName",CalldaGlobalConfig.getInstance().getUsername());
             params.addBodyParameter("loginPwd", CalldaGlobalConfig.getInstance().getPassword());
-            params.addBodyParameter("phoneNumber",username);
+            params.addBodyParameter("phoneNumber",username.substring(0,11));
+            Logger.i("delete_url",Interfaces.DELETE_FRIENDS+"?loginName="+CalldaGlobalConfig.getInstance().getUsername()+"&loginPwd="+CalldaGlobalConfig.getInstance().getPassword()+"&phoneNumber="+username.substring(0,11));
             httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.DELETE_FRIENDS, params, new RequestCallBack<String>(){
                 @Override
                 public void onFailure(HttpException error, String msg) {
@@ -682,21 +699,7 @@ public class DemoHelper {
             msg.setStatus(InviteMesageStatus.BEAGREED);
             notifyNewIviteMessage(msg);
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-            RequestParams params = new RequestParams();
-            params.addBodyParameter("loginName", CalldaGlobalConfig.getInstance().getUsername());
-            params.addBodyParameter("loginPwd", CalldaGlobalConfig.getInstance().getPassword());
-            params.addBodyParameter("phoneNumber",username.substring(0,11));
-            httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.ADD_FRIEND, params, new RequestCallBack<String>(){
-                @Override
-                public void onFailure(HttpException error, String msg) {
-                    error.printStackTrace();
-                }
 
-                @Override
-                public void onSuccess(ResponseInfo<String> responseInfo) {
-                    Logger.i("add_result",responseInfo.result);
-                }
-            });
         }
 
         @Override
@@ -718,7 +721,7 @@ public class DemoHelper {
         //保存未读数，这里没有精确计算
         inviteMessgeDao.saveUnreadMessageCount(1);
         // 提示有新消息
-        getNotifier().viberateAndPlayTone(null);
+        //getNotifier().viberateAndPlayTone(null);
     }
     
     /**
@@ -746,13 +749,13 @@ public class DemoHelper {
         //实际开发中，可能还需要从服务器获取用户信息,
         //从服务器获取的数据，最好缓存起来，避免频繁的网络请求
         EaseUser user = null;
-     /*   if(username.equals(EMClient.getInstance().getCurrentUser()))
-            return getUserProfileManager().getCurrentUserInfo();*/
+        if(username.equals(EMClient.getInstance().getCurrentUser()))
+            return getUserProfileManager().getCurrentUserInfo();
         user = getContactList().get(username);
         //TODO 获取不在好友列表里的群成员具体信息，即陌生人信息，demo未实现
-        if(user == null && getRobotList() != null){
+       /* if(user == null && getRobotList() != null){
             user = getRobotList().get(username);
-        }
+        }*/
         return user;
 	}
 	
@@ -1107,10 +1110,9 @@ public class DemoHelper {
    }
    
    public void asyncFetchContactsFromServer(final EMValueCallBack<List<String>> callback){
-       if(isSyncingContactsWithServer){
+     /*  if(isSyncingContactsWithServer){
            return;
-       }
-       
+       }*/
        isSyncingContactsWithServer = true;
        
        new Thread(){

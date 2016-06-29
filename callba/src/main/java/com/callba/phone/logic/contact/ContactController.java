@@ -7,9 +7,14 @@ import java.util.Map;
 
 import android.text.TextUtils;
 
+import com.callba.R;
+import com.callba.phone.DemoHelper;
 import com.callba.phone.activity.contact.ContactMutliNumBean;
+import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.util.Logger;
+import com.callba.phone.widget.EaseAlertDialog;
+import com.hyphenate.chat.EMClient;
 
 /** 
  * 联系人业务逻辑管理
@@ -28,9 +33,38 @@ public class ContactController {
 	
 	//检索的字母、位置索引表
 	private Map<String, Integer> letterSearchMap;
-	
+	private UserDao userDao;
 	public ContactController() {
 		mAllContactPersonEntities = CalldaGlobalConfig.getInstance().getContactBeans();
+		userDao=new UserDao(new UserDao.PostListener() {
+			@Override
+			public void start() {
+
+			}
+
+			@Override
+			public void success(String msg) {
+				if(EMClient.getInstance().getCurrentUser().equals(msg+"-callba")){
+
+					return;
+				}
+
+				if(DemoHelper.getInstance().getContactList().containsKey(msg+"-callba")){
+					//提示已在好友列表中(在黑名单列表里)，无需添加
+					if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(msg+"-callba")){
+
+						return;
+					}
+
+					return;
+				}
+			}
+
+			@Override
+			public void failure(String msg) {
+
+			}
+		});
 	}
 	
 	/**
@@ -63,6 +97,8 @@ public class ContactController {
 		List<String> contactPhones=new ArrayList<>();
 		Logger.i("contact_size",mAllContactPersonEntities.size()+"");
 		for(int i=0;i<mAllContactPersonEntities.size();i++){
+			if(!mAllContactPersonEntities.get(i).getDisplayName().equals("Call吧电话"))
+			userDao.addFriend(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),mAllContactPersonEntities.get(i).getPhoneNumber());
 			Logger.i("contact_number",mAllContactPersonEntities.get(i).getPhoneNumber());
 			if(i==0)
 			{personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0)));

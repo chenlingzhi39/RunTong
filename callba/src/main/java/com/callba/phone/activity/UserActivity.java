@@ -265,12 +265,12 @@ public class UserActivity extends BaseActivity {
 
         } else {
             // 是否已提示过升级
-            boolean noticedUpgrade = mSharedPreferenceUtil.getBoolean(
+          /*  boolean noticedUpgrade = mSharedPreferenceUtil.getBoolean(
                     Constant.IS_NOTICE_UPGRADE, false);
             if (noticedUpgrade) {
                 // 只提示一次
                 return;
-            }
+            }*/
 
             if (appVersionBean.isHasNewVersion()) {
                 // 存在新版本

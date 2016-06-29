@@ -62,8 +62,6 @@ public class ConversationViewHolder extends BaseViewHolder<EMConversation> {
         String username = conversation.getUserName();
             EaseUserUtils.setUserAvatar(getContext(), username, avatar);
             EaseUserUtils.setUserNick(username, name);
-
-
         if (conversation.getUnreadMsgCount() > 0) {
             // 显示与此用户的消息未读数
            unreadLabel.setText(String.valueOf(conversation.getUnreadMsgCount()));

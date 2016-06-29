@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.callba.R;
 import com.callba.phone.bean.EaseUser;
+import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.controller.EaseUI;
 import com.callba.phone.controller.EaseUI.EaseUserProfileProvider;
 
@@ -37,17 +38,23 @@ public class EaseUserUtils {
      */
     public static void setUserAvatar(Context context, String username, ImageView imageView){
     	EaseUser user = getUserInfo(username);
+        if(username.equals(CalldaGlobalConfig.getInstance().getUsername()+"-callba")){
+            if(!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
+                Glide.with(context).load(CalldaGlobalConfig.getInstance().getUserhead()).into(imageView);
+            return;
+        }
         if(user != null && user.getAvatar() != null){
             try {
                 int avatarResId = Integer.parseInt(user.getAvatar());
                 Glide.with(context).load(avatarResId).into(imageView);
             } catch (Exception e) {
                 //正常的string路径
-                Glide.with(context).load(user.getAvatar()).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.ease_default_avatar).into(imageView);
+                Glide.with(context).load(user.getAvatar()).diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.logo).into(imageView);
             }
         }else{
-            Glide.with(context).load(R.drawable.ease_default_avatar).into(imageView);
+            Glide.with(context).load(R.drawable.logo).into(imageView);
         }
+
     }
     
     /**

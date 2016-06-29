@@ -16,6 +16,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.DemoHelper;
+import com.callba.phone.bean.EaseUser;
 import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;

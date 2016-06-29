@@ -39,6 +39,7 @@ import com.callba.phone.db.InviteMessgeDao;
 import com.callba.phone.db.UserDao;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.widget.ContactItemView;
 import com.callba.phone.widget.EaseContactList;
 import com.hyphenate.chat.EMClient;
@@ -339,12 +340,22 @@ public class WebContactFragment extends BaseFragment {
             EMLog.d(TAG, "on contact list sync success:" + success);
 
                             if(success){
-                                loadingView.setVisibility(View.GONE);
+                                SimpleHandler.getInstance().post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        loadingView.setVisibility(View.GONE);
+                                    }
+                                });
                                 refresh();
                             }else{
-                                String s1 = getResources().getString(R.string.get_failed_please_check);
+                                String s1 = getActivity().getResources().getString(R.string.get_failed_please_check);
                                 Toast.makeText(getActivity(), s1, 1).show();
-                                loadingView.setVisibility(View.GONE);
+                                SimpleHandler.getInstance().post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        loadingView.setVisibility(View.GONE);
+                                    }
+                                });
                             }
 
         }

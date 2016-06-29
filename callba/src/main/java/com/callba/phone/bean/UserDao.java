@@ -58,7 +58,11 @@ public class UserDao {
         httpUtils = new HttpUtils(6 * 1000);
         httpUtils.configRequestRetryCount(3);
     }
-
+    public UserDao(PostListener postListener) {
+        httpUtils = new HttpUtils(6 * 1000);
+        httpUtils.configRequestRetryCount(3);
+        this.postListener = postListener;
+    }
     public UserDao(Context context, Handler handler) {
         this.context = context;
         this.handler = handler;
@@ -717,7 +721,7 @@ public class UserDao {
             }
         });
     }
-    public void addFriend(String loginName,String password,String phoneNumber){
+    public void addFriend(String loginName,String password,final String phoneNumber){
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
@@ -731,6 +735,7 @@ public class UserDao {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
              Logger.i("add_result",responseInfo.result);
+                postListener.success(phoneNumber);
             }
         });
     }
@@ -747,6 +752,7 @@ public class UserDao {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Logger.i("get_result",responseInfo.result);
+
             }
         });
     }
@@ -768,4 +774,5 @@ public class UserDao {
             }
         });
     }
+
 }

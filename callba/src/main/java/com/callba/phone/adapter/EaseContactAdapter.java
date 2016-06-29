@@ -49,6 +49,7 @@ public class EaseContactAdapter extends ArrayAdapter<EaseUser> implements Sectio
         ImageView avatar;
         TextView nameView;
         TextView headerView;
+        TextView signView;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -62,6 +63,7 @@ public class EaseContactAdapter extends ArrayAdapter<EaseUser> implements Sectio
             holder.avatar = (ImageView) convertView.findViewById(R.id.avatar);
             holder.nameView = (TextView) convertView.findViewById(R.id.name);
             holder.headerView = (TextView) convertView.findViewById(R.id.header);
+            holder.signView=(TextView) convertView.findViewById(R.id.sign);
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder) convertView.getTag();

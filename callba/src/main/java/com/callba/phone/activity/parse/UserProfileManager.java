@@ -85,12 +85,13 @@ public class UserProfileManager {
     }
 
     public void asyncFetchContactInfosFromServer(List<String> usernames, final EMValueCallBack<List<EaseUser>> callback) {
-        if (isSyncingContactInfosWithServer) {
+       /* if (isSyncingContactInfosWithServer) {
             return;
-        }
+        }*/
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", CalldaGlobalConfig.getInstance().getUsername());
         params.addBodyParameter("loginPwd", CalldaGlobalConfig.getInstance().getPassword());
+        Logger.i("get_friends",Interfaces.GET_FRIENDS+"?loginName="+ CalldaGlobalConfig.getInstance().getUsername()+"&loginPwd="+CalldaGlobalConfig.getInstance().getPassword());
         httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_FRIENDS, params, new RequestCallBack<String>() {
             @Override
             public void onFailure(HttpException error, String msg) {
