@@ -87,6 +87,7 @@ public class WebContactFragment extends BaseFragment {
     private View loadingView;
     private ContactSyncListener contactSyncListener;
     private BlackListSyncListener blackListSyncListener;
+    private ContactInfoSyncListener contactInfoSyncListener;
     protected EaseUser toBeProcessUser;
     protected String toBeProcessUsername;
     private static final String TAG = WebContactFragment.class.getSimpleName();
@@ -154,6 +155,8 @@ public class WebContactFragment extends BaseFragment {
         blackListSyncListener = new BlackListSyncListener();
         DemoHelper.getInstance().addSyncBlackListListener(blackListSyncListener);
 
+        contactInfoSyncListener = new ContactInfoSyncListener();
+        DemoHelper.getInstance().getUserProfileManager().addSyncContactInfoListener(contactInfoSyncListener);
 
         if (DemoHelper.getInstance().isContactsSyncedWithServer()) {
             loadingView.setVisibility(View.GONE);
@@ -365,12 +368,19 @@ public class WebContactFragment extends BaseFragment {
 
         @Override
         public void onSyncComplete(boolean success) {
-
-                    refresh();
-
+            EMLog.d(TAG, "on black list sync success:" + success);
+                          refresh();
         }
 
     }
+    class ContactInfoSyncListener implements DataSyncListener{
+
+        @Override
+        public void onSyncComplete(final boolean success) {
+            EMLog.d(TAG, "on contactinfo list sync success:" + success);
+                        refresh();
+
+        }}
     /**
      * 把user移入到黑名单
      */

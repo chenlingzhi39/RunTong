@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Pair;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.Constant;
 import com.callba.phone.adapter.ConversationAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -51,6 +53,8 @@ public class MessageActivity extends BaseActivity {
     private ChatReceiver chatReceiver;
     private AsReadReceiver asReadReceiver;
     private int index=-1;
+    private BroadcastReceiver broadcastReceiver;
+    private LocalBroadcastManager broadcastManager;
     public interface EaseConversationListItemClickListener {
         /**
          * 会话listview item点击事件
@@ -100,6 +104,7 @@ public class MessageActivity extends BaseActivity {
         registerReceiver(chatReceiver,filter);
         asReadReceiver=new AsReadReceiver();
         registerReceiver(asReadReceiver,filter1);
+        registerBroadcastReceiver();
     }
 
     @Override
@@ -156,6 +161,7 @@ public class MessageActivity extends BaseActivity {
     protected void onDestroy() {
         unregisterReceiver(chatReceiver);
         unregisterReceiver(asReadReceiver);
+        unregisterBroadcastReceiver();
         super.onDestroy();
     }
 
@@ -209,5 +215,22 @@ public class MessageActivity extends BaseActivity {
             return true;
         }
         return false;
+    }
+    private void registerBroadcastReceiver() {
+        broadcastManager = LocalBroadcastManager.getInstance(this);
+        IntentFilter intentFilter = new IntentFilter(Constant.ACTION_CONTACT_CHANAGED);
+        broadcastReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Logger.i("webContact",Constant.ACTION_CONTACT_CHANAGED);
+                conversationList.clear();
+                conversationList.addAll(loadConversationList());
+            }
+        };
+        broadcastManager.registerReceiver(broadcastReceiver, intentFilter);
+    }
+    private void unregisterBroadcastReceiver(){
+        broadcastManager.unregisterReceiver(broadcastReceiver);
     }
 }

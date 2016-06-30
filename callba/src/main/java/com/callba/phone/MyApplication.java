@@ -4,6 +4,7 @@ package com.callba.phone;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -25,9 +26,12 @@ import com.callba.R;
 import com.callba.phone.activity.WelcomeActivity;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.StorageUtils;
+import com.zhy.http.okhttp.OkHttpUtils;
+
 import de.greenrobot.dao.DaoMaster;
 import de.greenrobot.dao.DaoSession;
 import de.greenrobot.dao.query.QueryBuilder;
+import okhttp3.OkHttpClient;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class MyApplication extends MultiDexApplication {
@@ -56,6 +60,14 @@ public class MyApplication extends MultiDexApplication {
         options.setAcceptInvitationAlways(false);
         options.setAutoLogin(false);
         EaseUI.getInstance().init(this,options);*/
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+//                .addInterceptor(new LoggerInterceptor("TAG"))
+                .connectTimeout(20000L, TimeUnit.MILLISECONDS)
+                .readTimeout(20000L, TimeUnit.MILLISECONDS)
+                //其他配置
+                .build();
+
+        OkHttpUtils.initClient(okHttpClient);
         DemoHelper.getInstance().init(this);
         GlideBuilder builder = new GlideBuilder(this);
         builder.setMemoryCache(new LruResourceCache(5 * 1024 * 1024));

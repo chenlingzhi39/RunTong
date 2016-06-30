@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.activity.parse.UserProfileManager;
+import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseEmojicon;
 import com.callba.phone.bean.EaseNotifier;
 import com.callba.phone.bean.EaseUser;
@@ -29,6 +30,9 @@ import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.PreferenceManager;
+import com.callba.phone.util.SimpleHandler;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMContactListener;
@@ -53,6 +57,8 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,6 +66,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import okhttp3.Call;
 
 public class DemoHelper {
     /**
@@ -132,6 +140,7 @@ public class DemoHelper {
 
     private boolean isGroupAndContactListenerRegisted;
     private HttpUtils httpUtils;
+    private Gson gson;
 	private DemoHelper() {
 	}
 
@@ -172,6 +181,7 @@ public class DemoHelper {
 	        initDbDao();
             httpUtils = new HttpUtils(10 * 1000);
             httpUtils.configRequestRetryCount(3);
+            gson=new Gson();
 		}
 	}
 
@@ -382,7 +392,7 @@ public class DemoHelper {
                     }.start();
                 }else{
                     if(!isGroupsSyncedWithServer){
-                        asyncFetchGroupsFromServer(null);
+                        //asyncFetchGroupsFromServer(null);
                     }
                     
                     if(!isContactsSyncedWithServer){
@@ -601,7 +611,7 @@ public class DemoHelper {
 
         @Override
         public void onContactAdded(String username) {
-            // 保存增加的联系人
+            /*// 保存增加的联系人
             Map<String, EaseUser> localUsers = getContactList();
             Map<String, EaseUser> toAddUsers = new HashMap<String, EaseUser>();
             EaseUser user = new EaseUser(username);
@@ -610,11 +620,45 @@ public class DemoHelper {
                 userDao.saveContact(user);
             }
             toAddUsers.put(username, user);
-            localUsers.putAll(toAddUsers);
+            localUsers.putAll(toAddUsers);*/
+            Logger.i("get_friends",Interfaces.GET_FRIENDS+"?loginName="+ CalldaGlobalConfig.getInstance().getUsername()+"&loginPwd="+CalldaGlobalConfig.getInstance().getPassword());
+            OkHttpUtils
+                    .post()
+                    .url(Interfaces.GET_FRIENDS)
+                    .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+                    .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                    .build().execute(new StringCallback() {
+                @Override
+                public void onError(Call call, Exception e, int id) {
+                 e.printStackTrace();
+                }
 
+                @Override
+                public void onResponse(String response, int id) {
+                    Logger.i("get_result",response);
+                    String[] result = response.split("\\|");
+                    if (result[0].equals("0")) {
+                        ArrayList<BaseUser> list;
+                        list = gson.fromJson(result[1], new TypeToken<List<BaseUser>>() {
+                        }.getType());
+                        List<EaseUser> mList = new ArrayList<EaseUser>();
+                        for (BaseUser baseUser : list) {
+                            EaseUser user = new EaseUser(baseUser.getPhoneNumber()+"-callba");
+                            user.setAvatar(baseUser.getUrl_head());
+                            user.setNick(baseUser.getNickname());
+                            user.setSign(baseUser.getSign());
+                            EaseCommonUtils.setUserInitialLetter(user);
+                            mList.add(user);
+                        }
+                        updateContactList(mList);
+                        broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+
+                    }
+                }
+            });
            //发送好友变动广播
-            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-            RequestParams params = new RequestParams();
+
+          /*  RequestParams params = new RequestParams();
             params.addBodyParameter("loginName", CalldaGlobalConfig.getInstance().getUsername());
             params.addBodyParameter("loginPwd", CalldaGlobalConfig.getInstance().getPassword());
             params.addBodyParameter("phoneNumber",username.substring(0,11));
@@ -622,7 +666,7 @@ public class DemoHelper {
             httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.ADD_FRIEND, params, new RequestCallBack<String>(){
                 @Override
                 public void onFailure(HttpException error, String msg) {
-                    error.printStackTrace();
+                    Logger.i("add_fail",msg);
                 }
 
                 @Override
@@ -630,7 +674,8 @@ public class DemoHelper {
                     Logger.i("add_result",responseInfo.result);
                     asyncFetchContactsFromServer(null);
                 }
-            });
+            });*/
+
         }
 
         @Override
@@ -651,7 +696,7 @@ public class DemoHelper {
             httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.DELETE_FRIENDS, params, new RequestCallBack<String>(){
                 @Override
                 public void onFailure(HttpException error, String msg) {
-
+                    error.printStackTrace();
                 }
 
                 @Override
@@ -1181,7 +1226,6 @@ public class DemoHelper {
                        callback.onError(e.getErrorCode(), e.toString());
                    }
                }
-               
            }
        }.start();
    }

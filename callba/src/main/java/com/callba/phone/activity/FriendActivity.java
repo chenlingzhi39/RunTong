@@ -1,17 +1,25 @@
 package com.callba.phone.activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -20,20 +28,32 @@ import com.amap.api.location.AMapLocationListener;
 import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.Constant;
+import com.callba.phone.DemoHelper;
 import com.callba.phone.adapter.NearByUserAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Advertisement;
+import com.callba.phone.bean.BaseUser;
+import com.callba.phone.bean.EaseUser;
 import com.callba.phone.bean.NearByUser;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.logic.contact.ContactPersonEntity;
+import com.callba.phone.util.ContactsAccessPublic;
+import com.callba.phone.util.EaseCommonUtils;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.AlwaysMarqueeTextView;
 import com.callba.phone.view.BannerLayout;
+import com.callba.phone.widget.EaseAlertDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hyphenate.chat.EMClient;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +61,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import okhttp3.Call;
 
 /**
  * Created by PC-20160514 on 2016/5/21.
@@ -64,7 +85,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     @InjectView(R.id.progressBar)
     ProgressBar progressBar;
     private BannerLayout banner;
-    private UserDao userDao, userDao1;
+    private UserDao userDao, userDao1,userDao2;
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
     private NearByUserAdapter nearByUserAdapter;
@@ -75,7 +96,8 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     private ArrayList<String> webImages = new ArrayList<>();
     private ImageView imageView;
     private View footer;
-
+    private int page=1;
+    private boolean is_refresh=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +106,6 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         location.setTextColor(getResources().getColor(R.color.black_2f));
         location.setText(CalldaGlobalConfig.getInstance().getAddress());
         userDao = new UserDao(this, this);
-
         initRefreshLayout();
         userList.setLayoutManager(new LinearLayoutManager(this));
         userList.setLoadingMoreEnabled(false);
@@ -154,7 +175,23 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
 
             }
         });*/
+        userDao2=new UserDao();
         nearByUserAdapter = new NearByUserAdapter(this);
+        nearByUserAdapter.setError(R.layout.view_more_error).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                is_refresh=false;
+                nearByUserAdapter.resumeMore();
+            }
+        });
+        nearByUserAdapter.setMore(R.layout.view_more, new RecyclerArrayAdapter.OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                is_refresh=false;
+                userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), CalldaGlobalConfig.getInstance().getLatitude(), CalldaGlobalConfig.getInstance().getLongitude(), 1000,page+1);
+            }
+        });
+        nearByUserAdapter.setNoMore(R.layout.view_nomore);
         userList.addHeaderView(view1);
         footer = new View(this);
         userList.addFootView(footer);
@@ -162,7 +199,8 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             @Override
             public void onRefresh() {
                 //refresh data here
-                userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), CalldaGlobalConfig.getInstance().getLatitude(), CalldaGlobalConfig.getInstance().getLongitude(), 1000);
+                is_refresh=true;
+                userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), CalldaGlobalConfig.getInstance().getLatitude(), CalldaGlobalConfig.getInstance().getLongitude(), 1000,page);
              }
 
             @Override
@@ -216,7 +254,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                     CalldaGlobalConfig.getInstance().setAddress(aMapLocation.getAddress());
                     CalldaGlobalConfig.getInstance().setLatitude(aMapLocation.getLatitude());
                     CalldaGlobalConfig.getInstance().setLongitude(aMapLocation.getLongitude());
-                    userDao.saveLocation(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                    userDao2.saveLocation(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
                     location.setText(aMapLocation.getAddress());
                 } else {
                     //定位失败
@@ -243,12 +281,165 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             userDao1.getAd(2, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
 
     }
+    private void showDialog(Context context,
+                                  final NearByUser entity) {
 
+        final DialogHelper helper = new DialogHelper(entity);
+        Dialog dialog = new AlertDialog.Builder(this).setView(helper.getView()).create();
+        helper.setDialog(dialog);
+        dialog.show();
+    }
+    class DialogHelper implements DialogInterface.OnDismissListener,View.OnClickListener {
+        private Dialog mDialog;
+        private View view;
+        TextView tv_name;
+        Button add;
+       NearByUser entity;
+        public DialogHelper(NearByUser entity) {
+            this.entity=entity;
+            view=getLayoutInflater().inflate(R.layout.dialog_friend,null);
+            tv_name=(TextView)view.findViewById(R.id.name);
+            add=(Button)view.findViewById(R.id.add_contact);
+            add.setOnClickListener(this);
+            tv_name.setText(entity.getNickname());
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.add_contact:
+                    if(EMClient.getInstance().getCurrentUser().equals(entity.getPhoneNumber()+"-callba")){
+                        new EaseAlertDialog(FriendActivity.this, R.string.not_add_myself).show();
+                        return;
+                    }
+
+                    if(DemoHelper.getInstance().getContactList().containsKey(entity.getPhoneNumber()+"-callba")){
+                        //提示已在好友列表中(在黑名单列表里)，无需添加
+                        if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(entity.getPhoneNumber()+"-callba")){
+                            new EaseAlertDialog(FriendActivity.this, R.string.user_already_in_contactlist).show();
+                            return;
+                        }
+                        new EaseAlertDialog(FriendActivity.this, R.string.This_user_is_already_your_friend).show();
+                        return;
+                    }
+
+                    final ProgressDialog  progressDialog = new ProgressDialog(FriendActivity.this);
+                    String stri = getResources().getString(R.string.Is_sending_a_request);
+                    progressDialog.setMessage(stri);
+                    progressDialog.setCanceledOnTouchOutside(false);
+                    progressDialog.show();
+                    mDialog.dismiss();
+                    OkHttpUtils
+                            .post()
+                            .url(Interfaces.ADD_FRIEND)
+                            .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+                            .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                            .addParams("phoneNumber",entity.getPhoneNumber())
+                            .build()
+                            .execute(new StringCallback() {
+                                @Override
+                                public void onError(Call call, Exception e, int id) {
+                                    e.printStackTrace();
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            progressDialog.dismiss();
+                                            String s2 = getResources().getString(R.string.Request_add_buddy_failure);
+                                            Toast.makeText(getApplicationContext(), s2 , 1).show();
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onResponse(String response, int id) {
+                                    Logger.i("add_result",response);
+                                    String[] result=response.split("\\|");
+                                    if(result[0].equals("0"))
+                                    {
+                                    try {
+                                        //demo写死了个reason，实际应该让用户手动填入
+                                        String s = getResources().getString(R.string.Add_a_friend);
+                                        //EMClient.getInstance().contactManager().addContact(entity.getPhoneNumber()+"-callba", s);
+                                        runOnUiThread(new Runnable() {
+                                            public void run() {
+                                                progressDialog.dismiss();
+                                                String s1 = "添加成功";
+                                                Toast.makeText(getApplicationContext(), s1, 1).show();
+                                            }
+                                        });
+                                    } catch (final Exception e) {
+                                        runOnUiThread(new Runnable() {
+                                            public void run() {
+                                                progressDialog.dismiss();
+                                                String s2 = getResources().getString(R.string.Request_add_buddy_failure);
+                                                Toast.makeText(getApplicationContext(), s2 + e.getMessage(), 1).show();
+                                            }
+                                        });
+                                    }
+                                }else { toast(result[1]);
+                                        progressDialog.dismiss();
+                                    }
+                                    OkHttpUtils
+                                            .post()
+                                            .url(Interfaces.GET_FRIENDS)
+                                            .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+                                            .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                                            .build().execute(new StringCallback() {
+                                        @Override
+                                        public void onError(Call call, Exception e, int id) {
+                                            e.printStackTrace();
+                                        }
+
+                                        @Override
+                                        public void onResponse(String response, int id) {
+                                            Logger.i("get_result",response);
+                                            String[] result = response.split("\\|");
+                                            if (result[0].equals("0")) {
+                                                ArrayList<BaseUser> list;
+                                                list = gson.fromJson(result[1], new TypeToken<List<BaseUser>>() {
+                                                }.getType());
+                                                List<EaseUser> mList = new ArrayList<EaseUser>();
+                                                for (BaseUser baseUser : list) {
+                                                    EaseUser user = new EaseUser(baseUser.getPhoneNumber()+"-callba");
+                                                    user.setAvatar(baseUser.getUrl_head());
+                                                    user.setNick(baseUser.getNickname());
+                                                    user.setSign(baseUser.getSign());
+                                                    EaseCommonUtils.setUserInitialLetter(user);
+                                                    mList.add(user);
+                                                }
+                                                DemoHelper.getInstance().updateContactList(mList);
+                                                LocalBroadcastManager.getInstance(FriendActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+
+                    break;
+
+            }
+        }
+
+        public View getView() {
+            return view;
+        }
+
+        public void setDialog(Dialog dialog) {
+            mDialog = dialog;
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            mDialog=null;
+        }
+    }
 
     @Override
     public void failure(String msg) {
         userList.refreshComplete();
         toast(msg);
+        if(!is_refresh)
+        nearByUserAdapter.pauseMore();
     }
 
     @Override
@@ -272,18 +463,26 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             Logger.i("size", list.size() + "");
             if (list.size() == 0) {
             } else {
+                if(is_refresh){
                 nearByUserAdapter.clear();
                 nearByUserAdapter.addAll(list);
-                nearByUserAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
+                    page=1;
+                nearByUserAdapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
                     @Override
-                    public void onItemClick(int position) {
-
-
+                    public boolean onItemClick(int position) {
+                        Logger.i("userlist","longclick");
+                        showDialog(FriendActivity.this,nearByUserAdapter.getData().get(position-2));
+                        return true;
                     }
-                });
+                });}else{
+                    nearByUserAdapter.addAll(list);
+                    page+=1;
+                }
             }
         } else {
             toast(result[1]);
+            if(!is_refresh)
+                nearByUserAdapter.stopMore();
         }
 
     }

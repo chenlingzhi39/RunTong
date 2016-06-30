@@ -237,7 +237,7 @@ public class LoginController {
 				} catch (Exception e) {
 					e.printStackTrace();
 					loginState = false;
-					loginListener.localLoginFailed(UserLoginErrorMsg.SERVER_ERROR);
+					loginListener.localLoginFailed(UserLoginErrorMsg.TIMEOUT);
 				}
 				break;
 				

@@ -45,7 +45,7 @@
     <string name="sign_in">我的签到</string>
     <string name="refresh">刷新</string>
     <string name="share">分享</string>
-    <string name="message">信息</string>
+    <string name="message">消息</string>
     <string name="post_message">发送信息</string>
     <string name="play_game_plus">玩游戏+3</string>
     <string name="play_game_hint">完成游戏任务可获金币</string>
@@ -240,7 +240,7 @@
 	<string name="unknownerror">未知异常！</string>
 	<string name="getkey_error">网络不稳定,获取版本信息失败,请重新启动！</string>
 	<string name="castkey_error">获取版本信息错误,登录异常！</string>
-	<string name="logining">正在登陆</string>
+	<string name="logining">正在登录</string>
 	<string name="second">秒</string>
 	<string name="minute">分</string>
 	<string name="unconnected">未接通</string>

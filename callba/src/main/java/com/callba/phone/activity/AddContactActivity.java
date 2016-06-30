@@ -1,7 +1,9 @@
 package com.callba.phone.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,13 +16,28 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.bean.BaseUser;
+import com.callba.phone.bean.EaseUser;
+import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.util.EaseCommonUtils;
+import com.callba.phone.util.Interfaces;
+import com.callba.phone.util.Logger;
 import com.callba.phone.widget.EaseAlertDialog;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hyphenate.chat.EMClient;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import okhttp3.Call;
 
 /**
  * Created by PC-20160514 on 2016/6/22.
@@ -45,7 +62,7 @@ public class AddContactActivity extends BaseActivity {
     LinearLayout searchedUserLayout;
     String toAddUsername;
     ProgressDialog progressDialog;
-
+    Gson gson=new Gson();
 
     @Override
     public void refresh(Object... params) {
@@ -107,7 +124,7 @@ public class AddContactActivity extends BaseActivity {
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
 
-        new Thread(new Runnable() {
+    /*    new Thread(new Runnable() {
             public void run() {
 
                 try {
@@ -131,7 +148,91 @@ public class AddContactActivity extends BaseActivity {
                     });
                 }
             }
-        }).start();
+        }).start();*/
+        OkHttpUtils
+                .post()
+                .url(Interfaces.ADD_FRIEND)
+                .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+                .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                .addParams("phoneNumber",nameText.getText().toString())
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        e.printStackTrace();
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                progressDialog.dismiss();
+                                String s2 = getResources().getString(R.string.Request_add_buddy_failure);
+                                Toast.makeText(getApplicationContext(), s2 , 1).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        Logger.i("add_result",response);
+                        String[] result=response.split("\\|");
+                        if(result[0].equals("0")){
+                        try {
+                            //demo写死了个reason，实际应该让用户手动填入
+                            String s = getResources().getString(R.string.Add_a_friend);
+                            //EMClient.getInstance().contactManager().addContact(toAddUsername+"-callba", s);
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    progressDialog.dismiss();
+                                    String s1 = "添加成功";
+                                    Toast.makeText(getApplicationContext(), s1, 1).show();
+                                }
+                            });
+                        } catch (final Exception e) {
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    progressDialog.dismiss();
+                                    String s2 = getResources().getString(R.string.Request_add_buddy_failure);
+                                    Toast.makeText(getApplicationContext(), s2 + e.getMessage(), 1).show();
+                                }
+                            });
+                        }
+                    }else { toast(result[1]);
+                            progressDialog.dismiss();
+                        }
+                        OkHttpUtils
+                                .post()
+                                .url(Interfaces.GET_FRIENDS)
+                                .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+                                .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                                .build().execute(new StringCallback() {
+                            @Override
+                            public void onError(Call call, Exception e, int id) {
+                                e.printStackTrace();
+                            }
+
+                            @Override
+                            public void onResponse(String response, int id) {
+                                Logger.i("get_result",response);
+                                String[] result = response.split("\\|");
+                                if (result[0].equals("0")) {
+                                    ArrayList<BaseUser> list;
+                                    list = gson.fromJson(result[1], new TypeToken<List<BaseUser>>() {
+                                    }.getType());
+                                    List<EaseUser> mList = new ArrayList<EaseUser>();
+                                    for (BaseUser baseUser : list) {
+                                        EaseUser user = new EaseUser(baseUser.getPhoneNumber()+"-callba");
+                                        user.setAvatar(baseUser.getUrl_head());
+                                        user.setNick(baseUser.getNickname());
+                                        user.setSign(baseUser.getSign());
+                                        EaseCommonUtils.setUserInitialLetter(user);
+                                        mList.add(user);
+                                    }
+                                    DemoHelper.getInstance().updateContactList(mList);
+                                    LocalBroadcastManager.getInstance(AddContactActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+
+                                }
+                            }
+                        });
+                    }
+                });
     }
 
     @Override

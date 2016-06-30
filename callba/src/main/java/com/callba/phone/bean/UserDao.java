@@ -300,14 +300,15 @@ public class UserDao {
         });
     }
 
-    public void getNearBy(String loginName, String password, double latitude, double longitude, int radius) {
+    public void getNearBy(String loginName, String password, double latitude, double longitude, int radius,int page) {
         final RequestParams params = new RequestParams();
-        Logger.i("nearby_url",Interfaces.GET_NEARBY+"?"+"loginName="+loginName+"&loginPwd="+password+"&latitude="+latitude+"&longitude="+longitude+"&radius="+radius);
+        Logger.i("nearby_url",Interfaces.GET_NEARBY+"?"+"loginName="+loginName+"&loginPwd="+password+"&latitude="+latitude+"&longitude="+longitude+"&radius="+radius+"&page="+page);
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
         params.addBodyParameter("latitude", latitude + "");
         params.addBodyParameter("longitude", longitude + "");
         params.addBodyParameter("radius", radius + "");
+        params.addBodyParameter("page",page+"");
         httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_NEARBY, params, new RequestCallBack<String>() {
             @Override
             public void onFailure(HttpException error, String msg) {
