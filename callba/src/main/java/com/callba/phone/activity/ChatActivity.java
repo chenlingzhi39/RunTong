@@ -93,16 +93,68 @@ public class ChatActivity extends BaseActivity {
     protected EaseChatFragmentListener chatFragmentListener;
     protected MyItemClickListener extendMenuItemClickListener;
     protected String toChatUsername;
-    protected int chatType;
+    protected int chatType=EaseConstant.CHATTYPE_SINGLE;
     protected InputMethodManager inputManager;
     protected ClipboardManager clipboard;
     protected boolean isMessageListInited;
     protected EMMessage contextMenuMessage;
     protected EMConversation conversation;
-    protected int pagesize = 20;
+    protected int pagesize = 10;
     protected boolean isloading;
     protected boolean haveMoreData = true;
     private EaseVoiceRecorderView voiceRecorderView;
+    private EMMessageListener msgListener=new EMMessageListener() {
+        @Override
+        public void onMessageReceived(List<EMMessage> list) {
+            for (EMMessage message : messages) {
+                Logger.i("chatActivity","receive");
+                String username = null;
+                // 群组消息
+                if (message.getChatType() == EMMessage.ChatType.GroupChat || message.getChatType() == EMMessage.ChatType.ChatRoom) {
+                    username = message.getTo();
+                } else {
+                    // 单聊消息
+                    username = message.getFrom();
+                }
+
+                // 如果是当前会话的消息，刷新聊天页面
+                if (username.equals(toChatUsername)) {
+                    messageList.refreshSelectLast();
+                    // 声音和震动提示有新消息
+                    EaseUI.getInstance().getNotifier().viberateAndPlayTone(message);
+                } else {
+                    // 如果消息不是和当前聊天ID的消息
+                    EaseUI.getInstance().getNotifier().onNewMsg(message);
+                }
+            }
+        }
+
+        @Override
+        public void onCmdMessageReceived(List<EMMessage> list) {
+
+        }
+
+        @Override
+        public void onMessageReadAckReceived(List<EMMessage> list) {
+            if(isMessageListInited) {
+                messageList.refresh();
+            }
+        }
+
+        @Override
+        public void onMessageDeliveryAckReceived(List<EMMessage> list) {
+            if(isMessageListInited) {
+                messageList.refresh();
+            }
+        }
+
+        @Override
+        public void onMessageChanged(EMMessage emMessage, Object o) {
+            if(isMessageListInited) {
+                messageList.refresh();
+            }
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,7 +205,6 @@ public class ChatActivity extends BaseActivity {
                 sendBigExpressionMessage(emojicon.getName(), emojicon.getIdentityCode());
             }
         });
-        onMessageListInit();
         swipeRefreshLayout = messageList.getSwipeRefreshLayout();
         setRefreshLayoutListener();
         swipeRefreshLayout.setColorSchemeResources(R.color.holo_blue_bright, R.color.holo_green_light,
@@ -161,76 +212,37 @@ public class ChatActivity extends BaseActivity {
         inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        if (chatType != EaseConstant.CHATTYPE_CHATROOM) {
+            onConversationInit();
+            onMessageListInit();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         if(isMessageListInited)
-            messageList.refresh();
+            messageList.refreshSelectLast();
+        DemoHelper.getInstance().pushActivity(this);
         EMClient.getInstance().chatManager().addMessageListener(msgListener);
     }
     @Override
     public void onStop() {
         super.onStop();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         // unregister this event listener when this activity enters the
         // background
         EMClient.getInstance().chatManager().removeMessageListener(msgListener);
 
         // 把此activity 从foreground activity 列表里移除
-        //EaseUI.getInstance().popActivity(getActivity());
+        DemoHelper.getInstance().popActivity(this);
     }
-    EMMessageListener msgListener=new EMMessageListener() {
-        @Override
-        public void onMessageReceived(List<EMMessage> list) {
-            for (EMMessage message : messages) {
-                String username = null;
-                // 群组消息
-                if (message.getChatType() == EMMessage.ChatType.GroupChat || message.getChatType() == EMMessage.ChatType.ChatRoom) {
-                    username = message.getTo();
-                } else {
-                    // 单聊消息
-                    username = message.getFrom();
-                }
-                Logger.i("username",username);
-                // 如果是当前会话的消息，刷新聊天页面
-                if (username.equals(toChatUsername)) {
-                    messageList.refreshSelectLast();
-                    // 声音和震动提示有新消息
-                    EaseUI.getInstance().getNotifier().viberateAndPlayTone(message);
-                } else {
-                    // 如果消息不是和当前聊天ID的消息
-                    EaseUI.getInstance().getNotifier().onNewMsg(message);
-                }
-            }
-        }
 
-        @Override
-        public void onCmdMessageReceived(List<EMMessage> list) {
-
-        }
-
-        @Override
-        public void onMessageReadAckReceived(List<EMMessage> list) {
-            if(isMessageListInited) {
-                messageList.refresh();
-            }
-        }
-
-        @Override
-        public void onMessageDeliveryAckReceived(List<EMMessage> list) {
-            if(isMessageListInited) {
-                messageList.refresh();
-            }
-        }
-
-        @Override
-        public void onMessageChanged(EMMessage emMessage, Object o) {
-            if(isMessageListInited) {
-                messageList.refresh();
-            }
-        }
-    };
     protected void onConversationInit(){
         // 获取当前conversation对象
 

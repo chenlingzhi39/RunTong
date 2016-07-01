@@ -358,8 +358,7 @@ public class MainTabActivity extends TabActivity {
         }, 300);
         DemoHelper sdkHelper = DemoHelper.getInstance();
         sdkHelper.pushActivity(this);
-
-        EMClient.getInstance().chatManager().addMessageListener(messageListener);
+         EMClient.getInstance().chatManager().addMessageListener(messageListener);
         //EMClient.getInstance().chatManager().addMessageListener(msgListener);
     }
 
@@ -376,7 +375,7 @@ public class MainTabActivity extends TabActivity {
         MyApplication.activities.remove(this);
         if (mNotificationManager != null)
             mNotificationManager.cancel(10);
-        //EMClient.getInstance().chatManager().removeMessageListener(msgListener);
+        //EMClient.getInstance().chatManager().removeMessageListener(messageListener);
         unregisterReceiver(payReceiver);
         //unregisterBroadcastReceiver();
         super.onDestroy();

@@ -105,6 +105,7 @@ public class WebContactFragment extends BaseFragment {
         return webContactFragment;
     }
 
+
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);

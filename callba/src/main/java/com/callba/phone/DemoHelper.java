@@ -335,7 +335,7 @@ public class DemoHelper {
             @Override
             public String getLatestText(EMMessage message, int fromUsersNum, int messageNum) {
                 EaseUser user = getUserInfo(message.getFrom());
-                return user!=null?user.getNick():message.getFrom()+":"+EaseCommonUtils.getMessageDigest(message,appContext);
+                return (user!=null?user.getNick():message.getFrom())+":"+EaseCommonUtils.getMessageDigest(message,appContext);
                 // return fromUsersNum + "个基友，发来了" + messageNum + "条消息";
             }
             
@@ -431,7 +431,7 @@ public class DemoHelper {
         //注册连接监听
         EMClient.getInstance().addConnectionListener(connectionListener);
         //注册群组和联系人监听
-        registerGroupAndContactListener();
+       // registerGroupAndContactListener();
         //注册消息事件监听
         registerEventListener();
         
