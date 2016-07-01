@@ -229,18 +229,18 @@ public class ChatActivity extends BaseActivity {
     @Override
     public void onStop() {
         super.onStop();
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
         // unregister this event listener when this activity enters the
         // background
         EMClient.getInstance().chatManager().removeMessageListener(msgListener);
 
         // 把此activity 从foreground activity 列表里移除
         DemoHelper.getInstance().popActivity(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
     }
 
     protected void onConversationInit(){
