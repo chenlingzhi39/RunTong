@@ -5,16 +5,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import com.callba.R;
+import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
+import com.callba.phone.MyApplication;
 import com.callba.phone.activity.contact.ContactMutliNumBean;
+import com.callba.phone.bean.BaseUser;
+import com.callba.phone.bean.EaseUser;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.util.EaseCommonUtils;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.widget.EaseAlertDialog;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hyphenate.chat.EMClient;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import okhttp3.Call;
 
 /** 
  * 联系人业务逻辑管理
@@ -34,8 +48,10 @@ public class ContactController {
 	//检索的字母、位置索引表
 	private Map<String, Integer> letterSearchMap;
 	private UserDao userDao;
+	private Gson gson;
 	public ContactController() {
 		mAllContactPersonEntities = CalldaGlobalConfig.getInstance().getContactBeans();
+		gson=new Gson();
 		userDao=new UserDao(new UserDao.PostListener() {
 			@Override
 			public void start() {
@@ -92,28 +108,87 @@ public class ContactController {
 	 * @return
 	 */
 	public List<ContactEntity> getFilterListContactEntitiesNoDuplicate() {
-		List<ContactMutliNumBean> personEntities = new ArrayList<ContactMutliNumBean>();
-		String lastName = "";
-		List<String> contactPhones=new ArrayList<>();
-		Logger.i("contact_size",mAllContactPersonEntities.size()+"");
-		for(int i=0;i<mAllContactPersonEntities.size();i++){
-			if(!mAllContactPersonEntities.get(i).getDisplayName().equals("Call吧电话"))
-			userDao.addFriend(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),mAllContactPersonEntities.get(i).getPhoneNumber());
-			Logger.i("contact_number",mAllContactPersonEntities.get(i).getPhoneNumber());
-			if(i==0)
-			{personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0)));
-				contactPhones.add(mAllContactPersonEntities.get(0).getPhoneNumber());
-				personEntities.get(0).setContactPhones(contactPhones);
-			continue;}
-			if(!mAllContactPersonEntities.get(i).getDisplayName().equals(mAllContactPersonEntities.get(i-1).getDisplayName())){
-				contactPhones=new ArrayList<>();
-				contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
-				personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(i)));
-			}else{
-				contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
+		final List<ContactMutliNumBean> personEntities = new ArrayList<ContactMutliNumBean>();
+		String phoneNumbers="";
+				List<String> contactPhones=new ArrayList<>();
+				Logger.i("contact_size",mAllContactPersonEntities.size()+"");
+				for(int i=0;i<mAllContactPersonEntities.size();i++){
+					if(!mAllContactPersonEntities.get(i).getDisplayName().equals("Call吧电话"))
+					{//userDao.addFriend(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),mAllContactPersonEntities.get(i).getPhoneNumber());
+					phoneNumbers+=mAllContactPersonEntities.get(i).getDisplayName()+",";
+					}
+					Logger.i("contact_number",mAllContactPersonEntities.get(i).getPhoneNumber());
+					if(i==0)
+					{personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0)));
+						contactPhones.add(mAllContactPersonEntities.get(0).getPhoneNumber());
+						personEntities.get(0).setContactPhones(contactPhones);
+						continue;}
+					if(!mAllContactPersonEntities.get(i).getDisplayName().equals(mAllContactPersonEntities.get(i-1).getDisplayName())){
+						contactPhones=new ArrayList<>();
+						contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
+						personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(i)));
+					}else{
+						contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
+					}
+					personEntities.get(personEntities.size()-1).setContactPhones(contactPhones);
 				}
-			personEntities.get(personEntities.size()-1).setContactPhones(contactPhones);
-		}
+
+		Logger.i("phoneNumbers",phoneNumbers);
+		OkHttpUtils
+				.post()
+				.url(Interfaces.ADD_FRIENDS)
+				.addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+				.addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+				.addParams("phoneNumbers",phoneNumbers)
+				.build().execute(new StringCallback() {
+			@Override
+			public void onError(Call call, Exception e, int id) {
+               e.printStackTrace();
+			}
+
+			@Override
+			public void onResponse(String response, int id) {
+				Logger.i("add_results",response);
+                String[] result=response.split("\\|");
+					  if(result[0].equals("0")){
+						  OkHttpUtils
+								  .post()
+								  .url(Interfaces.GET_FRIENDS)
+								  .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+								  .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+								  .build().execute(new StringCallback() {
+							  @Override
+							  public void onError(Call call, Exception e, int id) {
+								  e.printStackTrace();
+							  }
+
+							  @Override
+							  public void onResponse(String response, int id) {
+								  Logger.i("get_result",response);
+								  String[] result = response.split("\\|");
+								  if (result[0].equals("0")) {
+									  ArrayList<BaseUser> list;
+									  list = gson.fromJson(result[1], new TypeToken<List<BaseUser>>() {
+									  }.getType());
+									  List<EaseUser> mList = new ArrayList<EaseUser>();
+									  for (BaseUser baseUser : list) {
+										  EaseUser user = new EaseUser(baseUser.getPhoneNumber()+"-callba");
+										  user.setAvatar(baseUser.getUrl_head());
+										  user.setNick(baseUser.getNickname());
+										  user.setSign(baseUser.getSign());
+										  EaseCommonUtils.setUserInitialLetter(user);
+										  mList.add(user);
+									  }
+									  DemoHelper.getInstance().updateContactList(mList);
+									  LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+
+								  }
+							  }
+						  });
+					  }
+			}
+		});
+
 		/*for(ContactPersonEntity contactPersonEntity : mAllContactPersonEntities) {
 
 			if(!TextUtils.isEmpty(lastName) && lastName.equals(contactPersonEntity.getDisplayName())) {

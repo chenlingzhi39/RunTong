@@ -5,13 +5,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.ImageButton;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
@@ -19,12 +27,15 @@ import com.callba.phone.Constant;
 import com.callba.phone.adapter.ConversationAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.bean.EaseUser;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.Logger;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
-
+import com.hyphenate.chat.EMMessage;
+import com.hyphenate.util.EMLog;
+import com.umeng.fb.model.Conversation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,8 +43,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * Created by Administrator on 2016/5/15.
@@ -49,12 +62,25 @@ public class MessageActivity extends BaseActivity {
     RecyclerView conversationListview;
     //EaseConversationList conversationListView;
     protected List<EMConversation> conversationList = new ArrayList<>();
+    @InjectView(R.id.query)
+    EditText query;
+    @InjectView(R.id.search_clear)
+    ImageButton clearSearch;
     private ConversationAdapter adapter;
     private ChatReceiver chatReceiver;
     private AsReadReceiver asReadReceiver;
-    private int index=-1;
+    private int index = -1;
     private BroadcastReceiver broadcastReceiver;
     private LocalBroadcastManager broadcastManager;
+   private  List<EMConversation> copyList;
+    protected InputMethodManager inputMethodManager;
+    @OnClick(R.id.search_clear)
+    public void onClick() {
+        query.getText().clear();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(query.getWindowToken(), 0);
+    }
+
     public interface EaseConversationListItemClickListener {
         /**
          * 会话listview item点击事件
@@ -75,22 +101,23 @@ public class MessageActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
+        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         String language = Locale.getDefault().getLanguage();
-        Logger.i("language",language);
+        Logger.i("language", language);
         Locale.setDefault(new Locale("zh"));
-        Logger.i("language",Locale.getDefault().getLanguage());
+        Logger.i("language", Locale.getDefault().getLanguage());
         conversationList.addAll(loadConversationList());
         conversationListview.addItemDecoration(new DividerItemDecoration(
                 this, DividerItemDecoration.VERTICAL_LIST));
         conversationListview.setLayoutManager(new LinearLayoutManager(this));
-        adapter=new ConversationAdapter(this);
+        adapter = new ConversationAdapter(this);
         adapter.addAll(conversationList);
         adapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-             adapter.getData().get(position).markAllMessagesAsRead();
-             Intent intent=new Intent(MessageActivity.this,ChatActivity.class);
-                intent.putExtra("username",conversationList.get(position).getUserName());
+                adapter.getData().get(position).markAllMessagesAsRead();
+                Intent intent = new Intent(MessageActivity.this, ChatActivity.class);
+                intent.putExtra("username", conversationList.get(position).getUserName());
                 startActivity(intent);
                 adapter.notifyItemChanged(position);
             }
@@ -100,12 +127,45 @@ public class MessageActivity extends BaseActivity {
                 "com.callba.chat");
         IntentFilter filter1 = new IntentFilter(
                 "com.callba.asread");
-        chatReceiver=new ChatReceiver();
-        registerReceiver(chatReceiver,filter);
-        asReadReceiver=new AsReadReceiver();
-        registerReceiver(asReadReceiver,filter1);
+        chatReceiver = new ChatReceiver();
+        registerReceiver(chatReceiver, filter);
+        asReadReceiver = new AsReadReceiver();
+        registerReceiver(asReadReceiver, filter1);
         registerBroadcastReceiver();
-    }
+        query.addTextChangedListener(new TextWatcher() {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                new MyFilter(copyList).filter(s);
+                if (s.length() > 0) {
+                    clearSearch.setVisibility(View.VISIBLE);
+                } else {
+                    clearSearch.setVisibility(View.INVISIBLE);
+
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void afterTextChanged(Editable s) {
+            }
+        });
+        clearSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                query.getText().clear();
+                hideSoftKeyboard();
+            }
+        });
+
+        conversationListview.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // 隐藏软键盘
+                hideSoftKeyboard();
+                return false;
+            }
+        });    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -154,6 +214,7 @@ public class MessageActivity extends BaseActivity {
         for (Pair<Long, EMConversation> sortItem : sortList) {
             list.add(sortItem.second);
         }
+        copyList=list;
         return list;
     }
 
@@ -186,7 +247,8 @@ public class MessageActivity extends BaseActivity {
 
         });
     }
-    class ChatReceiver extends BroadcastReceiver{
+
+    class ChatReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             conversationList.clear();
@@ -195,7 +257,8 @@ public class MessageActivity extends BaseActivity {
             adapter.addAll(conversationList);
         }
     }
-    class AsReadReceiver extends BroadcastReceiver{
+
+    class AsReadReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             conversationList.clear();
@@ -204,6 +267,7 @@ public class MessageActivity extends BaseActivity {
             adapter.addAll(conversationList);
         }
     }
+
     /**
      * 重写onkeyDown 捕捉返回键
      */
@@ -216,6 +280,7 @@ public class MessageActivity extends BaseActivity {
         }
         return false;
     }
+
     private void registerBroadcastReceiver() {
         broadcastManager = LocalBroadcastManager.getInstance(this);
         IntentFilter intentFilter = new IntentFilter(Constant.ACTION_CONTACT_CHANAGED);
@@ -223,14 +288,77 @@ public class MessageActivity extends BaseActivity {
 
             @Override
             public void onReceive(Context context, Intent intent) {
-                Logger.i("webContact",Constant.ACTION_CONTACT_CHANAGED);
+                Logger.i("webContact", Constant.ACTION_CONTACT_CHANAGED);
                 conversationList.clear();
                 conversationList.addAll(loadConversationList());
             }
         };
         broadcastManager.registerReceiver(broadcastReceiver, intentFilter);
     }
-    private void unregisterBroadcastReceiver(){
+
+    private void unregisterBroadcastReceiver() {
         broadcastManager.unregisterReceiver(broadcastReceiver);
+    }
+    public class MyFilter extends Filter{
+        List<EMConversation> mOriginalList;
+        public MyFilter(List<EMConversation> messages) {
+        this.mOriginalList=messages;
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence prefix) {
+            FilterResults results = new FilterResults();
+            if(mOriginalList==null){
+                mOriginalList = new ArrayList<EMConversation>();
+            }
+
+
+            if(prefix==null || prefix.length()==0){
+                results.values = copyList;
+                results.count = copyList.size();
+            }else{
+                String prefixString = prefix.toString();
+                final int count = mOriginalList.size();
+                final ArrayList<EMConversation> newValues = new ArrayList<EMConversation>();
+                for(int i=0;i<count;i++){
+                    final EMConversation conversation= mOriginalList.get(i);
+//                    String username = user.getNick();
+//                    if(username == null)
+//                        username = user.getNick();
+              String username=conversation.getUserName();
+                    if(username.startsWith(prefixString)){
+                        newValues.add(conversation);
+                    }
+                    else{
+                        final String[] words = username.split(" ");
+                        final int wordCount = words.length;
+
+                        // Start at index 0, in case valueText starts with space(s)
+                        for (int k = 0; k < wordCount; k++) {
+                            if (words[k].startsWith(prefixString)) {
+                                newValues.add(conversation);
+                                break;
+                            }
+                        }
+                    }
+                }
+                results.values=newValues;
+                results.count=newValues.size();
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            adapter.clear();
+            adapter.addAll((ArrayList<EMConversation>)results.values);
+        }
+    }
+    protected void hideSoftKeyboard() {
+        if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+            if (getCurrentFocus() != null)
+                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                        InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 }

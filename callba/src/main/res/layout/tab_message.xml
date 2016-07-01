@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/toolbar_padding"/>
-
+    <include
+        android:id="@+id/search_bar_view"
+        layout="@layout/ease_search_bar_with_padding" />
    <!-- <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -224,6 +224,10 @@ public interface Interfaces {
 	 * 删除好友
 	 */
 	String DELETE_FRIENDS="http://inter.boboit.cn/inter/friend/deletefriend.jsp";
+	/**
+	 * 添加多个好友
+	 */
+	String ADD_FRIENDS="http://inter.boboit.cn/inter/friend/addfriends.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

@@ -226,6 +226,8 @@ public class HomeActivity extends BaseActivity {
                         startActivity(intent);
                     }} else {
                     //toast(result[1]);
+                    Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
+                    startActivity(intent);
                 }
             }
 
@@ -473,7 +475,7 @@ public class HomeActivity extends BaseActivity {
         Task task = new Task(Task.TASK_LOGIN);
         Map<String, Object> taskParams = new HashMap<String, Object>();
         taskParams.put("loginSign", sign);
-        taskParams.put("loginType", "0");
+        taskParams.put("loginType", "1");
         task.setTaskParams(taskParams);
 
         // 登录

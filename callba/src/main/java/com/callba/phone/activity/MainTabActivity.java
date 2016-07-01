@@ -40,6 +40,7 @@ import android.widget.Toast;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 
+import com.callba.phone.DemoHelper;
 import com.callba.phone.MyApplication;
 import com.callba.phone.activity.contact.ContactActivity;
 import com.callba.phone.activity.contact.ContactActivity2;
@@ -86,11 +87,11 @@ public class MainTabActivity extends TabActivity {
     private int[] mTabImageArray = {R.drawable.menu1_selector,
             R.drawable.menu2_selector, R.drawable.menu3_selector,
             R.drawable.menu4_selector, R.drawable.menu5_selector};
-    EMMessageListener msgListener;
     NotificationManager mNotificationManager;
     private static final int FLING_MIN_DISTANCE = 100;
     private static final int FLING_MIN_VELOCITY = 0;
     BroadcastReceiver payReceiver;
+    private EMMessageListener messageListener;
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -252,14 +253,15 @@ public class MainTabActivity extends TabActivity {
             } catch (Exception e) {
             }
         }
-        msgListener = new EMMessageListener() {
+        messageListener = new EMMessageListener() {
 
             @Override
             public void onMessageReceived(List<EMMessage> messages) {
                 //收到消息
                 for (EMMessage message : messages) {
                     Log.i("get_message", message.getBody().toString());
-                    sendNotification1(ChatActivity.class, "你有一条新消息", EaseCommonUtils.getMessageDigest(message,MainTabActivity.this), message.getFrom());
+                    //sendNotification1(ChatActivity.class, "你有一条新消息", EaseCommonUtils.getMessageDigest(message,MainTabActivity.this), message.getFrom());
+                        DemoHelper.getInstance().getNotifier().onNewMsg(message);
                     Intent intent = new Intent("com.callba.chat");
                     intent.putExtra("username", message.getFrom());
                     sendBroadcast(intent);
@@ -354,12 +356,19 @@ public class MainTabActivity extends TabActivity {
                 sendBroadcast(intent);
             }
         }, 300);
-        EMClient.getInstance().chatManager().addMessageListener(msgListener);
+        DemoHelper sdkHelper = DemoHelper.getInstance();
+        sdkHelper.pushActivity(this);
+
+        EMClient.getInstance().chatManager().addMessageListener(messageListener);
+        //EMClient.getInstance().chatManager().addMessageListener(msgListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        EMClient.getInstance().chatManager().removeMessageListener(messageListener);
+        DemoHelper sdkHelper = DemoHelper.getInstance();
+        sdkHelper.popActivity(this);
     }
 
     @Override
@@ -367,7 +376,7 @@ public class MainTabActivity extends TabActivity {
         MyApplication.activities.remove(this);
         if (mNotificationManager != null)
             mNotificationManager.cancel(10);
-        EMClient.getInstance().chatManager().removeMessageListener(msgListener);
+        //EMClient.getInstance().chatManager().removeMessageListener(msgListener);
         unregisterReceiver(payReceiver);
         //unregisterBroadcastReceiver();
         super.onDestroy();

@@ -17,6 +17,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -25,6 +27,7 @@ import android.os.Build;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 
+import com.callba.R;
 import com.callba.phone.controller.EaseUI;
 import com.callba.phone.controller.EaseUI.*;
 import com.hyphenate.chat.EMClient;
@@ -274,12 +277,13 @@ public class EaseNotifier {
             mBuilder.setTicker(notifyText);
             mBuilder.setContentText(summaryBody);
             mBuilder.setContentIntent(pendingIntent);
+            mBuilder.setLargeIcon(notificationInfoProvider.getLargeIcon(message));
             // mBuilder.setNumber(notificationNum);
             Notification notification = mBuilder.build();
 
             if (isForeground) {
                 notificationManager.notify(foregroundNotifyID, notification);
-                notificationManager.cancel(foregroundNotifyID);
+                //notificationManager.cancel(foregroundNotifyID);
             } else {
                 notificationManager.notify(notifyID, notification);
             }
@@ -407,7 +411,7 @@ public class EaseNotifier {
          * @return 0使用默认图标
          */
         int getSmallIcon(EMMessage message);
-
+        Bitmap getLargeIcon(EMMessage message);
         /**
          * 设置notification点击时的跳转intent
          * 

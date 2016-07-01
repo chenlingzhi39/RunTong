@@ -33,6 +33,7 @@ import com.callba.phone.bean.EaseEmojicon;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.controller.EaseUI;
 import com.callba.phone.util.EaseCommonUtils;
+import com.callba.phone.util.Logger;
 import com.callba.phone.widget.EaseAlertDialog;
 import com.callba.phone.widget.EaseChatExtendMenu;
 import com.callba.phone.widget.EaseChatInputMenu;
@@ -169,6 +170,16 @@ public class ChatActivity extends BaseActivity {
             messageList.refresh();
         EMClient.getInstance().chatManager().addMessageListener(msgListener);
     }
+    @Override
+    public void onStop() {
+        super.onStop();
+        // unregister this event listener when this activity enters the
+        // background
+        EMClient.getInstance().chatManager().removeMessageListener(msgListener);
+
+        // 把此activity 从foreground activity 列表里移除
+        //EaseUI.getInstance().popActivity(getActivity());
+    }
     EMMessageListener msgListener=new EMMessageListener() {
         @Override
         public void onMessageReceived(List<EMMessage> list) {
@@ -181,7 +192,7 @@ public class ChatActivity extends BaseActivity {
                     // 单聊消息
                     username = message.getFrom();
                 }
-
+                Logger.i("username",username);
                 // 如果是当前会话的消息，刷新聊天页面
                 if (username.equals(toChatUsername)) {
                     messageList.refreshSelectLast();
@@ -510,11 +521,6 @@ public class ChatActivity extends BaseActivity {
 
     }
 
-    @Override
-    protected void onDestroy() {
-        unregisterReceiver(chatReceiver);
-        super.onDestroy();
-    }
 
   /*  @OnClick(R.id.btn_send)
     public void onClick() {

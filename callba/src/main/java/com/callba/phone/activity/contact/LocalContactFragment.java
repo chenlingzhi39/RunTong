@@ -90,6 +90,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
     }
     private void initContactListView() {
         ContactController contactController = new ContactController();
+
         List<ContactEntity> allContactEntities = contactController.getFilterListContactEntitiesNoDuplicate();
         if(mContactListData == null) {
             mContactListData = new ArrayList<ContactEntity>();

@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,9 +33,9 @@ public class EaseContactList extends RelativeLayout {
     protected int primarySize;
     protected boolean showSiderBar;
     protected Drawable initialLetterBg;
-    
+    protected SwipeRefreshLayout swipeRefreshLayout;
     static final int MSG_UPDATE_LIST = 0;
-    
+    protected SwipeRefreshLayout.OnRefreshListener refreshListener;
     Handler handler = new Handler() {
         
         @Override
@@ -86,13 +87,28 @@ public class EaseContactList extends RelativeLayout {
         LayoutInflater.from(context).inflate(R.layout.ease_widget_contact_list, this);
         listView = (ListView)findViewById(R.id.list);
         sidebar = (EaseSidebar) findViewById(R.id.sidebar);
+        swipeRefreshLayout=(SwipeRefreshLayout) findViewById(R.id.refresh);
+        swipeRefreshLayout.setColorSchemeResources(R.color.orange);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshListener.onRefresh();
+            }
+        });
+
         if(!showSiderBar)
             sidebar.setVisibility(View.GONE);
     }
-    
+
+    public void setRefreshListener(SwipeRefreshLayout.OnRefreshListener refreshListener) {
+        this.refreshListener = refreshListener;
+    }
+    public void setRefreshing(boolean isRefreshing){
+        swipeRefreshLayout.setRefreshing(isRefreshing);
+    }
     /*
-     * init view
-     */
+         * init view
+         */
     public void init(List<EaseUser> contactList){
     	this.contactList = contactList;
         adapter = new EaseContactAdapter(context, 0, new ArrayList<EaseUser>(contactList));

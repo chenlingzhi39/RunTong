@@ -5,15 +5,20 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.activity.ChatActivity;
 import com.callba.phone.activity.parse.UserProfileManager;
 import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseEmojicon;
+import com.callba.phone.bean.EaseEmojiconGroupEntity;
 import com.callba.phone.bean.EaseNotifier;
+import com.callba.phone.bean.EaseNotifier.*;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.controller.EaseUI;
@@ -27,6 +32,7 @@ import com.callba.phone.db.UserDao;
 import com.callba.phone.domain.RobotUser;
 import com.callba.phone.receiver.CallReceiver;
 import com.callba.phone.util.EaseCommonUtils;
+import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.PreferenceManager;
@@ -222,7 +228,7 @@ public class DemoHelper {
             }
         });
         
-       /* //不设置，则使用easeui默认的
+        //不设置，则使用easeui默认的
         easeUI.setSettingsProvider(new EaseSettingsProvider() {
             
             @Override
@@ -268,8 +274,8 @@ public class DemoHelper {
                     }
                 }
             }
-        });*/
-     /*   //设置表情provider
+        });
+      /*  //设置表情provider
         easeUI.setEmojiconInfoProvider(new EaseEmojiconInfoProvider() {
             
             @Override
@@ -288,7 +294,7 @@ public class DemoHelper {
                 //返回文字表情emoji文本和图片(resource id或者本地路径)的映射map
                 return null;
             }
-        });
+        });*/
         
         //不设置，则使用easeui默认的
         easeUI.getNotifier().setNotificationInfoProvider(new EaseNotificationInfoProvider() {
@@ -296,15 +302,21 @@ public class DemoHelper {
             @Override
             public String getTitle(EMMessage message) {
               //修改标题,这里使用默认
-                return null;
+                return "你有一条新消息";
             }
             
             @Override
             public int getSmallIcon(EMMessage message) {
               //设置小图标，这里为默认
-                return 0;
+                return R.drawable.logo_notification;
             }
-            
+
+            @Override
+            public Bitmap getLargeIcon(EMMessage message) {
+                return BitmapFactory.decodeResource(appContext.getResources(),
+                        R.drawable.logo);
+            }
+
             @Override
             public String getDisplayedText(EMMessage message) {
                 // 设置状态栏的消息提示，可以根据message的类型做相应提示
@@ -322,7 +334,8 @@ public class DemoHelper {
             
             @Override
             public String getLatestText(EMMessage message, int fromUsersNum, int messageNum) {
-                return null;
+                EaseUser user = getUserInfo(message.getFrom());
+                return user!=null?user.getNick():message.getFrom()+":"+EaseCommonUtils.getMessageDigest(message,appContext);
                 // return fromUsersNum + "个基友，发来了" + messageNum + "条消息";
             }
             
@@ -330,7 +343,8 @@ public class DemoHelper {
             public Intent getLaunchIntent(EMMessage message) {
                 //设置点击通知栏跳转事件
                 Intent intent = new Intent(appContext, ChatActivity.class);
-                //有电话时优先跳转到通话页面
+                intent.putExtra("username", message.getFrom());
+               /* //有电话时优先跳转到通话页面
                 if(isVideoCalling){
                     intent = new Intent(appContext, VideoCallActivity.class);
                 }else if(isVoiceCalling){
@@ -350,10 +364,10 @@ public class DemoHelper {
                         }
                         
                     }
-                }
+                }*/
                 return intent;
             }
-        });*/
+        });
     }
     
     /**
@@ -1165,7 +1179,7 @@ public class DemoHelper {
            @Override
            public void run(){
                List<String> usernames = null;
-               try {
+              /* try {
                    usernames = EMClient.getInstance().contactManager().getAllContactsFromServer();
                    // in case that logout already before server returns, we should return immediately
                    if(!isLoggedIn()){
@@ -1188,7 +1202,7 @@ public class DemoHelper {
                     // 存入db
                    UserDao dao = new UserDao(appContext);
                    List<EaseUser> users = new ArrayList<EaseUser>(userlist.values());
-                   dao.saveContactList(users);
+                   dao.saveContactList(users);*/
 
                    demoModel.setContactSynced(true);
                    EMLog.d(TAG, "set contact syn status to true");
@@ -1216,7 +1230,7 @@ public class DemoHelper {
                    if(callback != null){
                        callback.onSuccess(usernames);
                    }
-               } catch (HyphenateException e) {
+            /*   } catch (HyphenateException e) {
                    demoModel.setContactSynced(false);
                    isContactsSyncedWithServer = false;
                    isSyncingContactsWithServer = false;
@@ -1225,7 +1239,7 @@ public class DemoHelper {
                    if(callback != null){
                        callback.onError(e.getErrorCode(), e.toString());
                    }
-               }
+               }*/
            }
        }.start();
    }

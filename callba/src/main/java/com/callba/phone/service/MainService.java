@@ -1449,7 +1449,7 @@ public class MainService extends Service implements Runnable{
 				 */
 				locationOption.setGpsFirst(false);
 				// 设置定位模式为高精度模式
-				locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+				locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
 				locationOption.setInterval(CalldaGlobalConfig.getInstance().getInterval());
 				// 设置定位监听
 				locationClient.setLocationListener(this);

@@ -178,6 +178,40 @@ public class AddContactActivity extends BaseActivity {
                             //demo写死了个reason，实际应该让用户手动填入
                             String s = getResources().getString(R.string.Add_a_friend);
                             //EMClient.getInstance().contactManager().addContact(toAddUsername+"-callba", s);
+                            OkHttpUtils
+                                    .post()
+                                    .url(Interfaces.GET_FRIENDS)
+                                    .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+                                    .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                                    .build().execute(new StringCallback() {
+                                @Override
+                                public void onError(Call call, Exception e, int id) {
+                                    e.printStackTrace();
+                                }
+
+                                @Override
+                                public void onResponse(String response, int id) {
+                                    Logger.i("get_result",response);
+                                    String[] result = response.split("\\|");
+                                    if (result[0].equals("0")) {
+                                        ArrayList<BaseUser> list;
+                                        list = gson.fromJson(result[1], new TypeToken<List<BaseUser>>() {
+                                        }.getType());
+                                        List<EaseUser> mList = new ArrayList<EaseUser>();
+                                        for (BaseUser baseUser : list) {
+                                            EaseUser user = new EaseUser(baseUser.getPhoneNumber()+"-callba");
+                                            user.setAvatar(baseUser.getUrl_head());
+                                            user.setNick(baseUser.getNickname());
+                                            user.setSign(baseUser.getSign());
+                                            EaseCommonUtils.setUserInitialLetter(user);
+                                            mList.add(user);
+                                        }
+                                        DemoHelper.getInstance().updateContactList(mList);
+                                        LocalBroadcastManager.getInstance(AddContactActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+
+                                    }
+                                }
+                            });
                             runOnUiThread(new Runnable() {
                                 public void run() {
                                     progressDialog.dismiss();
@@ -197,40 +231,7 @@ public class AddContactActivity extends BaseActivity {
                     }else { toast(result[1]);
                             progressDialog.dismiss();
                         }
-                        OkHttpUtils
-                                .post()
-                                .url(Interfaces.GET_FRIENDS)
-                                .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-                                .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
-                                .build().execute(new StringCallback() {
-                            @Override
-                            public void onError(Call call, Exception e, int id) {
-                                e.printStackTrace();
-                            }
 
-                            @Override
-                            public void onResponse(String response, int id) {
-                                Logger.i("get_result",response);
-                                String[] result = response.split("\\|");
-                                if (result[0].equals("0")) {
-                                    ArrayList<BaseUser> list;
-                                    list = gson.fromJson(result[1], new TypeToken<List<BaseUser>>() {
-                                    }.getType());
-                                    List<EaseUser> mList = new ArrayList<EaseUser>();
-                                    for (BaseUser baseUser : list) {
-                                        EaseUser user = new EaseUser(baseUser.getPhoneNumber()+"-callba");
-                                        user.setAvatar(baseUser.getUrl_head());
-                                        user.setNick(baseUser.getNickname());
-                                        user.setSign(baseUser.getSign());
-                                        EaseCommonUtils.setUserInitialLetter(user);
-                                        mList.add(user);
-                                    }
-                                    DemoHelper.getInstance().updateContactList(mList);
-                                    LocalBroadcastManager.getInstance(AddContactActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-
-                                }
-                            }
-                        });
                     }
                 });
     }

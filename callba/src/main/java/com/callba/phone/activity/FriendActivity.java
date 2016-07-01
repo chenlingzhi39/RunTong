@@ -308,6 +308,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         public void onClick(View v) {
             switch (v.getId()){
                 case R.id.add_contact:
+                    mDialog.dismiss();
                     if(EMClient.getInstance().getCurrentUser().equals(entity.getPhoneNumber()+"-callba")){
                         new EaseAlertDialog(FriendActivity.this, R.string.not_add_myself).show();
                         return;
@@ -328,7 +329,6 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                     progressDialog.setMessage(stri);
                     progressDialog.setCanceledOnTouchOutside(false);
                     progressDialog.show();
-                    mDialog.dismiss();
                     OkHttpUtils
                             .post()
                             .url(Interfaces.ADD_FRIEND)
@@ -359,6 +359,15 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                                         //demo写死了个reason，实际应该让用户手动填入
                                         String s = getResources().getString(R.string.Add_a_friend);
                                         //EMClient.getInstance().contactManager().addContact(entity.getPhoneNumber()+"-callba", s);
+                                        List<EaseUser> mList = new ArrayList<EaseUser>();
+                                            EaseUser user = new EaseUser(entity.getPhoneNumber()+"-callba");
+                                            user.setAvatar(entity.getUrl_head());
+                                            user.setNick(entity.getNickname());
+                                            //user.setSign(entity.getSign());
+                                            EaseCommonUtils.setUserInitialLetter(user);
+                                            mList.add(user);
+                                        DemoHelper.getInstance().updateContactList(mList);
+                                        LocalBroadcastManager.getInstance(FriendActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
                                         runOnUiThread(new Runnable() {
                                             public void run() {
                                                 progressDialog.dismiss();
@@ -378,40 +387,6 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                                 }else { toast(result[1]);
                                         progressDialog.dismiss();
                                     }
-                                    OkHttpUtils
-                                            .post()
-                                            .url(Interfaces.GET_FRIENDS)
-                                            .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-                                            .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
-                                            .build().execute(new StringCallback() {
-                                        @Override
-                                        public void onError(Call call, Exception e, int id) {
-                                            e.printStackTrace();
-                                        }
-
-                                        @Override
-                                        public void onResponse(String response, int id) {
-                                            Logger.i("get_result",response);
-                                            String[] result = response.split("\\|");
-                                            if (result[0].equals("0")) {
-                                                ArrayList<BaseUser> list;
-                                                list = gson.fromJson(result[1], new TypeToken<List<BaseUser>>() {
-                                                }.getType());
-                                                List<EaseUser> mList = new ArrayList<EaseUser>();
-                                                for (BaseUser baseUser : list) {
-                                                    EaseUser user = new EaseUser(baseUser.getPhoneNumber()+"-callba");
-                                                    user.setAvatar(baseUser.getUrl_head());
-                                                    user.setNick(baseUser.getNickname());
-                                                    user.setSign(baseUser.getSign());
-                                                    EaseCommonUtils.setUserInitialLetter(user);
-                                                    mList.add(user);
-                                                }
-                                                DemoHelper.getInstance().updateContactList(mList);
-                                                LocalBroadcastManager.getInstance(FriendActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-
-                                            }
-                                        }
-                                    });
                                 }
                             });
 

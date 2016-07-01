@@ -156,7 +156,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         Task task = new Task(Task.TASK_LOGIN);
         Map<String, Object> taskParams = new HashMap<String, Object>();
         taskParams.put("loginSign", sign);
-        taskParams.put("loginType", "0");
+        taskParams.put("loginType", "1");
         task.setTaskParams(taskParams);
         //登录
         LoginController.getInstance().userLogin(this, task, new UserLoginListener() {
@@ -201,11 +201,16 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
      * 跳转到主页面
      */
     private void gotoMainActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainTabActivity.class);
+        this.startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
-        Intent intent = new Intent(LoginActivity.this, MainTabActivity.class);
-        this.startActivity(intent);
+        super.onDestroy();
     }
 
     /**

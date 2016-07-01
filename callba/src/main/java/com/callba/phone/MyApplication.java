@@ -71,7 +71,7 @@ public class MyApplication extends MultiDexApplication {
         DemoHelper.getInstance().init(this);
         GlideBuilder builder = new GlideBuilder(this);
         builder.setMemoryCache(new LruResourceCache(5 * 1024 * 1024));
-        Glide.get(this).setMemoryCategory(MemoryCategory.HIGH);
+        Glide.get(this).setMemoryCategory(MemoryCategory.NORMAL);
         builder.setDiskCache(
                 new ExternalCacheDiskCacheFactory(this, StorageUtils.getCacheDirectory(getApplicationContext()).getPath(), 10 * 1024 * 1024));
         initUmengAnalytics();

@@ -463,7 +463,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
             @Override
             public void failure(String msg) {
-                toast(msg);
+               // toast(msg);
             }
         });
     }
