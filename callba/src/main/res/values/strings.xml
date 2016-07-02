@@ -679,4 +679,5 @@
     <string name="File_does_not_exist">文件不存在</string>
     <string name="The_file_is_not_greater_than_10_m">文件不能大于10M</string>
     <string name="no_result">对不起，没有搜索到相关数据！</string>
+    <string name="clear">清空</string>
 </resources>

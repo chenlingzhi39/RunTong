@@ -663,7 +663,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     private void addWXPlatform() {
 
         // wx967daebe835fbeac是你在微信开发平台注册应用的AppID, 这里需要替换成你注册的AppID
-        String appId = "wx967daebe835fbeac";
+        String appId = "wxd258acce3916c63a";
         // 微信图文分享,音乐必须设置一个url
         String contentUrl = "http://www.umeng.com/social";
         // 添加微信平台

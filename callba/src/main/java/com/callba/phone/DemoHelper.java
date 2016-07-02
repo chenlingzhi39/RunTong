@@ -699,26 +699,12 @@ public class DemoHelper {
             localUsers.remove(username);
             userDao.deleteContact(username);
             inviteMessgeDao.deleteMessage(username);
-
+            EMClient.getInstance().chatManager().deleteConversation(username,true);
+            Intent intent=new Intent(Constant.ACTION_CONTACT_CHANAGED);
+            intent.putExtra("username",username);
             //发送好友变动广播
-            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-            RequestParams params = new RequestParams();
-            params.addBodyParameter("loginName",CalldaGlobalConfig.getInstance().getUsername());
-            params.addBodyParameter("loginPwd", CalldaGlobalConfig.getInstance().getPassword());
-            params.addBodyParameter("phoneNumber",username.substring(0,11));
-            Logger.i("delete_url",Interfaces.DELETE_FRIENDS+"?loginName="+CalldaGlobalConfig.getInstance().getUsername()+"&loginPwd="+CalldaGlobalConfig.getInstance().getPassword()+"&phoneNumber="+username.substring(0,11));
-            httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.DELETE_FRIENDS, params, new RequestCallBack<String>(){
-                @Override
-                public void onFailure(HttpException error, String msg) {
-                    error.printStackTrace();
-                }
+            broadcastManager.sendBroadcast(intent);
 
-                @Override
-                public void onSuccess(ResponseInfo<String> responseInfo) {
-                    Logger.i("delete_result",responseInfo.result);
-
-                }
-            });
         }
 
         @Override
@@ -832,6 +818,9 @@ public class DemoHelper {
 			public void onMessageReceived(List<EMMessage> messages) {
 			    for (EMMessage message : messages) {
 			        EMLog.d(TAG, "onMessageReceived id : " + message.getMsgId());
+                    Intent intent = new Intent("com.callba.chat");
+                    intent.putExtra("message",message);
+                    appContext.sendBroadcast(intent);
 			        //应用在后台，不需要刷新UI,通知栏提示新消息
 			        if(!easeUI.hasForegroundActivies()){
 			            getNotifier().onNewMsg(message);

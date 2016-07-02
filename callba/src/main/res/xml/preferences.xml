@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.jenzz.materialpreference.PreferenceCategory android:title="@string/notify">
+        <com.jenzz.materialpreference.SwitchPreference
+            android:key="message_key"
+            android:defaultValue="true"
+            android:title="@string/newnotify"
+            />
+        <com.jenzz.materialpreference.SwitchPreference
+            android:key="voice_key"
+            android:defaultValue="true"
+            android:title="@string/voice"
+            />
+        <com.jenzz.materialpreference.SwitchPreference
+            android:key="shake_key"
+            android:defaultValue="true"
+            android:title="@string/shake"
+            />
+    </com.jenzz.materialpreference.PreferenceCategory>
+</PreferenceScreen>

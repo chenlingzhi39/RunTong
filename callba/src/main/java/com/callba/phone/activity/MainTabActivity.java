@@ -261,9 +261,11 @@ public class MainTabActivity extends TabActivity {
                 for (EMMessage message : messages) {
                     Log.i("get_message", message.getBody().toString());
                     //sendNotification1(ChatActivity.class, "你有一条新消息", EaseCommonUtils.getMessageDigest(message,MainTabActivity.this), message.getFrom());
-                        DemoHelper.getInstance().getNotifier().onNewMsg(message);
+
+                    DemoHelper.getInstance().getNotifier().onNewMsg(message);
                     Intent intent = new Intent("com.callba.chat");
                     intent.putExtra("username", message.getFrom());
+                    intent.putExtra("message",message);
                     sendBroadcast(intent);
                 }
             }
@@ -356,20 +358,19 @@ public class MainTabActivity extends TabActivity {
                 sendBroadcast(intent);
             }
         }, 300);
-        DemoHelper sdkHelper = DemoHelper.getInstance();
-        sdkHelper.pushActivity(this);
-         EMClient.getInstance().chatManager().addMessageListener(messageListener);
+       /* DemoHelper sdkHelper = DemoHelper.getInstance();
+        sdkHelper.pushActivity(this);*/
+        //EMClient.getInstance().chatManager().addMessageListener(messageListener);
         //EMClient.getInstance().chatManager().addMessageListener(msgListener);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        EMClient.getInstance().chatManager().removeMessageListener(messageListener);
-        DemoHelper sdkHelper = DemoHelper.getInstance();
-        sdkHelper.popActivity(this);
+        //EMClient.getInstance().chatManager().removeMessageListener(messageListener);
+       /* DemoHelper sdkHelper = DemoHelper.getInstance();
+        sdkHelper.popActivity(this);*/
     }
-
     @Override
     protected void onDestroy() {
         MyApplication.activities.remove(this);

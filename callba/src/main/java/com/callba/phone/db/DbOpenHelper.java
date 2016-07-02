@@ -22,14 +22,15 @@ import com.callba.phone.DemoHelper;
 
 public class DbOpenHelper extends SQLiteOpenHelper {
 
-	private static final int DATABASE_VERSION = 6;
+	private static final int DATABASE_VERSION = 7;
 	private static DbOpenHelper instance;
 
 	private static final String USERNAME_TABLE_CREATE = "CREATE TABLE "
 			+ UserDao.TABLE_NAME + " ("
 			+ UserDao.COLUMN_NAME_NICK + " TEXT, "
 			+ UserDao.COLUMN_NAME_AVATAR + " TEXT, "
-			+ UserDao.COLUMN_NAME_ID + " TEXT PRIMARY KEY);";
+			+ UserDao.COLUMN_NAME_ID + " TEXT PRIMARY KEY,"
+			+ UserDao.COLUMN_NAME_SIGN +" TEXT);";
 	
 	private static final String INIVTE_MESSAGE_TABLE_CREATE = "CREATE TABLE "
 			+ InviteMessgeDao.TABLE_NAME + " ("
@@ -99,6 +100,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		if (oldVersion < 6) {
 		    db.execSQL("ALTER TABLE " + InviteMessgeDao.TABLE_NAME + " ADD COLUMN " + 
 		            InviteMessgeDao.COLUMN_NAME_GROUPINVITER + " TEXT;");
+		}
+		if(oldVersion<7){
+			db.execSQL("drop table uers");
+			db.execSQL(USERNAME_TABLE_CREATE);
 		}
 	}
 	

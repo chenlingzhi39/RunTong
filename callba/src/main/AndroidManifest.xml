@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.callba"
     android:versionCode="103"
-    android:versionName="1.0.7">
+    android:versionName="1.0.8">
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -68,6 +68,11 @@
         <activity
             android:name=".phone.activity.SelectPicPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />
+        <activity android:name=".phone.activity.SettingsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            />
         <activity android:name=".phone.activity.GoldActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -481,7 +486,7 @@
         -->
 
         <activity
-            android:name="com.callba.wxapi.WXEntryActivity"
+            android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:screenOrientation="portrait"

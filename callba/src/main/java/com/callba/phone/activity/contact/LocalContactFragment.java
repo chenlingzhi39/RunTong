@@ -33,6 +33,7 @@ import com.callba.phone.logic.contact.ContactSerarchWatcher;
 import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.QuickSearchBar;
 
 import java.util.ArrayList;
@@ -89,23 +90,34 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         }
     }
     private void initContactListView() {
-        ContactController contactController = new ContactController();
+       final ContactController contactController = new ContactController();
+       new Thread(new Runnable() {
+           @Override
+           public void run() {
+               final List<ContactEntity> allContactEntities = contactController.getFilterListContactEntitiesNoDuplicate();
+               SimpleHandler.getInstance().post(new Runnable() {
+                   @Override
+                   public void run() {
+                       if(mContactListData == null) {
+                           mContactListData = new ArrayList<ContactEntity>();
+                       }
+                       mContactListData.clear();
+                       mContactListData.addAll(allContactEntities);
 
-        List<ContactEntity> allContactEntities = contactController.getFilterListContactEntitiesNoDuplicate();
-        if(mContactListData == null) {
-            mContactListData = new ArrayList<ContactEntity>();
-        }
-        mContactListData.clear();
-        mContactListData.addAll(allContactEntities);
+                       mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
+                       mListView.setAdapter(mContactListAdapter);
 
-        mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
-        mListView.setAdapter(mContactListAdapter);
+                       mQuickSearchBar.setListView(mListView);
+                       mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
 
-        mQuickSearchBar.setListView(mListView);
-        mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
+                       et_search.addTextChangedListener(new ContactSerarchWatcher(
+                               mContactListAdapter, mContactListData, mQuickSearchBar));
+                   }
+               });
+           }
+       }).start();
 
-        et_search.addTextChangedListener(new ContactSerarchWatcher(
-                mContactListAdapter, mContactListData, mQuickSearchBar));
+
     }
 
     @Override

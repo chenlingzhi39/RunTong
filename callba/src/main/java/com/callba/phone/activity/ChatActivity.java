@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.ClipboardManager;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -60,7 +61,8 @@ import butterknife.InjectView;
  */
 @ActivityFragmentInject(
         contentViewId = R.layout.chat,
-        navigationId = R.drawable.press_back
+        navigationId = R.drawable.press_back,
+        menuId=R.menu.menu_chat
 )
 public class ChatActivity extends BaseActivity {
     @InjectView(R.id.title)
@@ -103,135 +105,84 @@ public class ChatActivity extends BaseActivity {
     protected boolean isloading;
     protected boolean haveMoreData = true;
     private EaseVoiceRecorderView voiceRecorderView;
-    private EMMessageListener msgListener=new EMMessageListener() {
-        @Override
-        public void onMessageReceived(List<EMMessage> list) {
-            for (EMMessage message : messages) {
-                Logger.i("chatActivity","receive");
-                String username = null;
-                // 群组消息
-                if (message.getChatType() == EMMessage.ChatType.GroupChat || message.getChatType() == EMMessage.ChatType.ChatRoom) {
-                    username = message.getTo();
-                } else {
-                    // 单聊消息
-                    username = message.getFrom();
-                }
-
-                // 如果是当前会话的消息，刷新聊天页面
-                if (username.equals(toChatUsername)) {
-                    messageList.refreshSelectLast();
-                    // 声音和震动提示有新消息
-                    EaseUI.getInstance().getNotifier().viberateAndPlayTone(message);
-                } else {
-                    // 如果消息不是和当前聊天ID的消息
-                    EaseUI.getInstance().getNotifier().onNewMsg(message);
-                }
-            }
-        }
-
-        @Override
-        public void onCmdMessageReceived(List<EMMessage> list) {
-
-        }
-
-        @Override
-        public void onMessageReadAckReceived(List<EMMessage> list) {
-            if(isMessageListInited) {
-                messageList.refresh();
-            }
-        }
-
-        @Override
-        public void onMessageDeliveryAckReceived(List<EMMessage> list) {
-            if(isMessageListInited) {
-                messageList.refresh();
-            }
-        }
-
-        @Override
-        public void onMessageChanged(EMMessage emMessage, Object o) {
-            if(isMessageListInited) {
-                messageList.refresh();
-            }
-        }
-    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        voiceRecorderView = (EaseVoiceRecorderView) findViewById(R.id.voice_recorder);
-        listView = messageList.getListView();
-        chatAdapter = new ChatAdapter(this);
-        userName = getIntent().getStringExtra("username");
-        toChatUsername = userName;
-        if(DemoHelper.getInstance().getContactList().get(userName)!=null)
-        title.setText(DemoHelper.getInstance().getContactList().get(userName).getNick());
-        else  title.setText(userName);
-        IntentFilter filter = new IntentFilter(
-                "com.callba.chat");
-        chatReceiver = new ChatReceiver();
-        registerReceiver(chatReceiver, filter);
-        if(EMClient.getInstance().chatManager().getConversation(userName)!=null)
-        EMClient.getInstance().chatManager().getConversation(userName).markAllMessagesAsRead();
-        Intent intent = new Intent("com.callba.asread");
-        sendBroadcast(intent);
-        extendMenuItemClickListener = new MyItemClickListener();
-        registerExtendMenuItem();
-        inputMenu.init(null);
-        inputMenu.setChatInputMenuListener(new ChatInputMenuListener() {
-
-            @Override
-            public void onSendMessage(String content) {
-                // 发送文本消息
-                sendTextMessage(content);
-            }
-
-            @Override
-            public boolean onPressToSpeakBtnTouch(View v, MotionEvent event) {
-                return voiceRecorderView.onPressToSpeakBtnTouch(v, event, new EaseVoiceRecorderCallback() {
-
-                    @Override
-                    public void onVoiceRecordComplete(String voiceFilePath, int voiceTimeLength) {
-                        // 发送语音消息
-                        sendVoiceMessage(voiceFilePath, voiceTimeLength);
-                    }
-                });
-
-            }
-
-            @Override
-            public void onBigExpressionClicked(EaseEmojicon emojicon) {
-                //发送大表情(动态表情)
-                sendBigExpressionMessage(emojicon.getName(), emojicon.getIdentityCode());
-            }
-        });
-        swipeRefreshLayout = messageList.getSwipeRefreshLayout();
-        setRefreshLayoutListener();
-        swipeRefreshLayout.setColorSchemeResources(R.color.holo_blue_bright, R.color.holo_green_light,
-                R.color.holo_orange_light, R.color.holo_red_light);
-        inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        if (chatType != EaseConstant.CHATTYPE_CHATROOM) {
-            onConversationInit();
-            onMessageListInit();
-        }
+        init();
     }
+      protected void init(){
+          voiceRecorderView = (EaseVoiceRecorderView) findViewById(R.id.voice_recorder);
+          listView = messageList.getListView();
+          chatAdapter = new ChatAdapter(this);
+          userName = getIntent().getStringExtra("username");
+          toChatUsername = userName;
+          if(DemoHelper.getInstance().getContactList().get(userName)!=null)
+              title.setText(DemoHelper.getInstance().getContactList().get(userName).getNick());
+          else  title.setText(userName);
+          IntentFilter filter = new IntentFilter(
+                  "com.callba.chat");
+          chatReceiver = new ChatReceiver();
+          registerReceiver(chatReceiver, filter);
+          if(EMClient.getInstance().chatManager().getConversation(userName)!=null)
+              EMClient.getInstance().chatManager().getConversation(userName).markAllMessagesAsRead();
+          Intent intent = new Intent("com.callba.asread");
+          sendBroadcast(intent);
+          extendMenuItemClickListener = new MyItemClickListener();
+          registerExtendMenuItem();
+          inputMenu.init(null);
+          inputMenu.setChatInputMenuListener(new ChatInputMenuListener() {
 
+              @Override
+              public void onSendMessage(String content) {
+                  // 发送文本消息
+                  sendTextMessage(content);
+              }
+
+              @Override
+              public boolean onPressToSpeakBtnTouch(View v, MotionEvent event) {
+                  return voiceRecorderView.onPressToSpeakBtnTouch(v, event, new EaseVoiceRecorderCallback() {
+
+                      @Override
+                      public void onVoiceRecordComplete(String voiceFilePath, int voiceTimeLength) {
+                          // 发送语音消息
+                          sendVoiceMessage(voiceFilePath, voiceTimeLength);
+                      }
+                  });
+
+              }
+
+              @Override
+              public void onBigExpressionClicked(EaseEmojicon emojicon) {
+                  //发送大表情(动态表情)
+                  sendBigExpressionMessage(emojicon.getName(), emojicon.getIdentityCode());
+              }
+          });
+          swipeRefreshLayout = messageList.getSwipeRefreshLayout();
+          setRefreshLayoutListener();
+          swipeRefreshLayout.setColorSchemeResources(R.color.holo_blue_bright, R.color.holo_green_light,
+                  R.color.holo_orange_light, R.color.holo_red_light);
+          inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+          clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+          getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+          if (chatType != EaseConstant.CHATTYPE_CHATROOM) {
+              onConversationInit();
+              onMessageListInit();
+          }
+      }
     @Override
     protected void onResume() {
         super.onResume();
         if(isMessageListInited)
             messageList.refreshSelectLast();
         DemoHelper.getInstance().pushActivity(this);
-        EMClient.getInstance().chatManager().addMessageListener(msgListener);
+
     }
     @Override
     public void onStop() {
         super.onStop();
         // unregister this event listener when this activity enters the
         // background
-        EMClient.getInstance().chatManager().removeMessageListener(msgListener);
 
         // 把此activity 从foreground activity 列表里移除
         DemoHelper.getInstance().popActivity(this);
@@ -431,7 +382,7 @@ public class ChatActivity extends BaseActivity {
         if(isMessageListInited) {
             messageList.refreshSelectLast();
         }
-        sendBroadcast(new Intent("com.callba.chat"));
+
         //刷新ui
       /*  if(isMessageListInited) {
             messageList.refreshSelectLast();
@@ -556,7 +507,27 @@ public class ChatActivity extends BaseActivity {
               /*  chatAdapter.clear();
                 chatAdapter.addAll(messages);
                 list.scrollToPosition(messages.size() - 1);*/
-            messageList.refresh();
+            Logger.i("chatActivity","receive");
+            EMMessage message=(EMMessage) intent.getExtras().get("message");
+            String username = null;
+            // 群组消息
+            if (message.getChatType() == EMMessage.ChatType.GroupChat || message.getChatType() == EMMessage.ChatType.ChatRoom) {
+                username = message.getTo();
+            } else {
+                // 单聊消息
+                username = message.getFrom();
+            }
+
+            // 如果是当前会话的消息，刷新聊天页面
+            if (username.equals(toChatUsername)) {
+                messageList.refreshSelectLast();
+                // 声音和震动提示有新消息
+                EaseUI.getInstance().getNotifier().viberateAndPlayTone(message);
+            } else {
+                // 如果消息不是和当前聊天ID的消息
+                EaseUI.getInstance().getNotifier().onNewMsg(message);
+            }
+
         }
     }
 
@@ -703,5 +674,34 @@ public class ChatActivity extends BaseActivity {
 
             }
         }
+    }
+    protected void emptyHistory() {
+        String msg = getResources().getString(R.string.Whether_to_empty_all_chats);
+        new EaseAlertDialog(this,null, msg, null,new EaseAlertDialog.AlertDialogUser() {
+
+            @Override
+            public void onResult(boolean confirmed, Bundle bundle) {
+                if(confirmed){
+                    // 清空会话
+
+                    EMClient.getInstance().chatManager().deleteConversation(toChatUsername, true);
+                    messageList.refresh();
+                }
+            }
+        }, true).show();;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.clear:
+                emptyHistory();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        init();
     }
 }

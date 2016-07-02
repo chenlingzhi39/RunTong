@@ -21,7 +21,7 @@ import com.umeng.socialize.controller.UMSocialService;
 import com.umeng.socialize.controller.listener.SocializeListeners;
 import com.umeng.socialize.media.CircleShareContent;
 import com.umeng.socialize.media.UMImage;
-import com.umeng.socialize.weixin.controller.UMWXHandler;
+import com.umeng.socialize.sso.UMWXHandler;
 
 
 import java.util.ArrayList;
@@ -168,7 +168,7 @@ public class ShareActivity extends BaseActivity implements
     }
 
     private void shareWXFriend() {
-        UMWXHandler wxCircleHandler = new UMWXHandler(ShareActivity.this,
+        /*UMWXHandler wxCircleHandler = new UMWXHandler(ShareActivity.this,
                 appid, appSecret);
         wxCircleHandler.setToCircle(true);
         wxCircleHandler.addToSocialSDK();
@@ -179,7 +179,7 @@ public class ShareActivity extends BaseActivity implements
         circleMedia.setTitle(getString(R.string.share_title));
         circleMedia.setShareImage(new UMImage(this, R.drawable.logo));
         circleMedia.setTargetUrl(contenturl);
-        controller.setShareMedia(circleMedia);
+        controller.setShareMedia(circleMedia);*/
     }
 
 

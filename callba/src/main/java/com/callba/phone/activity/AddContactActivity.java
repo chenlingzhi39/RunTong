@@ -178,6 +178,7 @@ public class AddContactActivity extends BaseActivity {
                             //demo写死了个reason，实际应该让用户手动填入
                             String s = getResources().getString(R.string.Add_a_friend);
                             //EMClient.getInstance().contactManager().addContact(toAddUsername+"-callba", s);
+                            sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
                             OkHttpUtils
                                     .post()
                                     .url(Interfaces.GET_FRIENDS)

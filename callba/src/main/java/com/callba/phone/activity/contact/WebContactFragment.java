@@ -32,6 +32,7 @@ import com.callba.phone.DemoHelper;
 import com.callba.phone.DemoHelper.DataSyncListener;
 import com.callba.phone.activity.BlacklistActivity;
 import com.callba.phone.activity.ChatActivity;
+import com.callba.phone.activity.FriendActivity;
 import com.callba.phone.activity.NewFriendsMsgActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.BaseUser;
@@ -50,6 +51,11 @@ import com.google.gson.reflect.TypeToken;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -86,6 +92,7 @@ public class WebContactFragment extends BaseFragment {
     Map<String, EaseUser> contactsMap;
     private ContactItemView applicationItem;
     private ContactItemView blackListItem;
+    private ContactItemView nearByItem;
     protected InputMethodManager inputMethodManager;
     private InviteMessgeDao inviteMessgeDao;
     private BroadcastReceiver broadcastReceiver;
@@ -119,6 +126,8 @@ public class WebContactFragment extends BaseFragment {
         applicationItem.setOnClickListener(clickListener);
         blackListItem = (ContactItemView) headerView.findViewById(R.id.black_item);
         blackListItem.setOnClickListener(clickListener);
+        nearByItem=(ContactItemView) headerView.findViewById(R.id.nearby_item);
+        nearByItem.setOnClickListener(clickListener);
         loadingView = LayoutInflater.from(getActivity()).inflate(R.layout.em_layout_loading_data, null);
         contentContainer.addView(loadingView);
         contactsMap = DemoHelper.getInstance().getContactList();
@@ -212,9 +221,13 @@ public class WebContactFragment extends BaseFragment {
                         .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
                         .build().execute(new StringCallback() {
                     @Override
+                    public void onAfter(int id) {
+                        contactListLayout.setRefreshing(false);
+                    }
+
+                    @Override
                     public void onError(Call call, Exception e, int id) {
                         toast(getActivity().getString(R.string.network_error));
-                        contactListLayout.setRefreshing(false);
                     }
 
                     @Override
@@ -255,15 +268,36 @@ public class WebContactFragment extends BaseFragment {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.delete_contact) {
-            try {
-                // 删除此联系人
-                deleteContact(toBeProcessUser);
-                // 删除相关的邀请消息
-                InviteMessgeDao dao = new InviteMessgeDao(getActivity());
-                dao.deleteMessage(toBeProcessUser.getUsername());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
+                OkHttpUtils
+                        .post()
+                        .url(Interfaces.DELETE_FRIENDS)
+                        .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+                        .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                        .addParams("phoneNumber",toBeProcessUser.getUsername().substring(0,11))
+                        .build().execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        toast("删除失败");
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                    String[] result=response.split("\\|");
+                        Logger.i("delete_result",response);
+                       if(result[0].equals("0")){
+                           // 删除此联系人
+                           deleteContact(toBeProcessUser);
+                           // 删除相关的邀请消息
+                           InviteMessgeDao dao = new InviteMessgeDao(getActivity());
+                           dao.deleteMessage(toBeProcessUser.getUsername());
+                       }else{
+                           toast("删除失败");
+                       }
+                    }
+                });
+
+
             return true;
         } else if (item.getItemId() == R.id.add_to_blacklist) {
             moveToBlacklist(toBeProcessUsername);
@@ -288,8 +322,7 @@ public class WebContactFragment extends BaseFragment {
         }
         getContactList();
         if (contactListLayout != null)
-            contactListLayout.refresh();
-        contactListLayout.setRefreshing(false);
+          contactListLayout.refresh();
     }
 
     /**
@@ -361,6 +394,9 @@ public class WebContactFragment extends BaseFragment {
                     break;
                 case R.id.black_item:
                     startActivity(new Intent(getActivity(), BlacklistActivity.class));
+                    break;
+                case R.id.nearby_item:
+                    startActivity(new Intent(getActivity(), FriendActivity.class));
                     break;
                /* case R.id.group_item:
                     // 进入群聊列表页面

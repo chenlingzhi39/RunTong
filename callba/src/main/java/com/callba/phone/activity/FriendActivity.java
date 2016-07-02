@@ -359,6 +359,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                                         //demo写死了个reason，实际应该让用户手动填入
                                         String s = getResources().getString(R.string.Add_a_friend);
                                         //EMClient.getInstance().contactManager().addContact(entity.getPhoneNumber()+"-callba", s);
+                                        sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
                                         List<EaseUser> mList = new ArrayList<EaseUser>();
                                             EaseUser user = new EaseUser(entity.getPhoneNumber()+"-callba");
                                             user.setAvatar(entity.getUrl_head());

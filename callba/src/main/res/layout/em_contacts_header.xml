@@ -22,14 +22,31 @@
         android:layout_height="wrap_content"
         app:contactItemImage="@drawable/em_groups_icon"
         app:contactItemName="@string/blacklist" />
-    <!--<com.hyphenate.chatuidemo.widget.ContactItemView
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/divider_list"/>
+    <com.callba.phone.widget.ContactItemView
+        android:id="@+id/nearby_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:contactItemImage="@drawable/ease_chat_location_normal"
+        app:contactItemName="@string/friend" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/divider_list"/>
+    <com.callba.phone.widget.ContactItemView
         android:id="@+id/group_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:contactItemImage="@drawable/em_groups_icon"
         app:contactItemName="@string/group_chat" />
-
-    <com.hyphenate.chatuidemo.widget.ContactItemView
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/divider_list"/>
+   <!-- <com.hyphenate.chatuidemo.widget.ContactItemView
         android:id="@+id/chat_room_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

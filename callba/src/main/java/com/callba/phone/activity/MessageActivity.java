@@ -1,7 +1,10 @@
 package com.callba.phone.activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -11,15 +14,19 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Pair;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
@@ -28,7 +35,10 @@ import com.callba.phone.adapter.ConversationAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.EaseUser;
+import com.callba.phone.db.InviteMessgeDao;
+import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.Logger;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.hyphenate.chat.EMClient;
@@ -122,6 +132,13 @@ public class MessageActivity extends BaseActivity {
                 adapter.notifyItemChanged(position);
             }
         });
+        adapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemClick(int position) {
+                showDeleteDialog(MessageActivity.this,adapter.getData().get(position));
+                return false;
+            }
+        });
         conversationListview.setAdapter(adapter);
         IntentFilter filter = new IntentFilter(
                 "com.callba.chat");
@@ -131,7 +148,6 @@ public class MessageActivity extends BaseActivity {
         registerReceiver(chatReceiver, filter);
         asReadReceiver = new AsReadReceiver();
         registerReceiver(asReadReceiver, filter1);
-        registerBroadcastReceiver();
         query.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 new MyFilter(copyList).filter(s);
@@ -165,13 +181,17 @@ public class MessageActivity extends BaseActivity {
                 hideSoftKeyboard();
                 return false;
             }
-        });    }
+        });
+
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.edit:
-                Intent intent = new Intent(MessageActivity.this, PostMessageActivity.class);
+            case R.id.settings:
+               /* Intent intent = new Intent(MessageActivity.this, PostMessageActivity.class);
+                startActivity(intent);*/
+                Intent intent=new Intent(MessageActivity.this,SettingsActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -222,7 +242,6 @@ public class MessageActivity extends BaseActivity {
     protected void onDestroy() {
         unregisterReceiver(chatReceiver);
         unregisterReceiver(asReadReceiver);
-        unregisterBroadcastReceiver();
         super.onDestroy();
     }
 
@@ -268,6 +287,15 @@ public class MessageActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        conversationList.clear();
+        conversationList.addAll(loadConversationList());
+        adapter.clear();
+        adapter.addAll(conversationList);
+    }
+
     /**
      * 重写onkeyDown 捕捉返回键
      */
@@ -281,24 +309,8 @@ public class MessageActivity extends BaseActivity {
         return false;
     }
 
-    private void registerBroadcastReceiver() {
-        broadcastManager = LocalBroadcastManager.getInstance(this);
-        IntentFilter intentFilter = new IntentFilter(Constant.ACTION_CONTACT_CHANAGED);
-        broadcastReceiver = new BroadcastReceiver() {
 
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Logger.i("webContact", Constant.ACTION_CONTACT_CHANAGED);
-                conversationList.clear();
-                conversationList.addAll(loadConversationList());
-            }
-        };
-        broadcastManager.registerReceiver(broadcastReceiver, intentFilter);
-    }
 
-    private void unregisterBroadcastReceiver() {
-        broadcastManager.unregisterReceiver(broadcastReceiver);
-    }
     public class MyFilter extends Filter{
         List<EMConversation> mOriginalList;
         public MyFilter(List<EMConversation> messages) {
@@ -361,4 +373,60 @@ public class MessageActivity extends BaseActivity {
                         InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
+    private void showDeleteDialog(Context context,
+                                  final EMConversation entity) {
+
+        final DialogHelper helper = new DialogHelper(entity);
+        Dialog dialog = new AlertDialog.Builder(this).setView(helper.getView()).create();
+        helper.setDialog(dialog);
+        dialog.show();
+    }
+    class DialogHelper implements DialogInterface.OnDismissListener,View.OnClickListener {
+        private Dialog mDialog;
+        private View view;
+        TextView tv_name;
+        Button delete_conversation;
+        Button delete_conversation_message;
+        EMConversation entity;
+        public DialogHelper(EMConversation entity) {
+            this.entity=entity;
+            view=getLayoutInflater().inflate(R.layout.dialog_conversation,null);
+            tv_name=(TextView)view.findViewById(R.id.name);
+            delete_conversation=(Button)view.findViewById(R.id.delete_conversation);
+            delete_conversation.setOnClickListener(this);
+            delete_conversation_message=(Button)view.findViewById(R.id.delete_conversation_messages);
+            delete_conversation_message.setOnClickListener(this);
+            tv_name.setText(entity.getUserName());
+        }
+
+        @Override
+        public void onClick(View v) {
+            mDialog.dismiss();
+            switch (v.getId()){
+                case R.id.delete_conversation:
+                    EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(),false);
+                    adapter.remove(entity);
+                    break;
+                case R.id.delete_conversation_messages:
+                    EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(),true);
+                    adapter.remove(entity);
+                    break;
+
+            }
+        }
+
+        public View getView() {
+            return view;
+        }
+
+        public void setDialog(Dialog dialog) {
+            mDialog = dialog;
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            mDialog=null;
+        }
+    }
+
 }
