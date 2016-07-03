@@ -31,6 +31,7 @@ import com.callba.phone.logic.contact.ContactListAdapter;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.logic.contact.ContactSerarchWatcher;
 import com.callba.phone.logic.contact.QueryContacts;
+import com.callba.phone.service.MainService;
 import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SimpleHandler;
@@ -70,6 +71,10 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         ButterKnife.inject(this, fragmentRootView);
         mListView.setOnItemClickListener(this);
         mListView.setOnItemLongClickListener(this);
+    }
+
+    @Override
+    protected void lazyLoad() {
         initContactListView();
         IntentFilter intentFilter=new IntentFilter("com.callba.contact");
         broadcastReceiver=new ContactBroadcastReceiver();
@@ -91,32 +96,31 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
     }
     private void initContactListView() {
        final ContactController contactController = new ContactController();
-       new Thread(new Runnable() {
-           @Override
-           public void run() {
-               final List<ContactEntity> allContactEntities = contactController.getFilterListContactEntitiesNoDuplicate();
-               SimpleHandler.getInstance().post(new Runnable() {
-                   @Override
-                   public void run() {
-                       if(mContactListData == null) {
-                           mContactListData = new ArrayList<ContactEntity>();
-                       }
-                       mContactListData.clear();
-                       mContactListData.addAll(allContactEntities);
+        MainService.getFixedThreadPool().execute(new Runnable() {
+            @Override
+            public void run() {
+                final List<ContactEntity> allContactEntities = contactController.getFilterListContactEntitiesNoDuplicate();
+                SimpleHandler.getInstance().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(mContactListData == null) {
+                            mContactListData = new ArrayList<ContactEntity>();
+                        }
+                        mContactListData.clear();
+                        mContactListData.addAll(allContactEntities);
 
-                       mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
-                       mListView.setAdapter(mContactListAdapter);
+                        mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
+                        mListView.setAdapter(mContactListAdapter);
 
-                       mQuickSearchBar.setListView(mListView);
-                       mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
+                        mQuickSearchBar.setListView(mListView);
+                        mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
 
-                       et_search.addTextChangedListener(new ContactSerarchWatcher(
-                               mContactListAdapter, mContactListData, mQuickSearchBar));
-                   }
-               });
-           }
-       }).start();
-
+                        et_search.addTextChangedListener(new ContactSerarchWatcher(
+                                mContactListAdapter, mContactListData, mQuickSearchBar));
+                    }
+                });
+            }
+        });
 
     }
 

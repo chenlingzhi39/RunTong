@@ -368,7 +368,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                                             EaseCommonUtils.setUserInitialLetter(user);
                                             mList.add(user);
                                         DemoHelper.getInstance().updateContactList(mList);
-                                        LocalBroadcastManager.getInstance(FriendActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+                                        //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
                                         runOnUiThread(new Runnable() {
                                             public void run() {
                                                 progressDialog.dismiss();

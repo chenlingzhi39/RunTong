@@ -84,8 +84,8 @@ public class ContactActivity2 extends BaseActivity {
             }
         });
         broadcastManager=LocalBroadcastManager.getInstance(this);
-        registerBroadcastReceiver();
-        webContactFragment=new WebContactFragment();
+        //registerBroadcastReceiver();
+        //webContactFragment=new WebContactFragment();
     }
 
     public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
@@ -107,7 +107,7 @@ public class ContactActivity2 extends BaseActivity {
                     return LocalContactFragment.newInstance();
 
                 case 1:
-                    return webContactFragment;
+                    return WebContactFragment.newInstance();
 
                 default:
                     return null;
@@ -185,7 +185,7 @@ public class ContactActivity2 extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        unregisterBroadcastReceiver();
+        //unregisterBroadcastReceiver();
         super.onDestroy();
     }
     /**

@@ -116,7 +116,6 @@ public class WebContactFragment extends BaseFragment {
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
-        registerBroadcastReceiver();
         inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         View headerView = LayoutInflater.from(getActivity()).inflate(R.layout.em_contacts_header, null);
         HeaderItemClickListener clickListener = new HeaderItemClickListener();
@@ -128,12 +127,11 @@ public class WebContactFragment extends BaseFragment {
         blackListItem.setOnClickListener(clickListener);
         nearByItem=(ContactItemView) headerView.findViewById(R.id.nearby_item);
         nearByItem.setOnClickListener(clickListener);
+        headerView.findViewById(R.id.group_item).setOnClickListener(clickListener);
         loadingView = LayoutInflater.from(getActivity()).inflate(R.layout.em_layout_loading_data, null);
         contentContainer.addView(loadingView);
         contactsMap = DemoHelper.getInstance().getContactList();
         contactList = new ArrayList<EaseUser>();
-        getContactList();
-        contactListLayout.init(contactList);
         query.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 contactListLayout.filter(s);
@@ -192,7 +190,7 @@ public class WebContactFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
-        refresh();
+        //refresh();
         clearSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -247,7 +245,7 @@ public class WebContactFragment extends BaseFragment {
                                 EaseCommonUtils.setUserInitialLetter(user);
                                 mList.add(user);
                             }
-                          refresh();
+                            refresh();
                         }else{
                             toast(result[1]);
                         }
@@ -255,6 +253,14 @@ public class WebContactFragment extends BaseFragment {
                 });
             }
         });
+    }
+
+    @Override
+    protected void lazyLoad() {
+        //registerBroadcastReceiver();
+        getContactList();
+        contactListLayout.init(contactList);
+
     }
 
     @Override
@@ -398,11 +404,11 @@ public class WebContactFragment extends BaseFragment {
                 case R.id.nearby_item:
                     startActivity(new Intent(getActivity(), FriendActivity.class));
                     break;
-               /* case R.id.group_item:
+                case R.id.group_item:
                     // 进入群聊列表页面
                     //startActivity(new Intent(getActivity(), GroupsActivity.class));
                     break;
-                case R.id.chat_room_item:
+               /* case R.id.chat_room_item:
                     //进入聊天室列表页面
                     //startActivity(new Intent(getActivity(), PublicChatRoomsActivity.class));
                     break;
@@ -421,7 +427,7 @@ public class WebContactFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unregisterBroadcastReceiver();
+        //unregisterBroadcastReceiver();
         unregisterForContextMenu(listView);
         ButterKnife.reset(this);
     }

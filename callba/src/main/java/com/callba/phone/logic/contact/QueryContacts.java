@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import com.callba.phone.bean.SearchSortKeyBean;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.service.MainService;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.PinYinUtil;
 import com.callba.phone.util.SharedPreferenceUtil;
@@ -34,17 +35,23 @@ public class QueryContacts {
 		mContext = context;
 		ContentResolver contentResolver = context.getContentResolver();
 		
-		Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI; // 联系人的Uri
-		String[] projection = { ContactsContract.CommonDataKinds.Phone._ID,
+		final Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI; // 联系人的Uri
+		final String[] projection = { ContactsContract.CommonDataKinds.Phone._ID,
 				ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
 				ContactsContract.CommonDataKinds.Phone.DATA1, "sort_key",
 				ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
 				ContactsContract.CommonDataKinds.Phone.PHOTO_ID,
 				ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY }; // 查询的列
 		List<ContactPersonEntity> contactLists = new ArrayList<ContactPersonEntity>();
-		MyAsyncQueryHandler asyncQuery = new MyAsyncQueryHandler(contentResolver, contactLists);
-		asyncQuery.startQuery(0, null, uri, projection, null, null,
-				"sort_key COLLATE LOCALIZED asc"); // 按照sort_key升序查询
+		final MyAsyncQueryHandler asyncQuery = new MyAsyncQueryHandler(contentResolver, contactLists);
+		MainService.getFixedThreadPool().execute(new Runnable() {
+			@Override
+			public void run() {
+				asyncQuery.startQuery(0, null, uri, projection, null, null,
+						"sort_key COLLATE LOCALIZED asc"); // 按照sort_key升序查询
+			}
+		});
+
 	}
 	
 	/**

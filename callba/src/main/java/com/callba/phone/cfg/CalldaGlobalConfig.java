@@ -18,7 +18,7 @@ public class CalldaGlobalConfig {
 	private static CalldaGlobalConfig calldaGlobalConfig;
 	private CalldaGlobalConfig(){}
 	
-	public static synchronized CalldaGlobalConfig getInstance() {
+	public static CalldaGlobalConfig getInstance() {
 		if(calldaGlobalConfig == null) {
 			calldaGlobalConfig = new CalldaGlobalConfig();
 		}

@@ -34,7 +34,7 @@ import butterknife.OnClick;
  */
 @ActivityFragmentInject(
         contentViewId = R.layout.fragment_number)
-public class NumberFragment extends BaseFragment implements UserDao.PostListener {
+public  class NumberFragment extends BaseFragment implements UserDao.PostListener {
     @InjectView(R.id.number)
     TextView number;
     @InjectView(R.id.address)
@@ -54,6 +54,11 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
     public static NumberFragment newInstance() {
         NumberFragment numberFragment = new NumberFragment();
         return numberFragment;
+    }
+
+    @Override
+    protected void lazyLoad() {
+
     }
 
     @Override

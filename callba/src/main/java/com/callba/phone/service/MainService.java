@@ -78,7 +78,7 @@ public class MainService extends Service implements Runnable{
 	private static final int DEFAULT_MAXIMUM_POOL_SIZE = 2;
 	private Thread mThread;
 	private boolean isRun = true;// 线程开关
-	private ExecutorService fixedThreadPool;	//线程池
+	private static ExecutorService fixedThreadPool;	//线程池
 	/**
 	 * 存储任务集合
 	 */
@@ -102,6 +102,11 @@ public class MainService extends Service implements Runnable{
 
 		}
 	};
+
+	public static  ExecutorService getFixedThreadPool() {
+		return fixedThreadPool;
+	}
+
 	/**
 	 * 新建任务
 	 * 

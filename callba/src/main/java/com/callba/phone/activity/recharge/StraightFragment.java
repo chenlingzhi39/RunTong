@@ -194,7 +194,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
 
             @Override
             public void success(String msg) {
-             String[] result=msg.split("\\|");
+                String[] result=msg.split("\\|");
                 if(result[0].equals("0"))
                     toast(result[1]);
                 else if(result.length>1)toast(result[1]);
@@ -202,7 +202,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
 
             @Override
             public void failure(String msg) {
-            toast(msg);
+                toast(msg);
             }
         });
         subject = "39元套餐";
@@ -226,7 +226,12 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
             }
         });
 
-        //userDao.getRechargeMeal(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
+
+    }
+
+    @Override
+    protected void lazyLoad() {
+
     }
 
     @Override
