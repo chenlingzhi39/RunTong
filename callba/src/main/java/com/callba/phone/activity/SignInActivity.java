@@ -664,11 +664,12 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
 
         // wx967daebe835fbeac是你在微信开发平台注册应用的AppID, 这里需要替换成你注册的AppID
         String appId = "wxd258acce3916c63a";
+        String appSecret="c17f1da2803cc4b58544cc9f81f989f8";
         // 微信图文分享,音乐必须设置一个url
         String contentUrl = "http://www.umeng.com/social";
         // 添加微信平台
         UMWXHandler wxHandler = mController.getConfig().supportWXPlatform(
-                this, appId, contentUrl);
+                this, appId,appSecret);
         wxHandler.setWXTitle("友盟社会化组件还不错-WXHandler...");
 
         UMImage mUMImgBitmap = new UMImage(this,
@@ -695,7 +696,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         // mController.setShareMedia(mUMImgBitmap);
         // 支持微信朋友圈
         UMWXHandler circleHandler = mController.getConfig()
-                .supportWXCirclePlatform(this, appId, contentUrl);
+                .supportWXCirclePlatform(this, appId, appSecret);
         circleHandler.setCircleTitle("友盟社会化组件还不错-CircleHandler...");
 
         //

@@ -77,4 +77,12 @@
         <attr name="contactItemImage" format="reference"/>
         <attr name="contactItemName" format="string"/>
     </declare-styleable>
+    <declare-styleable name="EaseSwitchButton">
+        <attr name="switchOpenImage" format="reference"/>
+        <attr name="switchCloseImage" format="reference"/>
+        <attr name="switchStatus">
+            <enum name="open" value="0"/>
+            <enum name="close" value="1"/>
+        </attr>
+    </declare-styleable>
 </resources>

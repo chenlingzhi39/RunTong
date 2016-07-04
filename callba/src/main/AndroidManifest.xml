@@ -68,6 +68,50 @@
         <activity
             android:name=".phone.activity.SelectPicPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />
+        <activity
+            android:name=".phone.ui.ExitGroupDialog"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyDialogStyleBottom" >
+        </activity>
+        <activity android:name=".phone.activity.GroupDetailsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="adjustPan"
+            />
+        <activity android:name=".phone.activity.GroupSimpleDetailActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="adjustPan"
+            />
+        <activity android:name=".phone.activity.PublicGroupsSeachActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="adjustPan"
+            />
+        <activity android:name=".phone.activity.PublicGroupsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="adjustPan"
+            />
+        <activity android:name=".phone.activity.GroupPickContactsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"/>
+        <activity android:name=".phone.activity.NewGroupActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            />
+        <activity android:name=".phone.activity.GroupsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="adjustPan"
+            />
         <activity android:name=".phone.activity.SettingsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

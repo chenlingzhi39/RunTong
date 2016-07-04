@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
@@ -126,10 +127,27 @@ public class MessageActivity extends BaseActivity {
             @Override
             public void onItemClick(int position) {
                 adapter.getData().get(position).markAllMessagesAsRead();
-                Intent intent = new Intent(MessageActivity.this, ChatActivity.class);
-                intent.putExtra("username", conversationList.get(position).getUserName());
-                startActivity(intent);
                 adapter.notifyItemChanged(position);
+                EMConversation conversation = adapter.getItem(position);
+                String username = conversation.getUserName();
+                if (username.equals(EMClient.getInstance().getCurrentUser()))
+                    Toast.makeText(MessageActivity.this, R.string.Cant_chat_with_yourself, 0).show();
+                else {
+                    // 进入聊天页面
+                    Intent intent = new Intent(MessageActivity.this, ChatActivity.class);
+                    if(conversation.isGroup()){
+                        if(conversation.getType() == EMConversation.EMConversationType.ChatRoom){
+                            // it's group chat
+                            intent.putExtra(Constant.EXTRA_CHAT_TYPE, Constant.CHATTYPE_CHATROOM);
+                        }else{
+                            intent.putExtra(Constant.EXTRA_CHAT_TYPE, Constant.CHATTYPE_GROUP);
+                        }
+
+                    }
+                    // it's single chat
+                    intent.putExtra(Constant.EXTRA_USER_ID, username);
+                    startActivity(intent);
+                }
             }
         });
         adapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {

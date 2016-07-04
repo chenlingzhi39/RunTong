@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.ClipboardManager;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.EaseConstant;
 import com.callba.phone.GeocoderActivity;
@@ -33,7 +35,10 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.EaseEmojicon;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.controller.EaseUI;
+import com.callba.phone.ui.EaseChatFragmentListener;
+import com.callba.phone.ui.EaseGroupRemoveListener;
 import com.callba.phone.util.EaseCommonUtils;
+import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Logger;
 import com.callba.phone.widget.EaseAlertDialog;
 import com.callba.phone.widget.EaseChatExtendMenu;
@@ -46,6 +51,7 @@ import com.callba.phone.widget.chatrow.EaseCustomChatRowProvider;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
+import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.util.PathUtil;
 
@@ -61,10 +67,9 @@ import butterknife.InjectView;
  */
 @ActivityFragmentInject(
         contentViewId = R.layout.chat,
-        navigationId = R.drawable.press_back,
-        menuId=R.menu.menu_chat
+        navigationId = R.drawable.press_back
 )
-public class ChatActivity extends BaseActivity {
+public class ChatActivity extends BaseActivity implements EaseChatFragmentListener {
     @InjectView(R.id.title)
     TextView title;
     @InjectView(R.id.input_menu)
@@ -105,21 +110,51 @@ public class ChatActivity extends BaseActivity {
     protected boolean isloading;
     protected boolean haveMoreData = true;
     private EaseVoiceRecorderView voiceRecorderView;
+    private GroupListener groupListener;
+    public static ChatActivity activityInstance;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activityInstance=this;
         ButterKnife.inject(this);
         init();
     }
       protected void init(){
+          chatFragmentListener=this;
+          chatType=getIntent().getIntExtra("chatType",1);
+          if(chatType != EaseConstant.CHATTYPE_SINGLE)
+              messageList.setShowUserNick(true);
           voiceRecorderView = (EaseVoiceRecorderView) findViewById(R.id.voice_recorder);
           listView = messageList.getListView();
           chatAdapter = new ChatAdapter(this);
-          userName = getIntent().getStringExtra("username");
+          userName = getIntent().getStringExtra(Constant.EXTRA_USER_ID);
           toChatUsername = userName;
-          if(DemoHelper.getInstance().getContactList().get(userName)!=null)
+          title.setText(toChatUsername);
+          if (chatType == EaseConstant.CHATTYPE_SINGLE) { // 单聊
+              // 设置标题
+              if(EaseUserUtils.getUserInfo(toChatUsername) != null){
+                  title.setText(EaseUserUtils.getUserInfo(toChatUsername).getNick());
+              }
+              //titleBar.setRightImageResource(R.drawable.ease_mm_title_remove);
+          } else {
+              //titleBar.setRightImageResource(R.drawable.ease_to_group_details_normal);
+              if (chatType == EaseConstant.CHATTYPE_GROUP) {
+                  // 群聊
+                  EMGroup group = EMClient.getInstance().groupManager().getGroup(toChatUsername);
+                  if (group != null)
+                      title.setText(group.getGroupName());
+                  // 监听当前会话的群聊解散被T事件
+                  groupListener = new GroupListener();
+                  EMClient.getInstance().groupManager().addGroupChangeListener(groupListener);
+              } else {
+                  //onChatRoomViewCreation();
+              }
+
+          }
+         /* if(DemoHelper.getInstance().getContactList().get(userName)!=null)
               title.setText(DemoHelper.getInstance().getContactList().get(userName).getNick());
-          else  title.setText(userName);
+          else  title.setText(userName);*/
           IntentFilter filter = new IntentFilter(
                   "com.callba.chat");
           chatReceiver = new ChatReceiver();
@@ -314,6 +349,26 @@ public class ChatActivity extends BaseActivity {
                 return false;
             }
         });
+    }
+    /**
+     * 点击进入群组详情
+     *
+     */
+    protected void toGroupDetails() {
+        if (chatType == EaseConstant.CHATTYPE_GROUP) {
+            EMGroup group = EMClient.getInstance().groupManager().getGroup(toChatUsername);
+            if (group == null) {
+                Toast.makeText(this, R.string.gorup_not_found, 0).show();
+                return;
+            }
+            if(chatFragmentListener != null){
+                chatFragmentListener.onEnterToChatDetails();
+            }
+        }else if(chatType == EaseConstant.CHATTYPE_CHATROOM){
+            if(chatFragmentListener != null){
+                chatFragmentListener.onEnterToChatDetails();
+            }
+        }
     }
     /**
      * 隐藏软键盘
@@ -604,49 +659,7 @@ public class ChatActivity extends BaseActivity {
         startActivityForResult(intent, REQUEST_CODE_LOCAL);
     }
 
-    public interface EaseChatFragmentListener {
-        /**
-         * 设置消息扩展属性
-         */
-        void onSetMessageAttributes(EMMessage message);
 
-        /**
-         * 进入会话详情
-         */
-        void onEnterToChatDetails();
-
-        /**
-         * 用户头像点击事件
-         *
-         * @param username
-         */
-        void onAvatarClick(String username);
-
-        /**
-         * 消息气泡框点击事件
-         */
-        boolean onMessageBubbleClick(EMMessage message);
-
-        /**
-         * 消息气泡框长按事件
-         */
-        void onMessageBubbleLongClick(EMMessage message);
-
-        /**
-         * 扩展输入栏item点击事件,如果要覆盖EaseChatFragment已有的点击事件，return true
-         *
-         * @param view
-         * @param itemId
-         * @return
-         */
-        boolean onExtendMenuItemClick(int itemId, View view);
-
-        /**
-         * 设置自定义chatrow提供者
-         * @return
-         */
-       EaseCustomChatRowProvider onSetCustomChatRowProvider();
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -690,11 +703,24 @@ public class ChatActivity extends BaseActivity {
             }
         }, true).show();;
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if(chatType==EaseConstant.CHATTYPE_SINGLE)
+        getMenuInflater().inflate(R.menu.menu_chat, menu);
+        if(chatType==EaseConstant.CHATTYPE_GROUP)
+            getMenuInflater().inflate(R.menu.menu_group_detail,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.clear:
                 emptyHistory();
+                break;
+            case R.id.detail:
+                toGroupDetails();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -703,5 +729,84 @@ public class ChatActivity extends BaseActivity {
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
         init();
+    }
+    /**
+     * 监测群组解散或者被T事件
+     *
+     */
+    class GroupListener extends EaseGroupRemoveListener {
+
+        @Override
+        public void onUserRemoved(final String groupId, String groupName) {
+            runOnUiThread(new Runnable() {
+
+                public void run() {
+                    if (toChatUsername.equals(groupId)) {
+                        Toast.makeText(ChatActivity.this, R.string.you_are_group, 1).show();
+                        finish();
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onGroupDestroy(final String groupId, String groupName) {
+            // 群组解散正好在此页面，提示群组被解散，并finish此页面
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    if (toChatUsername.equals(groupId)) {
+                        Toast.makeText(ChatActivity.this, R.string.the_current_group, 1).show();
+                        finish();
+                    }
+                }
+            });
+        }
+
+    }
+
+    @Override
+    public void onAvatarClick(String username) {
+
+    }
+
+    @Override
+    public void onSetMessageAttributes(EMMessage message) {
+
+    }
+
+    @Override
+    public void onEnterToChatDetails() {
+        if (chatType == Constant.CHATTYPE_GROUP) {
+            EMGroup group = EMClient.getInstance().groupManager().getGroup(toChatUsername);
+            if (group == null) {
+                Toast.makeText(this, R.string.gorup_not_found, 0).show();
+                return;
+            }
+            startActivityForResult(
+                    (new Intent(this, GroupDetailsActivity.class).putExtra("groupId", toChatUsername)),
+                    REQUEST_CODE_GROUP_DETAIL);
+        }else if(chatType == Constant.CHATTYPE_CHATROOM){
+            //startActivityForResult(new Intent(getActivity(), ChatRoomDetailsActivity.class).putExtra("roomId", toChatUsername), REQUEST_CODE_GROUP_DETAIL);
+        }
+    }
+
+    @Override
+    public boolean onMessageBubbleClick(EMMessage message) {
+        return false;
+    }
+
+    @Override
+    public void onMessageBubbleLongClick(EMMessage message) {
+
+    }
+
+    @Override
+    public boolean onExtendMenuItemClick(int itemId, View view) {
+        return false;
+    }
+
+    @Override
+    public EaseCustomChatRowProvider onSetCustomChatRowProvider() {
+        return null;
     }
 }

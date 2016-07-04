@@ -61,8 +61,19 @@ public class ConversationViewHolder extends BaseViewHolder<EMConversation> {
     @Override
     public void setData(EMConversation conversation) {
         String username = conversation.getUserName();
-            EaseUserUtils.setUserAvatar(getContext(), username, avatar);
-            EaseUserUtils.setUserNick(username, name);
+        if (conversation.getType() == EMConversation.EMConversationType.GroupChat) {
+            // 群聊消息，显示群聊头像
+            avatar.setImageResource(R.drawable.ease_group_icon);
+            EMGroup group = EMClient.getInstance().groupManager().getGroup(username);
+            name.setText(group != null ? group.getGroupName() : username);
+        } else if(conversation.getType() == EMConversation.EMConversationType.ChatRoom){
+           avatar.setImageResource(R.drawable.ease_group_icon);
+            EMChatRoom room = EMClient.getInstance().chatroomManager().getChatRoom(username);
+            name.setText(room != null && !TextUtils.isEmpty(room.getName()) ? room.getName() : username);
+        }else {
+            EaseUserUtils.setUserAvatar(getContext(), username,avatar);
+            EaseUserUtils.setUserNick(username,name);
+        }
         if (conversation.getUnreadMsgCount() > 0) {
             // 显示与此用户的消息未读数
            unreadLabel.setText(String.valueOf(conversation.getUnreadMsgCount()));

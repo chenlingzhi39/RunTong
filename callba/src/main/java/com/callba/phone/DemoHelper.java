@@ -341,9 +341,24 @@ public class DemoHelper {
             
             @Override
             public Intent getLaunchIntent(EMMessage message) {
-                //设置点击通知栏跳转事件
                 Intent intent = new Intent(appContext, ChatActivity.class);
-                intent.putExtra("username", message.getFrom());
+                ChatType chatType=message.getChatType();
+                //设置点击通知栏跳转事件
+                if (chatType == ChatType.Chat) { // 单聊信息
+                    intent.putExtra("userId", message.getFrom());
+                    intent.putExtra("chatType", Constant.CHATTYPE_SINGLE);
+                } else { // 群聊信息
+                    // message.getTo()为群聊id
+                    intent.putExtra("userId", message.getTo());
+                    if(chatType == ChatType.GroupChat){
+                        intent.putExtra("chatType", Constant.CHATTYPE_GROUP);
+                    }else{
+                        intent.putExtra("chatType", Constant.CHATTYPE_CHATROOM);
+                    }
+
+                }
+
+                intent.putExtra(Constant.EXTRA_USER_ID, message.getFrom());
                /* //有电话时优先跳转到通话页面
                 if(isVideoCalling){
                     intent = new Intent(appContext, VideoCallActivity.class);
@@ -406,7 +421,7 @@ public class DemoHelper {
                     }.start();
                 }else{
                     if(!isGroupsSyncedWithServer){
-                        //asyncFetchGroupsFromServer(null);
+                        asyncFetchGroupsFromServer(null);
                     }
                     
                     if(!isContactsSyncedWithServer){
@@ -431,7 +446,7 @@ public class DemoHelper {
         //注册连接监听
         EMClient.getInstance().addConnectionListener(connectionListener);
         //注册群组和联系人监听
-       // registerGroupAndContactListener();
+         registerGroupAndContactListener();
         //注册消息事件监听
         registerEventListener();
         
@@ -448,7 +463,7 @@ public class DemoHelper {
     public void registerGroupAndContactListener(){
         if(!isGroupAndContactListenerRegisted){
             //注册群组变动监听
-           // EMClient.getInstance().groupManager().addGroupChangeListener(new MyGroupChangeListener());
+            EMClient.getInstance().groupManager().addGroupChangeListener(new MyGroupChangeListener());
             //注册联系人变动监听
             EMClient.getInstance().contactManager().setContactListener(new MyContactListener());
             isGroupAndContactListenerRegisted = true;
@@ -459,7 +474,7 @@ public class DemoHelper {
     /**
      * 群组变动监听
      */
- /*   class MyGroupChangeListener implements EMGroupChangeListener {
+    class MyGroupChangeListener implements EMGroupChangeListener {
 
         @Override
         public void onInvitationReceived(String groupId, String groupName, String inviter, String reason) {
@@ -616,7 +631,6 @@ public class DemoHelper {
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
         }
     }
-    */
     /***
      * 好友变化listener
      * 

@@ -33,6 +33,7 @@ import com.callba.phone.DemoHelper.DataSyncListener;
 import com.callba.phone.activity.BlacklistActivity;
 import com.callba.phone.activity.ChatActivity;
 import com.callba.phone.activity.FriendActivity;
+import com.callba.phone.activity.GroupsActivity;
 import com.callba.phone.activity.NewFriendsMsgActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.BaseUser;
@@ -186,7 +187,7 @@ public class WebContactFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), ChatActivity.class);
                 EaseUser user = (EaseUser) listView.getItemAtPosition(position);
-                intent.putExtra("username", user.getUsername());
+                intent.putExtra(Constant.EXTRA_USER_ID, user.getUsername());
                 startActivity(intent);
             }
         });
@@ -406,7 +407,7 @@ public class WebContactFragment extends BaseFragment {
                     break;
                 case R.id.group_item:
                     // 进入群聊列表页面
-                    //startActivity(new Intent(getActivity(), GroupsActivity.class));
+                    startActivity(new Intent(getActivity(), GroupsActivity.class));
                     break;
                /* case R.id.chat_room_item:
                     //进入聊天室列表页面

@@ -306,7 +306,7 @@ public class LoginController {
 		Message msg = handler.obtainMessage();
 		String results = null;
 		int i=0;
-		while(i<5)
+		for (i=0;i<5;i++)
 		{try {
 			String content = HttpUtils.getDatafFromPostConnClose(
 					Interfaces.Login, params);
@@ -316,24 +316,23 @@ public class LoginController {
 			Logger.d(TAG, "LoginControll login result : " + results);
 			
 			msg.arg1 = Task.TASK_SUCCESS;
-			break;
+
 		} catch (ConnectTimeoutException e1) {
 			e1.printStackTrace();
 			msg.arg1 = Task.TASK_TIMEOUT;
-			i++;
+			if(i!=4)
+			continue;
 		} catch (UnknownHostException e2) {
 			e2.printStackTrace();
 			msg.arg1 = Task.TASK_NETWORK_ERROR;
-			break;
 		} catch (Exception e) {
 			e.printStackTrace();
 			msg.arg1 = Task.TASK_FAILED;
-			break;
 		} finally {
 			msg.what = task.getTaskID();
 			msg.obj = results;
-			
 			handler.sendMessage(msg);
+			break;
 		}}
 	}
 }
