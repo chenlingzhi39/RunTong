@@ -24,6 +24,7 @@ import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.callba.BuildConfig;
 import com.callba.R;
 import com.callba.phone.activity.WelcomeActivity;
+import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.StorageUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -46,7 +47,6 @@ public class MyApplication extends MultiDexApplication {
 //	private PushAgent mPushAgent;
 
     private long lastRestartTimeMillis = System.currentTimeMillis();
-
     //实现ConnectionListener接口
     private DaoSession mDaoSession;
     private SQLiteDatabase db;

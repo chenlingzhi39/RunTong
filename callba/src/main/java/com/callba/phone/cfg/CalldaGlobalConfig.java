@@ -1,5 +1,6 @@
 package com.callba.phone.cfg;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import com.callba.phone.logic.contact.ContactPersonEntity;
  * @Version V1.0  
  * @Createtime：2014年5月10日 下午5:19:25 
  */
-public class CalldaGlobalConfig {
+public class CalldaGlobalConfig implements Serializable{
 	private static CalldaGlobalConfig calldaGlobalConfig;
 	private CalldaGlobalConfig(){}
 	
@@ -394,7 +395,24 @@ public class CalldaGlobalConfig {
 		outState.putBoolean("isBackcallAutoAnswer", isCallBackAutoAnswer);
 		outState.putBoolean("isAutoLogin", isAutoLogin);
 		outState.putBoolean("keyBoardSetting", keyBoardSetting);
-		
+		outState.putDouble("longitude",longitude);
+		outState.putDouble("latitude",latitude);
+		outState.putString("address",address);
+		outState.putLong("interval",interval);
+		outState.putString("userhead",userhead);
+		outState.putString("nickname",nickname);
+		outState.putString("signature",signature);
+		outState.putInt("gold",gold);
+		outState.putString("commission",commission);
+		ArrayList list1 = new ArrayList();
+		list1.add(advertisements1);
+		outState.putParcelableArrayList("advertisements1",list1);
+		ArrayList list2 = new ArrayList();
+		list2.add(advertisements1);
+		outState.putParcelableArrayList("advertisements2",list2);
+		ArrayList list3 = new ArrayList();
+		list3.add(advertisements1);
+		outState.putParcelableArrayList("advertisements3",list3);
 		@SuppressWarnings("rawtypes")
 		ArrayList list = new ArrayList();
 		list.add(contactBeans);
@@ -420,6 +438,18 @@ public class CalldaGlobalConfig {
 		ivPathBack = savedInstanceState.getString("ivPathBack");
 		keyBoardSetting = savedInstanceState.getBoolean("keyBoardSetting");
 		contactBeans = (List<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0);
+		longitude=savedInstanceState.getDouble("longitude",longitude);
+		latitude=savedInstanceState.getDouble("latitude",latitude);
+		address=savedInstanceState.getString("address",address);
+		interval=savedInstanceState.getLong("interval",interval);
+		userhead=savedInstanceState.getString("userhead",userhead);
+		nickname=savedInstanceState.getString("nickname",nickname);
+		signature=savedInstanceState.getString("signature",signature);
+		gold=savedInstanceState.getInt("gold",gold);
+		commission=savedInstanceState.getString("commission",commission);
+		advertisements1=(ArrayList<Advertisement>)savedInstanceState.getParcelableArrayList("advertisements1").get(0);
+		advertisements2=(ArrayList<Advertisement>)savedInstanceState.getParcelableArrayList("advertisements2").get(0);
+		advertisements3=(ArrayList<Advertisement>)savedInstanceState.getParcelableArrayList("advertisements3").get(0);
 	}
 }
  

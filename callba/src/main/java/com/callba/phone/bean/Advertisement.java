@@ -1,9 +1,14 @@
 package com.callba.phone.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * Created by PC-20160514 on 2016/6/14.
  */
-public class Advertisement {
+public class Advertisement implements Serializable{
     private String image;
     private String adurl;
 
@@ -22,4 +27,5 @@ public class Advertisement {
     public void setImage(String image) {
         this.image = image;
     }
+
 }
