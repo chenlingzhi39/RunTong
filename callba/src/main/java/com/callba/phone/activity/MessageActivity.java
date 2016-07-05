@@ -8,20 +8,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Pair;
-import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -35,18 +35,11 @@ import com.callba.phone.Constant;
 import com.callba.phone.adapter.ConversationAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.EaseUser;
-import com.callba.phone.db.InviteMessgeDao;
-import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.util.ActivityUtil;
-import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.Logger;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
-import com.hyphenate.chat.EMMessage;
-import com.hyphenate.util.EMLog;
-import com.umeng.fb.model.Conversation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,14 +70,17 @@ public class MessageActivity extends BaseActivity {
     EditText query;
     @InjectView(R.id.search_clear)
     ImageButton clearSearch;
+    @InjectView(R.id.refresh)
+    SwipeRefreshLayout refresh;
     private ConversationAdapter adapter;
     private ChatReceiver chatReceiver;
     private AsReadReceiver asReadReceiver;
     private int index = -1;
     private BroadcastReceiver broadcastReceiver;
     private LocalBroadcastManager broadcastManager;
-   private  List<EMConversation> copyList;
+    private List<EMConversation> copyList;
     protected InputMethodManager inputMethodManager;
+
     @OnClick(R.id.search_clear)
     public void onClick() {
         query.getText().clear();
@@ -102,11 +98,6 @@ public class MessageActivity extends BaseActivity {
     }
 
     private EaseConversationListItemClickListener listItemClickListener;
-
-    @Override
-    public void refresh(Object... params) {
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,11 +126,11 @@ public class MessageActivity extends BaseActivity {
                 else {
                     // 进入聊天页面
                     Intent intent = new Intent(MessageActivity.this, ChatActivity.class);
-                    if(conversation.isGroup()){
-                        if(conversation.getType() == EMConversation.EMConversationType.ChatRoom){
+                    if (conversation.isGroup()) {
+                        if (conversation.getType() == EMConversation.EMConversationType.ChatRoom) {
                             // it's group chat
                             intent.putExtra(Constant.EXTRA_CHAT_TYPE, Constant.CHATTYPE_CHATROOM);
-                        }else{
+                        } else {
                             intent.putExtra(Constant.EXTRA_CHAT_TYPE, Constant.CHATTYPE_GROUP);
                         }
 
@@ -153,7 +144,7 @@ public class MessageActivity extends BaseActivity {
         adapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemClick(int position) {
-                showDeleteDialog(MessageActivity.this,adapter.getData().get(position));
+                showDeleteDialog(adapter.getData().get(position));
                 return false;
             }
         });
@@ -200,7 +191,17 @@ public class MessageActivity extends BaseActivity {
                 return false;
             }
         });
-
+       refresh.setColorSchemeResources(R.color.orange);
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                conversationList.clear();
+                conversationList.addAll(loadConversationList());
+                adapter.clear();
+                adapter.addAll(conversationList);
+                refresh.setRefreshing(false);
+            }
+        });
     }
 
     @Override
@@ -209,7 +210,7 @@ public class MessageActivity extends BaseActivity {
             case R.id.settings:
                /* Intent intent = new Intent(MessageActivity.this, PostMessageActivity.class);
                 startActivity(intent);*/
-                Intent intent=new Intent(MessageActivity.this,SettingsActivity.class);
+                Intent intent = new Intent(MessageActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 break;
         }
@@ -252,7 +253,7 @@ public class MessageActivity extends BaseActivity {
         for (Pair<Long, EMConversation> sortItem : sortList) {
             list.add(sortItem.second);
         }
-        copyList=list;
+        copyList = list;
         return list;
     }
 
@@ -328,38 +329,37 @@ public class MessageActivity extends BaseActivity {
     }
 
 
-
-    public class MyFilter extends Filter{
+    public class MyFilter extends Filter {
         List<EMConversation> mOriginalList;
+
         public MyFilter(List<EMConversation> messages) {
-        this.mOriginalList=messages;
+            this.mOriginalList = messages;
         }
 
         @Override
         protected FilterResults performFiltering(CharSequence prefix) {
             FilterResults results = new FilterResults();
-            if(mOriginalList==null){
+            if (mOriginalList == null) {
                 mOriginalList = new ArrayList<EMConversation>();
             }
 
 
-            if(prefix==null || prefix.length()==0){
+            if (prefix == null || prefix.length() == 0) {
                 results.values = copyList;
                 results.count = copyList.size();
-            }else{
+            } else {
                 String prefixString = prefix.toString();
                 final int count = mOriginalList.size();
                 final ArrayList<EMConversation> newValues = new ArrayList<EMConversation>();
-                for(int i=0;i<count;i++){
-                    final EMConversation conversation= mOriginalList.get(i);
+                for (int i = 0; i < count; i++) {
+                    final EMConversation conversation = mOriginalList.get(i);
 //                    String username = user.getNick();
 //                    if(username == null)
 //                        username = user.getNick();
-              String username=conversation.getUserName();
-                    if(username.startsWith(prefixString)){
+                    String username = conversation.getUserName();
+                    if (username.startsWith(prefixString)) {
                         newValues.add(conversation);
-                    }
-                    else{
+                    } else {
                         final String[] words = username.split(" ");
                         final int wordCount = words.length;
 
@@ -372,8 +372,8 @@ public class MessageActivity extends BaseActivity {
                         }
                     }
                 }
-                results.values=newValues;
-                results.count=newValues.size();
+                results.values = newValues;
+                results.count = newValues.size();
             }
             return results;
         }
@@ -381,9 +381,10 @@ public class MessageActivity extends BaseActivity {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             adapter.clear();
-            adapter.addAll((ArrayList<EMConversation>)results.values);
+            adapter.addAll((ArrayList<EMConversation>) results.values);
         }
     }
+
     protected void hideSoftKeyboard() {
         if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
             if (getCurrentFocus() != null)
@@ -391,60 +392,30 @@ public class MessageActivity extends BaseActivity {
                         InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
-    private void showDeleteDialog(Context context,
-                                  final EMConversation entity) {
 
-        final DialogHelper helper = new DialogHelper(entity);
-        Dialog dialog = new AlertDialog.Builder(this).setView(helper.getView()).create();
-        helper.setDialog(dialog);
-        dialog.show();
+    private void showDeleteDialog(final EMConversation entity) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setItems(new String[] { getString(R.string.delete_conversation), getString(R.string.delete_conversation_messages) },
+                    new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            switch (which) {
+                                case 0:
+                                    EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(), false);
+                                    adapter.remove(entity);
+                                    break;
+                                case 1:
+                                    EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(), true);
+                                    adapter.remove(entity);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    });
+            builder.create().show();
     }
-    class DialogHelper implements DialogInterface.OnDismissListener,View.OnClickListener {
-        private Dialog mDialog;
-        private View view;
-        TextView tv_name;
-        Button delete_conversation;
-        Button delete_conversation_message;
-        EMConversation entity;
-        public DialogHelper(EMConversation entity) {
-            this.entity=entity;
-            view=getLayoutInflater().inflate(R.layout.dialog_conversation,null);
-            tv_name=(TextView)view.findViewById(R.id.name);
-            delete_conversation=(Button)view.findViewById(R.id.delete_conversation);
-            delete_conversation.setOnClickListener(this);
-            delete_conversation_message=(Button)view.findViewById(R.id.delete_conversation_messages);
-            delete_conversation_message.setOnClickListener(this);
-            tv_name.setText(entity.getUserName());
-        }
 
-        @Override
-        public void onClick(View v) {
-            mDialog.dismiss();
-            switch (v.getId()){
-                case R.id.delete_conversation:
-                    EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(),false);
-                    adapter.remove(entity);
-                    break;
-                case R.id.delete_conversation_messages:
-                    EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(),true);
-                    adapter.remove(entity);
-                    break;
-
-            }
-        }
-
-        public View getView() {
-            return view;
-        }
-
-        public void setDialog(Dialog dialog) {
-            mDialog = dialog;
-        }
-
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            mDialog=null;
-        }
-    }
 
 }

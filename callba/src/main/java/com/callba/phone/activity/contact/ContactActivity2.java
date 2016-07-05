@@ -200,4 +200,5 @@ public class ContactActivity2 extends BaseActivity {
         }
         return false;
     }
+
 }

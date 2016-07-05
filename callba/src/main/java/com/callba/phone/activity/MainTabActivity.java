@@ -92,10 +92,10 @@ public class MainTabActivity extends TabActivity {
     private static final int FLING_MIN_VELOCITY = 0;
     BroadcastReceiver payReceiver;
     private EMMessageListener messageListener;
-    @Override
+   /* @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
+    }*/
 
 
     @Override

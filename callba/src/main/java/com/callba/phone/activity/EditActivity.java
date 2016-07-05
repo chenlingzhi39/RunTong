@@ -29,8 +29,6 @@ public class EditActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-		setContentView(R.layout.em_activity_edit);
-		
 		editText = (EditText) findViewById(R.id.edittext);
 		String title = getIntent().getStringExtra("title");
 		String data = getIntent().getStringExtra("data");

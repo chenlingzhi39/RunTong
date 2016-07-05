@@ -50,6 +50,7 @@ import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hyphenate.chat.EMClient;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.bitmap.BitmapCommonUtils;
@@ -1017,7 +1018,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             if (allcalllists == null)
                 return false;
             CalldaCalllogBean bean = allcalllists.get(position);
-            showDeleteDialog(context, bean.getDisplayName(), bean);
+            showDeleteDialog(context,allcalllists.get(position), mergecalllists.get(position));
             return true;
         }
 
@@ -1028,8 +1029,8 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
      *
      * @param context
      */
-    private void showDeleteDialog(Context context, String name,
-                                  final CalldaCalllogBean bean) {
+    private void showDeleteDialog(Context context,final CalldaCalllogBean bean0,
+                                  final CalllogDetailBean bean) {
       /*  final Dialog dialog = new Dialog(context, R.style.MyDialog);
         View view = View.inflate(context, R.layout.calllog_delete_dialog_bg,
                 null);
@@ -1070,56 +1071,26 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         });
 
         dialog.show();*/
-        final DialogHelper helper = new DialogHelper(name,bean);
-        Dialog dialog = new AlertDialog.Builder(this).setView(helper.getView()).create();
-        helper.setDialog(dialog);
-        dialog.show();
-    }
-    class DialogHelper implements DialogInterface.OnDismissListener,OnClickListener{
-        private Dialog mDialog;
-        private View view;
-        TextView tv_number;
-        Button single,multiple;
-        String number;
-        CalldaCalllogBean bean;
-        public DialogHelper(String number, CalldaCalllogBean bean) {
-            this.number=number;
-            this.bean=bean;
-            view=getLayoutInflater().inflate(R.layout.dialog_calllog,null);
-            tv_number=(TextView)view.findViewById(R.id.number);
-            single=(Button)view.findViewById(R.id.single);
-            multiple=(Button)view.findViewById(R.id.multiple);
-            single.setOnClickListener(this);
-            multiple.setOnClickListener(this);
-            tv_number.setText(number);
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(bean.getCallLogNumber());
+        builder.setItems(new String[] {"删除单条通话记录", "删除所有通话记录" },
+                new DialogInterface.OnClickListener() {
 
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.single:
-                    calllogService.deleteSingleCallLog(bean);
-                    mDialog.dismiss();
-                    break;
-                case R.id.multiple:
-                    calllogService.deleteAllCallLog();
-                    mDialog.dismiss();
-                    break;
-            }
-        }
-
-        public View getView() {
-            return view;
-        }
-
-        public void setDialog(Dialog dialog) {
-           mDialog = dialog;
-        }
-
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            mDialog=null;
-        }
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        switch (which) {
+                            case 0:
+                                calllogService.deleteSingleCallLog(bean0);
+                                break;
+                            case 1:
+                                calllogService.deleteAllCallLog();
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+        builder.create().show();
     }
 
     @Override

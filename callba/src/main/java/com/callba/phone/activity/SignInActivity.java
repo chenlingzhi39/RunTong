@@ -690,7 +690,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         umVedio.setThumb(mUMImgBitmap);
         // 设置分享文字内容
         mController
-                .setShareContent("友盟社会化组件还不错，让移动应用快速整合社交分享功能。www.umeng.com/social");
+                .setShareContent("我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
         // mController.setShareContent(null);
         // 设置分享图片
         // mController.setShareMedia(mUMImgBitmap);

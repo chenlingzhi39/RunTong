@@ -68,11 +68,22 @@
         <activity
             android:name=".phone.activity.SelectPicPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />
+        <activity android:name=".phone.activity.EditActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            />
         <activity
             android:name=".phone.ui.ExitGroupDialog"
             android:screenOrientation="portrait"
-            android:theme="@style/MyDialogStyleBottom" >
+            android:theme="@style/MyDialogStyleBottom"
+            android:windowSoftInputMode="adjustPan">
         </activity>
+        <activity android:name=".phone.activity.GroupBlacklistActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            />
         <activity android:name=".phone.activity.GroupDetailsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

@@ -105,7 +105,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         gson = new Gson();
         location.setTextColor(getResources().getColor(R.color.black_2f));
         location.setText(CalldaGlobalConfig.getInstance().getAddress());
-        userDao = new UserDao(this, this);
+            userDao = new UserDao(this, this);
         initRefreshLayout();
         userList.setLayoutManager(new LinearLayoutManager(this));
         userList.setLoadingMoreEnabled(false);
@@ -281,135 +281,106 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             userDao1.getAd(2, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
 
     }
-    private void showDialog(Context context,
-                                  final NearByUser entity) {
+    private void showDialog(final NearByUser entity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(entity.getNickname());
+        builder.setItems(new String[] { getString(R.string.add_friend) },
+                new DialogInterface.OnClickListener() {
 
-        final DialogHelper helper = new DialogHelper(entity);
-        Dialog dialog = new AlertDialog.Builder(this).setView(helper.getView()).create();
-        helper.setDialog(dialog);
-        dialog.show();
-    }
-    class DialogHelper implements DialogInterface.OnDismissListener,View.OnClickListener {
-        private Dialog mDialog;
-        private View view;
-        TextView tv_name;
-        Button add;
-       NearByUser entity;
-        public DialogHelper(NearByUser entity) {
-            this.entity=entity;
-            view=getLayoutInflater().inflate(R.layout.dialog_friend,null);
-            tv_name=(TextView)view.findViewById(R.id.name);
-            add=(Button)view.findViewById(R.id.add_contact);
-            add.setOnClickListener(this);
-            tv_name.setText(entity.getNickname());
-        }
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        switch (which) {
+                            case 0:
+                                if(EMClient.getInstance().getCurrentUser().equals(entity.getPhoneNumber()+"-callba")){
+                                    new EaseAlertDialog(FriendActivity.this, R.string.not_add_myself).show();
+                                    return;
+                                }
 
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.add_contact:
-                    mDialog.dismiss();
-                    if(EMClient.getInstance().getCurrentUser().equals(entity.getPhoneNumber()+"-callba")){
-                        new EaseAlertDialog(FriendActivity.this, R.string.not_add_myself).show();
-                        return;
-                    }
+                                if(DemoHelper.getInstance().getContactList().containsKey(entity.getPhoneNumber()+"-callba")){
+                                    //提示已在好友列表中(在黑名单列表里)，无需添加
+                                    if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(entity.getPhoneNumber()+"-callba")){
+                                        new EaseAlertDialog(FriendActivity.this, R.string.user_already_in_contactlist).show();
+                                        return;
+                                    }
+                                    new EaseAlertDialog(FriendActivity.this, R.string.This_user_is_already_your_friend).show();
+                                    return;
+                                }
 
-                    if(DemoHelper.getInstance().getContactList().containsKey(entity.getPhoneNumber()+"-callba")){
-                        //提示已在好友列表中(在黑名单列表里)，无需添加
-                        if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(entity.getPhoneNumber()+"-callba")){
-                            new EaseAlertDialog(FriendActivity.this, R.string.user_already_in_contactlist).show();
-                            return;
+                                final ProgressDialog  progressDialog = new ProgressDialog(FriendActivity.this);
+                                String stri = getResources().getString(R.string.Is_sending_a_request);
+                                progressDialog.setMessage(stri);
+                                progressDialog.setCanceledOnTouchOutside(false);
+                                progressDialog.show();
+                                OkHttpUtils
+                                        .post()
+                                        .url(Interfaces.ADD_FRIEND)
+                                        .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+                                        .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                                        .addParams("phoneNumber",entity.getPhoneNumber())
+                                        .build()
+                                        .execute(new StringCallback() {
+                                            @Override
+                                            public void onError(Call call, Exception e, int id) {
+                                                e.printStackTrace();
+                                                runOnUiThread(new Runnable() {
+                                                    public void run() {
+                                                        progressDialog.dismiss();
+                                                        String s2 = getResources().getString(R.string.Request_add_buddy_failure);
+                                                        Toast.makeText(getApplicationContext(), s2 , 1).show();
+                                                    }
+                                                });
+                                            }
+
+                                            @Override
+                                            public void onResponse(String response, int id) {
+                                                Logger.i("add_result",response);
+                                                String[] result=response.split("\\|");
+                                                if(result[0].equals("0"))
+                                                {
+                                                    try {
+                                                        //demo写死了个reason，实际应该让用户手动填入
+                                                        String s = getResources().getString(R.string.Add_a_friend);
+                                                        //EMClient.getInstance().contactManager().addContact(entity.getPhoneNumber()+"-callba", s);
+                                                        sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+                                                        List<EaseUser> mList = new ArrayList<EaseUser>();
+                                                        EaseUser user = new EaseUser(entity.getPhoneNumber()+"-callba");
+                                                        user.setAvatar(entity.getUrl_head());
+                                                        user.setNick(entity.getNickname());
+                                                        //user.setSign(entity.getSign());
+                                                        EaseCommonUtils.setUserInitialLetter(user);
+                                                        mList.add(user);
+                                                        DemoHelper.getInstance().updateContactList(mList);
+                                                        //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+                                                        runOnUiThread(new Runnable() {
+                                                            public void run() {
+                                                                progressDialog.dismiss();
+                                                                String s1 = "添加成功";
+                                                                Toast.makeText(getApplicationContext(), s1, 1).show();
+                                                            }
+                                                        });
+                                                    } catch (final Exception e) {
+                                                        runOnUiThread(new Runnable() {
+                                                            public void run() {
+                                                                progressDialog.dismiss();
+                                                                String s2 = getResources().getString(R.string.Request_add_buddy_failure);
+                                                                Toast.makeText(getApplicationContext(), s2 + e.getMessage(), 1).show();
+                                                            }
+                                                        });
+                                                    }
+                                                }else { toast(result[1]);
+                                                    progressDialog.dismiss();
+                                                }
+                                            }
+                                        });
+
+                                break;
+                            default:
+                                break;
                         }
-                        new EaseAlertDialog(FriendActivity.this, R.string.This_user_is_already_your_friend).show();
-                        return;
                     }
-
-                    final ProgressDialog  progressDialog = new ProgressDialog(FriendActivity.this);
-                    String stri = getResources().getString(R.string.Is_sending_a_request);
-                    progressDialog.setMessage(stri);
-                    progressDialog.setCanceledOnTouchOutside(false);
-                    progressDialog.show();
-                    OkHttpUtils
-                            .post()
-                            .url(Interfaces.ADD_FRIEND)
-                            .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-                            .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
-                            .addParams("phoneNumber",entity.getPhoneNumber())
-                            .build()
-                            .execute(new StringCallback() {
-                                @Override
-                                public void onError(Call call, Exception e, int id) {
-                                    e.printStackTrace();
-                                    runOnUiThread(new Runnable() {
-                                        public void run() {
-                                            progressDialog.dismiss();
-                                            String s2 = getResources().getString(R.string.Request_add_buddy_failure);
-                                            Toast.makeText(getApplicationContext(), s2 , 1).show();
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onResponse(String response, int id) {
-                                    Logger.i("add_result",response);
-                                    String[] result=response.split("\\|");
-                                    if(result[0].equals("0"))
-                                    {
-                                    try {
-                                        //demo写死了个reason，实际应该让用户手动填入
-                                        String s = getResources().getString(R.string.Add_a_friend);
-                                        //EMClient.getInstance().contactManager().addContact(entity.getPhoneNumber()+"-callba", s);
-                                        sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-                                        List<EaseUser> mList = new ArrayList<EaseUser>();
-                                            EaseUser user = new EaseUser(entity.getPhoneNumber()+"-callba");
-                                            user.setAvatar(entity.getUrl_head());
-                                            user.setNick(entity.getNickname());
-                                            //user.setSign(entity.getSign());
-                                            EaseCommonUtils.setUserInitialLetter(user);
-                                            mList.add(user);
-                                        DemoHelper.getInstance().updateContactList(mList);
-                                        //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-                                        runOnUiThread(new Runnable() {
-                                            public void run() {
-                                                progressDialog.dismiss();
-                                                String s1 = "添加成功";
-                                                Toast.makeText(getApplicationContext(), s1, 1).show();
-                                            }
-                                        });
-                                    } catch (final Exception e) {
-                                        runOnUiThread(new Runnable() {
-                                            public void run() {
-                                                progressDialog.dismiss();
-                                                String s2 = getResources().getString(R.string.Request_add_buddy_failure);
-                                                Toast.makeText(getApplicationContext(), s2 + e.getMessage(), 1).show();
-                                            }
-                                        });
-                                    }
-                                }else { toast(result[1]);
-                                        progressDialog.dismiss();
-                                    }
-                                }
-                            });
-
-                    break;
-
-            }
-        }
-
-        public View getView() {
-            return view;
-        }
-
-        public void setDialog(Dialog dialog) {
-            mDialog = dialog;
-        }
-
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            mDialog=null;
-        }
+                });
+        builder.create().show();
     }
-
     @Override
     public void failure(String msg) {
         userList.refreshComplete();
@@ -447,7 +418,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                     @Override
                     public boolean onItemClick(int position) {
                         Logger.i("userlist","longclick");
-                        showDialog(FriendActivity.this,nearByUserAdapter.getData().get(position-2));
+                        showDialog(nearByUserAdapter.getData().get(position-2));
                         return true;
                     }
                 });}else{

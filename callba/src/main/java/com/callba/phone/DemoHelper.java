@@ -356,9 +356,7 @@ public class DemoHelper {
                         intent.putExtra("chatType", Constant.CHATTYPE_CHATROOM);
                     }
 
-                }
-
-                intent.putExtra(Constant.EXTRA_USER_ID, message.getFrom());
+                };
                /* //有电话时优先跳转到通话页面
                 if(isVideoCalling){
                     intent = new Intent(appContext, VideoCallActivity.class);
@@ -596,13 +594,13 @@ public class DemoHelper {
             msg.setFrom(accepter);
             msg.setTo(groupId);
             msg.setMsgId(UUID.randomUUID().toString());
-            msg.addBody(new EMTextMessageBody(accepter + " " +st4));
+            msg.addBody(new EMTextMessageBody(getUserInfo(accepter).getNick() + " " +st4));
             msg.setStatus(Status.SUCCESS);
             // 保存同意消息
             EMClient.getInstance().chatManager().saveMessage(msg);
             // 提醒新消息
             getNotifier().viberateAndPlayTone(msg);
-
+            getNotifier().onNewMsg(msg);
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
         }
 
@@ -620,12 +618,13 @@ public class DemoHelper {
             msg.setFrom(inviter);
             msg.setTo(groupId);
             msg.setMsgId(UUID.randomUUID().toString());
-            msg.addBody(new EMTextMessageBody(inviter + " " +st3));
+            msg.addBody(new EMTextMessageBody(getUserInfo(inviter).getNick() + " " +st3));
             msg.setStatus(EMMessage.Status.SUCCESS);
             // 保存邀请消息
             EMClient.getInstance().chatManager().saveMessage(msg);
             // 提醒新消息
             getNotifier().viberateAndPlayTone(msg);
+            getNotifier().onNewMsg(msg);
             EMLog.d(TAG, "onAutoAcceptInvitationFromGroup groupId:" + groupId);
             //发送local广播
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
@@ -781,7 +780,7 @@ public class DemoHelper {
         //保存未读数，这里没有精确计算
         inviteMessgeDao.saveUnreadMessageCount(1);
         // 提示有新消息
-        //getNotifier().viberateAndPlayTone(null);
+        getNotifier().viberateAndPlayTone(null);
     }
     
     /**

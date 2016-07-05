@@ -2,8 +2,11 @@ package com.callba.phone.activity.recharge;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -99,6 +102,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     // 支付宝公钥
     public static final String RSA_PUBLIC = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnxj/9qwVfgoUh/y2W89L6BkRAFljhNhgPdyPuBV64bfQNN1PjbCzkIM6qRdKBoLPXmKKMiFYnkd6rAoprih3/PrQEB/VsW8OoM8fxn67UDYuyBTqA23MML9q1+ilIZwBC2AQ2UBVOrFXfFl75p6/B5KsiNG9zpgmLCUYuLkxpLQIDAQAB";
     private static final int SDK_PAY_FLAG = 1;
+    private ProgressDialog progressDialog;
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @SuppressWarnings("unused")
@@ -117,8 +121,6 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
                         userDao1.pay(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),outTradeNo,"success");
-                        getActivity().finish();
-                        getActivity().sendBroadcast(new Intent("com.callba.pay"));
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
                         // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
@@ -189,20 +191,40 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         userDao1=new UserDao(getActivity(), new UserDao.PostListener() {
             @Override
             public void start() {
-
+            progressDialog= ProgressDialog.show(getActivity(), null,
+                    "正在验证支付结果");
             }
 
             @Override
             public void success(String msg) {
+                progressDialog.dismiss();
                 String[] result=msg.split("\\|");
                 if(result[0].equals("0"))
-                    toast(result[1]);
+                {toast(result[1]);
+               /* getActivity().sendBroadcast(new Intent("com.callba.pay"));
+                getActivity().finish();*/
+                }
                 else if(result.length>1)toast(result[1]);
             }
 
             @Override
             public void failure(String msg) {
-                toast(msg);
+                progressDialog.dismiss();
+               AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("充值失败，请重试");
+                builder.setPositiveButton("重试",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                userDao1.pay(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),outTradeNo,"success");
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.setCanceledOnTouchOutside(false);
+                alertDialog.setCancelable(false);
+                alertDialog.show();
+                //toast("充值失败，请联系客服");
             }
         });
         subject = "39元套餐";
@@ -335,7 +357,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
      */
     public void pay() {
 
-        String orderInfo = getOrderInfo(subject, body, price);
+        String orderInfo = getOrderInfo(subject, body,price);
 
         /**
          * 特别注意，这里的签名逻辑需要放在服务端，切勿将私钥泄露在代码中！

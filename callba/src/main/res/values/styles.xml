@@ -4,7 +4,7 @@
         <item name="colorAccent">@color/orange</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>
+        <!-- <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>-->
         <!--<item name="android:textAppearance">@style/TextAppearance.FontPath</item>-->
     </style>
     <style name="TransparentDialog" parent="@android:style/Theme.Dialog">

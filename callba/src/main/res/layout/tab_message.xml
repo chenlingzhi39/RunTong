@@ -3,7 +3,8 @@
     xmlns:hyphenate="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_marginBottom="53dp">
     <include layout="@layout/toolbar_padding"/>
     <include
         android:id="@+id/search_bar_view"
@@ -27,18 +28,20 @@
             android:src="@drawable/search"
             android:layout_toLeftOf="@+id/text"/>
     </RelativeLayout>-->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
       <!--  <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="正在建设中"/>-->
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/refresh">
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/conversation_list" />
-    </RelativeLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

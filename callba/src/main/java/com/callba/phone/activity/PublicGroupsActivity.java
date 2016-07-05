@@ -64,28 +64,23 @@ public class PublicGroupsActivity extends BaseActivity {
     private ProgressBar footLoadingPB;
     private TextView footLoadingText;
     @Override
-    public void refresh(Object... params) {
-
-    }
-
-    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		pb = (ProgressBar) findViewById(R.id.progressBar);
-		listView = (ListView) findViewById(R.id.list);
-		groupsList = new ArrayList<EMGroupInfo>();
-		
-		View footView = getLayoutInflater().inflate(R.layout.em_listview_footer_view, null);
+        pb = (ProgressBar) findViewById(R.id.progressBar);
+        listView = (ListView) findViewById(R.id.list);
+        groupsList = new ArrayList<EMGroupInfo>();
+
+        View footView = getLayoutInflater().inflate(R.layout.em_listview_footer_view, null);
         footLoadingLayout = (LinearLayout) footView.findViewById(R.id.loading_layout);
         footLoadingPB = (ProgressBar)footView.findViewById(R.id.loading_bar);
         footLoadingText = (TextView) footView.findViewById(R.id.loading_text);
         listView.addFooterView(footView, null, false);
         footLoadingLayout.setVisibility(View.GONE);
-        
+
         //获取及显示数据
         loadAndShowData();
-        
+
         //设置item点击事件
         listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -96,12 +91,11 @@ public class PublicGroupsActivity extends BaseActivity {
             }
         });
         listView.setOnScrollListener(new OnScrollListener() {
-            
+
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if(scrollState == OnScrollListener.SCROLL_STATE_IDLE){
+                        if(scrollState == OnScrollListener.SCROLL_STATE_IDLE){
                     if(listView.getCount() != 0){
-                        groupsList.clear();
                         int lasPos = view.getLastVisiblePosition();
                         if(hasMoreData && !isLoading && lasPos == listView.getCount()-1){
                             loadAndShowData();
@@ -109,25 +103,25 @@ public class PublicGroupsActivity extends BaseActivity {
                     }
                 }
             }
-            
+
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                
+
             }
         });
-        
-	}
-	
-	/**
-	 * 搜索
-	 * @param view
-	 */
-	public void search(){
-	    startActivity(new Intent(this, PublicGroupsSeachActivity.class));
-	}
-	
-	private void loadAndShowData(){
-	    new Thread(new Runnable() {
+
+    }
+
+    /**
+     * 搜索
+     * @param view
+     */
+    public void search(){
+        startActivity(new Intent(this, PublicGroupsSeachActivity.class));
+    }
+
+    private void loadAndShowData(){
+        new Thread(new Runnable() {
 
             public void run() {
                 try {
@@ -138,6 +132,7 @@ public class PublicGroupsActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
 
                         public void run() {
+                            //searchBtn.setVisibility(View.VISIBLE);
                             groupsList.addAll(returnGroups);
                             if(returnGroups.size() != 0){
                                 //获取cursor
@@ -146,17 +141,22 @@ public class PublicGroupsActivity extends BaseActivity {
                                     footLoadingLayout.setVisibility(View.VISIBLE);
                             }
                             if(isFirstLoading){
-                                //pb.setVisibility(View.INVISIBLE);
+                               // pb.setVisibility(View.INVISIBLE);
                                 isFirstLoading = false;
                                 //设置adapter
                                 adapter = new GroupsAdapter(PublicGroupsActivity.this, 1, groupsList);
                                 listView.setAdapter(adapter);
+                                if(returnGroups.size() < pagesize){
+                                    hasMoreData = false;
+                                    footLoadingLayout.setVisibility(View.VISIBLE);
+                                    footLoadingPB.setVisibility(View.GONE);
+                                    footLoadingText.setText("没有更多了");}
                             }else{
                                 if(returnGroups.size() < pagesize){
                                     hasMoreData = false;
                                     footLoadingLayout.setVisibility(View.VISIBLE);
                                     footLoadingPB.setVisibility(View.GONE);
-                                    footLoadingText.setText("No more data");
+                                    footLoadingText.setText("没有更多了");
                                 }
                                 adapter.notifyDataSetChanged();
                             }
@@ -168,7 +168,7 @@ public class PublicGroupsActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             isLoading = false;
-                            //pb.setVisibility(View.INVISIBLE);
+                           // pb.setVisibility(View.INVISIBLE);
                             footLoadingLayout.setVisibility(View.GONE);
                             Toast.makeText(PublicGroupsActivity.this, "加载数据失败，请检查网络或稍后重试", 0).show();
                         }
@@ -176,32 +176,31 @@ public class PublicGroupsActivity extends BaseActivity {
                 }
             }
         }).start();
-	}
-	/**
-	 * adapter
-	 *
-	 */
-	private class GroupsAdapter extends ArrayAdapter<EMGroupInfo> {
+    }
+    /**
+     * adapter
+     *
+     */
+    private class GroupsAdapter extends ArrayAdapter<EMGroupInfo> {
 
-		private LayoutInflater inflater;
+        private LayoutInflater inflater;
 
-		public GroupsAdapter(Context context, int res, List<EMGroupInfo> groups) {
-			super(context, res, groups);
-			this.inflater = LayoutInflater.from(context);
-		}
+        public GroupsAdapter(Context context, int res, List<EMGroupInfo> groups) {
+            super(context, res, groups);
+            this.inflater = LayoutInflater.from(context);
+        }
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				convertView = inflater.inflate(R.layout.em_row_group, null);
-			}
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.em_row_group, null);
+            }
 
-			((TextView) convertView.findViewById(R.id.name)).setText(getItem(position).getGroupName());
+            ((TextView) convertView.findViewById(R.id.name)).setText(getItem(position).getGroupName());
 
-			return convertView;
-		}
-	}
-
+            return convertView;
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

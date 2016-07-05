@@ -21,18 +21,25 @@ public class NearByUserViewHolder extends BaseViewHolder<NearByUser> {
     TextView userName;
     @InjectView(R.id.distance)
     TextView distance;
+    @InjectView(R.id.sign)
+    TextView sign;
 
     public NearByUserViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_nearby_user);
-        ButterKnife.inject(this,itemView);
+        ButterKnife.inject(this, itemView);
     }
 
     @Override
     public void setData(NearByUser data) {
-       userName.setText(data.getNickname());
-        if(!data.getUrl_head().equals(""))
-        Glide.with(getContext()).load(data.getUrl_head()).into(userHead);else
-        userHead.setImageResource(R.drawable.head);
-        distance.setHint(data.getDistance().substring(0,data.getDistance().lastIndexOf("."))+"米以内");
+        userName.setText(data.getNickname());
+        if (!data.getUrl_head().equals(""))
+            Glide.with(getContext()).load(data.getUrl_head()).into(userHead);
+        else
+            userHead.setImageResource(R.drawable.head);
+         sign.setText(data.getSign());
+        int away = Integer.parseInt(data.getDistance().substring(0, data.getDistance().lastIndexOf(".")));
+        if (away < 1000)
+            distance.setHint(away + "米以内");
+        else distance.setHint((float)(Math.round(away/10))/100 + "公里以内");
     }
 }

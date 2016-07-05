@@ -50,7 +50,7 @@ import java.util.List;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public  class BaseActivity extends AppCompatActivity {
 	public static Boolean flag = true;
 	/**
 	 * 布局的id
@@ -83,14 +83,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 	 * 
 	 * @param params
 	 */
-	public abstract void refresh(Object... params);
+	public void refresh(Object... params){}
 
 	private boolean myDialogFlag = false;
    public Toolbar toolbar;
-	@Override
+	/*@Override
 	protected void attachBaseContext(Context newBase) {
 		super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-	}
+	}*/
 	@SuppressLint("InlinedApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -197,10 +197,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 	}
 	protected void setToolbarTitle(int strId) {
 		if (getSupportActionBar() != null) {
-			//AssetManager mgr=getAssets();//得到AssetManager
-			//Typeface tf= Typeface.createFromAsset(mgr, "fonts/STXIHEI.TTF");//根据路径得到Typeface
 			TextView title=(TextView)findViewById(R.id.title);
-			//title.setTypeface(tf);
 			title.setText(getResources().getString(mToolbarTitle));
 
 
@@ -413,4 +410,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 	  Toast.makeText(this,getString(id),Toast.LENGTH_SHORT).show();
   }
 
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+	}
 }

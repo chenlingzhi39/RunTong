@@ -1431,7 +1431,7 @@ public class MainService extends Service implements Runnable{
 						EMClient.getInstance().chatManager().loadAllConversations();
 						Log.d("main", "登录聊天服务器成功！");
 
-
+						//DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
 					}
 
 					@Override

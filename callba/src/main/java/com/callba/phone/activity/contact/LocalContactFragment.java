@@ -36,6 +36,7 @@ import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.QuickSearchBar;
+import com.hyphenate.chat.EMClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,7 +138,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-       showDeleteDialog(getActivity(),(ContactPersonEntity)mContactListData.get(position));
+       showDeleteDialog((ContactPersonEntity)mContactListData.get(position));
         return true;
     }
 
@@ -146,53 +147,24 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         getActivity().unregisterReceiver(broadcastReceiver);
         super.onDestroy();
     }
-    private void showDeleteDialog(Context context,
-                                  final ContactPersonEntity entity) {
+    private void showDeleteDialog(final ContactPersonEntity entity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(entity.getDisplayName());
+        builder.setItems(new String[] { getString(R.string.delete_contact) },
+                new DialogInterface.OnClickListener() {
 
-        final DialogHelper helper = new DialogHelper(entity);
-        Dialog dialog = new AlertDialog.Builder(getActivity()).setView(helper.getView()).create();
-        helper.setDialog(dialog);
-        dialog.show();
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        switch (which) {
+                            case 0:
+                                ContactsAccessPublic.deleteContact(getActivity(),entity.getDisplayName());
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+        builder.create().show();
     }
-    class DialogHelper implements DialogInterface.OnDismissListener,View.OnClickListener {
-        private Dialog mDialog;
-        private View view;
-        TextView tv_name;
-        Button delete;
-        ContactPersonEntity entity;
-        public DialogHelper(ContactPersonEntity entity) {
-            this.entity=entity;
-            view=getActivity().getLayoutInflater().inflate(R.layout.dialog_contact,null);
-            tv_name=(TextView)view.findViewById(R.id.name);
-            delete=(Button)view.findViewById(R.id.delete_contact);
-            delete.setOnClickListener(this);
-            tv_name.setText(entity.getDisplayName());
-        }
-
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()){
-                case R.id.delete_contact:
-                    ContactsAccessPublic.deleteContact(getActivity(),entity.getDisplayName());
-                    mDialog.dismiss();
-                    break;
-
-            }
-        }
-
-        public View getView() {
-            return view;
-        }
-
-        public void setDialog(Dialog dialog) {
-            mDialog = dialog;
-        }
-
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            mDialog=null;
-        }
-    }
-
 
 }

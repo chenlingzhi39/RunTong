@@ -129,6 +129,7 @@ public class CropActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        if(subscription!=null)
         subscription.unsubscribe();
         super.onDestroy();
     }

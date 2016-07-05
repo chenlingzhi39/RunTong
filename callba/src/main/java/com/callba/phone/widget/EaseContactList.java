@@ -128,6 +128,7 @@ public class EaseContactList extends RelativeLayout {
     }
 
     public void filter(CharSequence str) {
+        if(adapter!=null)
         adapter.getFilter().filter(str);
     }
     

@@ -9,6 +9,15 @@ public class NearByUser {
     private String phoneNumber;
     private String url_head;
     private String distance;
+    private String sign;
+
+    public String getSign() {
+        return sign;
+    }
+
+    public void setSign(String sign) {
+        this.sign = sign;
+    }
 
     public String getDistance() {
         return distance;

@@ -75,7 +75,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 	private EMGroup group;
 	private GridAdapter adapter;
 	private ProgressDialog progressDialog;
-
+    private ProgressDialog pd;
 	private RelativeLayout rl_switch_block_groupmsg;
 
 	public static GroupDetailsActivity instance;
@@ -99,6 +99,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
+		pd=ProgressDialog.show(this,null,"正在加载群组成员");
 	    // 获取传过来的groupid
         groupId = getIntent().getStringExtra("groupId");
         group = EMClient.getInstance().groupManager().getGroup(groupId);
@@ -108,12 +109,12 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
             finish();
             return;
         }
+
 		instance = this;
 		title=(TextView) findViewById(R.id.title);
 		st = getResources().getString(R.string.people);
 		clearAllHistory = (RelativeLayout) findViewById(R.id.clear_all_history);
 		userGridview = (EaseExpandGridView) findViewById(R.id.gridview);
-		loadingPB = (ProgressBar) findViewById(R.id.progressBar);
 		exitBtn = (Button) findViewById(R.id.btn_exit_grp);
 		deleteBtn = (Button) findViewById(R.id.btn_exitdel_grp);
 		blacklistLayout = (RelativeLayout) findViewById(R.id.rl_blacklist);
@@ -574,15 +575,15 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 				// 如果不是创建者或者没有相应权限，不提供加减人按钮
 				if (!group.getOwner().equals(EMClient.getInstance().getCurrentUser())) {
 					// if current user is not group admin, hide add/remove btn
-					convertView.setVisibility(View.INVISIBLE);
+					convertView.setVisibility(View.GONE);
 				} else { // 显示删除按钮
 					if (isInDeleteMode) {
 						// 正处于删除模式下，隐藏删除按钮
-						convertView.setVisibility(View.INVISIBLE);
+						convertView.setVisibility(View.GONE);
 					} else {
 						// 正常模式
 						convertView.setVisibility(View.VISIBLE);
-						convertView.findViewById(R.id.badge_delete).setVisibility(View.INVISIBLE);
+						convertView.findViewById(R.id.badge_delete).setVisibility(View.GONE);
 					}
 					final String st10 = getResources().getString(R.string.The_delete_button_is_clicked);
 					button.setOnClickListener(new OnClickListener() {
@@ -601,14 +602,14 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 				// 如果不是创建者或者没有相应权限
 				if (!group.isAllowInvites() && !group.getOwner().equals(EMClient.getInstance().getCurrentUser())) {
 					// if current user is not group admin, hide add/remove btn
-					convertView.setVisibility(View.INVISIBLE);
+					convertView.setVisibility(View.GONE);
 				} else {
 					// 正处于删除模式下,隐藏添加按钮
 					if (isInDeleteMode) {
-						convertView.setVisibility(View.INVISIBLE);
+						convertView.setVisibility(View.GONE);
 					} else {
 						convertView.setVisibility(View.VISIBLE);
-						convertView.findViewById(R.id.badge_delete).setVisibility(View.INVISIBLE);
+						convertView.findViewById(R.id.badge_delete).setVisibility(View.GONE);
 					}
 					final String st11 = getResources().getString(R.string.Add_a_button_was_clicked);
 					button.setOnClickListener(new OnClickListener() {
@@ -635,7 +636,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 					// 如果是删除模式下，显示减人图标
 					convertView.findViewById(R.id.badge_delete).setVisibility(View.VISIBLE);
 				} else {
-					convertView.findViewById(R.id.badge_delete).setVisibility(View.INVISIBLE);
+					convertView.findViewById(R.id.badge_delete).setVisibility(View.GONE);
 				}
 				final String st12 = getResources().getString(R.string.not_delete_myself);
 				final String st13 = getResources().getString(R.string.Are_removed);
@@ -744,12 +745,12 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 			public void run() {
 				try {
 				    EMClient.getInstance().groupManager().getGroupFromServer(groupId);
-					
+
 					runOnUiThread(new Runnable() {
 						public void run() {
 							title.setText(group.getGroupName() + "(" + group.getAffiliationsCount()
 									+ ")");
-							//loadingPB.setVisibility(View.INVISIBLE);
+							pd.dismiss();
 							refreshMembers();
 							if (EMClient.getInstance().getCurrentUser().equals(group.getOwner())) {
 								// 显示解散按钮
@@ -774,7 +775,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 				} catch (Exception e) {
 					runOnUiThread(new Runnable() {
 						public void run() {
-							loadingPB.setVisibility(View.INVISIBLE);
+							pd.dismiss();
 						}
 					});
 				}

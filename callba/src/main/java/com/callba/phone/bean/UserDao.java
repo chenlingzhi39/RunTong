@@ -676,6 +676,11 @@ public class UserDao {
         params.addBodyParameter("payResult",payResult);
         httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.PAY_SUCCESS, params, new RequestCallBack<String>(){
             @Override
+            public void onStart() {
+                postListener.start();
+            }
+
+            @Override
             public void onFailure(HttpException error, String msg) {
                 postListener.failure(context.getString(R.string.network_error));
             }

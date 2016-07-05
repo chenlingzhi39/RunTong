@@ -58,6 +58,7 @@ import com.hyphenate.util.PathUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -121,6 +122,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         init();
     }
       protected void init(){
+          Locale.setDefault(new Locale("zh"));
           chatFragmentListener=this;
           chatType=getIntent().getIntExtra("chatType",1);
           if(chatType != EaseConstant.CHATTYPE_SINGLE)
@@ -130,7 +132,6 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
           chatAdapter = new ChatAdapter(this);
           userName = getIntent().getStringExtra(Constant.EXTRA_USER_ID);
           toChatUsername = userName;
-          title.setText(toChatUsername);
           if (chatType == EaseConstant.CHATTYPE_SINGLE) { // 单聊
               // 设置标题
               if(EaseUserUtils.getUserInfo(toChatUsername) != null){
@@ -225,6 +226,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
 
     @Override
     protected void onDestroy() {
+        unregisterReceiver(chatReceiver);
         super.onDestroy();
 
     }

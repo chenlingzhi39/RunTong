@@ -328,7 +328,7 @@ public class WebContactFragment extends BaseFragment {
             applicationItem.hideUnreadMsgView();
         }
         getContactList();
-        if (contactListLayout != null)
+        if(contactListLayout!=null)
           contactListLayout.refresh();
     }
 
@@ -481,6 +481,7 @@ public class WebContactFragment extends BaseFragment {
                         loadingView.setVisibility(View.GONE);
                     }
                 });
+
                 refresh();
             } else {
                 String s1 = getActivity().getResources().getString(R.string.get_failed_please_check);
@@ -612,5 +613,20 @@ public class WebContactFragment extends BaseFragment {
             refresh();
         }
     }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (contactSyncListener != null) {
+            DemoHelper.getInstance().removeSyncContactListener(contactSyncListener);
+            contactSyncListener = null;
+        }
 
+        if(blackListSyncListener != null){
+            DemoHelper.getInstance().removeSyncBlackListListener(blackListSyncListener);
+        }
+
+        if(contactInfoSyncListener != null){
+            DemoHelper.getInstance().getUserProfileManager().removeSyncContactInfoListener(contactInfoSyncListener);
+        }
+    }
 }
