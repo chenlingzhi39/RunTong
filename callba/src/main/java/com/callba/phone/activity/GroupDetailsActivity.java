@@ -40,6 +40,7 @@ import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.ui.ExitGroupDialog;
 import com.callba.phone.util.EaseUserUtils;
+import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.widget.EaseAlertDialog;
 import com.callba.phone.widget.EaseExpandGridView;
 import com.callba.phone.widget.EaseSwitchButton;
@@ -80,7 +81,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 
 	public static GroupDetailsActivity instance;
 	
-	String st = "";
+	String st = "人)";
 	// 清空所有聊天记录
 	private RelativeLayout clearAllHistory;
 	private RelativeLayout blacklistLayout;
@@ -230,8 +231,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 								EMClient.getInstance().groupManager().changeGroupName(groupId, returnData);
 								runOnUiThread(new Runnable() {
 									public void run() {
-										title.setText(returnData + "(" + group.getAffiliationsCount()
-												+ st);
+										title.setText(returnData + "(" + group.getAffiliationsCount()+ st);
 										progressDialog.dismiss();
 										Toast.makeText(getApplicationContext(), st6, 0).show();
 									}
@@ -411,8 +411,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 					runOnUiThread(new Runnable() {
 						public void run() {
 						    refreshMembers();
-							title.setText(group.getGroupName() + "(" + group.getAffiliationsCount()
-									+ st);
+							title.setText(group.getGroupName() + "(" + group.getAffiliationsCount()+ st);
 							progressDialog.dismiss();
 						}
 					});
@@ -567,7 +566,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 			}
 			final LinearLayout button = (LinearLayout) convertView.findViewById(R.id.button_avatar);
 			// 最后一个item，减人按钮
-			if (position == getCount() - 1) {
+			if (group.getOwner().equals(EMClient.getInstance().getCurrentUser())&&position == getCount() - 1) {
 			    holder.textView.setText("");
 				// 设置成删除按钮
 			    holder.imageView.setImageResource(R.drawable.em_smiley_minus_btn);
@@ -579,11 +578,11 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 				} else { // 显示删除按钮
 					if (isInDeleteMode) {
 						// 正处于删除模式下，隐藏删除按钮
-						convertView.setVisibility(View.GONE);
+						convertView.setVisibility(View.INVISIBLE);
 					} else {
 						// 正常模式
 						convertView.setVisibility(View.VISIBLE);
-						convertView.findViewById(R.id.badge_delete).setVisibility(View.GONE);
+						convertView.findViewById(R.id.badge_delete).setVisibility(View.INVISIBLE);
 					}
 					final String st10 = getResources().getString(R.string.The_delete_button_is_clicked);
 					button.setOnClickListener(new OnClickListener() {
@@ -595,7 +594,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 						}
 					});
 				}
-			} else if (position == getCount() - 2) { // 添加群组成员按钮
+			} else if (group.getOwner().equals(EMClient.getInstance().getCurrentUser())&&position == getCount() - 2) { // 添加群组成员按钮
 			    holder.textView.setText("");
 			    holder.imageView.setImageResource(R.drawable.em_smiley_add_btn);
 //				button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.smiley_add_btn, 0, 0);
@@ -606,10 +605,10 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 				} else {
 					// 正处于删除模式下,隐藏添加按钮
 					if (isInDeleteMode) {
-						convertView.setVisibility(View.GONE);
+						convertView.setVisibility(View.INVISIBLE);
 					} else {
 						convertView.setVisibility(View.VISIBLE);
-						convertView.findViewById(R.id.badge_delete).setVisibility(View.GONE);
+						convertView.findViewById(R.id.badge_delete).setVisibility(View.INVISIBLE);
 					}
 					final String st11 = getResources().getString(R.string.Add_a_button_was_clicked);
 					button.setOnClickListener(new OnClickListener() {
@@ -636,7 +635,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 					// 如果是删除模式下，显示减人图标
 					convertView.findViewById(R.id.badge_delete).setVisibility(View.VISIBLE);
 				} else {
-					convertView.findViewById(R.id.badge_delete).setVisibility(View.GONE);
+					convertView.findViewById(R.id.badge_delete).setVisibility(View.INVISIBLE);
 				}
 				final String st12 = getResources().getString(R.string.not_delete_myself);
 				final String st13 = getResources().getString(R.string.Are_removed);
@@ -691,8 +690,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 										public void run() {
 											deleteDialog.dismiss();
 											refreshMembers();
-											title.setText(group.getGroupName() + "("
-													+ group.getAffiliationsCount() + st);
+											title.setText(group.getGroupName() + "("+ group.getAffiliationsCount() + st);
 										}
 									});
 								} catch (final Exception e) {
@@ -736,7 +734,9 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 
 		@Override
 		public int getCount() {
+			if(group.getOwner().equals(EMClient.getInstance().getCurrentUser()))
 			return super.getCount() + 2;
+			else return super.getCount();
 		}
 	}
 
@@ -748,8 +748,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 
 					runOnUiThread(new Runnable() {
 						public void run() {
-							title.setText(group.getGroupName() + "(" + group.getAffiliationsCount()
-									+ ")");
+							title.setText(group.getGroupName() + "(" + group.getAffiliationsCount()+ st);
 							pd.dismiss();
 							refreshMembers();
 							if (EMClient.getInstance().getCurrentUser().equals(group.getOwner())) {

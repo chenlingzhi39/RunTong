@@ -72,14 +72,15 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         ButterKnife.inject(this, fragmentRootView);
         mListView.setOnItemClickListener(this);
         mListView.setOnItemLongClickListener(this);
+        IntentFilter intentFilter=new IntentFilter("com.callba.contact");
+        broadcastReceiver=new ContactBroadcastReceiver();
+        getActivity().registerReceiver(broadcastReceiver,intentFilter);
+        initContactListView();
     }
 
     @Override
     protected void lazyLoad() {
-        initContactListView();
-        IntentFilter intentFilter=new IntentFilter("com.callba.contact");
-        broadcastReceiver=new ContactBroadcastReceiver();
-        getActivity().registerReceiver(broadcastReceiver,intentFilter);
+
     }
 
 

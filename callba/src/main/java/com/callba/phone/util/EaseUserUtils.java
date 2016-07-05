@@ -62,6 +62,10 @@ public class EaseUserUtils {
      */
     public static void setUserNick(String username, TextView textView){
         if(textView != null){
+            if(username.equals(CalldaGlobalConfig.getInstance().getUsername()+"-callba")){
+                textView.setText(CalldaGlobalConfig.getInstance().getNickname());
+                return;
+            }
         	EaseUser user = getUserInfo(username);
         	if(user != null && user.getNick() != null){
         		textView.setText(user.getNick());
