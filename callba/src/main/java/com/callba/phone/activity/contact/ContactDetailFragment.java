@@ -11,9 +11,11 @@ import android.widget.ListView;
 import com.callba.R;
 import com.callba.phone.BaseFragment;
 import com.callba.phone.adapter.ContactNumberAdapter;
+import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.CalldaCalllogBean;
 import com.callba.phone.bean.CalllogDetailBean;
+import com.callba.phone.util.CallUtils;
 import com.callba.phone.util.Logger;
 
 import java.util.ArrayList;
@@ -33,26 +35,35 @@ public class ContactDetailFragment extends BaseFragment {
     RecyclerView lvPhoneNums;
     private ContactMutliNumBean bean;
    private ContactNumberAdapter contactNumberAdapter;
+    CallUtils callUtils;
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
         bean=(ContactMutliNumBean) getArguments().get("contact");
         lvPhoneNums.setLayoutManager(new LinearLayoutManager(getActivity()));
+        setDatatoAdapter();
     }
 
     @Override
     protected void lazyLoad() {
-        setDatatoAdapter();
+
     }
 
     private void setDatatoAdapter() {
-            List<String> phoneNums =new ArrayList<>();
-            phoneNums =(ArrayList<String>) bean.getContactPhones();
+            List<String> phoneNums = bean.getContactPhones();
             Logger.i("number",phoneNums.size()+"");
             contactNumberAdapter=new ContactNumberAdapter(getActivity());
             contactNumberAdapter.addAll(phoneNums);
             lvPhoneNums.setAdapter(contactNumberAdapter);
-
+            callUtils=new CallUtils();
+            contactNumberAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position) {
+                    String phoneNum = contactNumberAdapter.getData().get(position);
+                    callUtils.judgeCallMode(getActivity(), phoneNum,bean.getDisplayName());
+                    Logger.i("number","click");
+                }
+            });
             // bean为空时，设置联系人编辑不可用
 
         }

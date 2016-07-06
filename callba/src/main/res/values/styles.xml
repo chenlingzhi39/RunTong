@@ -4,7 +4,7 @@
         <item name="colorAccent">@color/orange</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <!-- <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>-->
+         <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>
         <!--<item name="android:textAppearance">@style/TextAppearance.FontPath</item>-->
     </style>
     <style name="DetailTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -35,7 +35,7 @@
         <item name="fontPath">fonts/STXIHEI.TTF</item>
     </style>
     <style name="AppTheme.Widget.TextView" parent="android:Widget.TextView">
-        <item name="fontPath">fonts/STXIHEI.TTF</item>
+        <!--<item name="fontPath">fonts/STXIHEI.TTF</item>-->
         <item name="android:textColor">@color/black</item>
     </style>
     <style name="ToolBarStyle" parent="@style/ThemeOverlay.AppCompat.ActionBar">

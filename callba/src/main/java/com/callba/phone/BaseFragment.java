@@ -17,6 +17,7 @@ public abstract class BaseFragment extends Fragment {
     protected View fragmentRootView;
     protected int mContentViewId;
     public ProgressDialog progressDialog;
+    public boolean is_first=true;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -60,7 +61,10 @@ public abstract class BaseFragment extends Fragment {
      * 可见
      */
     protected void onVisible() {
+        if(is_first){
         lazyLoad();
+        is_first=false;
+        }
     }
 
 

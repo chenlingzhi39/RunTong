@@ -254,6 +254,7 @@ public class WebContactFragment extends BaseFragment {
                 });
             }
         });
+
     }
 
     @Override
@@ -261,7 +262,6 @@ public class WebContactFragment extends BaseFragment {
         //registerBroadcastReceiver();
         getContactList();
         contactListLayout.init(contactList);
-
     }
 
     @Override

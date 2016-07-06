@@ -15,7 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.callba.R;
+import com.callba.phone.activity.contact.ContactActivity2;
 import com.callba.phone.activity.contact.ContactDetailActivity;
+import com.callba.phone.activity.contact.ContactDetailActivity2;
 import com.callba.phone.activity.contact.ContactMutliNumBean;
 import com.callba.phone.bean.CalllogDetailBean;
 import com.callba.phone.cfg.CalldaGlobalConfig;
@@ -120,7 +122,7 @@ public class CalllogListAdapter extends BaseAdapter {
 				
 			   CalllogDetailBean currentbean=calldaCalllogBeans.get(position);
 
-				Intent intent = new Intent(context, ContactDetailActivity.class);
+				Intent intent = new Intent(context, ContactDetailActivity2.class);
 				intent.putExtra("contact", contactMutliNumBean);
 //				intent.putParcelableArrayListExtra("", currentbean);
 				intent.putExtra("log", currentbean);

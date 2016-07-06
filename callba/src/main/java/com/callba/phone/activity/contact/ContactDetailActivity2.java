@@ -95,12 +95,16 @@ public class ContactDetailActivity2 extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+            Bundle bundle=new Bundle();
             switch (position) {
+
                 case 0:
-                    return TestFragment.newInstance();
+                    CalllogFragment calllogFragment=new CalllogFragment();
+                    bundle.putString("name",bean.getDisplayName());
+                    calllogFragment.setArguments(bundle);
+                    return calllogFragment;
                 case 1:
                     ContactDetailFragment contactDetailFragment=new ContactDetailFragment();
-                    Bundle bundle=new Bundle();
                     bundle.putSerializable("contact",bean);
                     contactDetailFragment.setArguments(bundle);
                     return contactDetailFragment;
