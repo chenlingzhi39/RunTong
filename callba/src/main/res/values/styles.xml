@@ -7,12 +7,24 @@
         <!-- <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>-->
         <!--<item name="android:textAppearance">@style/TextAppearance.FontPath</item>-->
     </style>
+    <style name="DetailTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/orange</item>
+        <item name="colorPrimaryDark">@color/orange</item>
+        <item name="colorAccent">@color/orange</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <!-- <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>-->
+        <!--<item name="android:textAppearance">@style/TextAppearance.FontPath</item>-->
+    </style>
     <style name="TransparentDialog" parent="@android:style/Theme.Dialog">
         <item
             name="android:background">@android:color/transparent</item>
     </style>
     <style name="BaseAppTheme.AppTheme" >
         <!-- Customize your theme here. -->
+
+    </style>
+    <style name="DetailTheme.AppTheme">
 
     </style>
     <style name="TextAppearance.FontPath" parent="android:TextAppearance">

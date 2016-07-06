@@ -1,5 +1,6 @@
 package com.callba.phone.activity;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.MyApplication;
 import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.activity.recharge.RechargeActivity2;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -53,9 +55,12 @@ import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
+import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

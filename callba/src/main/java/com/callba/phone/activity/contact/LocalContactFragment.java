@@ -131,7 +131,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         ContactEntity contactEntity = mContactListData.get(position);
         ContactPersonEntity contactPersonEntity = (ContactPersonEntity)contactEntity;
         ContactMutliNumBean contactMutliNumBean = (ContactMutliNumBean)contactPersonEntity;
-        Intent intent = new Intent(getActivity(), ContactDetailActivity.class);
+        Intent intent = new Intent(getActivity(), ContactDetailActivity2.class);
         intent.putExtra("contact", contactMutliNumBean);
         intent.putExtra("activity", "ContactActivity");
         startActivity(intent);

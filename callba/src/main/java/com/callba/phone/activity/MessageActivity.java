@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,15 +21,19 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.maps2d.model.Text;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.Constant;
@@ -38,6 +43,8 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.Logger;
 import com.callba.phone.widget.DividerItemDecoration;
+import com.hyphenate.EMConnectionListener;
+import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
 
@@ -80,7 +87,8 @@ public class MessageActivity extends BaseActivity {
     private LocalBroadcastManager broadcastManager;
     private List<EMConversation> copyList;
     protected InputMethodManager inputMethodManager;
-
+    protected FrameLayout errorItemContainer;
+    protected TextView errorText;
     @OnClick(R.id.search_clear)
     public void onClick() {
         query.getText().clear();
@@ -98,11 +106,59 @@ public class MessageActivity extends BaseActivity {
     }
 
     private EaseConversationListItemClickListener listItemClickListener;
+    protected Handler handler = new Handler(){
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case 0:
+                   onConnectionDisconnected();
+                    break;
+                case 1:
+                    onConnectionConnected();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    protected EMConnectionListener connectionListener = new EMConnectionListener() {
+
+        @Override
+        public void onDisconnected(int error) {
+            if (error == EMError.USER_REMOVED || error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
+                //isConflict = true;
+            } else {
+                handler.sendEmptyMessage(0);
+            }
+        }
+
+        @Override
+        public void onConnected() {
+            handler.sendEmptyMessage(1);
+        }
+    };
+    /**
+     * 连接到服务器
+     */
+    protected void onConnectionConnected(){
+        errorItemContainer.setVisibility(View.GONE);
+        refresh();
+    }
+
+    /**
+     * 连接断开
+     */
+    protected void onConnectionDisconnected(){
+        errorItemContainer.setVisibility(View.VISIBLE);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
+        View errorView = (LinearLayout) View.inflate(this,R.layout.em_chat_neterror_item, null);
+        errorItemContainer = (FrameLayout) findViewById(R.id.fl_error_item);
+        errorText = (TextView) errorView.findViewById(R.id.tv_connect_errormsg);
+        errorItemContainer.addView(errorView);
         inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         String language = Locale.getDefault().getLanguage();
         Logger.i("language", language);
@@ -202,6 +258,7 @@ public class MessageActivity extends BaseActivity {
                 refresh.setRefreshing(false);
             }
         });
+        EMClient.getInstance().addConnectionListener(connectionListener);
     }
 
     @Override
@@ -261,6 +318,7 @@ public class MessageActivity extends BaseActivity {
     protected void onDestroy() {
         unregisterReceiver(chatReceiver);
         unregisterReceiver(asReadReceiver);
+        EMClient.getInstance().removeConnectionListener(connectionListener);
         super.onDestroy();
     }
 
@@ -285,34 +343,30 @@ public class MessageActivity extends BaseActivity {
 
         });
     }
-
+  public void refresh(){
+      conversationList.clear();
+      conversationList.addAll(loadConversationList());
+      adapter.clear();
+      adapter.addAll(conversationList);
+  }
     class ChatReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            conversationList.clear();
-            conversationList.addAll(loadConversationList());
-            adapter.clear();
-            adapter.addAll(conversationList);
+           refresh();
         }
     }
 
     class AsReadReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            conversationList.clear();
-            conversationList.addAll(loadConversationList());
-            adapter.clear();
-            adapter.addAll(conversationList);
+            refresh();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        conversationList.clear();
-        conversationList.addAll(loadConversationList());
-        adapter.clear();
-        adapter.addAll(conversationList);
+        refresh();
     }
 
     /**

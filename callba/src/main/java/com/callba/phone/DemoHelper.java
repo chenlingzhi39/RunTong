@@ -787,7 +787,7 @@ public class DemoHelper {
      * 账号在别的设备登录
      */
     protected void onConnectionConflict(){
-        /*Intent intent = new Intent(appContext, MainActivity.class);
+       /* Intent intent = new Intent(appContext, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constant.ACCOUNT_CONFLICT, true);
         appContext.startActivity(intent);*/
@@ -986,14 +986,14 @@ public class DemoHelper {
      * @return
      */
     public Map<String, EaseUser> getContactList() {
-        if (isLoggedIn() && contactList == null) {
+       /* if (isLoggedIn() && contactList == null) {
             contactList = demoModel.getContactList();
-        }
-        
+        }*/
+        contactList = demoModel.getContactList();
         // return a empty non-null object to avoid app crash
-        if(contactList == null){
+       /* if(contactList == null){
         	return new Hashtable<String, EaseUser>();
-        }
+        }*/
         
         return contactList;
     }
@@ -1181,7 +1181,7 @@ public class DemoHelper {
            @Override
            public void run(){
                List<String> usernames = null;
-              /* try {
+             /*  try {
                    usernames = EMClient.getInstance().contactManager().getAllContactsFromServer();
                    // in case that logout already before server returns, we should return immediately
                    if(!isLoggedIn()){
@@ -1190,21 +1190,20 @@ public class DemoHelper {
                        //通知listeners联系人同步完毕
                        notifyContactsSyncListener(false);
                        return;
-                   }
-                  
+                   }*/
                    Map<String, EaseUser> userlist = new HashMap<String, EaseUser>();
-                   for (String username : usernames) {
+               /*    for (String username : usernames) {
                        EaseUser user = new EaseUser(username);
                        EaseCommonUtils.setUserInitialLetter(user);
                        userlist.put(username, user);
-                   }
+                   }*/
                    // 存入内存
                    getContactList().clear();
                    getContactList().putAll(userlist);
                     // 存入db
                    UserDao dao = new UserDao(appContext);
                    List<EaseUser> users = new ArrayList<EaseUser>(userlist.values());
-                   dao.saveContactList(users);*/
+                   dao.saveContactList(users);
 
                    demoModel.setContactSynced(true);
                    EMLog.d(TAG, "set contact syn status to true");
@@ -1355,7 +1354,7 @@ public class DemoHelper {
         
         setContactList(null);
         setRobotList(null);
-        //getUserProfileManager().reset();
+        getUserProfileManager().reset();
         DemoDBManager.getInstance().closeDB();
     }
 

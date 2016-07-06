@@ -31,6 +31,7 @@ import android.widget.LinearLayout;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.DemoHelper;
 import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.ContactData;
@@ -51,6 +52,7 @@ import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.ZipUtil;
+import com.hyphenate.chat.EMClient;
 
 import me.iwf.photopicker.PhotoPickerActivity;
 
@@ -166,6 +168,7 @@ public class WelcomeActivity extends BaseActivity {
 			}
 		});
 		rootView.startAnimation(alphaAnimation);
+
 	}
 
 	@Override
@@ -183,8 +186,15 @@ public class WelcomeActivity extends BaseActivity {
 					| View.SYSTEM_UI_FLAG_FULLSCREEN
 					| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 		}
+		if (DemoHelper.getInstance().isLoggedIn()) {
+			// ** 免登陆情况 加载所有本地群和会话
+			//不是必须的，不加sdk也会自动异步去加载(不会重复加载)；
+			//加上的话保证进了主页面会话和群组都已经load完毕
+			EMClient.getInstance().groupManager().loadAllGroups();
+			EMClient.getInstance().chatManager().loadAllConversations();
+		}else {
 
-
+		}
 		}
 
 
@@ -255,6 +265,7 @@ public class WelcomeActivity extends BaseActivity {
 		Logger.i(TAG, "currentGetVersionTime : " + currentGetVersionTime);
 
 		if (!TextUtils.isEmpty(appVersionBean.getSecretKey())) {
+
 			// 成功获取key
 			check2Upgrade(appVersionBean);
 		} else if (currentGetVersionTime <= Constant.GETVERSION_RETRY_TIMES) {

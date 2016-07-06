@@ -131,11 +131,6 @@ public class ContactDetailActivity extends BaseActivity implements
 		}
 
 	}
-
-	@Override
-	public void refresh(Object... params) {
-	}
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()){

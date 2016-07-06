@@ -167,6 +167,7 @@ public class ContactController {
 								  Logger.i("get_result",response);
 								  String[] result = response.split("\\|");
 								  if (result[0].equals("0")) {
+									  DemoHelper.getInstance().getContactList();
 									  ArrayList<BaseUser> list;
 									  list = gson.fromJson(result[1], new TypeToken<List<BaseUser>>() {
 									  }.getType());
@@ -179,9 +180,8 @@ public class ContactController {
 										  EaseCommonUtils.setUserInitialLetter(user);
 										  mList.add(user);
 									  }
-									  DemoHelper.getInstance().updateContactList(mList);
-									  LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-
+										  DemoHelper.getInstance().updateContactList(mList);
+										  LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
 								  }
 							  }
 						  });
