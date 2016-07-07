@@ -287,6 +287,13 @@ public class MessageActivity extends BaseActivity {
             }
         });
         EMClient.getInstance().addConnectionListener(connectionListener);
+        broadcastReceiver= new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+              refresh();
+            }
+        };
+        broadcastManager.registerReceiver(broadcastReceiver,new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
     }
 
     @Override
@@ -346,6 +353,7 @@ public class MessageActivity extends BaseActivity {
     protected void onDestroy() {
         unregisterReceiver(chatReceiver);
         unregisterReceiver(asReadReceiver);
+        broadcastManager.unregisterReceiver(broadcastReceiver);
         EMClient.getInstance().removeConnectionListener(connectionListener);
         super.onDestroy();
     }

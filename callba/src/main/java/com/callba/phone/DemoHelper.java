@@ -560,6 +560,7 @@ public class DemoHelper {
         @Override
         public void onUserRemoved(String groupId, String groupName) {
             //TODO 提示用户被T了，demo省略此步骤
+            EMClient.getInstance().chatManager().deleteConversation(groupName,true);
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
             Toast.makeText(appContext, "你已被群\""+groupName+"\"移除", 1).show();
             Logger.i("demohelper","用户被T了");
@@ -569,6 +570,7 @@ public class DemoHelper {
         public void onGroupDestroy(String groupId, String groupName) {
             // 群被解散
             //TODO 提示用户群被解散,demo省略
+            EMClient.getInstance().chatManager().deleteConversation(groupName,true);
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
             Toast.makeText(appContext, "群\""+groupName+"\"已被解散", 1).show();
             Logger.i("demohelper","群被解散");
@@ -718,7 +720,7 @@ public class DemoHelper {
             localUsers.remove(username);
             userDao.deleteContact(username);
             inviteMessgeDao.deleteMessage(username);
-            EMClient.getInstance().chatManager().deleteConversation(username,true);
+            EMClient.getInstance().chatManager().deleteConversation(username,false);
             Intent intent=new Intent(Constant.ACTION_CONTACT_CHANAGED);
             intent.putExtra("username",username);
             //发送好友变动广播
