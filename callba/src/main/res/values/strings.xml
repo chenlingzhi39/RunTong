@@ -32,12 +32,14 @@
     <string name="earn_gold">签到赚金币+3</string>
     <string name="time">到期时间</string>
     <string name="friend">左邻右舍</string>
+    <string name="sale">商户促销</string>
     <string name="location">我的位置:</string>
     <string name="distance">米以内</string>
     <string name="mall">精品商城</string>
     <string name="finance">我的金融</string>
     <string name="flow">流量充值</string>
     <string name="community">我的圈子</string>
+    <string name="family">我的家族</string>
     <string name="camera">拍照</string>
     <string name="post">发送</string>
     <string name="delete">删除</string>
@@ -64,6 +66,12 @@
     <string name="settings">设置</string>
     <string name="my_number">我的账号</string>
     <string name="my_commission">我的佣金</string>
+    <string name="get_commission">提现</string>
+    <string name="all_order">全部订单</string>
+    <string name="commission_detail">佣金明细</string>
+    <string name="my_team">我的团队</string>
+    <string name="a_type">A类客户</string>
+    <string name="qr_code">我的二维码</string>
     <string name="meal">套餐</string>
     <string name="work_date">有效期</string>
     <string name="total">话费余额</string>

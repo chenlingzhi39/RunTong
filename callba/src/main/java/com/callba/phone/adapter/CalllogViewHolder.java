@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.bean.CalldaCalllogBean;
+import com.callba.phone.cfg.CalldaGlobalConfig;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,20 +37,22 @@ public class CalllogViewHolder extends BaseViewHolder<CalldaCalllogBean> {
         number.setHint(data.getCallLogNumber()+"");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         time.setText(simpleDateFormat.format(new Date(data.getCallLogTime())));
+        if(data.getFormatedCallLogDuration().equals("00:00:00"))
+            state.setHint("未接通");
+        else{
+            state.setHint(data.getFormatedCallLogDuration());
+        }
         switch (data.getCallLogType()) {
             case CalldaCalllogBean.INCOMING_CALL:
                 imageState.setImageResource(R.drawable.ic_call_got_grey600_24dp);
-                state.setHint("来电");
                 break;
 
             case CalldaCalllogBean.OUTGOING_CALL:
                 imageState.setImageResource(R.drawable.ic_call_made_grey600_24dp);
-                state.setHint("去电");
                 break;
 
             case CalldaCalllogBean.MISSED_CALL:
                 imageState.setImageResource(R.drawable.ic_call_missed_grey600_24dp);
-                state.setHint("未接");
                 break;
             default:
                 break;

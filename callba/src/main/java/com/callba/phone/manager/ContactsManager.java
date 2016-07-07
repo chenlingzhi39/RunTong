@@ -2,12 +2,21 @@ package com.callba.phone.manager;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.provider.ContactsContract;
+import android.text.TextUtils;
 import android.util.Log;
 
+import com.callba.R;
 import com.callba.phone.bean.Contact;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -100,7 +109,7 @@ public class ContactsManager {
      * @return 0 if contact not exist in contacts list. Otherwise return
      * the id of the contact.
      */
-    public String getContactID(String name) {
+    public  String getContactID(String name) {
         String id = "0";
         Cursor cursor = contentResolver.query(
                 android.provider.ContactsContract.Contacts.CONTENT_URI,
@@ -258,5 +267,32 @@ public class ContactsManager {
         }
         Log.w(TAG, "**update end**");
     }
+    public static Bitmap getAvatar(Context context,String name,boolean is_high){
+        Uri uri= ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+        Cursor cursor=context.getContentResolver().query(uri, new String[]{ContactsContract.CommonDataKinds.Phone.CONTACT_ID ,ContactsContract.Contacts.Photo._ID},android.provider.ContactsContract.Contacts.DISPLAY_NAME +
+                "='" + name + "'", null, null);
+        //得到联系人头像Bitamp
+        Bitmap contactPhoto = null;
+        if (cursor.moveToNext()) {
+
+            //得到联系人ID
+            Long contactid = cursor.getLong(0);
+
+            //得到联系人头像ID
+            Long photoid = cursor.getLong(1);
+
+            //photoid 大于0 表示联系人有头像 如果没有给此人设置头像则给他一个默认的
+            if (photoid > 0) {
+                Uri uri1 = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactid);
+                InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(context.getContentResolver(), uri1,is_high);
+                contactPhoto = BitmapFactory.decodeStream(input);
+            } else {
+                contactPhoto = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo);
+            }
+        }
+            return contactPhoto;
+
+    }
+
 }
 

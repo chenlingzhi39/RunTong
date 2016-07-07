@@ -48,6 +48,7 @@ import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.Constant;
 import com.callba.phone.logic.login.LoginController;
+import com.callba.phone.ui.EaseGroupRemoveListener;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
@@ -558,6 +559,8 @@ public class MainTabActivity extends TabActivity {
             }
         });
     }
+
+
 
 
 

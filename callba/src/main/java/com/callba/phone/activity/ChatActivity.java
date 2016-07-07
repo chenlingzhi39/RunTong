@@ -227,6 +227,8 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     @Override
     protected void onDestroy() {
         unregisterReceiver(chatReceiver);
+        if(groupListener!=null)
+        EMClient.getInstance().groupManager().removeGroupChangeListener(groupListener);
         super.onDestroy();
 
     }
@@ -739,12 +741,13 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     class GroupListener extends EaseGroupRemoveListener {
 
         @Override
-        public void onUserRemoved(final String groupId, String groupName) {
+        public void onUserRemoved(final String groupId, final String groupName) {
             runOnUiThread(new Runnable() {
 
                 public void run() {
                     if (toChatUsername.equals(groupId)) {
-                        Toast.makeText(ChatActivity.this, R.string.you_are_group, 1).show();
+                       // Toast.makeText(ChatActivity.this, R.string.you_are_group, 1).show();
+                        Toast.makeText(ChatActivity.this, "你已被群\""+groupName+"\"移除", 1).show();
                         finish();
                     }
                 }
@@ -752,12 +755,13 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         }
 
         @Override
-        public void onGroupDestroy(final String groupId, String groupName) {
+        public void onGroupDestroy(final String groupId,final String groupName) {
             // 群组解散正好在此页面，提示群组被解散，并finish此页面
             runOnUiThread(new Runnable() {
                 public void run() {
                     if (toChatUsername.equals(groupId)) {
-                        Toast.makeText(ChatActivity.this, R.string.the_current_group, 1).show();
+                       // Toast.makeText(ChatActivity.this, R.string.the_current_group, 1).show();
+                        Toast.makeText(ChatActivity.this, "群\""+groupName+"\"已被解散", 1).show();
                         finish();
                     }
                 }

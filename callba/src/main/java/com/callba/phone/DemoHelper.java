@@ -36,6 +36,7 @@ import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.PreferenceManager;
+import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.SimpleHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -404,6 +405,7 @@ public class DemoHelper {
                 }else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
                     onConnectionConflict();
                 }
+
             }
 
             @Override
@@ -559,6 +561,8 @@ public class DemoHelper {
         public void onUserRemoved(String groupId, String groupName) {
             //TODO 提示用户被T了，demo省略此步骤
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
+            Toast.makeText(appContext, "你已被群\""+groupName+"\"移除", 1).show();
+            Logger.i("demohelper","用户被T了");
         }
 
         @Override
@@ -566,6 +570,8 @@ public class DemoHelper {
             // 群被解散
             //TODO 提示用户群被解散,demo省略
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
+            Toast.makeText(appContext, "群\""+groupName+"\"已被解散", 1).show();
+            Logger.i("demohelper","群被解散");
         }
 
         @Override
@@ -594,7 +600,7 @@ public class DemoHelper {
             msg.setFrom(accepter);
             msg.setTo(groupId);
             msg.setMsgId(UUID.randomUUID().toString());
-            msg.addBody(new EMTextMessageBody(getUserInfo(accepter).getNick() + " " +st4));
+            msg.addBody(new EMTextMessageBody(accepter + " " +st4));
             msg.setStatus(Status.SUCCESS);
             // 保存同意消息
             EMClient.getInstance().chatManager().saveMessage(msg);

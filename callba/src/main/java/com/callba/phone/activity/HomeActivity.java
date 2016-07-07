@@ -88,14 +88,10 @@ public class HomeActivity extends BaseActivity {
     TextView recharge;
     @InjectView(R.id.search)
     TextView search;
-    @InjectView(R.id.friend)
-    TextView friend;
     @InjectView(R.id.mall)
     TextView mall;
     @InjectView(R.id.finance)
     TextView finance;
-    @InjectView(R.id.community)
-    TextView community;
     @InjectView(R.id.game)
     TextView game;
     @InjectView(R.id.sign_in)
@@ -322,7 +318,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.recharge, R.id.search, R.id.friend, R.id.mall, R.id.finance, R.id.community, R.id.game, R.id.sign_in})
+    @OnClick({R.id.recharge, R.id.search, R.id.sale, R.id.mall, R.id.finance, R.id.family, R.id.game, R.id.sign_in})
     public void onClick(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -336,9 +332,8 @@ public class HomeActivity extends BaseActivity {
                 intent=new Intent(HomeActivity.this,AccountActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.friend:
-                intent = new Intent(HomeActivity.this, FriendActivity.class);
-                startActivity(intent);
+            case R.id.sale:
+                toast("暂未开放");
                 break;
             case R.id.mall:
                 toast("暂未开放");
@@ -346,8 +341,9 @@ public class HomeActivity extends BaseActivity {
             case R.id.finance:
                 toast("暂未开放");
                 break;
-            case R.id.community:
-                toast("暂未开放");
+            case R.id.family:
+                startActivity(new Intent(HomeActivity.this,FamilyActivity.class));
+                //toast("暂未开放");
                 /*intent = new Intent(HomeActivity.this, CommunityActivity.class);
                 startActivity(intent);*/
                 break;

@@ -1,5 +1,6 @@
 package com.callba.phone.activity.contact;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,7 +9,9 @@ import android.view.ViewGroup;
 
 import com.callba.R;
 import com.callba.phone.BaseFragment;
+import com.callba.phone.activity.SelectDialPopupWindow;
 import com.callba.phone.adapter.CalllogAdapter;
+import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.CalldaCalllogBean;
 import com.callba.phone.bean.ContactData;
@@ -49,7 +52,17 @@ public class CalllogFragment extends BaseFragment {
                 calllogAdapter.addAll(beans);
                 calllogList.setAdapter(calllogAdapter);
                 calllogList.addItemDecoration(new DividerItemDecoration(
-                        getActivity(), DividerItemDecoration.VERTICAL_LIST));}
+                        getActivity(), DividerItemDecoration.VERTICAL_LIST));
+                calllogAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        Intent intent=new Intent(getActivity(), SelectDialPopupWindow.class);
+                        intent.putExtra("name",getArguments().getString("name"));
+                        intent.putExtra("number",beans.get(position).getCallLogNumber());
+                        startActivity(intent);
+                    }
+                });
+                }
             }
 
             @Override

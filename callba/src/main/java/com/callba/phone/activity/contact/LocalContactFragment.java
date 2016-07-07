@@ -75,12 +75,12 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         IntentFilter intentFilter=new IntentFilter("com.callba.contact");
         broadcastReceiver=new ContactBroadcastReceiver();
         getActivity().registerReceiver(broadcastReceiver,intentFilter);
-        initContactListView();
+
     }
 
     @Override
     protected void lazyLoad() {
-
+        initContactListView();
     }
 
 
@@ -98,7 +98,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
     }
     private void initContactListView() {
        final ContactController contactController = new ContactController();
-        MainService.getFixedThreadPool().execute(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 final List<ContactEntity> allContactEntities = contactController.getFilterListContactEntitiesNoDuplicate();
@@ -122,7 +122,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
                     }
                 });
             }
-        });
+        }).start();
 
     }
 
@@ -132,6 +132,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         ContactPersonEntity contactPersonEntity = (ContactPersonEntity)contactEntity;
         ContactMutliNumBean contactMutliNumBean = (ContactMutliNumBean)contactPersonEntity;
         Intent intent = new Intent(getActivity(), ContactDetailActivity2.class);
+        contactMutliNumBean.setAvatar(null);
         intent.putExtra("contact", contactMutliNumBean);
         intent.putExtra("activity", "ContactActivity");
         startActivity(intent);

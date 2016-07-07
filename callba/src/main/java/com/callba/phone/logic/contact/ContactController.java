@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
@@ -15,9 +16,11 @@ import com.callba.phone.DemoHelper;
 import com.callba.phone.MyApplication;
 import com.callba.phone.activity.contact.ContactMutliNumBean;
 import com.callba.phone.bean.BaseUser;
+import com.callba.phone.bean.Contact;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -49,38 +52,11 @@ public class ContactController {
 	private Map<String, Integer> letterSearchMap;
 	private UserDao userDao;
 	private Gson gson;
+	private Context contaxt;
 	public ContactController() {
 		mAllContactPersonEntities = CalldaGlobalConfig.getInstance().getContactBeans();
 		gson=new Gson();
-		userDao=new UserDao(new UserDao.PostListener() {
-			@Override
-			public void start() {
-
-			}
-
-			@Override
-			public void success(String msg) {
-				if(EMClient.getInstance().getCurrentUser().equals(msg+"-callba")){
-
-					return;
-				}
-
-				if(DemoHelper.getInstance().getContactList().containsKey(msg+"-callba")){
-					//提示已在好友列表中(在黑名单列表里)，无需添加
-					if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(msg+"-callba")){
-
-						return;
-					}
-
-					return;
-				}
-			}
-
-			@Override
-			public void failure(String msg) {
-
-			}
-		});
+	    contaxt=MyApplication.getInstance().getApplicationContext();
 	}
 	
 	/**
@@ -119,14 +95,14 @@ public class ContactController {
 					}
 					Logger.i("contact_number",mAllContactPersonEntities.get(i).getPhoneNumber());
 					if(i==0)
-					{personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0)));
+					{personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0), ContactsManager.getAvatar(contaxt,mAllContactPersonEntities.get(0).getDisplayName(),false)));
 						contactPhones.add(mAllContactPersonEntities.get(0).getPhoneNumber());
 						personEntities.get(0).setContactPhones(contactPhones);
 						continue;}
 					if(!mAllContactPersonEntities.get(i).getDisplayName().equals(mAllContactPersonEntities.get(i-1).getDisplayName())){
 						contactPhones=new ArrayList<>();
 						contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
-						personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(i)));
+						personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(i), ContactsManager.getAvatar(contaxt,mAllContactPersonEntities.get(i).getDisplayName(),false)));
 					}else{
 						contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
 					}

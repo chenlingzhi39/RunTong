@@ -1,12 +1,16 @@
 package com.callba.phone.logic.contact;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
@@ -82,14 +86,14 @@ public class QueryContacts {
 					String name = cursor.getString(1);
 					String number = cursor.getString(2);
 //					String sortKey = cursor.getString(3);
-//					int contactId = cursor.getInt(4);
+ // 				    int contactId = cursor.getInt(4);
 //					Long photoId = cursor.getLong(5);
 					String lookUpKey = cursor.getString(6);
 
 					if(TextUtils.isEmpty(number)) {
 						continue;
 					}
-
+					Bitmap contactPhoto=null;
 					ContactPersonEntity cb = new ContactPersonEntity();
 					cb.set_id(lookUpKey);
 					cb.setDisplayName(name);
@@ -99,8 +103,7 @@ public class QueryContacts {
 						cb.setPhoneNumber(number.replace(" ", "").replace("-",
 								""));
 					}
-					
-					
+
 					if (name != null && !"".equals(name)) {
 						
 						SearchSortKeyBean searchSortKeyBean = PinYinUtil.converterPinYinToSearchBean(name.trim());

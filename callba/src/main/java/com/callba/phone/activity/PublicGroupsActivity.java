@@ -38,6 +38,7 @@ import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMCursorResult;
+import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMGroupInfo;
 import com.hyphenate.exceptions.HyphenateException;
 
@@ -53,7 +54,6 @@ public class PublicGroupsActivity extends BaseActivity {
 	private ProgressBar pb;
 	private ListView listView;
 	private GroupsAdapter adapter;
-	
 	private List<EMGroupInfo> groupsList;
 	private boolean isLoading;
 	private boolean isFirstLoading = true;
@@ -63,6 +63,7 @@ public class PublicGroupsActivity extends BaseActivity {
     private LinearLayout footLoadingLayout;
     private ProgressBar footLoadingPB;
     private TextView footLoadingText;
+    private ArrayList<String> groupIds;
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,7 +71,7 @@ public class PublicGroupsActivity extends BaseActivity {
         pb = (ProgressBar) findViewById(R.id.progressBar);
         listView = (ListView) findViewById(R.id.list);
         groupsList = new ArrayList<EMGroupInfo>();
-
+        groupIds=getIntent().getStringArrayListExtra("groupIds");
         View footView = getLayoutInflater().inflate(R.layout.em_listview_footer_view, null);
         footLoadingLayout = (LinearLayout) footView.findViewById(R.id.loading_layout);
         footLoadingPB = (ProgressBar)footView.findViewById(R.id.loading_bar);
@@ -133,7 +134,7 @@ public class PublicGroupsActivity extends BaseActivity {
 
                         public void run() {
                             //searchBtn.setVisibility(View.VISIBLE);
-                            groupsList.addAll(returnGroups);
+                            groupsList.addAll(filterInfos(returnGroups));
                             if(returnGroups.size() != 0){
                                 //获取cursor
                                 cursor = result.getCursor();
@@ -211,4 +212,12 @@ public class PublicGroupsActivity extends BaseActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+   public ArrayList<EMGroupInfo> filterInfos(List<EMGroupInfo> groupInfos){
+       ArrayList<EMGroupInfo> infos=new ArrayList<>();
+       for(EMGroupInfo emGroupInfo:groupInfos){
+           if(!groupIds.contains(emGroupInfo.getGroupId()))
+               infos.add(emGroupInfo);
+       }
+       return  infos;
+   }
 }

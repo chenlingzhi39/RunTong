@@ -1,5 +1,6 @@
 package com.callba.phone.activity.contact;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.widget.ListView;
 
 import com.callba.R;
 import com.callba.phone.BaseFragment;
+import com.callba.phone.activity.SelectDialPopupWindow;
 import com.callba.phone.adapter.ContactNumberAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -60,8 +62,11 @@ public class ContactDetailFragment extends BaseFragment {
                 @Override
                 public void onItemClick(int position) {
                     String phoneNum = contactNumberAdapter.getData().get(position);
-                    callUtils.judgeCallMode(getActivity(), phoneNum,bean.getDisplayName());
-                    Logger.i("number","click");
+                    Intent intent=new Intent(getActivity(), SelectDialPopupWindow.class);
+                    intent.putExtra("name",bean.getDisplayName());
+                    intent.putExtra("number",phoneNum);
+                    startActivity(intent);
+                    //callUtils.judgeCallMode(getActivity(), phoneNum,bean.getDisplayName());
                 }
             });
             // bean为空时，设置联系人编辑不可用

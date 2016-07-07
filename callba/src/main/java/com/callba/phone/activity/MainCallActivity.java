@@ -278,9 +278,13 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 beancallout = mergecalllists.get(position).getCalllogBean()
                         .get(0);
                 et_number.setText("");
-                callUtils.judgeCallMode(MainCallActivity.this,
+                Intent intent=new Intent(MainCallActivity.this, SelectDialPopupWindow.class);
+                intent.putExtra("name",beancallout.getDisplayName());
+                intent.putExtra("number",beancallout.getCallLogNumber());
+                startActivity(intent);
+               /* callUtils.judgeCallMode(MainCallActivity.this,
                         beancallout.getCallLogNumber(),
-                        beancallout.getDisplayName());
+                        beancallout.getDisplayName());*/
             }
         });
         // 根据输入号码 显示过滤的记录
@@ -475,8 +479,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         // 查询通话记录
         calllogService.setQueryLocalCalllogCount(50);
         calllogService.startQueryCallLog();
-        ll_diallayout.setVisibility(View.VISIBLE);
-        //iv_ad.setVisibility(View.VISIBLE);
         // 刷新余额
 
         // 检测键盘音设置是否改变
@@ -930,9 +932,9 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         if ("".equals(searchNumber)) {
             ll_number.setVisibility(View.GONE);
             ll_call.setVisibility(View.INVISIBLE);
-            iv_ad.setVisibility(View.VISIBLE);
+            //iv_ad.setVisibility(View.VISIBLE);
 
-            lv_calllog.setVisibility(View.VISIBLE);
+            //lv_calllog.setVisibility(View.VISIBLE);
             lv_filterNum.setVisibility(View.GONE);
 
             isFristSearchContact = true;
@@ -1132,7 +1134,11 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         Logger.v("检索列表拨号", bean.getPhoneNumber() + "callName:" + callName);
         callNum = et_number.getText().toString().trim();
         et_number.setText("");
-        callUtils.judgeCallMode(MainCallActivity.this, callNum, callName);
+        Intent intent=new Intent(MainCallActivity.this, SelectDialPopupWindow.class);
+        intent.putExtra("name",callName);
+        intent.putExtra("number",callNum);
+        startActivity(intent);
+       // callUtils.judgeCallMode(MainCallActivity.this, callNum, callName);
     }
 
 /*	@Override
@@ -1318,29 +1324,16 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         return true;
     }
 
-    private ImageViewReceiver mMessageReceiver;
     public static final String KEYBOARD_MESSAGE_RECEIVED_ACTION = "com.runtong.KEYBOARD_AD_ACTION";
 
     public void registerRedpointReceiver() {
         Logger.i("CallButtonChangeReceiver",
                 "registerMessageReceiver-->CallButtonChangeReceiver");
-        mMessageReceiver = new ImageViewReceiver();
         IntentFilter filter = new IntentFilter();
         filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
         filter.addAction(KEYBOARD_MESSAGE_RECEIVED_ACTION);
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                mMessageReceiver, filter);
     }
 
-    public class ImageViewReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Logger.v("mainactivity", "CallButtonChangeReceiver---->onReceive");
-            //loadADImage();
-        }
-
-    }
     public class LoginReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1350,8 +1343,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     }
     @Override
     protected void onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(
-                mMessageReceiver);
+
         super.onPause();
     }
 

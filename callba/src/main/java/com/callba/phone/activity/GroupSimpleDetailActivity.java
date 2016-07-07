@@ -14,10 +14,14 @@
 
 package com.callba.phone.activity;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +29,8 @@ import android.widget.Toast;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.cfg.Constant;
+import com.callba.phone.util.NumberAddressService;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMGroupInfo;
@@ -39,10 +45,12 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 	private TextView tv_admin;
 	private TextView tv_name;
 	private TextView tv_introduction;
+	private TextView tv_id;
+	private TextView tv_need_apply;
 	private EMGroup group;
 	private String groupid;
 	private ProgressBar progressBar;
-
+    private String apply;
 	@Override
 	public void refresh(Object... params) {
 
@@ -55,8 +63,8 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 		tv_admin = (TextView) findViewById(R.id.tv_admin);
 		btn_add_group = (Button) findViewById(R.id.btn_add_to_group);
 		tv_introduction = (TextView) findViewById(R.id.tv_introduction);
-
-
+        tv_id=(TextView) findViewById(R.id.tv_id);
+        tv_need_apply=(TextView)findViewById(R.id.tv_need_apply);
 		EMGroupInfo groupInfo = (EMGroupInfo) getIntent().getSerializableExtra("groupinfo");
 		String groupname = null;
 		if(groupInfo != null){
@@ -71,8 +79,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 		}
 		
 		tv_name.setText(groupname);
-		
-		
+		tv_id.setText(groupid);
 		if(group != null){
 		    showGroupDetail();
 		    return;
@@ -83,9 +90,11 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 				//从服务器获取详情
 				try {
 					group = EMClient.getInstance().groupManager().getGroupFromServer(groupid);
+
 					runOnUiThread(new Runnable() {
 						public void run() {
 							showGroupDetail();
+							tv_need_apply.setText(group.isMembersOnly()?"是":"否");
 						}
 					});
 				} catch (final HyphenateException e) {
@@ -95,6 +104,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 						public void run() {
 							//progressBar.setVisibility(View.INVISIBLE);
 							Toast.makeText(GroupSimpleDetailActivity.this, st1+e.getMessage(), 1).show();
+
 						}
 					});
 				}
@@ -121,16 +131,19 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 				try {
 					//如果是membersOnly的群，需要申请加入，不能直接join
 					if(group.isMembersOnly()){
-					    EMClient.getInstance().groupManager().applyJoinToGroup(groupid, st2);
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								showDialog();
+							}
+						});
 					}else{
 					    EMClient.getInstance().groupManager().joinGroup(groupid);
 					}
 					runOnUiThread(new Runnable() {
 						public void run() {
 							pd.dismiss();
-							if(group.isMembersOnly())
-								Toast.makeText(GroupSimpleDetailActivity.this, st3, 0).show();
-							else
+							if(!group.isMembersOnly())
 								Toast.makeText(GroupSimpleDetailActivity.this, st4, 0).show();
 							btn_add_group.setEnabled(false);
 						}
@@ -157,7 +170,68 @@ public class GroupSimpleDetailActivity extends BaseActivity {
          tv_admin.setText(group.getOwner());
          tv_introduction.setText(group.getDescription());
      }
-	
+	public class DialogHelper implements DialogInterface.OnDismissListener {
+		private Dialog mDialog;
+		private View mView;
+		private EditText change;
+
+		public DialogHelper() {
+			mView = getLayoutInflater().inflate(R.layout.dialog_change_number, null);
+			change = (EditText) mView.findViewById(R.id.et_change);
+		}
+
+		private String getNumber() {
+			return change.getText().toString();
+		}
+
+		@Override
+		public void onDismiss(DialogInterface dialogInterface) {
+			mDialog = null;
+		}
+
+		public void setDialog(Dialog mDialog) {
+			this.mDialog = mDialog;
+		}
+
+		public View getView() {
+			return mView;
+		}
+	}
+
+	public void showDialog() {
+		final DialogHelper helper = new DialogHelper();
+		Dialog dialog = new AlertDialog.Builder(this)
+				.setView(helper.getView()).setTitle(getString(R.string.input_number))
+				.setTitle("请输入验证信息")
+				.setOnDismissListener(helper)
+				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						apply=helper.getNumber();
+							new Thread(new Runnable() {
+								@Override
+								public void run() {
+									try {
+									EMClient.getInstance().groupManager().applyJoinToGroup(groupid, apply);
+
+								}catch (HyphenateException e){
+
+									}}
+							}).start();
+						Toast.makeText(GroupSimpleDetailActivity.this, getResources().getString(R.string.send_the_request_is), 0).show();
+					}
+				}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				})
+				.create();
+
+		helper.setDialog(dialog);
+		dialog.show();
+	}
+
 	public void back(View view){
 		finish();
 	}

@@ -6,9 +6,12 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.callba.R;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /** 
  * 联系人页面ListView适配器
@@ -85,6 +88,7 @@ public class ContactListAdapter extends BaseAdapter {
 				viewHolder_Item = new ViewHolder_Item();
 				viewHolder_Item.tvDisplayName = (TextView) convertView
 						.findViewById(R.id.tv_displayname);
+                viewHolder_Item.avatar=(CircleImageView) convertView.findViewById(R.id.avatar);
 
 				convertView.setTag(viewHolder_Item);
 			}
@@ -103,6 +107,9 @@ public class ContactListAdapter extends BaseAdapter {
 		} else {
 			ContactPersonEntity contactPersonEntity = (ContactPersonEntity) bean;
 			viewHolder_Item.tvDisplayName.setText(contactPersonEntity.getDisplayName());
+			if(contactPersonEntity.getAvatar()!=null)
+				viewHolder_Item.avatar.setImageBitmap(contactPersonEntity.getAvatar());
+			else viewHolder_Item.avatar.setImageResource(R.drawable.head_portrait);
 		}
 		
 		return convertView;
@@ -114,6 +121,7 @@ public class ContactListAdapter extends BaseAdapter {
 
 	static class ViewHolder_Item {
 		TextView tvDisplayName;
+		CircleImageView avatar;
 	}
 }
  

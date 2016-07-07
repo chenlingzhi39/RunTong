@@ -28,7 +28,8 @@
 			android:layout_marginLeft="10dp"
 			android:clickable="true"
 			android:textSize="16sp"
-			android:text="号码"/>
+			android:text="号码"
+			android:textColor="@color/black"/>
 	</LinearLayout>
 
 	<View

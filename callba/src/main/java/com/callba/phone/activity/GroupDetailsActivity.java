@@ -796,6 +796,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		EMClient.getInstance().groupManager().removeGroupChangeListener(groupChangeListener);
 		instance = null;
 	}
 	

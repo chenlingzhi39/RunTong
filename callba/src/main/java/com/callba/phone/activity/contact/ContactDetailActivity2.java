@@ -1,9 +1,14 @@
 package com.callba.phone.activity.contact;
 
+import android.content.ContentUris;
 import android.content.Context;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -24,7 +29,10 @@ import android.widget.ImageView;
 
 import com.callba.R;
 import com.callba.phone.activity.TestFragment;
+import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.util.Logger;
+
+import java.io.InputStream;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -69,6 +77,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
 
             window.setStatusBarColor(Color.TRANSPARENT);
         }
+        header.setImageBitmap(ContactsManager.getAvatar(this,bean.getDisplayName(),true));
     }
 
     private void initToolbar() {

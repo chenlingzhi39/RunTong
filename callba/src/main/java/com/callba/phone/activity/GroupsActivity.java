@@ -1,10 +1,10 @@
 /**
  * Copyright (C) 2016 Hyphenate Inc. All rights reserved.
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,157 +41,169 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
 import com.hyphenate.exceptions.HyphenateException;
 
+import java.util.ArrayList;
 import java.util.List;
+
 @ActivityFragmentInject(
-		contentViewId = R.layout.em_fragment_groups,
-		navigationId = R.drawable.press_back,
-		toolbarTitle = R.string.group_chat
+        contentViewId = R.layout.em_fragment_groups,
+        navigationId = R.drawable.press_back,
+        toolbarTitle = R.string.group_chat
 )
 public class GroupsActivity extends BaseActivity {
-	public static final String TAG = "GroupsActivity";
-	private ListView groupListView;
-	protected List<EMGroup> grouplist;
-	private GroupAdapter groupAdapter;
-	private InputMethodManager inputMethodManager;
-	public static GroupsActivity instance;
-	private View progressBar;
-	private SwipeRefreshLayout swipeRefreshLayout;
+    public static final String TAG = "GroupsActivity";
+    private ListView groupListView;
+    protected List<EMGroup> grouplist;
+    private GroupAdapter groupAdapter;
+    private InputMethodManager inputMethodManager;
+    public static GroupsActivity instance;
+    private View progressBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private LocalBroadcastManager broadcastManager;
-	private BroadcastReceiver broadcastReceiver;
-	@Override
-	public void refresh(Object... params) {
+    private BroadcastReceiver broadcastReceiver;
 
-	}
+    @Override
+    public void refresh(Object... params) {
 
-	Handler handler = new Handler(){
-	    public void handleMessage(android.os.Message msg) {
-	        swipeRefreshLayout.setRefreshing(false);
-	        switch (msg.what) {
-            case 0:
-                refresh();
-                break;
-            case 1:
-                Toast.makeText(GroupsActivity.this, R.string.Failed_to_get_group_chat_information, Toast.LENGTH_LONG).show();
-                break;
+    }
 
-            default:
-                break;
+    Handler handler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            swipeRefreshLayout.setRefreshing(false);
+            switch (msg.what) {
+                case 0:
+                    refresh();
+                    break;
+                case 1:
+                    Toast.makeText(GroupsActivity.this, R.string.Failed_to_get_group_chat_information, Toast.LENGTH_LONG).show();
+                    break;
+
+                default:
+                    break;
             }
-	    };
-	};
+        }
 
-		
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		instance = this;
-		inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		grouplist = EMClient.getInstance().groupManager().getAllGroups();
-		groupListView = (ListView) findViewById(R.id.list);
-		//show group list
+        ;
+    };
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        instance = this;
+        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        grouplist =EMClient.getInstance().groupManager().getAllGroups();
+        groupListView = (ListView) findViewById(R.id.list);
+        //show group list
         groupAdapter = new GroupAdapter(this, 1, grouplist);
         groupListView.setAdapter(groupAdapter);
-		
-		swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
-		swipeRefreshLayout.setColorSchemeResources(R.color.holo_blue_bright, R.color.holo_green_light,
-		                R.color.holo_orange_light, R.color.holo_red_light);
-		//下拉刷新
-		swipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
 
-			@Override
-			public void onRefresh() {
-				new Thread(){
-					@Override
-					public void run(){
-						try {
-							EMClient.getInstance().groupManager().getJoinedGroupsFromServer();
-							handler.sendEmptyMessage(0);
-						} catch (HyphenateException e) {
-							e.printStackTrace();
-							handler.sendEmptyMessage(1);
-						}
-					}
-				}.start();
-			}
-		});
-		
-		groupListView.setOnItemClickListener(new OnItemClickListener() {
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.holo_blue_bright, R.color.holo_green_light,
+                R.color.holo_orange_light, R.color.holo_red_light);
+        //下拉刷新
+        swipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				if (position == 1) {
-					// 新建群聊
-					startActivityForResult(new Intent(GroupsActivity.this, NewGroupActivity.class), 0);
-				} else if (position == 2) {
-					// 添加公开群
-					startActivityForResult(new Intent(GroupsActivity.this, PublicGroupsActivity.class), 0);
-				} else {
-					// 进入群聊
-					Intent intent = new Intent(GroupsActivity.this, ChatActivity.class);
-					// it is group chat
-					intent.putExtra("chatType", Constant.CHATTYPE_GROUP);
-					intent.putExtra("userId", groupAdapter.getItem(position - 3).getGroupId());
-					startActivityForResult(intent, 0);
-				}
-			}
+            @Override
+            public void onRefresh() {
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            EMClient.getInstance().groupManager().getJoinedGroupsFromServer();
+                            handler.sendEmptyMessage(0);
+                        } catch (HyphenateException e) {
+                            e.printStackTrace();
+                            handler.sendEmptyMessage(1);
+                        }
+                    }
+                }.start();
+            }
+        });
 
-		});
-		groupListView.setOnTouchListener(new OnTouchListener() {
+        groupListView.setOnItemClickListener(new OnItemClickListener() {
 
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
-					if (getCurrentFocus() != null)
-						inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-								InputMethodManager.HIDE_NOT_ALWAYS);
-				}
-				return false;
-			}
-		});
-		IntentFilter intentFilter = new IntentFilter();
-		//intentFilter.addAction(Constant.ACTION_CONTACT_CHANAGED);
-		intentFilter.addAction(Constant.ACTION_GROUP_CHANAGED);
-		broadcastManager=LocalBroadcastManager.getInstance(this);
-		broadcastReceiver=new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				refresh();
-			}
-		};
-		broadcastManager.registerReceiver(broadcastReceiver,intentFilter);
-	}
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 1) {
+                    // 新建群聊
+                    startActivityForResult(new Intent(GroupsActivity.this, NewGroupActivity.class), 0);
+                } else if (position == 2) {
+                    // 添加公开群
+                    Intent intent=new Intent(GroupsActivity.this, PublicGroupsActivity.class);
+                    ArrayList<String> groupIds=new ArrayList<String>();
+                    for (EMGroup group:grouplist){
+                        groupIds.add(group.getGroupId());
+                    }
+                    intent.putStringArrayListExtra("groupIds",groupIds);
+                    startActivityForResult(intent, 0);
+                } else {
+                    // 进入群聊
+                    Intent intent = new Intent(GroupsActivity.this, ChatActivity.class);
+                    // it is group chat
+                    intent.putExtra("chatType", Constant.CHATTYPE_GROUP);
+                    intent.putExtra("userId", groupAdapter.getItem(position - 3).getGroupId());
+                    startActivityForResult(intent, 0);
+                }
+            }
 
-	/**
-	 * 进入公开群聊列表
-	 */
-	public void onPublicGroups(View view) {
-		startActivity(new Intent(this, PublicGroupsActivity.class));
-	}
+        });
+        groupListView.setOnTouchListener(new OnTouchListener() {
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-	}
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
+                    if (getCurrentFocus() != null)
+                        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                                InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+                return false;
+            }
+        });
+        IntentFilter intentFilter = new IntentFilter();
+        //intentFilter.addAction(Constant.ACTION_CONTACT_CHANAGED);
+        intentFilter.addAction(Constant.ACTION_GROUP_CHANAGED);
+        broadcastManager = LocalBroadcastManager.getInstance(this);
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                refresh();
+            }
+        };
+        broadcastManager.registerReceiver(broadcastReceiver, intentFilter);
+    }
 
-	@Override
-	public void onResume() {
+    /**
+     * 进入公开群聊列表
+     */
+    public void onPublicGroups(View view) {
+        startActivity(new Intent(this, PublicGroupsActivity.class));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onResume() {
         refresh();
-		super.onResume();
-	}
-	
-	private void refresh(){
-	    grouplist = EMClient.getInstance().groupManager().getAllGroups();
+        super.onResume();
+    }
+
+    private void refresh() {
+        grouplist = EMClient.getInstance().groupManager().getAllGroups();
         groupAdapter = new GroupAdapter(this, 1, grouplist);
         groupListView.setAdapter(groupAdapter);
         groupAdapter.notifyDataSetChanged();
-	}
+    }
 
-	@Override
-	protected void onDestroy() {
-		broadcastManager.unregisterReceiver(broadcastReceiver);
-		super.onDestroy();
-		instance = null;
-	}
-	
+    @Override
+    protected void onDestroy() {
+        broadcastManager.unregisterReceiver(broadcastReceiver);
+        super.onDestroy();
+        instance = null;
+    }
+
+
 
 }
