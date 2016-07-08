@@ -50,7 +50,6 @@ public  class NumberFragment extends BaseFragment implements UserDao.PostListene
     private UserDao userDao;
     private String address;
 
-
     public static NumberFragment newInstance() {
         NumberFragment numberFragment = new NumberFragment();
         return numberFragment;
@@ -86,7 +85,6 @@ public  class NumberFragment extends BaseFragment implements UserDao.PostListene
                 }
             }
         });
-
     }
 
     @Override
@@ -98,6 +96,12 @@ public  class NumberFragment extends BaseFragment implements UserDao.PostListene
     public void success(String msg) {
         toast(msg);
         if (progressDialog != null) progressDialog.dismiss();
+        if (CalldaGlobalConfig.getInstance().getAdvertisements1()!=null)
+        CalldaGlobalConfig.getInstance().getAdvertisements1().clear();
+        if (CalldaGlobalConfig.getInstance().getAdvertisements2()!=null)
+        CalldaGlobalConfig.getInstance().getAdvertisements2().clear();
+        if (CalldaGlobalConfig.getInstance().getAdvertisements3()!=null)
+        CalldaGlobalConfig.getInstance().getAdvertisements3().clear();
     }
 
     @Override

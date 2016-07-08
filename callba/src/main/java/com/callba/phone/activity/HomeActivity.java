@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.MyApplication;
@@ -193,6 +194,7 @@ public class HomeActivity extends BaseActivity {
                 list = gson.fromJson(msg, new TypeToken<List<Advertisement>>() {
                 }.getType());
                 CalldaGlobalConfig.getInstance().setAdvertisements1(list);
+                webImages.clear();
                 for (Advertisement advertisement : list) {
                     webImages.add(advertisement.getImage());
                 }
@@ -278,6 +280,14 @@ public class HomeActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (CalldaGlobalConfig.getInstance().getAdvertisements1()!=null)
+         if( CalldaGlobalConfig.getInstance().getAdvertisements1().size()==0)
+            userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+    }
+
     // 跳转到起始页
     private void gotoWelcomePage() {
         Intent intent = new Intent();
@@ -342,8 +352,8 @@ public class HomeActivity extends BaseActivity {
                 toast("暂未开放");
                 break;
             case R.id.family:
-                startActivity(new Intent(HomeActivity.this,FamilyActivity.class));
-                //toast("暂未开放");
+                //startActivity(new Intent(HomeActivity.this,FamilyActivity.class));
+                toast("暂未开放");
                 /*intent = new Intent(HomeActivity.this, CommunityActivity.class);
                 startActivity(intent);*/
                 break;

@@ -17,6 +17,7 @@ import com.callba.phone.bean.CalldaCalllogBean;
 import com.callba.phone.bean.ContactData;
 import com.callba.phone.logic.contact.ContactEntity;
 import com.callba.phone.service.CalllogService;
+import com.callba.phone.util.Logger;
 import com.callba.phone.widget.DividerItemDecoration;
 
 import java.text.SimpleDateFormat;

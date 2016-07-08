@@ -248,6 +248,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 							}
 						}
 					}).start();
+					setResult(REQUEST_CODE_EDIT_GROUPNAME,data);
 				}
 				break;
 			default:
@@ -449,7 +450,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 			break;
 
 		case R.id.rl_blacklist: // 黑名单列表
-			//startActivity(new Intent(GroupDetailsActivity.this, GroupBlacklistActivity.class).putExtra("groupId", groupId));
+			startActivity(new Intent(GroupDetailsActivity.this, GroupBlacklistActivity.class).putExtra("groupId", groupId));
 			break;
 
 		case R.id.rl_change_group_name:
@@ -623,6 +624,36 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 					});
 				}
 			} else { // 普通item，显示群组成员
+				if(position==getCount()-1&&group.isAllowInvites()){
+
+					holder.textView.setText("");
+					holder.imageView.setImageResource(R.drawable.em_smiley_add_btn);
+//				button.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.smiley_add_btn, 0, 0);
+					// 如果不是创建者或者没有相应权限
+					if (!group.isAllowInvites() && !group.getOwner().equals(EMClient.getInstance().getCurrentUser())) {
+						// if current user is not group admin, hide add/remove btn
+						convertView.setVisibility(View.GONE);
+					} else {
+						// 正处于删除模式下,隐藏添加按钮
+						if (isInDeleteMode) {
+							convertView.setVisibility(View.INVISIBLE);
+						} else {
+							convertView.setVisibility(View.VISIBLE);
+							convertView.findViewById(R.id.badge_delete).setVisibility(View.INVISIBLE);
+						}
+						final String st11 = getResources().getString(R.string.Add_a_button_was_clicked);
+						button.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								EMLog.d(TAG, st11);
+								// 进入选人页面
+								startActivityForResult(
+										(new Intent(GroupDetailsActivity.this, GroupPickContactsActivity.class).putExtra("groupId", groupId)),
+										REQUEST_CODE_ADD_USER);
+							}
+						});}
+				return convertView;
+				}
 				final String username = getItem(position);
 				convertView.setVisibility(View.VISIBLE);
 				button.setVisibility(View.VISIBLE);
@@ -736,6 +767,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 		public int getCount() {
 			if(group.getOwner().equals(EMClient.getInstance().getCurrentUser()))
 			return super.getCount() + 2;
+			else if(group.isAllowInvites())return super.getCount()+1;
 			else return super.getCount();
 		}
 	}

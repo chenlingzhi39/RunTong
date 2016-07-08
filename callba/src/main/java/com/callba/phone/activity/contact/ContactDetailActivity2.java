@@ -1,14 +1,25 @@
 package com.callba.phone.activity.contact;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.*;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -20,7 +31,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -28,14 +38,19 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.callba.R;
-import com.callba.phone.activity.TestFragment;
+import com.callba.phone.bean.Contact;
 import com.callba.phone.manager.ContactsManager;
-import com.callba.phone.util.Logger;
+import com.callba.phone.util.Utils;
 
-import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStreamReader;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 /**
  * Created by PC-20160514 on 2016/5/31.
@@ -56,6 +71,12 @@ public class ContactDetailActivity2 extends AppCompatActivity {
     @InjectView(R.id.main_content)
     CoordinatorLayout mainContent;
     private ContactMutliNumBean bean;
+    private static final int REQUESTCODE_PICK = 1;
+    private static final int REQUESTCODE_CUTTING = 2;
+    private static final int REQUESTCODE_CAMERA= 3;
+    private static final int RESULT_CAMERA_CROP_PATH_RESULT=4;
+    private Uri imageUri;
+    private Uri imageCropUri;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +98,13 @@ public class ContactDetailActivity2 extends AppCompatActivity {
 
             window.setStatusBarColor(Color.TRANSPARENT);
         }
-        header.setImageBitmap(ContactsManager.getAvatar(this,bean.getDisplayName(),true));
+        header.setImageBitmap(ContactsManager.getAvatar(this, bean.getDisplayName(), true));
+        String path = getSDCardPath();
+        File file = new File(path + "/temp.jpg");
+        imageUri = Uri.fromFile(file);
+        File cropFile = new File(getSDCardPath() + "/temp_crop.jpg");
+        imageCropUri = Uri.fromFile(cropFile);
+
     }
 
     private void initToolbar() {
@@ -89,6 +116,42 @@ public class ContactDetailActivity2 extends AppCompatActivity {
 
 
         }
+    }
+
+    @OnClick(R.id.header)
+    public void onClick() {
+        //startActivity(new Intent(ContactDetailActivity2.this, MainActivity.class));
+        uploadHeadPhoto();
+    }
+    private void uploadHeadPhoto() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("更改头像");
+        builder.setItems(new String[] { "拍照","相册" },
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        switch (which) {
+                            case 0:
+                                Intent intent = null;
+                                intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);//action is capture
+                                intent.putExtra("return-data", false);
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+                                intent.putExtra("noFaceDetection", true);
+                                startActivityForResult(intent, REQUESTCODE_CAMERA);
+                                break;
+                            case 1:
+                                Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT,null);
+                                pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                                startActivityForResult(pickIntent, REQUESTCODE_PICK);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+        builder.create().show();
     }
     public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
@@ -104,17 +167,17 @@ public class ContactDetailActivity2 extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            Bundle bundle=new Bundle();
+            Bundle bundle = new Bundle();
             switch (position) {
 
                 case 0:
-                    CalllogFragment calllogFragment=new CalllogFragment();
-                    bundle.putString("name",bean.getDisplayName());
+                    CalllogFragment calllogFragment = new CalllogFragment();
+                    bundle.putString("name", bean.getDisplayName());
                     calllogFragment.setArguments(bundle);
                     return calllogFragment;
                 case 1:
-                    ContactDetailFragment contactDetailFragment=new ContactDetailFragment();
-                    bundle.putSerializable("contact",bean);
+                    ContactDetailFragment contactDetailFragment = new ContactDetailFragment();
+                    bundle.putSerializable("contact", bean);
                     contactDetailFragment.setArguments(bundle);
                     return contactDetailFragment;
                 default:
@@ -134,6 +197,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
             return tabTitles[position];
         }
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -145,4 +209,174 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK)
+            return;
+        switch (requestCode) {
+            case REQUESTCODE_PICK:
+                if (data == null || data.getData() == null) {
+                    return;
+                }
+                startPhotoZoom(Uri.fromFile(new File(Utils.getPath(this,data))));
+                break;
+            case REQUESTCODE_CUTTING:
+                if (data != null) {
+                    setPicToView(data);
+                }
+                break;
+            case REQUESTCODE_CAMERA:
+                cropImg(imageUri);
+                break;
+            case RESULT_CAMERA_CROP_PATH_RESULT:
+                Bundle extras = data.getExtras();
+                if (extras != null) {
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageCropUri));
+                        updateAvatar(bitmap);
+                        header.setImageBitmap(bitmap);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void startPhotoZoom(Uri uri) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", 700);
+        intent.putExtra("outputY", 700);
+        intent.putExtra("return-data", true);
+        intent.putExtra("noFaceDetection", true);
+        startActivityForResult(intent, REQUESTCODE_CUTTING);
+    }
+    public void cropImg(Uri uri) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", 700);
+        intent.putExtra("outputY", 700);
+        intent.putExtra("return-data", false);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageCropUri);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("noFaceDetection", true);
+        startActivityForResult(intent, RESULT_CAMERA_CROP_PATH_RESULT);
+    }
+    /**
+     * save the picture data
+     *
+     * @param picdata
+     */
+    private void setPicToView(Intent picdata) {
+        Bundle extras = picdata.getExtras();
+        if (extras != null) {
+            final Bitmap photo = extras.getParcelable("data");
+            Drawable drawable = new BitmapDrawable(getResources(), photo);
+            header.setImageDrawable(drawable);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    updateAvatar(photo);
+                }
+            }).start();
+        }
+
+    }
+    public static String getSDCardPath() {
+        String cmd = "cat /proc/mounts";
+        Runtime run = Runtime.getRuntime();// 返回与当前 Java 应用程序相关的运行时对象
+        try {
+            Process p = run.exec(cmd);// 启动另一个进程来执行命令
+            BufferedInputStream in = new BufferedInputStream(p.getInputStream());
+            BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
+
+            String lineStr;
+            while ((lineStr = inBr.readLine()) != null) {
+                // 获得命令执行后在控制台的输出信息
+                if (lineStr.contains("sdcard")
+                        && lineStr.contains(".android_secure")) {
+                    String[] strArray = lineStr.split(" ");
+                    if (strArray != null && strArray.length >= 5) {
+                        String result = strArray[1].replace("/.android_secure",
+                                "");
+                        return result;
+                    }
+                }
+                // 检查命令是否执行失败。
+                if (p.waitFor() != 0 && p.exitValue() == 1) {
+                    // p.exitValue()==0表示正常结束，1：非正常结束
+                }
+            }
+            inBr.close();
+            in.close();
+        } catch (Exception e) {
+
+            return Environment.getExternalStorageDirectory().getPath();
+        }
+
+        return Environment.getExternalStorageDirectory().getPath();
+    }
+public void updateAvatar(Bitmap bit){
+    ContactsManager contactsManager=new ContactsManager(getContentResolver());
+    Uri rawContactUri = null;
+    Cursor rawContactCursor =  managedQuery(
+            ContactsContract.RawContacts.CONTENT_URI,
+            new String[] {RawContacts._ID},
+            RawContacts.CONTACT_ID + " = " + contactsManager.getContactID(bean.getDisplayName()),
+            null,
+            null);
+    if(!rawContactCursor.isAfterLast()) {
+        rawContactCursor.moveToFirst();
+        rawContactUri = RawContacts.CONTENT_URI.buildUpon().appendPath(""+rawContactCursor.getLong(0)).build();
+    }
+    rawContactCursor.close();
+
+    ByteArrayOutputStream streamy = new ByteArrayOutputStream();
+    bit.compress(Bitmap.CompressFormat.PNG, 0, streamy);
+    byte[] photo = streamy.toByteArray();
+    ContentValues values = new ContentValues();
+    int photoRow = -1;
+    String where = ContactsContract.Data.RAW_CONTACT_ID + " == " +
+            ContentUris.parseId(rawContactUri) + " AND " + Data.MIMETYPE + "=='" +
+            ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE + "'";
+    Cursor cursor = managedQuery(
+            ContactsContract.Data.CONTENT_URI,
+            null,
+            where,
+            null,
+            null);
+    int idIdx = cursor.getColumnIndexOrThrow(ContactsContract.Data._ID);
+    if(cursor.moveToFirst()){
+        photoRow = cursor.getInt(idIdx);
+    }
+    cursor.close();
+    values.put(ContactsContract.Data.RAW_CONTACT_ID,
+            ContentUris.parseId(rawContactUri));
+    values.put(ContactsContract.Data.IS_SUPER_PRIMARY, 1);
+    values.put(ContactsContract.CommonDataKinds.Photo.PHOTO, photo);
+    values.put(ContactsContract.Data.MIMETYPE,
+            ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE);
+    if(photoRow >= 0){
+        this.getContentResolver().update(
+                ContactsContract.Data.CONTENT_URI,
+                values,
+                ContactsContract.Data._ID + " = " + photoRow, null);
+    } else {
+        this.getContentResolver().insert(
+                ContactsContract.Data.CONTENT_URI,
+                values);
+    }
+
+}
 }

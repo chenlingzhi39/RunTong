@@ -262,6 +262,7 @@ public class BannerLayout extends RelativeLayout {
 
     //添加任意View视图
     private void setViews(final List<View> views) {
+        removeAllViews();
         //初始化pager
         pager = new ViewPager(getContext());
         //添加viewpager到SliderLayout

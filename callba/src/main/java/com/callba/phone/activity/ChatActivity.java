@@ -684,13 +684,16 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 double longitude = data.getDoubleExtra("longitude", 0);
                 String locationAddress = data.getStringExtra("address");
                 if (locationAddress != null && !locationAddress.equals("")) {
-                   sendLocationMessage(latitude, longitude, locationAddress);
+                    sendLocationMessage(latitude, longitude, locationAddress);
                 } else {
                     Toast.makeText(this, R.string.unable_to_get_loaction, 0).show();
                 }
 
             }
         }
+        if(resultCode==5)title.setText(data.getStringExtra("data"));
+
+
     }
     protected void emptyHistory() {
         String msg = getResources().getString(R.string.Whether_to_empty_all_chats);
@@ -747,7 +750,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 public void run() {
                     if (toChatUsername.equals(groupId)) {
                        // Toast.makeText(ChatActivity.this, R.string.you_are_group, 1).show();
-                        Toast.makeText(ChatActivity.this, "你已被群\""+groupName+"\"移除", 1).show();
+                       // Toast.makeText(ChatActivity.this, "你已被群\""+groupName+"\"移除", 1).show();
                         finish();
                     }
                 }
@@ -761,7 +764,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 public void run() {
                     if (toChatUsername.equals(groupId)) {
                        // Toast.makeText(ChatActivity.this, R.string.the_current_group, 1).show();
-                        Toast.makeText(ChatActivity.this, "群\""+groupName+"\"已被解散", 1).show();
+                        //Toast.makeText(ChatActivity.this, "群\""+groupName+"\"已被解散", 1).show();
                         finish();
                     }
                 }

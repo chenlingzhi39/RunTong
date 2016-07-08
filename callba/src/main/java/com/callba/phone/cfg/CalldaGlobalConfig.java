@@ -19,7 +19,7 @@ public class CalldaGlobalConfig implements Serializable{
 	private static CalldaGlobalConfig calldaGlobalConfig;
 	private CalldaGlobalConfig(){}
 	
-	public static CalldaGlobalConfig getInstance() {
+	public static synchronized CalldaGlobalConfig getInstance() {
 		if(calldaGlobalConfig == null) {
 			calldaGlobalConfig = new CalldaGlobalConfig();
 		}
@@ -132,7 +132,7 @@ public class CalldaGlobalConfig implements Serializable{
 		return advertisements1;
 	}
 
-	public void setAdvertisements1(ArrayList<Advertisement> advertisements) {
+	public void setAdvertisements1(ArrayList<Advertisement> advertisements1) {
 		this.advertisements1 = advertisements1;
 	}
 

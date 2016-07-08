@@ -153,7 +153,7 @@ public class MessageActivity extends BaseActivity {
      */
     protected void onConnectionDisconnected(){
         errorItemContainer.setVisibility(View.VISIBLE);
-        if(CalldaGlobalConfig.getInstance()!=null)
+       /* if(CalldaGlobalConfig.getInstance()!=null)
             if(!CalldaGlobalConfig.getInstance().getUsername().equals("")){
                 EMClient.getInstance().login(SharedPreferenceUtil.getInstance(MessageActivity.this).getString(com.callba.phone.cfg.Constant.LOGIN_USERNAME)+"-callba",SharedPreferenceUtil.getInstance(MessageActivity.this).getString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
                     @Override
@@ -176,7 +176,7 @@ public class MessageActivity extends BaseActivity {
                         Log.d("main", "登录聊天服务器失败！");
                     }
                 });
-            }
+            }*/
     }
 
     @Override
@@ -293,6 +293,7 @@ public class MessageActivity extends BaseActivity {
               refresh();
             }
         };
+        broadcastManager=LocalBroadcastManager.getInstance(this);
         broadcastManager.registerReceiver(broadcastReceiver,new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
     }
 

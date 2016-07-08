@@ -1,12 +1,18 @@
 package com.callba.phone.activity;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,10 +32,14 @@ import com.callba.phone.util.BitmapUtil;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NumberAddressService;
 import com.callba.phone.util.SharedPreferenceUtil;
+import com.callba.phone.util.Utils;
 import com.callba.phone.view.CircleTextView;
 
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
@@ -64,6 +74,12 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     private File f;
     private UserDao userDao,userDao1;
     private ProgressDialog dialog;
+    private static final int REQUESTCODE_PICK = 1;
+    private static final int REQUESTCODE_CUTTING = 2;
+    private static final int REQUESTCODE_CAMERA= 3;
+    private static final int RESULT_CAMERA_CROP_PATH_RESULT=4;
+    private Uri imageUri;
+    private Uri imageCropUri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +108,11 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
              toast(msg);
             }
         });
+        String path = getSDCardPath();
+        File file = new File(path + "/temp.jpg");
+        imageUri = Uri.fromFile(file);
+        File cropFile = new File(getSDCardPath() + "/temp_crop.jpg");
+        imageCropUri = Uri.fromFile(cropFile);
     }
 
     @Override
@@ -128,11 +149,12 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         /*Intent intent=new Intent(ChangeInfoActivity.this,SelectPicPopupWindow.class);
         intent.putExtra("isCrop",true);
         startActivityForResult(intent, 1);*/
-        PhotoPickerIntent intent = new PhotoPickerIntent(ChangeInfoActivity.this);
+      /*  PhotoPickerIntent intent = new PhotoPickerIntent(ChangeInfoActivity.this);
         intent.setPhotoCount(1);
         intent.setShowCamera(true);
         intent.setShowGif(true);
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, 0);*/
+        uploadHeadPhoto();
     }
     @OnClick(R.id.change_nickname)
     public void change_nickname(){
@@ -142,15 +164,41 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     public void change_signature(){
     shownSignatureDialog();
     }
+    private void uploadHeadPhoto() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("更改头像");
+        builder.setItems(new String[] { "拍照","相册" },
+                new DialogInterface.OnClickListener() {
 
-    @Override
-    public void refresh(Object... params) {
-
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        switch (which) {
+                            case 0:
+                                Intent intent = null;
+                                intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);//action is capture
+                                intent.putExtra("return-data", false);
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+                                intent.putExtra("noFaceDetection", true);
+                                startActivityForResult(intent, REQUESTCODE_CAMERA);
+                                break;
+                            case 1:
+                                Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT,null);
+                                pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                                startActivityForResult(pickIntent, REQUESTCODE_PICK);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+        builder.create().show();
     }
-    @Override
+
+   /* @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-      /*  switch (resultCode) {
+      *//*  switch (resultCode) {
             case RESULT_OK:
                 Log.i("path",data.getStringExtra("path"));
                 head.setImageBitmap(BitmapUtil.getLoacalBitmap(data.getStringExtra("path")));
@@ -159,7 +207,7 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
             default:
                 break;
 
-        }*/
+        }*//*
         if (resultCode == RESULT_OK && requestCode == 0) {
             if (data != null) {
                 ArrayList<String> photos =
@@ -175,7 +223,7 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
                 f= new File(data.getStringExtra("path"));
             }
         }
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -265,5 +313,116 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         helper.setDialog(dialog);
         dialog.show();
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK)
+            return;
+        switch (requestCode) {
+            case REQUESTCODE_PICK:
+                if (data == null || data.getData() == null) {
+                    return;
+                }
+                startPhotoZoom(Uri.fromFile(new File(Utils.getPath(this,data))));
+                break;
+            case REQUESTCODE_CUTTING:
+                if (data != null) {
+                    setPicToView(data);
+                }
+                break;
+            case REQUESTCODE_CAMERA:
+                cropImg(imageUri);
+                break;
+            case RESULT_CAMERA_CROP_PATH_RESULT:
+                Bundle extras = data.getExtras();
+                if (extras != null) {
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageCropUri));
+                        head.setImageBitmap(bitmap);
+                        f=BitmapUtil.saveBitmap(this,bitmap,Constant.PHOTO_PATH,"head.jpg");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
+    public void startPhotoZoom(Uri uri) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", 700);
+        intent.putExtra("outputY", 700);
+        intent.putExtra("return-data", true);
+        intent.putExtra("noFaceDetection", true);
+        startActivityForResult(intent, REQUESTCODE_CUTTING);
+    }
+    public void cropImg(Uri uri) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", 700);
+        intent.putExtra("outputY", 700);
+        intent.putExtra("return-data", false);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageCropUri);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("noFaceDetection", true);
+        startActivityForResult(intent, RESULT_CAMERA_CROP_PATH_RESULT);
+    }
+    /**
+     * save the picture data
+     *
+     * @param picdata
+     */
+    private void setPicToView(Intent picdata) {
+        Bundle extras = picdata.getExtras();
+        if (extras != null) {
+            final Bitmap photo = extras.getParcelable("data");
+            Drawable drawable = new BitmapDrawable(getResources(), photo);
+            head.setImageDrawable(drawable);
+            f=BitmapUtil.saveBitmap(this,photo,Constant.PHOTO_PATH,"head.jpg");
+        }
+
+    }
+    public static String getSDCardPath() {
+        String cmd = "cat /proc/mounts";
+        Runtime run = Runtime.getRuntime();// 返回与当前 Java 应用程序相关的运行时对象
+        try {
+            Process p = run.exec(cmd);// 启动另一个进程来执行命令
+            BufferedInputStream in = new BufferedInputStream(p.getInputStream());
+            BufferedReader inBr = new BufferedReader(new InputStreamReader(in));
+
+            String lineStr;
+            while ((lineStr = inBr.readLine()) != null) {
+                // 获得命令执行后在控制台的输出信息
+                if (lineStr.contains("sdcard")
+                        && lineStr.contains(".android_secure")) {
+                    String[] strArray = lineStr.split(" ");
+                    if (strArray != null && strArray.length >= 5) {
+                        String result = strArray[1].replace("/.android_secure",
+                                "");
+                        return result;
+                    }
+                }
+                // 检查命令是否执行失败。
+                if (p.waitFor() != 0 && p.exitValue() == 1) {
+                    // p.exitValue()==0表示正常结束，1：非正常结束
+                }
+            }
+            inBr.close();
+            in.close();
+        } catch (Exception e) {
+
+            return Environment.getExternalStorageDirectory().getPath();
+        }
+
+        return Environment.getExternalStorageDirectory().getPath();
+    }
 }

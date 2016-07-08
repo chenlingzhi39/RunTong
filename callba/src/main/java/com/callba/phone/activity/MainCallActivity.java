@@ -41,6 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.bumptech.glide.Glide;
 import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.ContactData;
 import com.callba.phone.bean.SystemNumber;
@@ -409,6 +410,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 list = gson.fromJson(msg, new TypeToken<List<Advertisement>>() {
                 }.getType());
                 CalldaGlobalConfig.getInstance().setAdvertisements3(list);
+                webImages.clear();
                 for(Advertisement advertisement : list){
                     webImages.add(advertisement.getImage());
                 }
@@ -489,6 +491,9 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 num1.setImageResource(R.drawable.call_1);
             }
         }
+        if(CalldaGlobalConfig.getInstance().getAdvertisements3()!=null)
+        if(CalldaGlobalConfig.getInstance().getAdvertisements3().size()==0)
+            userDao.getAd(3,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
         userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(MainCallActivity.this, "Call吧电话"));
         super.onResume();
     }
@@ -934,7 +939,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             ll_call.setVisibility(View.INVISIBLE);
             //iv_ad.setVisibility(View.VISIBLE);
 
-            //lv_calllog.setVisibility(View.VISIBLE);
+            lv_calllog.setVisibility(View.VISIBLE);
             lv_filterNum.setVisibility(View.GONE);
 
             isFristSearchContact = true;
@@ -1337,7 +1342,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     public class LoginReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
-            Logger.i("maincall","getad");
                 userDao.getAd(3,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
         }
     }

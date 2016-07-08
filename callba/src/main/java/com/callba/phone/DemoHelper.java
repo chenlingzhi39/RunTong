@@ -1,6 +1,7 @@
 package com.callba.phone;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -146,7 +147,6 @@ public class DemoHelper {
     private LocalBroadcastManager broadcastManager;
 
     private boolean isGroupAndContactListenerRegisted;
-    private HttpUtils httpUtils;
     private Gson gson;
 	private DemoHelper() {
 	}
@@ -172,7 +172,7 @@ public class DemoHelper {
 		    appContext = context;
 		    
 		    //设为调试模式，打成正式包时，最好设为false，以免消耗额外的资源
-		    EMClient.getInstance().setDebugMode(true);
+		    EMClient.getInstance().setDebugMode(false);
 		    //get easeui instance
 		    easeUI = EaseUI.getInstance();
 		    //调用easeui的api设置providers
@@ -186,8 +186,6 @@ public class DemoHelper {
 			setGlobalListeners();
 			broadcastManager = LocalBroadcastManager.getInstance(appContext);
 	        initDbDao();
-            httpUtils = new HttpUtils(10 * 1000);
-            httpUtils.configRequestRetryCount(3);
             gson=new Gson();
 		}
 	}
@@ -558,21 +556,31 @@ public class DemoHelper {
         }
 
         @Override
-        public void onUserRemoved(String groupId, String groupName) {
+        public void onUserRemoved(String groupId,final String groupName) {
             //TODO 提示用户被T了，demo省略此步骤
             EMClient.getInstance().chatManager().deleteConversation(groupName,true);
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
-            Toast.makeText(appContext, "你已被群\""+groupName+"\"移除", 1).show();
+            SimpleHandler.getInstance().post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(appContext, "你已被群\""+groupName+"\"移除", 1).show();
+                }
+            });
             Logger.i("demohelper","用户被T了");
         }
 
         @Override
-        public void onGroupDestroy(String groupId, String groupName) {
+        public void onGroupDestroy(String groupId,final String groupName) {
             // 群被解散
             //TODO 提示用户群被解散,demo省略
             EMClient.getInstance().chatManager().deleteConversation(groupName,true);
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
-            Toast.makeText(appContext, "群\""+groupName+"\"已被解散", 1).show();
+            SimpleHandler.getInstance().post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(appContext, "群\""+groupName+"\"已被解散", 1).show();
+                }
+            });
             Logger.i("demohelper","群被解散");
         }
 
