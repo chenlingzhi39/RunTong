@@ -498,6 +498,7 @@ public class MainTabActivity extends TabActivity {
                 for (Activity activity : MyApplication.activities) {
                     activity.finish();
                 }
+                dialog.dismiss();
                 startActivity(intent);
             }
         });

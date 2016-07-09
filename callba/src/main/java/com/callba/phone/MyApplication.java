@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Process;
+import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
 import com.bumptech.glide.Glide;
@@ -35,7 +36,7 @@ import de.greenrobot.dao.query.QueryBuilder;
 import okhttp3.OkHttpClient;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
-public class MyApplication extends MultiDexApplication {
+public class MyApplication extends Application {
     /**
      * 保存所有打开的Activity
      */
@@ -51,7 +52,13 @@ public class MyApplication extends MultiDexApplication {
     private DaoSession mDaoSession;
     private SQLiteDatabase db;
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
+    @Override
     public void onCreate() {
+        MultiDex.install(this);
         super.onCreate();
         myApplication = this;
         //CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/STXIHEI.TTF").setFontAttrId(R.attr.fontPath).build());
@@ -68,8 +75,8 @@ public class MyApplication extends MultiDexApplication {
                 .build();
 
         OkHttpUtils.initClient(okHttpClient);
-        DemoHelper.getInstance().init(this);
-        GlideBuilder builder = new GlideBuilder(this);
+        DemoHelper.getInstance().init(myApplication);
+        GlideBuilder builder = new GlideBuilder(myApplication);
         builder.setMemoryCache(new LruResourceCache(5 * 1024 * 1024));
         Glide.get(this).setMemoryCategory(MemoryCategory.NORMAL);
         builder.setDiskCache(

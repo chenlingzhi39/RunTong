@@ -126,44 +126,10 @@ public final class EaseUI {
             settingsProvider = new DefaultSettingsProvider();
         }
 
-        EMClient.getInstance().addConnectionListener(new MyConnectionListener());
         sdkInited = true;
         return true;
     }
-    private class MyConnectionListener implements EMConnectionListener {
-        @Override
-        public void onConnected() {
-        }
-        @Override
-        public void onDisconnected(final int error) {
 
-            if (error == EMError.USER_REMOVED) {
-                  Log.i("user","removed");
-                onCurrentAccountRemoved();
-            }else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
-                 Log.i("user","another");
-                onConnectionConflict();
-            }
-        }}
-    /**
-     * 账号在别的设备登录
-     */
-    protected void onConnectionConflict(){
-        Intent intent = new Intent(appContext, MainTabActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(Constant.ACCOUNT_CONFLICT, true);
-        appContext.startActivity(intent);
-    }
-
-    /**
-     * 账号被移除
-     */
-    protected void onCurrentAccountRemoved(){
-        Intent intent = new Intent(appContext, MainTabActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(Constant.ACCOUNT_REMOVED, true);
-        appContext.startActivity(intent);
-    }
     protected EMOptions initChatOptions(){
         Log.d(TAG, "init HuanXin Options");
         

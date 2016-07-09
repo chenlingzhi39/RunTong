@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.activity.ChatActivity;
+import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.activity.parse.UserProfileManager;
 import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseEmojicon;
@@ -147,7 +148,7 @@ public class DemoHelper {
     private LocalBroadcastManager broadcastManager;
 
     private boolean isGroupAndContactListenerRegisted;
-    private Gson gson;
+    Gson gson=new Gson();
 	private DemoHelper() {
 	}
 
@@ -172,7 +173,7 @@ public class DemoHelper {
 		    appContext = context;
 		    
 		    //设为调试模式，打成正式包时，最好设为false，以免消耗额外的资源
-		    EMClient.getInstance().setDebugMode(false);
+		    EMClient.getInstance().setDebugMode(true);
 		    //get easeui instance
 		    easeUI = EaseUI.getInstance();
 		    //调用easeui的api设置providers
@@ -186,7 +187,6 @@ public class DemoHelper {
 			setGlobalListeners();
 			broadcastManager = LocalBroadcastManager.getInstance(appContext);
 	        initDbDao();
-            gson=new Gson();
 		}
 	}
 
@@ -198,7 +198,7 @@ public class DemoHelper {
         // 默认添加好友时，是不需要验证的，改成需要验证
         options.setAcceptInvitationAlways(true);
         // 设置是否需要已读回执
-       options.setRequireAck(true);
+        options.setRequireAck(true);
         // 设置是否需要已送达回执
         options.setRequireDeliveryAck(false);
         options.setAutoLogin(false);
@@ -403,12 +403,23 @@ public class DemoHelper {
                 }else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
                     onConnectionConflict();
                 }
+                SimpleHandler.getInstance().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(appContext,"服务器已断开",Toast.LENGTH_SHORT).show();
+                    }
+                });
 
             }
 
             @Override
             public void onConnected() {
-                
+                SimpleHandler.getInstance().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(appContext,"服务器已连接",Toast.LENGTH_SHORT).show();
+                    }
+                });
                 // in case group and contact were already synced, we supposed to notify sdk we are ready to receive the events
                 if(isGroupsSyncedWithServer && isContactsSyncedWithServer){
                     new Thread(){
@@ -664,6 +675,7 @@ public class DemoHelper {
             }
             toAddUsers.put(username, user);
             localUsers.putAll(toAddUsers);*/
+
             Logger.i("get_friends",Interfaces.GET_FRIENDS+"?loginName="+ CalldaGlobalConfig.getInstance().getUsername()+"&loginPwd="+CalldaGlobalConfig.getInstance().getPassword());
             OkHttpUtils
                     .post()
@@ -803,22 +815,22 @@ public class DemoHelper {
      * 账号在别的设备登录
      */
     protected void onConnectionConflict(){
-       /* Intent intent = new Intent(appContext, MainActivity.class);
+        Intent intent = new Intent(appContext, MainTabActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constant.ACCOUNT_CONFLICT, true);
-        appContext.startActivity(intent);*/
+        appContext.startActivity(intent);
     }
     
     /**
      * 账号被移除
      */
     protected void onCurrentAccountRemoved(){
-       /* Intent intent = new Intent(appContext, MainActivity.class);
+        Intent intent = new Intent(appContext, MainTabActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constant.ACCOUNT_REMOVED, true);
-        appContext.startActivity(intent);*/
+        appContext.startActivity(intent);
     }
-	
+
 	private EaseUser getUserInfo(String username){
 	    //获取user信息，demo是从内存的好友列表里获取，
         //实际开发中，可能还需要从服务器获取用户信息,
@@ -833,7 +845,7 @@ public class DemoHelper {
         }*/
         return user;
 	}
-	
+
 	 /**
      * 全局事件监听
      * 因为可能会有UI页面先处理到这个消息，所以一般如果UI页面已经处理，这里就不需要再次处理

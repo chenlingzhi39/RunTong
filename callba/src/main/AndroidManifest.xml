@@ -824,7 +824,7 @@
     <uses-permission android:name="android.permission.RAISED_THREAD_PRIORITY" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <!-- 自动接听 -->
-    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
+   <!-- <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />-->
     <uses-permission android:name="android.permission.WRITE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
 
@@ -846,7 +846,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- Needed to store received images if the user wants to -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" />
+    <!--<uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" />-->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <!-- Needed to use our own Contact editor -->
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
@@ -856,14 +856,14 @@
     <!-- Needed to pre fill the wizard email field (only if enabled in custom settings) -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <!-- V1.2.3新增的权限, GET_TASKS用于检测APP是否处于前台、是否活着；REORDER_TASKS用于将APP切换到前台 -->
-    <uses-permission android:name="android.permission.GET_TASKS" />
+<!--    <uses-permission android:name="android.permission.GET_TASKS" />-->
     <uses-permission android:name="android.permission.REORDER_TASKS" />
 
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
 
     <uses-permission android:name="getui.permission.GetuiService.com.runtong" />
-    <uses-permission android:name="android.permission.WRITE_APN_SETTINGS"/>
+   <!-- <uses-permission android:name="android.permission.WRITE_APN_SETTINGS"/>-->
     <!--umeng-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -874,7 +874,7 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
+   <!-- <uses-permission android:name="android.permission.GET_TASKS" />-->
     <uses-permission android:name="android.permission.SET_DEBUG_APP" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
