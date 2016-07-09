@@ -45,6 +45,7 @@ import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
+import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
@@ -381,10 +382,21 @@ public class MessageActivity extends BaseActivity {
         });
     }
   public void refresh(){
-      conversationList.clear();
-      conversationList.addAll(loadConversationList());
-      adapter.clear();
-      adapter.addAll(conversationList);
+      new Thread(new Runnable() {
+          @Override
+          public void run() {
+              conversationList.clear();
+              conversationList.addAll(loadConversationList());
+              SimpleHandler.getInstance().post(new Runnable() {
+                  @Override
+                  public void run() {
+                      adapter.clear();
+                      adapter.addAll(conversationList);
+                  }
+              });
+          }
+      }).start();
+
   }
     class ChatReceiver extends BroadcastReceiver {
         @Override

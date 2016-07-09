@@ -410,8 +410,4 @@ public  class BaseActivity extends AppCompatActivity {
 	  Toast.makeText(this,getString(id),Toast.LENGTH_SHORT).show();
   }
 
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-	}
 }

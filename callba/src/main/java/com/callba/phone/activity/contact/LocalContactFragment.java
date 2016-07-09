@@ -75,12 +75,12 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         IntentFilter intentFilter=new IntentFilter("com.callba.contact");
         broadcastReceiver=new ContactBroadcastReceiver();
         getActivity().registerReceiver(broadcastReceiver,intentFilter);
-
+        initContactListView();
     }
 
     @Override
     protected void lazyLoad() {
-        initContactListView();
+
     }
 
 

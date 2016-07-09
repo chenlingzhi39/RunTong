@@ -248,7 +248,7 @@ public class HomeActivity extends BaseActivity {
             // 登录
             autoLogin();
 
-        } /*else {
+        }/* else {
 
             // 检查内存数据是否正常
             String username = CalldaGlobalConfig.getInstance().getUsername();

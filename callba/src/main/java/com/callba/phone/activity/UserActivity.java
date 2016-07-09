@@ -92,10 +92,12 @@ public class UserActivity extends BaseActivity {
     protected void onResume() {
         if (!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
             Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(userHead);
-        if(!CalldaGlobalConfig.getInstance().getNickname().equals(""))
+        if(!CalldaGlobalConfig.getInstance().getSignature().equals(""))
         {
             word.setText(CalldaGlobalConfig.getInstance().getSignature());
         }
+        if(!CalldaGlobalConfig.getInstance().getNickname().equals(""))
+         number.setText(CalldaGlobalConfig.getInstance().getUsername());
         super.onResume();
     }
 

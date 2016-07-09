@@ -617,11 +617,11 @@
             </intent-filter>-->
         </activity>
 
-        <receiver android:name="com.callba.phone.activity.CallChooserBroadCast">
+       <!-- <receiver android:name="com.callba.phone.activity.CallChooserBroadCast">
             <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
         <!-- push消息广播接收 -->
         <!--
         <receiver

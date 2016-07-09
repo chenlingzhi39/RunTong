@@ -584,6 +584,7 @@ public class MainTabActivity extends TabActivity {
                 Log.d("main", "退出聊天服务器失败！");
             }
         });
+
     }
 
 
