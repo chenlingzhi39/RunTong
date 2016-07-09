@@ -203,7 +203,7 @@ public class HttpUtils {
 			conn = url.openConnection();
 			conn.setDoOutput(true);
 			conn.setRequestProperty("Referer", "inter.boboit.cn");
-			conn.setConnectTimeout(2000);
+			conn.setConnectTimeout(10000);
 			writer = new OutputStreamWriter(conn.getOutputStream());
 			writer.flush();
 			writer.close();

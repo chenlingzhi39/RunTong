@@ -37,6 +37,7 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 
@@ -114,18 +115,14 @@ public class MainTabActivity extends TabActivity {
             window.setStatusBarColor(Color.TRANSPARENT);
         }
 
-            if (Build.MANUFACTURER.equals("Xiaomi"))
-                ActivityUtil.MIUISetStatusBarLightMode(getWindow(), true);
-            if (Build.MANUFACTURER.equals("Meizu"))
-                ActivityUtil.FlymeSetStatusBarLightMode(getWindow(), true);
+        if (Build.MANUFACTURER.equals("Xiaomi"))
+            ActivityUtil.MIUISetStatusBarLightMode(getWindow(), true);
+        if (Build.MANUFACTURER.equals("Meizu"))
+            ActivityUtil.FlymeSetStatusBarLightMode(getWindow(), true);
 
 
         MyApplication.activities.add(this);
 
-        if (savedInstanceState != null) {
-            //恢复保存到数据
-            CalldaGlobalConfig.getInstance().restoreGlobalCfg(savedInstanceState);
-        }
 
         //关闭登录模块的页面
         ActivityUtil.finishLoginPages();
@@ -266,7 +263,7 @@ public class MainTabActivity extends TabActivity {
                     DemoHelper.getInstance().getNotifier().onNewMsg(message);
                     Intent intent = new Intent("com.callba.chat");
                     intent.putExtra("username", message.getFrom());
-                    intent.putExtra("message",message);
+                    intent.putExtra("message", message);
                     sendBroadcast(intent);
                 }
             }
@@ -298,13 +295,13 @@ public class MainTabActivity extends TabActivity {
             showAccountRemovedDialog();
         }
         //registerBroadcastReceiver();
-        payReceiver=new BroadcastReceiver() {
+        payReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 mTabhost.setCurrentTab(0);
             }
         };
-        registerReceiver(payReceiver,new IntentFilter("com.callba.pay"));
+        registerReceiver(payReceiver, new IntentFilter("com.callba.pay"));
     }
 
 
@@ -342,6 +339,12 @@ public class MainTabActivity extends TabActivity {
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle state) {
+        CalldaGlobalConfig.getInstance().restoreGlobalCfg(state);
+        super.onRestoreInstanceState(state);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
     }
@@ -349,7 +352,7 @@ public class MainTabActivity extends TabActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i("maintab","onresume");
+        Log.i("maintab", "onresume");
         //延迟发送广播（让新来电更新数据库）
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -372,6 +375,7 @@ public class MainTabActivity extends TabActivity {
        /* DemoHelper sdkHelper = DemoHelper.getInstance();
         sdkHelper.popActivity(this);*/
     }
+
     @Override
     protected void onDestroy() {
         MyApplication.activities.remove(this);
@@ -560,9 +564,6 @@ public class MainTabActivity extends TabActivity {
             }
         });
     }
-
-
-
 
 
 }

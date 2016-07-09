@@ -110,7 +110,7 @@ public class ContactController {
 				}
 
 		Logger.i("phoneNumbers",phoneNumbers);
-		OkHttpUtils
+		/*OkHttpUtils
 				.post()
 				.url(Interfaces.ADD_FRIENDS)
 				.addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
@@ -163,7 +163,7 @@ public class ContactController {
 						  });
 					  }
 			}
-		});
+		});*/
 
 		/*for(ContactPersonEntity contactPersonEntity : mAllContactPersonEntities) {
 

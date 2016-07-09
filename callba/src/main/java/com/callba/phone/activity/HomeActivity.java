@@ -248,7 +248,7 @@ public class HomeActivity extends BaseActivity {
             // 登录
             autoLogin();
 
-        } else {
+        } /*else {
 
             // 检查内存数据是否正常
             String username = CalldaGlobalConfig.getInstance().getUsername();
@@ -269,8 +269,7 @@ public class HomeActivity extends BaseActivity {
             }
             userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
             userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
-        }
-
+        }*/
 
         localImages.add(R.drawable.ad4);
         localImages.add(R.drawable.ad5);
@@ -458,6 +457,7 @@ public class HomeActivity extends BaseActivity {
             Log.i("home", "nosecret");
             // 跳转到起始页
             gotoWelcomePage();
+            finish();
             return;
 
         } else if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
