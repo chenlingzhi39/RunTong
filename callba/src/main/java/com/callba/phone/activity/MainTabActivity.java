@@ -273,7 +273,7 @@ public class MainTabActivity extends TabActivity {
 
             @Override
             public void onCmdMessageReceived(List<EMMessage> messages) {
-                //收到透传消息
+                //收到透传消息me
             }
 
             @Override
