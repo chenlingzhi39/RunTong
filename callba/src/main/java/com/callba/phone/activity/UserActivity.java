@@ -164,8 +164,8 @@ public class UserActivity extends BaseActivity {
                         });
 
                 AlertDialog alertDialog = builder.create();
-                alertDialog.setCanceledOnTouchOutside(false);
-                alertDialog.setCancelable(false);
+                alertDialog.setCanceledOnTouchOutside(true);
+                alertDialog.setCancelable(true);
                 alertDialog.show();
 
                 break;
@@ -348,8 +348,8 @@ public class UserActivity extends BaseActivity {
                         });
 
                 AlertDialog alertDialog = builder.create();
-                alertDialog.setCanceledOnTouchOutside(false);
-                alertDialog.setCancelable(false);
+                alertDialog.setCanceledOnTouchOutside(true);
+                alertDialog.setCancelable(true);
                 alertDialog.show();
 
             } else {
