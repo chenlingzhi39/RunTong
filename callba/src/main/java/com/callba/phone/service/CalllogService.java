@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.CallLog;
 import android.provider.CallLog.Calls;
+import android.provider.ContactsContract;
 import android.text.TextUtils;
 
 import com.callba.phone.bean.CalldaCalllogBean;
@@ -102,10 +103,10 @@ public class CalllogService {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				totalCallLogBeans.addAll(queryBackCalllog());
+				//totalCallLogBeans.addAll(queryBackCalllog());
 				totalCallLogBeans.addAll(queryLocalCalllog());
 
-				Collections.sort(totalCallLogBeans, new MyComparator());
+				//Collections.sort(totalCallLogBeans, new MyComparator());
 
 				Message message = mHandler.obtainMessage();
 				message.what = ASYNC_QUERY_COMPLETE;
@@ -247,7 +248,7 @@ public class CalllogService {
 						|| number.length() < 3) {
 					continue;
 				}
-
+                Logger.i("display_name",name+" ");
 				calldaCalllogBean = new CalldaCalllogBean();
 				calldaCalllogBean.setCallLogMIME(CalldaCalllogBean.LOCAL_CALLLOG);
 				calldaCalllogBean.setId(id);
@@ -255,8 +256,7 @@ public class CalllogService {
 				calldaCalllogBean.setCallLogNumber(number);
 				calldaCalllogBean.setCallLogTime(calltime);
 				calldaCalllogBean
-						.setFormatedCallLogDuration(formatedCallDuration(callduration));
-
+						.setCalllogDuration(callduration);
 				switch (type) {
 				case Calls.INCOMING_TYPE:
 					calldaCalllogBean

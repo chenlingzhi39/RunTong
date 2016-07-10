@@ -37,10 +37,10 @@ public class CalllogViewHolder extends BaseViewHolder<CalldaCalllogBean> {
         number.setHint(data.getCallLogNumber()+"");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         time.setText(simpleDateFormat.format(new Date(data.getCallLogTime())));
-        if(data.getFormatedCallLogDuration().equals("00:00:00"))
+        if(data.getCalllogDuration()==0)
             state.setHint("未接通");
         else{
-            state.setHint(data.getFormatedCallLogDuration());
+            state.setHint(getTime(data.getCalllogDuration()));
         }
         switch (data.getCallLogType()) {
             case CalldaCalllogBean.INCOMING_CALL:
@@ -58,5 +58,11 @@ public class CalllogViewHolder extends BaseViewHolder<CalldaCalllogBean> {
                 break;
         }
 
+    }
+    public String getTime(long time){
+        if(time<60)return time+"秒";
+        else if(time<3600)return time/60+"分"+time%60+"秒";
+        else if(time<3600*24)return time/3600+"小时"+(time%3600)/60+"分"+time%3600%60+"秒";
+        return time+"秒";
     }
 }

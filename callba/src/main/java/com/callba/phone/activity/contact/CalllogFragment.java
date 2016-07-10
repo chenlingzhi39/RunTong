@@ -46,11 +46,16 @@ public class CalllogFragment extends BaseFragment {
 
         calllogService=new CalllogService(getActivity(), new CalllogService.CalldaCalllogListener() {
             @Override
-            public void onQueryCompleted(List<CalldaCalllogBean> calldaCalllogBeans) {
+            public void onQueryCompleted(final List<CalldaCalllogBean> calldaCalllogBeans) {
                 if(calldaCalllogBeans.size()>0)
-                {beans=sortByDate((ArrayList<CalldaCalllogBean>)calllogService.QuerySameNameCalllog(calldaCalllogBeans,getArguments().getString("name")));
+                {  List<String> numbers=((ContactMutliNumBean)getArguments().get("contact")).getContactPhones();
+                   ArrayList<CalldaCalllogBean> beans=new ArrayList<>();
+                    for(CalldaCalllogBean bean:calldaCalllogBeans){
+                         if(numbers.contains(bean.getCallLogNumber()))
+                             beans.add(bean);
+                    }
                 calllogAdapter=new CalllogAdapter(getActivity());
-                calllogAdapter.addAll(beans);
+                calllogAdapter.addAll(sortByDate(beans));
                 calllogList.setAdapter(calllogAdapter);
                 calllogList.addItemDecoration(new DividerItemDecoration(
                         getActivity(), DividerItemDecoration.VERTICAL_LIST));
@@ -58,8 +63,8 @@ public class CalllogFragment extends BaseFragment {
                     @Override
                     public void onItemClick(int position) {
                         Intent intent=new Intent(getActivity(), SelectDialPopupWindow.class);
-                        intent.putExtra("name",getArguments().getString("name"));
-                        intent.putExtra("number",beans.get(position).getCallLogNumber());
+                        intent.putExtra("name",calldaCalllogBeans.get(position).getDisplayName());
+                        intent.putExtra("number",calldaCalllogBeans.get(position).getCallLogNumber());
                         startActivity(intent);
                     }
                 });

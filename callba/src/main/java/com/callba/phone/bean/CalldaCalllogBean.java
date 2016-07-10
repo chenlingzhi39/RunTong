@@ -25,10 +25,10 @@ public class CalldaCalllogBean implements Serializable{
 	private String displayName;
 	private String location;
 	private long callLogTime;
+	private long calllogDuration;
 	private int callLogType;
 	private int callLogMIME;
 	private SearchSortKeyBean searchSortKeyBean;
-	private String formatedCallLogDuration = "00:00:00";
 	private int occurrenceNumber;
 	private int index;
 
@@ -95,13 +95,7 @@ public class CalldaCalllogBean implements Serializable{
 		this.callLogMIME = callLogMIME;
 	}
 
-	public String getFormatedCallLogDuration() {
-		return formatedCallLogDuration;
-	}
 
-	public void setFormatedCallLogDuration(String formatedCallLogDuration) {
-		this.formatedCallLogDuration = formatedCallLogDuration;
-	}
 
 	public SearchSortKeyBean getSearchSortKeyBean() {
 		return searchSortKeyBean;
@@ -119,6 +113,14 @@ public class CalldaCalllogBean implements Serializable{
 		this.occurrenceNumber = occurrenceNumber;
 	}
 
+	public long getCalllogDuration() {
+		return calllogDuration;
+	}
+
+	public void setCalllogDuration(long calllogDuration) {
+		this.calllogDuration = calllogDuration;
+	}
+
 	@Override
 	public String toString() {
 		return "CalldaCalllogBean [id=" + id + ", callLogNumber="
@@ -127,7 +129,6 @@ public class CalldaCalllogBean implements Serializable{
 				+ callLogType + ", callLogMIME=" + callLogMIME
 				+ ", searchSortKeyBean=" + searchSortKeyBean
 				+ ", location=" + location
-				+ ", formatedCallLogDuration=" + formatedCallLogDuration
 				+ ",occurrenceNumber=" + occurrenceNumber + "]";
 	}
 

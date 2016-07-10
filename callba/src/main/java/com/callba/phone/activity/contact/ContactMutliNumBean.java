@@ -48,7 +48,6 @@ public class ContactMutliNumBean extends ContactPersonEntity{
 		this.setShowPhoneNumber(contactPersonEntity.getShowPhoneNumber());
 		this.setSearchSortKeyBean(contactPersonEntity.getSearchSortKeyBean());
 		this.setShowSortPinYin(contactPersonEntity.getShowSortPinYin());
-
 		List<String> phoneNumbes = new ArrayList<String>();
 		phoneNumbes.add(contactPersonEntity.getPhoneNumber());
 		this.setContactPhones(phoneNumbes);
@@ -60,4 +59,5 @@ public class ContactMutliNumBean extends ContactPersonEntity{
 	public void setContactPhones(List<String> contactPhones) {
 		this.contactPhones = contactPhones;
 	}
+
 }

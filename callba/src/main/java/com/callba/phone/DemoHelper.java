@@ -173,7 +173,7 @@ public class DemoHelper {
 		    appContext = context;
 		    
 		    //设为调试模式，打成正式包时，最好设为false，以免消耗额外的资源
-		    EMClient.getInstance().setDebugMode(true);
+		    EMClient.getInstance().setDebugMode(false);
 		    //get easeui instance
 		    easeUI = EaseUI.getInstance();
 		    //调用easeui的api设置providers
@@ -403,23 +403,23 @@ public class DemoHelper {
                 }else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {
                     onConnectionConflict();
                 }
-                SimpleHandler.getInstance().post(new Runnable() {
+               /* SimpleHandler.getInstance().post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(appContext,"服务器已断开",Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
 
             }
 
             @Override
             public void onConnected() {
-                SimpleHandler.getInstance().post(new Runnable() {
+               /* SimpleHandler.getInstance().post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(appContext,"服务器已连接",Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
                 // in case group and contact were already synced, we supposed to notify sdk we are ready to receive the events
                 if(isGroupsSyncedWithServer && isContactsSyncedWithServer){
                     new Thread(){

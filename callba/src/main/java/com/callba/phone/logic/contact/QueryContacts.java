@@ -82,20 +82,19 @@ public class QueryContacts {
 				for (int i = 0; i < cursor.getCount(); i++) {
 					cursor.moveToPosition(i);
 
-//					String _id = cursor.getString(0);
+  			    //	String _id = cursor.getString(0);
 					String name = cursor.getString(1);
 					String number = cursor.getString(2);
 //					String sortKey = cursor.getString(3);
- // 				    int contactId = cursor.getInt(4);
-//					Long photoId = cursor.getLong(5);
-					String lookUpKey = cursor.getString(6);
-
+ 				    int contactId = cursor.getInt(4);
+// 					Long photoId = cursor.getLong(5);
+//					String lookUpKey = cursor.getString(6);
 					if(TextUtils.isEmpty(number)) {
 						continue;
 					}
 					Bitmap contactPhoto=null;
 					ContactPersonEntity cb = new ContactPersonEntity();
-					cb.set_id(lookUpKey);
+					cb.set_id(contactId+"");
 					cb.setDisplayName(name);
 					if (number.startsWith("+86")) {// 去除多余的中国地区号码标志，对这个程序没有影响。
 						cb.setPhoneNumber(number.substring(3));

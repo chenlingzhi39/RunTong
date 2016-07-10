@@ -32,6 +32,7 @@ public class ContactPersonEntity extends ContactEntity implements Serializable {
 		setType(CONTACT_TYPE_CONTACT);
 	}
 
+
 	public Bitmap getAvatar() {
 		return avatar;
 	}

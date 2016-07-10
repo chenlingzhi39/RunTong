@@ -95,14 +95,14 @@ public class ContactController {
 					}
 					Logger.i("contact_number",mAllContactPersonEntities.get(i).getPhoneNumber());
 					if(i==0)
-					{personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0), ContactsManager.getAvatar(contaxt,mAllContactPersonEntities.get(0).getDisplayName(),false)));
+					{personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0), ContactsManager.getAvatar(contaxt,mAllContactPersonEntities.get(0).get_id(),false)));
 						contactPhones.add(mAllContactPersonEntities.get(0).getPhoneNumber());
 						personEntities.get(0).setContactPhones(contactPhones);
 						continue;}
-					if(!mAllContactPersonEntities.get(i).getDisplayName().equals(mAllContactPersonEntities.get(i-1).getDisplayName())){
+					if(!mAllContactPersonEntities.get(i).get_id().equals(mAllContactPersonEntities.get(i-1).get_id())){
 						contactPhones=new ArrayList<>();
 						contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
-						personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(i), ContactsManager.getAvatar(contaxt,mAllContactPersonEntities.get(i).getDisplayName(),false)));
+						personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(i), ContactsManager.getAvatar(contaxt,mAllContactPersonEntities.get(i).get_id(),false)));
 					}else{
 						contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
 					}

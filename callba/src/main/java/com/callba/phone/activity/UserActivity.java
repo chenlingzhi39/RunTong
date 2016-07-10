@@ -124,20 +124,50 @@ public class UserActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case R.id.logout:
-                CalldaGlobalConfig.getInstance().setUsername("");
-                CalldaGlobalConfig.getInstance().setPassword("");
-                CalldaGlobalConfig.getInstance().setIvPath("");
-                LoginController.getInstance().setUserLoginState(false);
-                SharedPreferenceUtil.getInstance(this).putString(Constant.LOGIN_PASSWORD, "", true);
-                Intent intent0 = new Intent("com.callba.location");
-                intent0.putExtra("action", "logout");
-                sendBroadcast(intent0);
-                intent = new Intent();
-                intent.setClass(this, LoginActivity.class);
-                for (Activity activity : MyApplication.activities) {
-                    activity.finish();
-                }
-                startActivity(intent);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("确认退出登录？");
+                builder.setPositiveButton(R.string.ok,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                CalldaGlobalConfig.getInstance().setUsername("");
+                                CalldaGlobalConfig.getInstance().setPassword("");
+                                CalldaGlobalConfig.getInstance().setIvPath("");
+                                if (CalldaGlobalConfig.getInstance().getAdvertisements1()!=null)
+                                    CalldaGlobalConfig.getInstance().getAdvertisements1().clear();
+                                if (CalldaGlobalConfig.getInstance().getAdvertisements2()!=null)
+                                    CalldaGlobalConfig.getInstance().getAdvertisements2().clear();
+                                if (CalldaGlobalConfig.getInstance().getAdvertisements3()!=null)
+                                    CalldaGlobalConfig.getInstance().getAdvertisements3().clear();
+                                LoginController.getInstance().setUserLoginState(false);
+                                SharedPreferenceUtil.getInstance(UserActivity.this).putString(Constant.LOGIN_PASSWORD, "", true);
+                                Intent intent0 = new Intent("com.callba.location");
+                                intent0.putExtra("action", "logout");
+                                sendBroadcast(intent0);
+                                for (Activity activity : MyApplication.activities) {
+                                    activity.finish();
+                                }
+                                startActivity(new Intent(UserActivity.this,LoginActivity.class));
+                                    }
+                        });
+                builder.setNegativeButton(R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+
+                              dialog.dismiss();
+
+
+                            }
+                        });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.setCanceledOnTouchOutside(false);
+                alertDialog.setCancelable(false);
+                alertDialog.show();
+
                 break;
             case R.id.about:
                 intent = new Intent(UserActivity.this, AboutActivity.class);

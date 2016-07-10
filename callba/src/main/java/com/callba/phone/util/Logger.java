@@ -21,10 +21,10 @@ import android.util.Log;
  * @version V1.0 创建时间：2013-10-18 下午2:38:25
  */
 public class Logger {
-	private static final String LOG_FILENAME = "runtong";
+	private static final String LOG_FILENAME = "callba";
 
 //	private static final boolean DEBUG = true;
-	 private static final boolean DEBUG = false;
+	 private static final boolean DEBUG = true;
 
 	// private static final boolean LOG2FILE = true;
 	private static final boolean LOG2FILE = false;
