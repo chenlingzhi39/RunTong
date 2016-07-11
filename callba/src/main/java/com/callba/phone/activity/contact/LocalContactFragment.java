@@ -168,9 +168,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
                         dialog.dismiss();
                         switch (which) {
                             case 0:
-                                ContactsAccessPublic.deleteContact(getActivity(), entity.getDisplayName());
-                                mContactListData.remove(entity);
-                                mContactListAdapter.notifyDataSetChanged();
+                                ContactsAccessPublic.deleteContact(getActivity(), entity.get_id());
                                 break;
                             default:
                                 break;

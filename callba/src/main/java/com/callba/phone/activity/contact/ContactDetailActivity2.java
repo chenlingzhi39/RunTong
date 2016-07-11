@@ -76,7 +76,6 @@ public class ContactDetailActivity2 extends AppCompatActivity {
     CoordinatorLayout mainContent;
     private ContactMutliNumBean bean;
     private static final int REQUESTCODE_PICK = 1;
-    private static final int REQUESTCODE_CUTTING = 2;
     private static final int REQUESTCODE_CAMERA = 3;
     private static final int RESULT_CAMERA_CROP_PATH_RESULT = 4;
     private Uri imageUri;
@@ -243,12 +242,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
                 if (data == null || data.getData() == null) {
                     return;
                 }
-                startPhotoZoom(Uri.fromFile(new File(Utils.getPath(this, data))));
-                break;
-            case REQUESTCODE_CUTTING:
-                if (data != null) {
-                    setPicToView(data);
-                }
+                cropImg(Uri.fromFile(new File(Utils.getPath(this, data))));
                 break;
             case REQUESTCODE_CAMERA:
                 cropImg(imageUri);
@@ -271,18 +265,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void startPhotoZoom(Uri uri) {
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 700);
-        intent.putExtra("outputY", 700);
-        intent.putExtra("return-data", true);
-        intent.putExtra("noFaceDetection", true);
-        startActivityForResult(intent, REQUESTCODE_CUTTING);
-    }
+
 
     public void cropImg(Uri uri) {
         Intent intent = new Intent("com.android.camera.action.CROP");

@@ -75,7 +75,6 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     private UserDao userDao,userDao1;
     private ProgressDialog dialog;
     private static final int REQUESTCODE_PICK = 1;
-    private static final int REQUESTCODE_CUTTING = 2;
     private static final int REQUESTCODE_CAMERA= 3;
     private static final int RESULT_CAMERA_CROP_PATH_RESULT=4;
     private Uri imageUri;
@@ -131,6 +130,7 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         toast(getString(R.string.change_success));
         CalldaGlobalConfig.getInstance().setUserhead(msg);
         dialog.dismiss();
+        f=null;
     }
 
     @Override
@@ -322,12 +322,7 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
                 if (data == null || data.getData() == null) {
                     return;
                 }
-                startPhotoZoom(Uri.fromFile(new File(Utils.getPath(this,data))));
-                break;
-            case REQUESTCODE_CUTTING:
-                if (data != null) {
-                    setPicToView(data);
-                }
+                cropImg(Uri.fromFile(new File(Utils.getPath(this,data))));
                 break;
             case REQUESTCODE_CAMERA:
                 cropImg(imageUri);
@@ -338,7 +333,7 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
                     try {
                         Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageCropUri));
                         head.setImageBitmap(bitmap);
-                        f=BitmapUtil.saveBitmap(this,bitmap,Constant.PHOTO_PATH,"head.jpg");
+                        f= new File(getSDCardPath() + "/temp_crop.jpg");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -350,18 +345,6 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void startPhotoZoom(Uri uri) {
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 700);
-        intent.putExtra("outputY", 700);
-        intent.putExtra("return-data", true);
-        intent.putExtra("noFaceDetection", true);
-        startActivityForResult(intent, REQUESTCODE_CUTTING);
-    }
     public void cropImg(Uri uri) {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
@@ -375,21 +358,6 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
         intent.putExtra("noFaceDetection", true);
         startActivityForResult(intent, RESULT_CAMERA_CROP_PATH_RESULT);
-    }
-    /**
-     * save the picture data
-     *
-     * @param picdata
-     */
-    private void setPicToView(Intent picdata) {
-        Bundle extras = picdata.getExtras();
-        if (extras != null) {
-            final Bitmap photo = extras.getParcelable("data");
-            Drawable drawable = new BitmapDrawable(getResources(), photo);
-            head.setImageDrawable(drawable);
-            f=BitmapUtil.saveBitmap(this,photo,Constant.PHOTO_PATH,"head.jpg");
-        }
-
     }
     public static String getSDCardPath() {
         String cmd = "cat /proc/mounts";

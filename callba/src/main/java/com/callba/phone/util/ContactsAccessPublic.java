@@ -314,12 +314,10 @@ public  class ContactsAccessPublic {
      * Delete contacts who's name equals contact.getName();
      * @param contact
      */
-    public static void deleteContact(Context context,String name) {
+    public static void deleteContact(final Context context,String id) {
         Logger.w(TAG, "**delete start**");
         ContentResolver contentResolver = context.getContentResolver();
         ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-
-        String id = getContactID(context,name);
         //delete contact
         ops.add(ContentProviderOperation.newDelete(ContactsContract.RawContacts.CONTENT_URI)
                 .withSelection(ContactsContract.RawContacts.CONTACT_ID+"="+id, null)
@@ -328,7 +326,7 @@ public  class ContactsAccessPublic {
         ops.add(ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
                 .withSelection(ContactsContract.RawContacts.CONTACT_ID + "=" + id, null)
                 .build());
-        Logger.d(TAG, "delete contact: " + name);
+        Logger.d(TAG, "delete contact: " + id);
 
         try {
             contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
@@ -338,6 +336,12 @@ public  class ContactsAccessPublic {
             Logger.e(TAG, e.getMessage());
         }
         Logger.w(TAG, "**delete end**");
+        new QueryContacts(new QueryContactCallback() {
+            @Override
+            public void queryCompleted(List<ContactPersonEntity> contacts) {
+                context.sendBroadcast(new Intent("com.callba.contact"));
+            }
+        }).loadContact(context);
     }
 
     public static int deleteSIMContact(Context context, ContactData contact) throws Exception {
