@@ -90,15 +90,11 @@ public class MainService extends Service implements Runnable{
 	//监听联系人数据的监听对象
 	private  ContentObserver mObserver = new ContentObserver(
 			new Handler()) {
+
 		@Override
 		public void onChange(boolean selfChange) {
 			// 当联系人表发生变化时进行相应的操作
-			new QueryContacts(new QueryContactCallback() {
-				@Override
-				public void queryCompleted(List<ContactPersonEntity> contacts) {
-					sendBroadcast(new Intent("com.callba.contact"));
-				}
-			}).loadContact(MainService.this);
+
 
 		}
 	};

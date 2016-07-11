@@ -70,7 +70,9 @@ public class EaseUserUtils {
         	if(user != null && user.getNick() != null){
         		textView.setText(user.getNick());
         	}else{
-        		textView.setText(username);
+                StringBuffer buffer = new StringBuffer(username.substring(0,11));
+                buffer.replace(3,8,"****");
+        		textView.setText(buffer.toString());
         	}
         }
     }

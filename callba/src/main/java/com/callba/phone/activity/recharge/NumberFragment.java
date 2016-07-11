@@ -102,6 +102,8 @@ public  class NumberFragment extends BaseFragment implements UserDao.PostListene
         CalldaGlobalConfig.getInstance().getAdvertisements2().clear();
         if (CalldaGlobalConfig.getInstance().getAdvertisements3()!=null)
         CalldaGlobalConfig.getInstance().getAdvertisements3().clear();
+        if(CalldaGlobalConfig.getInstance().getDialAd()!=null)
+            CalldaGlobalConfig.getInstance().setDialAd(null);
     }
 
     @Override

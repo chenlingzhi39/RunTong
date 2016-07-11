@@ -327,14 +327,18 @@ public class DemoHelper {
                 if(user != null){
                     return getUserInfo(message.getFrom()).getNick() + ": " + ticker;
                 }else{
-                    return message.getFrom() + ": " + ticker;
+                    StringBuffer buffer = new StringBuffer(message.getFrom().substring(0,11));
+                    buffer.replace(3,8,"****");
+                    return buffer + ": " + ticker;
                 }
             }
             
             @Override
             public String getLatestText(EMMessage message, int fromUsersNum, int messageNum) {
                 EaseUser user = getUserInfo(message.getFrom());
-                return (user!=null?user.getNick():message.getFrom())+":"+EaseCommonUtils.getMessageDigest(message,appContext);
+                StringBuffer buffer = new StringBuffer(message.getFrom().substring(0,11));
+                buffer.replace(3,8,"****");
+                return (user!=null?user.getNick():buffer)+":"+EaseCommonUtils.getMessageDigest(message,appContext);
                 // return fromUsersNum + "个基友，发来了" + messageNum + "条消息";
             }
             
@@ -645,7 +649,9 @@ public class DemoHelper {
             msg.setFrom(inviter);
             msg.setTo(groupId);
             msg.setMsgId(UUID.randomUUID().toString());
-            msg.addBody(new EMTextMessageBody(getUserInfo(inviter).getNick() + " " +st3));
+            StringBuffer buffer = new StringBuffer(inviter.substring(0,11));
+            buffer.replace(3,8,"****");
+            msg.addBody(new EMTextMessageBody((getUserInfo(inviter)!=null?getUserInfo(inviter).getNick():buffer.toString())+" " +st3));
             msg.setStatus(EMMessage.Status.SUCCESS);
             // 保存邀请消息
             EMClient.getInstance().chatManager().saveMessage(msg);
@@ -1038,10 +1044,10 @@ public class DemoHelper {
     /**
      * 获取当前用户的环信id
      */
-    public String getCurrentUsernName(){
-    	if(username == null){
+    public String getCurrentUserName(){
+
     		username = demoModel.getCurrentUsernName();
-    	}
+
     	return username;
     }
 

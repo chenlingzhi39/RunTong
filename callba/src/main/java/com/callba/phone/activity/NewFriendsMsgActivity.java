@@ -13,12 +13,19 @@
  */
 package com.callba.phone.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.Constant;
 import com.callba.phone.adapter.NewFriendsMsgAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.db.InviteMessage;
@@ -33,22 +40,35 @@ import java.util.List;
 @ActivityFragmentInject(
 		contentViewId = R.layout.em_activity_new_friends_msg,
 		toolbarTitle = R.string.Application_and_notify,
-		navigationId = R.drawable.press_back
+		navigationId = R.drawable.press_back,
+		menuId = R.menu.menu_notice
 )
 public class NewFriendsMsgActivity extends BaseActivity {
 	private ListView listView;
-
+	InviteMessgeDao dao;
+	List<InviteMessage> msgs;
+	NewFriendsMsgAdapter adapter;
+	LocalBroadcastManager localBroadcastManager;
+	BroadcastReceiver broadcastReceiver;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		listView = (ListView) findViewById(R.id.list);
-		InviteMessgeDao dao = new InviteMessgeDao(this);
-		List<InviteMessage> msgs = dao.getMessagesList();
+		 dao = new InviteMessgeDao(this);
+		msgs = dao.getMessagesList();
 		//设置adapter
-		NewFriendsMsgAdapter adapter = new NewFriendsMsgAdapter(this, 1, msgs);
+		adapter = new NewFriendsMsgAdapter(this, 1, msgs);
 		listView.setAdapter(adapter);
 		dao.saveUnreadMessageCount(0);
-		
+		localBroadcastManager=LocalBroadcastManager.getInstance(this);
+		broadcastReceiver=new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				msgs = dao.getMessagesList();
+				adapter.notifyDataSetChanged();
+			}
+		};
+		localBroadcastManager.registerReceiver(broadcastReceiver,new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
 	}
 
 	public void back(View view) {
@@ -58,5 +78,23 @@ public class NewFriendsMsgActivity extends BaseActivity {
 	@Override
 	public void refresh(Object... params) {
 
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()){
+			case R.id.clear:
+				dao.deleteMessage();
+				msgs.clear();
+				adapter.notifyDataSetChanged();
+				break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onDestroy() {
+		localBroadcastManager.unregisterReceiver(broadcastReceiver);
+		super.onDestroy();
 	}
 }

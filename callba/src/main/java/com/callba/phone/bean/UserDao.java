@@ -707,6 +707,9 @@ public class UserDao {
             case 3:
                 url=Interfaces.GET_ADVERTICEMENT3;
                 break;
+            case 4:
+                url=Interfaces.GET_ADVERTICEMENT4;
+                break;
         }
         Logger.i("add_url",url);
         httpUtils.send(HttpRequest.HttpMethod.POST,url, params, new RequestCallBack<String>(){

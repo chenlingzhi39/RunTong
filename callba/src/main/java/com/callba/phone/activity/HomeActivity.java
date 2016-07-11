@@ -229,8 +229,9 @@ public class HomeActivity extends BaseActivity {
                         startActivity(intent);
                     }} else {
                     //toast(result[1]);
-                    Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
-                    startActivity(intent);
+                    if(result[1].equals("没有签到记录"))
+                    {Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
+                    startActivity(intent);}
                 }
             }
 
@@ -239,6 +240,10 @@ public class HomeActivity extends BaseActivity {
                 //toast(msg);
             }
         });
+        localImages.add(R.drawable.ad4);
+        localImages.add(R.drawable.ad5);
+        localImages.add(R.drawable.ad6);
+        banner.setViewRes(localImages);
         // 判断是否自动启动
         if (savedInstanceState == null
                 && CalldaGlobalConfig.getInstance().isAutoLogin()
@@ -247,7 +252,7 @@ public class HomeActivity extends BaseActivity {
             Logger.i("MainCallActivity", "MainCallActivity  oncreate autoLogin");
             // 登录
             autoLogin();
-
+         return;
         }/* else {
 
             // 检查内存数据是否正常
@@ -270,13 +275,7 @@ public class HomeActivity extends BaseActivity {
             userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
             userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
         }*/
-
-        localImages.add(R.drawable.ad4);
-        localImages.add(R.drawable.ad5);
-        localImages.add(R.drawable.ad6);
-        banner.setViewRes(localImages);
-
-
+        userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
     }
 
     @Override

@@ -90,7 +90,7 @@ public class ContactController {
 				Logger.i("contact_size",mAllContactPersonEntities.size()+"");
 				for(int i=0;i<mAllContactPersonEntities.size();i++){
 					if(!mAllContactPersonEntities.get(i).getDisplayName().equals("Call吧电话"))
-					{//userDao.addFriend(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),mAllContactPersonEntities.get(i).getPhoneNumber());
+					{
 					phoneNumbers+=mAllContactPersonEntities.get(i).getDisplayName()+",";
 					}
 					Logger.i("contact_number",mAllContactPersonEntities.get(i).getPhoneNumber());

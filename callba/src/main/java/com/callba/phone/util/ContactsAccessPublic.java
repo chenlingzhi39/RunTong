@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
@@ -17,6 +18,10 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.text.TextUtils;
 
 import com.callba.phone.bean.ContactData;
+import com.callba.phone.logic.contact.ContactPersonEntity;
+import com.callba.phone.logic.contact.QueryContactCallback;
+import com.callba.phone.logic.contact.QueryContacts;
+import com.callba.phone.service.MainService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -168,16 +173,24 @@ public  class ContactsAccessPublic {
                 Data.DISPLAY_NAME + " =?", // WHERE clause.
                 new String[]{name}, // WHERE clause value substitution
                 null); // Sort order.
-        if (cursor != null) {
-            if (cursor.getCount() == 0) {
-                return "0";
-            } else {
-                cursor.moveToFirst();
-                Logger.i("raw_contact_id", cursor.getString(0));
-                return cursor.getCount() - 1 + "";
-            }
-        } else return "0";
-
+        Logger.i("count",cursor.getCount()+"");
+      try {
+          if (cursor != null) {
+              if (cursor.getCount() == 0) {
+                  cursor.close();
+                  return "0";
+              } else {
+                  cursor.moveToFirst();
+                  Logger.i("raw_contact_id", cursor.getString(0));
+                  int count = cursor.getCount() - 1;
+                  cursor.close();
+                  return count + "";
+              }
+          } else return "0";
+      }catch (Exception e){
+          e.printStackTrace();
+      }
+        return "0";
     }
 
 
@@ -230,7 +243,7 @@ public  class ContactsAccessPublic {
             public void run() {
                 Uri rcUri = context.getContentResolver().insert(android.provider.ContactsContract.Data.CONTENT_URI, values);
                 for (int i = 1; i <= numbers.size(); i++)
-                    if (rcUri != null) {
+                {    if (rcUri != null) {
                         //往data表入电话数据
                         values.clear();
                         values.put(Data.RAW_CONTACT_ID, rawContactId);
@@ -238,7 +251,19 @@ public  class ContactsAccessPublic {
                         values.put(Phone.TYPE, Phone.TYPE_MOBILE);
                         values.put(Phone.NUMBER, numbers.get(i - 1));
                         rcUri = context.getContentResolver().insert(android.provider.ContactsContract.Data.CONTENT_URI, values);
+                    }}
+                SimpleHandler.getInstance().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        new QueryContacts(new QueryContactCallback() {
+                            @Override
+                            public void queryCompleted(List<ContactPersonEntity> contacts) {
+                                context.sendBroadcast(new Intent("com.callba.contact"));
+                            }
+                        }).loadContact(context);
                     }
+                });
+
             }
         }).start();
 

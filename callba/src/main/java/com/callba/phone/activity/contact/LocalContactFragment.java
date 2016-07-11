@@ -169,6 +169,8 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
                         switch (which) {
                             case 0:
                                 ContactsAccessPublic.deleteContact(getActivity(), entity.getDisplayName());
+                                mContactListData.remove(entity);
+                                mContactListAdapter.notifyDataSetChanged();
                                 break;
                             default:
                                 break;

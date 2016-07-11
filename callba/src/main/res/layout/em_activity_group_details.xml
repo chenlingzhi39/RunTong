@@ -259,7 +259,8 @@
                 android:id="@+id/rl_search"
                 android:layout_width="match_parent"
                 android:layout_height="50dip"
-                android:background="?attr/selectableItemBackground" >
+                android:background="?attr/selectableItemBackground"
+                 android:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -280,7 +281,34 @@
                     android:layout_marginRight="10dip"
                     android:background="#E6E6E6" />
             </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rl_introduction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground" >
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical|left"
+                    android:padding="20dip"
+                    android:text="@string/Introduction"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:typeface="serif"
+                    android:id="@+id/introduction"
+                    android:singleLine="true"
+                    android:ellipsize="end"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dip"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginLeft="10dip"
+                    android:layout_marginRight="10dip"
+                    android:background="#E6E6E6" />
+            </RelativeLayout>
           
 
             <Button

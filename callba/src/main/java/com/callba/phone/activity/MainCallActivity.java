@@ -180,13 +180,15 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     private TextView tv_location;
     private BannerLayout iv_ad;
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
-    private ArrayList<String> webImages=new ArrayList<>();
+    private ArrayList<String> webImages = new ArrayList<>();
     private UserDao userDao;
     private Gson gson;
     private LoginReceiver loginReceiver;
     private String[] result;
     List<SystemNumber> list;
     private UserDao userDao1;
+    PhoneNumTextWatcher phoneNumTextWatcher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,7 +197,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         ViewUtils.inject(this);
         //loadADImage();
         mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
-
 
 
         allcalllists = new ArrayList<CalldaCalllogBean>();
@@ -220,7 +221,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.ACTION_TAB_ONRESUME);
         registerReceiver(mainTabOnResumeReceiver, filter);
-      //  userDao.getAd(3,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
+        //  userDao.getAd(3,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
 
     }
 
@@ -261,7 +262,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     }
 
 
-
     public void init() {
         // 接受号码输入栏
         ll_number = (LinearLayout) findViewById(R.id.show_title_two);
@@ -279,9 +279,9 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 beancallout = mergecalllists.get(position).getCalllogBean()
                         .get(0);
                 et_number.setText("");
-                Intent intent=new Intent(MainCallActivity.this, SelectDialPopupWindow.class);
-                intent.putExtra("name",beancallout.getDisplayName());
-                intent.putExtra("number",beancallout.getCallLogNumber());
+                Intent intent = new Intent(MainCallActivity.this, SelectDialPopupWindow.class);
+                intent.putExtra("name", beancallout.getDisplayName());
+                intent.putExtra("number", beancallout.getCallLogNumber());
                 startActivity(intent);
                /* callUtils.judgeCallMode(MainCallActivity.this,
                         beancallout.getCallLogNumber(),
@@ -318,12 +318,12 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         registerReceiver(receiver, filter);
 
         llSearchingContact = (LinearLayout) findViewById(R.id.ll_searchingcontact);
-
         et_number = (EditText) findViewById(R.id.et_dial_phonenum);
-        et_number.addTextChangedListener(new PhoneNumTextWatcher(et_number));
+        phoneNumTextWatcher = new PhoneNumTextWatcher(et_number);
+        et_number.addTextChangedListener(phoneNumTextWatcher);
         //et_number.setOnLongClickListener(this);
         ll_delete = (LinearLayout) findViewById(R.id.delete_layout);
-        iv_ad=(BannerLayout) findViewById(R.id.banner);
+        iv_ad = (BannerLayout) findViewById(R.id.banner);
         for (int position = 1; position <= 3; position++)
             localImages.add(getResId("ad" + position, R.drawable.class));
 
@@ -390,9 +390,9 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         Logger.v("语言环境", s);
         IntentFilter filter1 = new IntentFilter(
                 "com.callba.login");
-        loginReceiver=new LoginReceiver();
-        registerReceiver(loginReceiver,filter1);
-        userDao=new UserDao(this,new UserDao.PostListener(){
+        loginReceiver = new LoginReceiver();
+        registerReceiver(loginReceiver, filter1);
+        userDao = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void failure(String msg) {
                 //toast(msg);
@@ -406,12 +406,12 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             @Override
             public void success(String msg) {
                 final ArrayList<Advertisement> list;
-                gson=new Gson();
+                gson = new Gson();
                 list = gson.fromJson(msg, new TypeToken<List<Advertisement>>() {
                 }.getType());
                 CalldaGlobalConfig.getInstance().setAdvertisements3(list);
                 webImages.clear();
-                for(Advertisement advertisement : list){
+                for (Advertisement advertisement : list) {
                     webImages.add(advertisement.getImage());
                 }
                 iv_ad.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
@@ -427,7 +427,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                     public void run() {
                         iv_ad.setViewUrls(webImages);
                     }
-                },500);
+                }, 500);
 
             }
         });
@@ -459,7 +459,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                     if (ContactsAccessPublic.hasName(MainCallActivity.this, "Call吧电话").equals("0"))
                         ContactsAccessPublic.insertPhoneContact(MainCallActivity.this, contactData, numbers);
                     else {
-                        ContactsAccessPublic.deleteContact(MainCallActivity.this,"Call吧电话");
+                        ContactsAccessPublic.deleteContact(MainCallActivity.this, "Call吧电话");
                         ContactsAccessPublic.insertPhoneContact(MainCallActivity.this, contactData, numbers);
                     }
                     //ContactsAccessPublic.updatePhoneContact(HomeActivity.this,"Call吧电话",numbers);
@@ -470,7 +470,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
             @Override
             public void failure(String msg) {
-               // toast(msg);
+                // toast(msg);
             }
         });
     }
@@ -491,10 +491,14 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 num1.setImageResource(R.drawable.call_1);
             }
         }
-        if(CalldaGlobalConfig.getInstance().getAdvertisements3()!=null)
-        if(CalldaGlobalConfig.getInstance().getAdvertisements3().size()==0)
-            userDao.getAd(3,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
-        userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(MainCallActivity.this, "Call吧电话"));
+        if (CalldaGlobalConfig.getInstance().getAdvertisements3() != null)
+            if (CalldaGlobalConfig.getInstance().getAdvertisements3().size() == 0)
+                userDao.getAd(3, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+       // userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(MainCallActivity.this, "Call吧电话"));
+        /*if (phoneNumTextWatcher == null) {
+            phoneNumTextWatcher = new PhoneNumTextWatcher(et_number);
+            et_number.addTextChangedListener(phoneNumTextWatcher);
+        }*/
         super.onResume();
     }
 
@@ -636,7 +640,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
             case R.id.dialcall:
                 // dialCallback();
-             callNum = et_number.getText().toString().trim();
+                callNum = et_number.getText().toString().trim();
                 et_number.setText("");
                 callUtils.judgeCallMode(this, callNum);
                 break;
@@ -674,16 +678,16 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                             number, Constant.DB_PATH,
                             this);
                     if (!address.equals("")) {*/
-                        Intent intent = new Intent(Intent.ACTION_INSERT);
-                        intent.setType("vnd.android.cursor.dir/person");
-                        intent.setType("vnd.android.cursor.dir/contact");
-                        intent.setType("vnd.android.cursor.dir/raw_contact");
-                        intent.putExtra(android.provider.ContactsContract.Intents.Insert.PHONE, number);
-                        if (!isIntentAvailable(this, intent)) {
-                            break;
-                        } else {
-                            startActivity(intent);
-                        }
+                    Intent intent = new Intent(Intent.ACTION_INSERT);
+                    intent.setType("vnd.android.cursor.dir/person");
+                    intent.setType("vnd.android.cursor.dir/contact");
+                    intent.setType("vnd.android.cursor.dir/raw_contact");
+                    intent.putExtra(android.provider.ContactsContract.Intents.Insert.PHONE, number);
+                    if (!isIntentAvailable(this, intent)) {
+                        break;
+                    } else {
+                        startActivity(intent);
+                    }
                   /*  } else {
                         toast("请输入正确的手机号!");
                         break;
@@ -702,9 +706,9 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                             number1, Constant.DB_PATH,
                             this);
                     if (!address.equals("")) {*/
-                        Uri smsToUri = Uri.parse("smsto://" + number1);
-                        Intent mIntent = new Intent(android.content.Intent.ACTION_SENDTO, smsToUri);
-                        startActivity(mIntent);
+                    Uri smsToUri = Uri.parse("smsto://" + number1);
+                    Intent mIntent = new Intent(android.content.Intent.ACTION_SENDTO, smsToUri);
+                    startActivity(mIntent);
                  /*   } else {
                         toast("请输入正确的手机号!");
                         break;
@@ -721,18 +725,18 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                             number2, Constant.DB_PATH,
                             this);
                     if (!address.equals("")) {*/
-                        Intent intent1 = new Intent(Intent.ACTION_INSERT_OR_EDIT);
-                        intent1.setType("vnd.android.cursor.item/person");
-                        intent1.setType("vnd.android.cursor.item/contact");
-                        intent1.setType("vnd.android.cursor.item/raw_contact");
-                        //    intent.putExtra(android.provider.ContactsContract.Intents.Insert.NAME, name);
-                        intent1.putExtra(android.provider.ContactsContract.Intents.Insert.PHONE, number2);
-                        intent1.putExtra(android.provider.ContactsContract.Intents.Insert.PHONE_TYPE, 3);
-                        if (!isIntentAvailable(this, intent1)) {
-                            break;
-                        } else {
-                            startActivity(intent1);
-                        }
+                    Intent intent1 = new Intent(Intent.ACTION_INSERT_OR_EDIT);
+                    intent1.setType("vnd.android.cursor.item/person");
+                    intent1.setType("vnd.android.cursor.item/contact");
+                    intent1.setType("vnd.android.cursor.item/raw_contact");
+                    //    intent.putExtra(android.provider.ContactsContract.Intents.Insert.NAME, name);
+                    intent1.putExtra(android.provider.ContactsContract.Intents.Insert.PHONE, number2);
+                    intent1.putExtra(android.provider.ContactsContract.Intents.Insert.PHONE_TYPE, 3);
+                    if (!isIntentAvailable(this, intent1)) {
+                        break;
+                    } else {
+                        startActivity(intent1);
+                    }
                 /*    } else {
                         toast("请输入正确的手机号!");
                         break;
@@ -1025,7 +1029,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             if (allcalllists == null)
                 return false;
             CalldaCalllogBean bean = allcalllists.get(position);
-            showDeleteDialog(context,allcalllists.get(position), mergecalllists.get(position));
+            showDeleteDialog(context, allcalllists.get(position), mergecalllists.get(position));
             return true;
         }
 
@@ -1036,7 +1040,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
      *
      * @param context
      */
-    private void showDeleteDialog(Context context,final CalldaCalllogBean bean0,
+    private void showDeleteDialog(Context context, final CalldaCalllogBean bean0,
                                   final CalllogDetailBean bean) {
       /*  final Dialog dialog = new Dialog(context, R.style.MyDialog);
         View view = View.inflate(context, R.layout.calllog_delete_dialog_bg,
@@ -1080,7 +1084,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         dialog.show();*/
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(bean.getCallLogNumber());
-        builder.setItems(new String[] {"删除单条通话记录", "删除所有通话记录" },
+        builder.setItems(new String[]{"删除单条通话记录", "删除所有通话记录"},
                 new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
@@ -1102,7 +1106,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
     @Override
     protected void onDestroy() {
-        Logger.i("maincall","destroy");
+        Logger.i("maincall", "destroy");
         unregisterReceiver(loginReceiver);
         super.onDestroy();
         // 取消广播监听
@@ -1139,11 +1143,13 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         Logger.v("检索列表拨号", bean.getPhoneNumber() + "callName:" + callName);
         callNum = et_number.getText().toString().trim();
         et_number.setText("");
-        Intent intent=new Intent(MainCallActivity.this, SelectDialPopupWindow.class);
-        intent.putExtra("name",callName);
-        intent.putExtra("number",callNum);
+      /*  et_number.removeTextChangedListener(phoneNumTextWatcher);
+        phoneNumTextWatcher = null;*/
+        Intent intent = new Intent(MainCallActivity.this, SelectDialPopupWindow.class);
+        intent.putExtra("name", callName);
+        intent.putExtra("number", callNum);
         startActivity(intent);
-       // callUtils.judgeCallMode(MainCallActivity.this, callNum, callName);
+        // callUtils.judgeCallMode(MainCallActivity.this, callNum, callName);
     }
 
 /*	@Override
@@ -1247,9 +1253,9 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 adapter = new CalllogListAdapter(MainCallActivity.this,
                         analysisCalllists, mergecalllists);
                 lv_calllog.setAdapter(adapter);
-                if(analysisCalllists.size()==0&&analysisCalllists.size()==0)
-					lv_calllog.setVisibility(View.GONE);
-				else lv_calllog.setVisibility(View.VISIBLE);
+                if (analysisCalllists.size() == 0 && analysisCalllists.size() == 0)
+                    lv_calllog.setVisibility(View.GONE);
+                else lv_calllog.setVisibility(View.VISIBLE);
             } else {
                 adapter.notifyDataSetChanged();
             }
@@ -1339,41 +1345,41 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         filter.addAction(KEYBOARD_MESSAGE_RECEIVED_ACTION);
     }
 
-    public class LoginReceiver extends BroadcastReceiver{
+    public class LoginReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-                userDao.getAd(3,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
+            userDao.getAd(3, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
         }
     }
+
     @Override
     protected void onPause() {
-
         super.onPause();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (CalldaGlobalConfig.getInstance().getKeyBoardSetting())
-            getMenuInflater().inflate(R.menu.menu_open_ring,menu);
-        else getMenuInflater().inflate(R.menu.menu_close_ring,menu);
+            getMenuInflater().inflate(R.menu.menu_open_ring, menu);
+        else getMenuInflater().inflate(R.menu.menu_close_ring, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.ring:
-                    boolean isKeyboardToneOn = CalldaGlobalConfig.getInstance()
-                            .getKeyBoardSetting();
+                boolean isKeyboardToneOn = CalldaGlobalConfig.getInstance()
+                        .getKeyBoardSetting();
 
                 CalldaGlobalConfig.getInstance().setKeyBoardSetting(
                         !isKeyboardToneOn);
                 SharedPreferenceUtil.getInstance(this).putBoolean(
                         Constant.KeyboardSetting, !isKeyboardToneOn, true);
                 if (CalldaGlobalConfig.getInstance().getKeyBoardSetting()) {
-                item.setIcon(R.drawable.open_ring);
-                item.setTitle(R.string.close_ring);
-                }else{
+                    item.setIcon(R.drawable.open_ring);
+                    item.setTitle(R.string.close_ring);
+                } else {
                     item.setIcon(R.drawable.close_ring);
                     item.setTitle(R.string.open_ring);
                 }

@@ -74,8 +74,6 @@ public class ContactDetailActivity2 extends AppCompatActivity {
     ViewPager viewpager;
     @InjectView(R.id.main_content)
     CoordinatorLayout mainContent;
-    @InjectView(R.id.scroll_view)
-    NestedScrollView scrollView;
     private ContactMutliNumBean bean;
     private static final int REQUESTCODE_PICK = 1;
     private static final int REQUESTCODE_CUTTING = 2;

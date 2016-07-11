@@ -169,6 +169,10 @@ public interface Interfaces {
 	 */
 	String GET_ADVERTICEMENT3 ="http://inter.boboit.cn/inter/ad/ad3.jsp";
 	/**
+	 * 获取广告4
+	 */
+	String GET_ADVERTICEMENT4 ="http://inter.boboit.cn/inter/ad/ad4.jsp";
+	/**
 	 * 附近的人
 	 */
 	String GET_NEARBY="http://inter.boboit.cn/inter/nearby/nearby.jsp";

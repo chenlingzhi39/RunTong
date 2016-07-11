@@ -15,7 +15,7 @@ package com.callba.phone.db;
 
 import android.content.ContentValues;
 import android.content.Context;
-
+import android.support.v4.content.LocalBroadcastManager;
 
 
 import java.util.List;
@@ -34,8 +34,7 @@ public class InviteMessgeDao {
 	static final String COLUMN_NAME_GROUPINVITER = "groupinviter";
 	
 	static final String COLUMN_NAME_UNREAD_MSG_COUNT = "unreadMsgCount";
-	
-		
+
 	public InviteMessgeDao(Context context){
 	}
 	
@@ -68,7 +67,9 @@ public class InviteMessgeDao {
 	public void deleteMessage(String from){
 	    DemoDBManager.getInstance().deleteMessage(from);
 	}
-	
+	public void deleteMessage(){
+		DemoDBManager.getInstance().deleteMessage();
+	}
 	public int getUnreadMessagesCount(){
 	    return DemoDBManager.getInstance().getUnreadNotifyCount();
 	}

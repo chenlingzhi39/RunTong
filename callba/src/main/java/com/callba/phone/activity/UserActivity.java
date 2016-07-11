@@ -13,6 +13,7 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -46,7 +47,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 @ActivityFragmentInject(
         contentViewId = R.layout.tab_user,
-        toolbarTitle = R.string.center
+        toolbarTitle = R.string.center,
+        menuId = R.menu.menu_user
 )
 public class UserActivity extends BaseActivity {
     @InjectView(R.id.user_head)
@@ -369,5 +371,17 @@ public class UserActivity extends BaseActivity {
             return true;
         }
         return false;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+               /* Intent intent = new Intent(MessageActivity.this, PostMessageActivity.class);
+                startActivity(intent);*/
+                Intent intent = new Intent(UserActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

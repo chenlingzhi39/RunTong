@@ -179,6 +179,9 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
                 //转到主页面
                 gotoMainActivity();
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
             }
 
             @Override
@@ -207,9 +210,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
     @Override
     protected void onDestroy() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
+
         super.onDestroy();
     }
 

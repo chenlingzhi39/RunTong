@@ -282,7 +282,12 @@ public class DemoDBManager {
             db.delete(InviteMessgeDao.TABLE_NAME, InviteMessgeDao.COLUMN_NAME_FROM + " = ?", new String[]{from});
         }
     }
-    
+    synchronized public void deleteMessage(){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        if(db.isOpen()){
+            db.delete(InviteMessgeDao.TABLE_NAME, null, null);
+        }
+    }
     synchronized int getUnreadNotifyCount(){
         int count = 0;
         SQLiteDatabase db = dbHelper.getReadableDatabase();

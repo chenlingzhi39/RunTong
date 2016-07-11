@@ -260,8 +260,9 @@ public class WebContactFragment extends BaseFragment {
     @Override
     protected void lazyLoad() {
         //registerBroadcastReceiver();
-        getContactList();
+        //getContactList();
         contactListLayout.init(contactList);
+        refresh();
     }
 
     @Override
@@ -327,9 +328,20 @@ public class WebContactFragment extends BaseFragment {
         } else {
             applicationItem.hideUnreadMsgView();
         }
-        getContactList();
-        if(contactListLayout!=null)
-          contactListLayout.refresh();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                getContactList();
+                SimpleHandler.getInstance().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(contactListLayout!=null)
+                            contactListLayout.refresh();
+                    }
+                });
+            }
+        }).start();
+
     }
 
     /**
@@ -344,9 +356,7 @@ public class WebContactFragment extends BaseFragment {
         synchronized (this.contactsMap) {
             final Iterator<Map.Entry<String, EaseUser>> iterator = contactsMap.entrySet().iterator();
             final List<String> blackList = EMClient.getInstance().contactManager().getBlackListUsernames();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
+
                     while (iterator.hasNext()) {
                         Map.Entry<String, EaseUser> entry = iterator.next();
                         //兼容以前的通讯录里的已有的数据显示，加上此判断，如果是新集成的可以去掉此判断
@@ -363,12 +373,10 @@ public class WebContactFragment extends BaseFragment {
                         }
                     }
                 }
-            }).start();
 
-        }
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+
+
+
                 // 排序
                 Collections.sort(contactList, new Comparator<EaseUser>() {
 
@@ -387,8 +395,8 @@ public class WebContactFragment extends BaseFragment {
 
                     }
                 });
-            }
-        }).start();
+
+
     }
 
     @Override

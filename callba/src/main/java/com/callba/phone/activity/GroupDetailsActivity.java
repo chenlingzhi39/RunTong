@@ -13,10 +13,14 @@
  */
 package com.callba.phone.activity;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -37,9 +41,15 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
+import com.callba.phone.MyApplication;
+import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.Constant;
+import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.ui.ExitGroupDialog;
 import com.callba.phone.util.EaseUserUtils;
+import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.widget.EaseAlertDialog;
 import com.callba.phone.widget.EaseExpandGridView;
@@ -92,6 +102,8 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
     private GroupChangeListener groupChangeListener;
     private RelativeLayout searchLayout;
     private TextView title;
+	private TextView introduction;
+	private RelativeLayout rl_introduction;
 	@Override
 	public void refresh(Object... params) {
 
@@ -127,8 +139,9 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 		rl_switch_block_groupmsg = (RelativeLayout) findViewById(R.id.rl_switch_block_groupmsg);
 		switchButton = (EaseSwitchButton) findViewById(R.id.switch_btn);
 		searchLayout = (RelativeLayout) findViewById(R.id.rl_search);
-
-
+        introduction=(TextView) findViewById(R.id.introduction);
+		rl_introduction= (RelativeLayout) findViewById(R.id.rl_introduction);
+		introduction.setText(getString(R.string.Introduction)+":"+group.getDescription());
 		idText.setText(groupId);
 		if (group.getOwner() == null || "".equals(group.getOwner())
 				|| !group.getOwner().equals(EMClient.getInstance().getCurrentUser())) {
@@ -182,6 +195,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 		changeGroupNameLayout.setOnClickListener(this);
 		rl_switch_block_groupmsg.setOnClickListener(this);
         searchLayout.setOnClickListener(this);
+		rl_introduction.setOnClickListener(this);
 	}
 
 	@Override
@@ -458,8 +472,16 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 			break;
 		case R.id.rl_search:
             //startActivity(new Intent(this, GroupSearchMessageActivity.class).putExtra("groupId", groupId));
-            
+
             break;
+			case R.id.rl_introduction:
+				if(!group.getDescription().equals("")){
+				android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+				builder.setMessage(group.getDescription());
+				android.app.AlertDialog alertDialog = builder.create();
+				alertDialog.setCanceledOnTouchOutside(true);
+				alertDialog.setCancelable(true);
+				alertDialog.show();}
 		default:
 			break;
 		}
@@ -594,6 +616,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 							notifyDataSetChanged();
 						}
 					});
+					return convertView;
 				}
 			} else if (group.getOwner().equals(EMClient.getInstance().getCurrentUser())&&position == getCount() - 2) { // 添加群组成员按钮
 			    holder.textView.setText("");
@@ -622,6 +645,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 									REQUEST_CODE_ADD_USER);
 						}
 					});
+					return convertView;
 				}
 			} else { // 普通item，显示群组成员
 				if(position==getCount()-1&&group.isAllowInvites()){
@@ -652,7 +676,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 										REQUEST_CODE_ADD_USER);
 							}
 						});}
-				return convertView;
+					return convertView;
 				}
 				final String username = getItem(position);
 				convertView.setVisibility(View.VISIBLE);

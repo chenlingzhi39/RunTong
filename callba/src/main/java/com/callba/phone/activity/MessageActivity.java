@@ -69,8 +69,7 @@ import butterknife.OnClick;
  */
 @ActivityFragmentInject(
         contentViewId = R.layout.tab_message,
-        toolbarTitle = R.string.message,
-        menuId = R.menu.menu_message
+        toolbarTitle = R.string.message
 )
 
 public class MessageActivity extends BaseActivity {
@@ -298,18 +297,7 @@ public class MessageActivity extends BaseActivity {
         broadcastManager.registerReceiver(broadcastReceiver,new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.settings:
-               /* Intent intent = new Intent(MessageActivity.this, PostMessageActivity.class);
-                startActivity(intent);*/
-                Intent intent = new Intent(MessageActivity.this, SettingsActivity.class);
-                startActivity(intent);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+
 
     /**
      * 获取会话列表

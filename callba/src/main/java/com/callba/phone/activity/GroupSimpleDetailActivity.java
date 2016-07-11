@@ -22,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +52,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 	private String groupid;
 	private ProgressBar progressBar;
     private String apply;
+	private LinearLayout introduction;
 	@Override
 	public void refresh(Object... params) {
 
@@ -65,6 +67,19 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 		tv_introduction = (TextView) findViewById(R.id.tv_introduction);
         tv_id=(TextView) findViewById(R.id.tv_id);
         tv_need_apply=(TextView)findViewById(R.id.tv_need_apply);
+		introduction=(LinearLayout) findViewById(R.id.introduction);
+		introduction.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(!group.getDescription().equals(""))
+				{android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(GroupSimpleDetailActivity.this);
+				builder.setMessage(group.getDescription());
+				android.app.AlertDialog alertDialog = builder.create();
+				alertDialog.setCanceledOnTouchOutside(true);
+				alertDialog.setCancelable(true);
+				alertDialog.show();}
+			}
+		});
 		EMGroupInfo groupInfo = (EMGroupInfo) getIntent().getSerializableExtra("groupinfo");
 		String groupname = null;
 		if(groupInfo != null){
@@ -154,6 +169,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 						public void run() {
 							pd.dismiss();
 							Toast.makeText(GroupSimpleDetailActivity.this, st5+e.getMessage(), 0).show();
+							btn_add_group.setEnabled(true);
 						}
 					});
 				}
@@ -224,6 +240,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						dialog.dismiss();
+						btn_add_group.setEnabled(true);
 					}
 				})
 				.create();

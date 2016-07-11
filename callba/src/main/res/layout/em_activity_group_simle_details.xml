@@ -95,7 +95,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
-            android:gravity="center_vertical" >
+            android:gravity="center_vertical"
+            android:id="@+id/introduction">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -112,19 +113,21 @@
                 android:layout_marginLeft="5dp"
                 android:padding="8dp"
                 android:textColor="#080808"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:singleLine="true"
+                android:ellipsize="end"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
-            android:gravity="center_vertical" >
+            android:gravity="center_vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="9dp"
-                android:text="是否需要申请"
+                android:text="是否需要验证"
                 android:textColor="#8F8F8F"
                 android:textSize="16sp" />
 
@@ -135,7 +138,8 @@
                 android:layout_marginLeft="5dp"
                 android:padding="8dp"
                 android:textColor="#080808"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                />
         </LinearLayout>
     </LinearLayout>
 

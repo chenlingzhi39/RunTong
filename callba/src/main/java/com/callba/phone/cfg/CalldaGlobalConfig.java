@@ -7,6 +7,7 @@ import java.util.List;
 import android.os.Bundle;
 
 import com.callba.phone.bean.Advertisement;
+import com.callba.phone.bean.DialAd;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 
 /** 
@@ -46,6 +47,7 @@ public class CalldaGlobalConfig implements Serializable{
 	private ArrayList<Advertisement> advertisements1;
 	private ArrayList<Advertisement> advertisements2;
 	private ArrayList<Advertisement> advertisements3;
+	private DialAd dialAd;
 	private double latitude;
 	private double longitude;
 	private String address;
@@ -55,6 +57,14 @@ public class CalldaGlobalConfig implements Serializable{
 	private String signature;
     private int gold;
     private String commission;
+
+	public DialAd getDialAd() {
+		return dialAd;
+	}
+
+	public void setDialAd(DialAd dialAd) {
+		this.dialAd = dialAd;
+	}
 
 	public String getCommission() {
 		return commission;

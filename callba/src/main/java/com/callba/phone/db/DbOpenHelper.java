@@ -68,7 +68,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	}
 	
 	private static String getUserDatabaseName() {
-        return  DemoHelper.getInstance().getCurrentUsernName() + "_demo.db";
+        return  DemoHelper.getInstance().getCurrentUserName() + "_demo.db";
     }
 	
 	@Override
