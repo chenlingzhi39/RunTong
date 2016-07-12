@@ -55,11 +55,6 @@ public class PostActivity extends BaseActivity implements UserDao.UploadListener
     private ProgressDialog dialog;
 
     @Override
-    public void refresh(Object... params) {
-
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation

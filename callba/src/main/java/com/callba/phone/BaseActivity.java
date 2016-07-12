@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,31 +23,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
-import com.callba.phone.activity.FunIntroduceActivity;
-import com.callba.phone.activity.GuideActivity;
 import com.callba.phone.activity.HomeActivity;
 import com.callba.phone.activity.MainCallActivity;
 import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.activity.MessageActivity;
 import com.callba.phone.activity.UserActivity;
-import com.callba.phone.activity.WelcomeActivity;
-import com.callba.phone.activity.contact.ContactActivity;
 import com.callba.phone.activity.contact.ContactActivity2;
-import com.callba.phone.activity.contact.ContactDetailActivity;
-import com.callba.phone.activity.login.LoginActivity;
-import com.callba.phone.activity.login.OnekeyRegisterAcitvity;
-import com.callba.phone.activity.login.RegisterActivity;
-import com.callba.phone.activity.more.RetrievePasswordActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.ActivityUtil;
-import com.callba.phone.view.MyDialog;
 
 import java.lang.reflect.Field;
 import java.util.List;
-
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public  class BaseActivity extends AppCompatActivity {
 	public static Boolean flag = true;
@@ -146,7 +132,6 @@ public  class BaseActivity extends AppCompatActivity {
 			}
 		}if(Build.VERSION.SDK_INT==Build.VERSION_CODES.LOLLIPOP||Build.VERSION.SDK_INT==Build.VERSION_CODES.LOLLIPOP_MR1){
 			if(this.getClass()==MainCallActivity.class||
-					this.getClass()==ContactActivity.class||
 					this.getClass()==ContactActivity2.class||
 					this.getClass()==HomeActivity.class||
 					this.getClass()==MessageActivity.class)
@@ -222,36 +207,7 @@ public  class BaseActivity extends AppCompatActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	/**
-	 * 退出所有打开的activity
-	 */
-	protected void exitApp() {
-		if (!myDialogFlag) {
-			myDialogFlag = true;
-			MyDialog.showDialog(this, getString(R.string.exit_confirm),
-					new OnClickListener() {
 
-						@Override
-						public void onClick(View v) {
-							switch (v.getId()) {
-							case R.id.bn_ok:
-								// 清空activity栈
-								ActivityUtil.finishAllActivity();
-
-								stopService(new Intent(BaseActivity.this,
-										MainService.class));
-								break;
-
-							default:
-								break;
-							}
-							MyDialog.dismissDialog();
-							myDialogFlag = false;
-						}
-					});
-
-		}
-	}
 
 	/**
 	 * 发送通知栏广播

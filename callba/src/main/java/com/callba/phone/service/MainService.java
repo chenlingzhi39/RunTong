@@ -2,7 +2,6 @@ package com.callba.phone.service;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,30 +30,12 @@ import com.callba.phone.DemoHelper;
 import com.callba.phone.activity.HomeActivity;
 import com.callba.phone.activity.UserActivity;
 import com.callba.phone.activity.WelcomeActivity;
-import com.callba.phone.activity.contact.ContactBackupActivity;
-import com.callba.phone.activity.contact.RemoteContactsActvity;
-import com.callba.phone.activity.login.OnekeyRegisterAcitvity;
 import com.callba.phone.activity.login.RegisterActivity;
-import com.callba.phone.activity.more.AddSubAccountActivity;
-import com.callba.phone.activity.more.ChangePasswordActivity;
-import com.callba.phone.activity.more.FeeQueryActivity;
-import com.callba.phone.activity.more.MoreInfoActivity;
-import com.callba.phone.activity.more.PreferentialActivity;
 import com.callba.phone.activity.more.QueryCalllogActivity;
-import com.callba.phone.activity.more.QueryMealActivity;
-import com.callba.phone.activity.more.RetrievePasswordActivity;
-import com.callba.phone.activity.more.ShowNumberActivity;
-import com.callba.phone.activity.more.SignActivity;
-import com.callba.phone.activity.more.SubAccountActivity;
-import com.callba.phone.activity.recharge.RechargeActivity;
-import com.callba.phone.activity.recharge.RechargeMealActivity;
 import com.callba.phone.bean.Task;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
-import com.callba.phone.logic.contact.ContactPersonEntity;
-import com.callba.phone.logic.contact.QueryContactCallback;
-import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.HttpUtils;
@@ -62,7 +43,6 @@ import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.SharedPreferenceUtil;
-import com.callba.phone.view.CalldaToast;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 
@@ -218,9 +198,7 @@ public class MainService extends Service implements Runnable{
 					if (ra != null)
 						ra.refresh(msg);
 				} else if ("RetrievePasswordActivity".equals(fromPage1)) {
-					RetrievePasswordActivity rpa = (RetrievePasswordActivity) ActivityUtil.getActivityByName("RetrievePasswordActivity");
-					if (rpa != null)
-						rpa.refresh(msg);
+
 				}
 				break;
 
@@ -232,109 +210,58 @@ public class MainService extends Service implements Runnable{
 				break;
 				
 			case Task.TASK_VERIFY_USER_EXIST:	//验证用户是否已注册
-				OnekeyRegisterAcitvity ora = (OnekeyRegisterAcitvity) ActivityUtil.getActivityByName("OnekeyRegisterAcitvity");
-				if(ora != null) {
-					ora.refresh(msg);
-				}
+
 				break;
 
 			case Task.TASK_SEND_SMS: // 发送短信
-				if (msg.arg1 == Task.TASK_FAILED) {
-					CalldaToast calldaToast = new CalldaToast();
-					calldaToast.showToast(MainService.this, R.string.send_failed);
-				} else {
-					try {
-						String result = (String) msg.obj;
-						if ("1".equals(result.split("\\|")[0])) {
-							// 返回值1开头，发送失败
-							CalldaToast calldaToast = new CalldaToast();
-							calldaToast.showToast(MainService.this, result.split("\\|")[1]);
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
+
 				break;
 
 			case Task.TASK_CHANGE_PWD: // 更改密码
-				ChangePasswordActivity cpa = (ChangePasswordActivity) ActivityUtil.getActivityByName("ChangePasswordActivity");
-				if(cpa != null)
-					cpa.refresh(msg);
+
 				break;
 
 			case Task.TASK_RETRIEVE_PWD: // 找回密码
-				RetrievePasswordActivity rpa = (RetrievePasswordActivity) ActivityUtil.getActivityByName("RetrievePasswordActivity");
-				if (rpa != null)
-					rpa.refresh(msg);
-				else {
-					showMessage(msg);
-				}
+
 				break;
 
 			case Task.TASK_SIGN: // 每日签到
-				SignActivity sa = (SignActivity) ActivityUtil.getActivityByName("SignActivity");
-				if (sa != null)
-					sa.refresh(msg);
-				else {
-					showMessage(msg);
-				}
+
 				break;
 
 			case Task.TASK_SHOWNUMBER_QUERY:// 显号查询
-				ShowNumberActivity snq = (ShowNumberActivity) ActivityUtil.getActivityByName("ShowNumberActivity");
-				if (snq != null)
-					snq.refresh(msg);
+
 			case Task.TASK_SHOWNUMBER_SET:// 显号设置
-				ShowNumberActivity sna = (ShowNumberActivity) ActivityUtil.getActivityByName("ShowNumberActivity");
-				if (sna != null)
-					sna.refresh(msg);
+
 				break;
 
 			case Task.TASK_FEE_QUERY:
-				FeeQueryActivity fqa = (FeeQueryActivity) ActivityUtil.getActivityByName("FeeQueryActivity");
-				if (fqa != null)
-					fqa.refresh(msg);
+
 				break;
 
 			case Task.TASK_GET_CONTACT_COUNT:
 			case Task.TASK_BACKUP_CONTACT:
-				ContactBackupActivity cba = (ContactBackupActivity) ActivityUtil.getActivityByName("ContactBackupActivity");
-				if (cba != null)
-					cba.refresh(msg);
+
 				break;
 
 			case Task.TASK_LOOK_REMOTE_CONTACT:
-				RemoteContactsActvity rca = (RemoteContactsActvity) ActivityUtil.getActivityByName("RemoteContactsActvity");
-				ContactBackupActivity cba1 = (ContactBackupActivity) ActivityUtil.getActivityByName("ContactBackupActivity");
-				if (rca != null) {
-					rca.refresh(msg);
-				} else if (cba1 != null) {
-					cba1.refresh(msg);
-				}
+
 				break;
 
 			case Task.TASK_GET_RECHARGE_INFO:
-				RechargeActivity ra1 = (RechargeActivity) ActivityUtil.getActivityByName("RechargeActivity");
-				if (ra1 != null)
-					ra1.refresh(msg);
+
 				break;
 
 			case Task.TASK_GET_RECHARGE_MEAL:
-				RechargeMealActivity rma = (RechargeMealActivity) ActivityUtil.getActivityByName("RechargeMealActivity");
-				if (rma != null)
-					rma.refresh(msg);
+
 				break;
 
 			case Task.TASK_GET_PREFERENTIAL_INFO:
-				PreferentialActivity pa = (PreferentialActivity) ActivityUtil.getActivityByName("PreferentialActivity");
-				if (pa != null)
-					pa.refresh(msg);
+
 				break;
 
 			case Task.TASK_QUERY_MEAL:
-				QueryMealActivity qma = (QueryMealActivity) ActivityUtil.getActivityByName("QueryMealActivity");
-				if (qma != null)
-					qma.refresh(msg);
+
 				break;
 
 			case Task.TASK_QUERY_CALLLOG:
@@ -348,18 +275,14 @@ public class MainService extends Service implements Runnable{
 			case Task.TASK_DELETE_SUBACCOUNT:
 			case Task.TASK_SUBACCOUNT_CHANGEPASS:
 
-				SubAccountActivity saa = (SubAccountActivity) ActivityUtil.getActivityByName("SubAccountActivity");
-				if (saa != null)
-					saa.refresh(msg);
+
 				break;
 
 			case Task.TASK_GET_SUBACCOUNT_YZM:
 			case Task.TASK_ADD_SUBACCOUNT:
 			case Task.TASK_ADD_SUBACCOUNT_GH:
 
-				AddSubAccountActivity asaa = (AddSubAccountActivity) ActivityUtil.getActivityByName("AddSubAccountActivity");
-				if (asaa != null)
-					asaa.refresh(msg);
+
 				break;
 			case Task.TASK_SHOW_USER:
 				
@@ -382,8 +305,7 @@ public class MainService extends Service implements Runnable{
 			try {
 				String message = ((String) msg.obj).split("\\|")[1];
 				
-				CalldaToast calldaToast = new CalldaToast();
-				calldaToast.showToast(MainService.this, message);
+
 			} catch (Exception e) {
 				e.printStackTrace();
 

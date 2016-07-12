@@ -3,8 +3,6 @@ package com.callba.phone.activity;
 import android.annotation.TargetApi;
 import android.app.ActionBar.LayoutParams;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,8 +13,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -41,7 +37,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
-import com.bumptech.glide.Glide;
 import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.ContactData;
 import com.callba.phone.bean.SystemNumber;
@@ -51,7 +46,6 @@ import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.hyphenate.chat.EMClient;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.bitmap.BitmapCommonUtils;
@@ -61,7 +55,6 @@ import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 import com.lidroid.xutils.bitmap.callback.DefaultBitmapLoadCallBack;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
-import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.CalldaCalllogBean;
 import com.callba.phone.bean.CalllogDetailBean;
@@ -71,27 +64,21 @@ import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.contact.ContactPersonEntity;
-import com.callba.phone.logic.login.LoginController;
-import com.callba.phone.logic.login.UserLoginErrorMsg;
-import com.callba.phone.logic.login.UserLoginListener;
 import com.callba.phone.service.CalllogService;
 import com.callba.phone.service.CalllogService.CalldaCalllogListener;
 import com.callba.phone.service.DialCallListAdapter;
 import com.callba.phone.service.MainService;
 import com.callba.phone.service.NineKeyboardQuickSearch;
-import com.callba.phone.service.YouhuiListAdapter;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.BitmapHelp;
 import com.callba.phone.util.CallUtils;
 import com.callba.phone.util.CalldaClipBoardHelper;
 import com.callba.phone.util.DataAnalysis;
-import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.KeyboardUtil;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NumberAddressService;
 import com.callba.phone.util.PhoneUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
-import com.callba.phone.view.CalldaToast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -297,8 +284,8 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         //ib_hideKey = (ImageButton) this.findViewById(R.id.dialupdown);
         //ib_hideKey.setOnClickListener(this);
         // 优惠信息
-        lv_youhui = (ListView) findViewById(R.id.diallistphonenumyouhui);
-        lv_youhui.setAdapter(new YouhuiListAdapter(this));
+       // lv_youhui = (ListView) findViewById(R.id.diallistphonenumyouhui);
+       // lv_youhui.setAdapter(new YouhuiListAdapter(this));
         // 切换通话记录/优惠信息
         tv_currentPage = (TextView) findViewById(R.id.contact_more_text);
         // tv_currentPage.setOnClickListener(this);
@@ -619,18 +606,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             // case R.id.contact_more_text:
             // showPopup();
             // break;
-            case R.id.ll_calllog: // Popup 通话记录
-                popupWindow.dismiss();
-                tv_currentPage.setText(R.string.calllog);
-                lv_calllog.setVisibility(View.VISIBLE);
-                lv_youhui.setVisibility(View.GONE);
-                break;
-            case R.id.ll_youhui: // Popup 优惠信息
-                popupWindow.dismiss();
-                tv_currentPage.setText(R.string.youhuixx);
-                lv_calllog.setVisibility(View.GONE);
-                lv_youhui.setVisibility(View.VISIBLE);
-                break;
+
             case R.id.up_down_layout:
                 ll_call.setVisibility(View.INVISIBLE);
                 ll_diallayout.setVisibility(View.GONE);
@@ -673,7 +649,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 break;
             case R.id.add_contact:
                 String number = et_number.getText().toString();
-                if (number.length() > 10) {
+               /* if (number.length() > 10) {*/
                   /*  String address = NumberAddressService.getAddress(
                             number, Constant.DB_PATH,
                             this);
@@ -692,16 +668,16 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                         toast("请输入正确的手机号!");
                         break;
                     }*/
-                } else {
+               /* } else {
                     toast("请输入正确的手机号!");
                     break;
-                }
+                }*/
 
 
                 break;
             case R.id.send_message:
                 String number1 = et_number.getText().toString();
-                if (number1.length() > 10) {
+              /*  if (number1.length() > 10) {*/
                    /* String address = NumberAddressService.getAddress(
                             number1, Constant.DB_PATH,
                             this);
@@ -713,14 +689,14 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                         toast("请输入正确的手机号!");
                         break;
                     }*/
-                } else {
+              /*  } else {
                     toast("请输入正确的手机号!");
                     break;
-                }
+                }*/
                 break;
             case R.id.add_to_contact:
                 String number2 = et_number.getText().toString();
-                if (number2.length() > 10) {
+               /* if (number2.length() > 10) {*/
                  /*   String address = NumberAddressService.getAddress(
                             number2, Constant.DB_PATH,
                             this);
@@ -741,10 +717,10 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                         toast("请输入正确的手机号!");
                         break;
                     }*/
-                } else {
+              /*  } else {
                     toast("请输入正确的手机号!");
                     break;
-                }
+                }*/
                 break;
             default:
                 break;
@@ -777,9 +753,9 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         if (isNumberAvail) {
             et_number.setText(clipText);
         } else {
-            CalldaToast calldaToast = new CalldaToast();
+          /*  CalldaToast calldaToast = new CalldaToast();
             calldaToast.showToast(getApplicationContext(),
-                    R.string.wrong_number_format);
+                    R.string.wrong_number_format);*/
         }
 
         llTextOperateLayout.setVisibility(View.GONE);
@@ -908,6 +884,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count,
                                       int after) {
+
         }
 
         @Override
@@ -942,10 +919,12 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             ll_number.setVisibility(View.GONE);
             ll_call.setVisibility(View.INVISIBLE);
             //iv_ad.setVisibility(View.VISIBLE);
-
-            lv_calllog.setVisibility(View.VISIBLE);
+            Logger.i("input","change");
+            //lv_calllog.setVisibility(View.VISIBLE);
             lv_filterNum.setVisibility(View.GONE);
-
+            if (analysisCalllists.size() == 0 && analysisCalllists.size() == 0)
+                lv_calllog.setVisibility(View.GONE);
+            else lv_calllog.setVisibility(View.VISIBLE);
             isFristSearchContact = true;
 
             // 停止查询联系人
@@ -987,28 +966,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         }
     }
 
-    /**
-     * 显示下拉Popup
-     */
-    @SuppressWarnings("deprecation")
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void showPopup() {
-        View popupView = View.inflate(this, R.layout.dial_top_popup, null);
 
-        LinearLayout ll_calllog = (LinearLayout) popupView
-                .findViewById(R.id.ll_calllog);
-        LinearLayout ll_youhui = (LinearLayout) popupView
-                .findViewById(R.id.ll_youhui);
-        ll_calllog.setOnClickListener(this);
-        ll_youhui.setOnClickListener(this);
-
-        popupWindow = new PopupWindow(popupView, LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT, true);
-        // popupWindow.setAnimationStyle(R.style.cleanPopupAnimation);
-        popupWindow.setBackgroundDrawable(new BitmapDrawable());
-        popupWindow.setTouchable(true);
-        popupWindow.showAsDropDown(tv_currentPage);
-    }
 
     /**
      * ListView监听器

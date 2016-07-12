@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_centerHorizontal="true"
-    android:id="@+id/root">
+    android:id="@+id/root"
+    android:clickable="true">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,13 +13,22 @@
         <Button
             android:id="@+id/dial"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="回拨电话" />
+            android:layout_height="50dp"
+            android:background="@drawable/em_btn_green_selector"
+            android:text="回拨电话"
+            android:textColor="@color/white"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textSize="18sp"/>
 
         <Button
             android:id="@+id/cancel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="取消" />
+            android:layout_height="50dp"
+            android:background="@drawable/em_btn_style_alert_dialog_special"
+            android:layout_margin="10dp"
+            android:textColor="@color/white"
+            android:text="取消"
+            android:textSize="18sp"/>
     </LinearLayout>
 </RelativeLayout>

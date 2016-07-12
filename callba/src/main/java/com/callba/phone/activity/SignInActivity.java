@@ -16,7 +16,6 @@ import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.MyApplication;
 import com.callba.phone.SocializeConfigDemo;
-import com.callba.phone.activity.more.ShareActivity;
 import com.callba.phone.activity.recharge.RechargeActivity2;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
@@ -31,7 +30,6 @@ import com.umeng.socialize.bean.SocializeEntity;
 import com.umeng.socialize.controller.RequestType;
 import com.umeng.socialize.controller.UMServiceFactory;
 import com.umeng.socialize.controller.UMSocialService;
-import com.umeng.socialize.controller.listener.SocializeListeners;
 import com.umeng.socialize.controller.listener.SocializeListeners.*;
 import com.umeng.socialize.media.CircleShareContent;
 import com.umeng.socialize.media.MailShareContent;
@@ -331,11 +329,6 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         toast(msg);
         btn_signIn.setEnabled(true);
         circle.setEnabled(true);
-    }
-
-    @Override
-    public void refresh(Object... params) {
-
     }
 
     public void add(String date) {

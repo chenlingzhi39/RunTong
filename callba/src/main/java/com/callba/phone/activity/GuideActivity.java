@@ -76,10 +76,6 @@ public class GuideActivity extends BaseActivity implements OnClickListener {
 
 
 
-	@Override
-	public void refresh(Object... params) {
-		
-	}
 //	@Override
 //	public boolean onKeyDown(int keyCode, KeyEvent event) {
 //		if(keyCode == KeyEvent.KEYCODE_BACK){

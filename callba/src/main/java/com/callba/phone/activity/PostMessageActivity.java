@@ -53,12 +53,6 @@ public class PostMessageActivity extends BaseActivity {
         ButterKnife.inject(this);
     }
 
-    @Override
-    public void refresh(Object... params) {
-
-    }
-
-
     @OnClick({R.id.submit, R.id.submit_image})
     public void onClick(View v) {
         Intent intent;

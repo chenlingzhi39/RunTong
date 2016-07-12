@@ -411,6 +411,7 @@ public class WelcomeActivity extends BaseActivity {
 								mSharedPreferenceUtil
 										.putBoolean(Constant.IS_NOTICE_UPGRADE,
 												false, true);
+								gotoActivity();
 							}
 						});
 				builder.setNegativeButton(R.string.cancel,

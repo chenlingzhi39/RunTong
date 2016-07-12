@@ -25,7 +25,7 @@ public class SelectDialPopupWindow extends Activity {
         callUtils=new CallUtils();
     }
 
-    @OnClick({R.id.dial, R.id.cancel})
+    @OnClick({R.id.dial, R.id.cancel,R.id.root})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.dial:
@@ -33,6 +33,9 @@ public class SelectDialPopupWindow extends Activity {
                 finish();
                 break;
             case R.id.cancel:
+                finish();
+                break;
+            case R.id.root:
                 finish();
                 break;
         }

@@ -77,10 +77,4 @@ public class ClauseActivity extends BaseActivity {
         page.addView(textView9);
     }
 
-
-    @Override
-    public void refresh(Object... params) {
-
-    }
-
 }

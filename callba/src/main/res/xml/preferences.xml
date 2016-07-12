@@ -17,4 +17,11 @@
             android:title="@string/shake"
             />
     </com.jenzz.materialpreference.PreferenceCategory>
+    <com.jenzz.materialpreference.PreferenceCategory android:title="@string/sign_in">
+        <com.jenzz.materialpreference.SwitchPreference
+            android:key="sign_key"
+            android:defaultValue="false"
+            android:title="登录自动跳转签到"
+            />
+    </com.jenzz.materialpreference.PreferenceCategory>
 </PreferenceScreen>

@@ -122,6 +122,7 @@ public class CallbackDisplayActivity extends BaseActivity {
 
             @Override
             public void success(String msg) {
+                try{
                 List<DialAd> dialAds;
                 dialAds = gson.fromJson(msg, new TypeToken<List<DialAd>>() {
                 }.getType());
@@ -129,6 +130,8 @@ public class CallbackDisplayActivity extends BaseActivity {
                     dialAd = dialAds.get(0);
                     CalldaGlobalConfig.getInstance().setDialAd(dialAd);
                     Glide.with(CallbackDisplayActivity.this).load(dialAd.getImage()).into(background);
+                }}catch (Exception e){
+                    e.printStackTrace();
                 }
             }
 

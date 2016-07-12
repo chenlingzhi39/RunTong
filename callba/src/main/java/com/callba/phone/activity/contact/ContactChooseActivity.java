@@ -21,7 +21,6 @@ import com.callba.phone.logic.contact.ContactController;
 import com.callba.phone.logic.contact.ContactEntity;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.logic.contact.ContactSerarchWatcher;
-import com.callba.phone.view.CalldaToast;
 import com.callba.phone.view.QuickSearchBar;
 
 public class ContactChooseActivity extends BaseActivity implements OnClickListener {
@@ -114,8 +113,7 @@ public class ContactChooseActivity extends BaseActivity implements OnClickListen
 		if (CalldaGlobalConfig.getInstance().getContactBeans() != null) {
 			personEntities = CalldaGlobalConfig.getInstance().getContactBeans();
 		} else {
-			CalldaToast calldaToast = new CalldaToast();
-			calldaToast.showToast(getApplicationContext(), R.string.cca_getcontact_fail);
+
 			return;
 		}
 

@@ -27,13 +27,13 @@
     <style name="DetailTheme.AppTheme">
 
     </style>
-    <style name="TextAppearance.FontPath" parent="android:TextAppearance">
-        <!-- Custom Attr-->
+   <!-- <style name="TextAppearance.FontPath" parent="android:TextAppearance">
+        &lt;!&ndash; Custom Attr&ndash;&gt;
         <item name="fontPath">fonts/STXIHEI.TTF</item>
     </style>
     <style name="TextViewCustomFont">
         <item name="fontPath">fonts/STXIHEI.TTF</item>
-    </style>
+    </style>-->
     <style name="AppTheme.Widget.TextView" parent="android:Widget.TextView">
         <!--<item name="fontPath">fonts/STXIHEI.TTF</item>-->
         <item name="android:textColor">@color/black</item>
@@ -173,7 +173,7 @@
         <item name="android:layout_height">1.5dp</item>
         <item name="android:background">#eee</item>
     </style>
-        <style name="RatingBar" parent="@android:style/Widget.RatingBar">
+        <style name="RatingBar" parent="@android:style/Widget.Holo.RatingBar.Small">
             <item name="android:progressDrawable">@drawable/rating_bar</item>
             <item name="android:minHeight">16dp</item>
             <item name="android:maxHeight">16dp</item>

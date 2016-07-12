@@ -25,11 +25,6 @@ public class SettingsActivity extends BaseActivity {
     FrameLayout fragment;
 
     @Override
-    public void refresh(Object... params) {
-
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);

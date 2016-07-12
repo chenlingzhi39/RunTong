@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.callba.BuildConfig;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.MyApplication;
@@ -73,6 +74,8 @@ public class UserActivity extends BaseActivity {
     RelativeLayout update;
     @InjectView(R.id.logout)
     RelativeLayout logout;
+    @InjectView(R.id.version_code)
+    TextView versionCode;
     private SharedPreferenceUtil mSharedPreferenceUtil;
 
     @Override
@@ -83,26 +86,24 @@ public class UserActivity extends BaseActivity {
         if (!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
             Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(userHead);
         Log.i("head", CalldaGlobalConfig.getInstance().getUserhead());
-        if(!CalldaGlobalConfig.getInstance().getNickname().equals(""))
-        {
+        if (!CalldaGlobalConfig.getInstance().getNickname().equals("")) {
             word.setText(CalldaGlobalConfig.getInstance().getSignature());
         }
         mSharedPreferenceUtil = SharedPreferenceUtil.getInstance(this);
+        versionCode.setHint(BuildConfig.VERSION_NAME);
     }
 
     @Override
     protected void onResume() {
         if (!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
             Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(userHead);
-        if(!CalldaGlobalConfig.getInstance().getSignature().equals(""))
-        {
+        if (!CalldaGlobalConfig.getInstance().getSignature().equals("")) {
             word.setText(CalldaGlobalConfig.getInstance().getSignature());
         }
-        if(!CalldaGlobalConfig.getInstance().getNickname().equals(""))
-         number.setText(CalldaGlobalConfig.getInstance().getUsername());
+        if (!CalldaGlobalConfig.getInstance().getNickname().equals(""))
+            number.setText(CalldaGlobalConfig.getInstance().getUsername());
         super.onResume();
     }
-
 
 
     @OnClick({R.id.account, R.id.change_info, R.id.change_password, R.id.retrieve, R.id.logout, R.id.about, R.id.help, R.id.update})
@@ -136,11 +137,11 @@ public class UserActivity extends BaseActivity {
                                 CalldaGlobalConfig.getInstance().setUsername("");
                                 CalldaGlobalConfig.getInstance().setPassword("");
                                 CalldaGlobalConfig.getInstance().setIvPath("");
-                                if (CalldaGlobalConfig.getInstance().getAdvertisements1()!=null)
+                                if (CalldaGlobalConfig.getInstance().getAdvertisements1() != null)
                                     CalldaGlobalConfig.getInstance().getAdvertisements1().clear();
-                                if (CalldaGlobalConfig.getInstance().getAdvertisements2()!=null)
+                                if (CalldaGlobalConfig.getInstance().getAdvertisements2() != null)
                                     CalldaGlobalConfig.getInstance().getAdvertisements2().clear();
-                                if (CalldaGlobalConfig.getInstance().getAdvertisements3()!=null)
+                                if (CalldaGlobalConfig.getInstance().getAdvertisements3() != null)
                                     CalldaGlobalConfig.getInstance().getAdvertisements3().clear();
                                 LoginController.getInstance().setUserLoginState(false);
                                 SharedPreferenceUtil.getInstance(UserActivity.this).putString(Constant.LOGIN_PASSWORD, "", true);
@@ -150,8 +151,8 @@ public class UserActivity extends BaseActivity {
                                 for (Activity activity : MyApplication.activities) {
                                     activity.finish();
                                 }
-                                startActivity(new Intent(UserActivity.this,LoginActivity.class));
-                                    }
+                                startActivity(new Intent(UserActivity.this, LoginActivity.class));
+                            }
                         });
                 builder.setNegativeButton(R.string.cancel,
                         new DialogInterface.OnClickListener() {
@@ -159,7 +160,7 @@ public class UserActivity extends BaseActivity {
                             public void onClick(DialogInterface dialog,
                                                 int which) {
 
-                              dialog.dismiss();
+                                dialog.dismiss();
 
 
                             }
@@ -325,7 +326,7 @@ public class UserActivity extends BaseActivity {
                                 } catch (ActivityNotFoundException e) {
                                     e.printStackTrace();
                                     /*CalldaToast calldaToast = new CalldaToast();
-									calldaToast.showToast(
+                                    calldaToast.showToast(
 											getApplicationContext(),
 											R.string.upgrade_openfailed);*/
                                     toast(getString(R.string.upgrade_openfailed));
@@ -360,6 +361,7 @@ public class UserActivity extends BaseActivity {
             }
         }
     }
+
     /**
      * 重写onkeyDown 捕捉返回键
      */
@@ -372,6 +374,7 @@ public class UserActivity extends BaseActivity {
         }
         return false;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

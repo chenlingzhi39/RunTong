@@ -60,11 +60,6 @@ public class GroupPickContactsActivity extends BaseActivity {
 	private List<String> exitingMembers;
 
 	@Override
-	public void refresh(Object... params) {
-
-	}
-
-	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// String groupName = getIntent().getStringExtra("groupName");

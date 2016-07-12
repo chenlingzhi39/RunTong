@@ -61,11 +61,6 @@ public class GroupsActivity extends BaseActivity {
     private LocalBroadcastManager broadcastManager;
     private BroadcastReceiver broadcastReceiver;
 
-    @Override
-    public void refresh(Object... params) {
-
-    }
-
     Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             swipeRefreshLayout.setRefreshing(false);

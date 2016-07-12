@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
-import com.callba.phone.activity.contact.ContactDetailActivity;
 import com.callba.phone.adapter.MoodAdapter;
 import com.callba.phone.adapter.NearByUserAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
@@ -57,11 +56,6 @@ public class CommunityActivity extends BaseActivity implements UserDao.PostListe
     private String[] result;
     private MoodAdapter moodAdapter;
     private View headerView;
-
-    @Override
-    public void refresh(Object... params) {
-
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

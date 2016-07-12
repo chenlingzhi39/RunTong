@@ -53,10 +53,6 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 	private ProgressBar progressBar;
     private String apply;
 	private LinearLayout introduction;
-	@Override
-	public void refresh(Object... params) {
-
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

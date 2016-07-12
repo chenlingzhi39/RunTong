@@ -63,12 +63,6 @@ public class AddContactActivity extends BaseActivity {
     String toAddUsername;
     ProgressDialog progressDialog;
     Gson gson=new Gson();
-
-    @Override
-    public void refresh(Object... params) {
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

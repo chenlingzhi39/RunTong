@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.callba"
     android:versionCode="103"
-    android:versionName="1.1.1">
+    android:versionName="1.1.0">
 
     <uses-sdk
         android:minSdkVersion="8" />
@@ -164,19 +164,13 @@
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize"
             />
-        <activity android:name=".phone.activity.more.ShareActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            />
         <activity android:name=".phone.activity.SignInActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             />
         <activity android:name=".phone.activity.NewFriendsMsgActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize"
@@ -332,56 +326,17 @@
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name="com.callba.phone.activity.login.LoginActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name="com.callba.phone.activity.login.OnekeyRegisterAcitvity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name="com.callba.phone.activity.login.RegisterActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name="com.callba.phone.activity.contact.ContactActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme" />
-        <activity
-            android:name="com.callba.phone.activity.recharge.RechargeActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.recharge.RechargeWayActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.recharge.RechargeMealWayActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.recharge.RechargeCalldaActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.recharge.RechargeCardActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.recharge.RechargeMealActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+
         <activity
             android:name="com.callba.phone.activity.MainTabActivity"
             android:launchMode="singleTask"
@@ -393,145 +348,28 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
-        <activity
-            android:name="com.callba.phone.activity.contact.ContactBackupActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme" />
-        <activity
-            android:name="com.callba.phone.activity.sms.SMSActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.sms.NewSMSActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.contact.ContactChooseActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.contact.ContactDetailActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme" />
-        <activity
-            android:name="com.callba.phone.activity.more.MoreInfoActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme" />
-        <activity
-            android:name="com.callba.phone.activity.more.AccountSettingActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.ChangePasswordActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.RetrievePasswordActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme" />
-        <activity
-            android:name="com.callba.phone.activity.more.AboutActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.ExitActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme" />
-        <activity
-            android:name="com.callba.phone.activity.more.AutoAnswerActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.LoginSettingActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.SignActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.InviteActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.QuHaoActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.ShowNumberActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.FeeQueryActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+
+
         <!-- <activity
              android:name=".phone.activity.more.CallSettingActivity"
              android:launchMode="singleTop"
              android:screenOrientation="portrait"
              android:theme="@android:style/Theme.Black.NoTitleBar" />-->
-        <activity
-            android:name="com.callba.phone.activity.contact.RemoteContactsActvity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.PreferentialActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.QueryMealActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+
+
+
         <activity
             android:name="com.callba.phone.activity.more.QueryCalllogActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
+
         <activity
-            android:name="com.callba.phone.activity.more.SubAccountActivity"
-            android:launchMode="singleTop"
+            android:name="com.callba.phone.activity.more.RetrievePasswordActivity"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.AddSubAccountActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.HelpCenterActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.activity.more.KeyboardSettingActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
-        <activity
-            android:name="com.callba.phone.OpenTabHelperActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
+            android:theme="@style/BaseAppTheme.AppTheme" />
+
         <!--
         <activity
             android:name=".activity.SendCallActivity"
@@ -575,10 +413,6 @@
             android:launchMode="singleTop"
             android:theme="@style/BaseAppTheme.AppTheme" />
 
-        <activity
-            android:name="com.callba.phone.activity.more.SystemDialSettingActivity"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
         <activity
             android:name="com.callba.phone.activity.CallChooserActivity"
             android:excludeFromRecents="true"

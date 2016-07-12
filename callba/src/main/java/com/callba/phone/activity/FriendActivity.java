@@ -347,7 +347,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                                                         EaseUser user = new EaseUser(entity.getPhoneNumber()+"-callba");
                                                         user.setAvatar(entity.getUrl_head());
                                                         user.setNick(entity.getNickname());
-                                                        //user.setSign(entity.getSign());
+                                                        user.setSign(entity.getSign());
                                                         EaseCommonUtils.setUserInitialLetter(user);
                                                         mList.add(user);
                                                         DemoHelper.getInstance().updateContactList(mList);
@@ -439,11 +439,6 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     protected void onResume() {
 
         super.onResume();
-    }
-
-    @Override
-    public void refresh(Object... params) {
-
     }
 
     @Override

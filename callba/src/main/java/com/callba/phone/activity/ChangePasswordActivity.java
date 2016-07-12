@@ -42,11 +42,6 @@ public class ChangePasswordActivity extends BaseActivity implements UserDao.Post
     private String old_password, new_password,comfirm_new_password;
 
     @Override
-    public void refresh(Object... params) {
-
-    }
-
-    @Override
     public void start() {
       ok.setClickable(false);
     }

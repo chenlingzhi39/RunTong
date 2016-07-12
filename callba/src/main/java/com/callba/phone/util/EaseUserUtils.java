@@ -71,7 +71,7 @@ public class EaseUserUtils {
         		textView.setText(user.getNick());
         	}else{
                 StringBuffer buffer = new StringBuffer(username.substring(0,11));
-                buffer.replace(3,8,"****");
+               // buffer.replace(3,8,"****");
         		textView.setText(buffer.toString());
         	}
         }

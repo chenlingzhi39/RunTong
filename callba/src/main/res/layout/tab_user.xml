@@ -328,13 +328,20 @@
             android:layout_marginLeft="40dp"
             android:text="@string/update"
             android:textSize="16sp"/>
-
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="120dp"
+                android:textSize="16sp"
+                android:id="@+id/version_code"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:src="@drawable/more"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+           />
         </RelativeLayout>
         <View
             android:layout_width="match_parent"

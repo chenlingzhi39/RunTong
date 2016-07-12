@@ -30,6 +30,7 @@ import com.callba.phone.adapter.NewFriendsMsgAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.db.InviteMessage;
 import com.callba.phone.db.InviteMessgeDao;
+import com.callba.phone.util.SimpleHandler;
 
 import java.util.List;
 
@@ -64,8 +65,16 @@ public class NewFriendsMsgActivity extends BaseActivity {
 		broadcastReceiver=new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				msgs = dao.getMessagesList();
-				adapter.notifyDataSetChanged();
+				SimpleHandler.getInstance().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						dao.saveUnreadMessageCount(0);
+						 msgs = dao.getMessagesList();
+						adapter = new NewFriendsMsgAdapter(NewFriendsMsgActivity.this, 1, msgs);
+						listView.setAdapter(adapter);
+					}
+				},500);
+
 			}
 		};
 		localBroadcastManager.registerReceiver(broadcastReceiver,new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
@@ -73,11 +82,6 @@ public class NewFriendsMsgActivity extends BaseActivity {
 
 	public void back(View view) {
 		finish();
-	}
-
-	@Override
-	public void refresh(Object... params) {
-
 	}
 
 	@Override

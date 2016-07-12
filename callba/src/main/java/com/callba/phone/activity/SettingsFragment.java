@@ -32,6 +32,8 @@ public class SettingsFragment extends PreferenceFragment {
         message.setDefaultValue(settingsModel.getSettingMsgNotification());
         voice.setDefaultValue(settingsModel.getSettingMsgSound());
         shake.setDefaultValue(settingsModel.getSettingMsgVibrate());
+        voice.setEnabled(settingsModel.getSettingMsgNotification());
+        shake.setEnabled(settingsModel.getSettingMsgNotification());
     }
 
     @Override

@@ -55,6 +55,7 @@ import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.BannerLayout;
@@ -276,6 +277,13 @@ public class HomeActivity extends BaseActivity {
             userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
         }*/
         userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+        if (!mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()).equals(date)&& (boolean)SPUtils.get(HomeActivity.this,"settings","sign_key",false)) {
+            String year = Calendar.getInstance().get(Calendar.YEAR) + "";
+            String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
+            if (month.length() == 1)
+                month = "0" + month;
+            userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
+        }
     }
 
     @Override
@@ -515,9 +523,8 @@ public class HomeActivity extends BaseActivity {
                         LoginController.parseLoginSuccessResult(
                                 HomeActivity.this, username, password,
                                 resultInfo);
-                        Logger.i("date",date);
-                        Logger.i("save_date",mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()));
-                        if (!mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()).equals(date)) {
+
+                        if (!mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()).equals(date)&& (boolean)SPUtils.get(HomeActivity.this,"settings","sign_key",false)) {
                             String year = Calendar.getInstance().get(Calendar.YEAR) + "";
                             String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
                             if (month.length() == 1)

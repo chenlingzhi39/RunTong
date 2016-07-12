@@ -43,20 +43,13 @@ public class AccountActivity extends BaseActivity {
     CircleImageView head;
     @InjectView(R.id.account)
     TextView account;
-    UserDao userDao, userDao1;
+    UserDao userDao;
     @InjectView(R.id.calllog_search)
     RelativeLayout calllogSearch;
     @InjectView(R.id.meal_search)
     RelativeLayout mealSearch;
     @InjectView(R.id.commission)
     Button commission;
-
-
-    @Override
-    public void refresh(Object... params) {
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

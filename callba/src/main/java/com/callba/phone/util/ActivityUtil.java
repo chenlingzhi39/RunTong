@@ -14,9 +14,7 @@ import com.callba.phone.activity.GuideActivity;
 import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.activity.calling.CallbackDisplayActivity;
 import com.callba.phone.activity.login.LoginActivity;
-import com.callba.phone.activity.login.OnekeyRegisterAcitvity;
 import com.callba.phone.activity.login.RegisterActivity;
-import com.callba.phone.activity.more.RetrievePasswordActivity;
 
 /**
  * Activity操作工具类
@@ -65,18 +63,7 @@ public class ActivityUtil {
 			Logger.d(TAG, "finishLoginPages finish  -> RegisterActivity");
 		}
 
-		OnekeyRegisterAcitvity ora = (OnekeyRegisterAcitvity) getActivityByName("OnekeyRegisterAcitvity");
-		if (ora != null) {
-			ora.finish();
-			Logger.d(TAG, "finishLoginPages finish  -> OnekeyRegisterAcitvity");
-		}
 
-		RetrievePasswordActivity rpa = (RetrievePasswordActivity) getActivityByName("RetrievePasswordActivity");
-		if (rpa != null) {
-			rpa.finish();
-			Logger.d(TAG,
-					"finishLoginPages finish  -> RetrievePasswordActivity");
-		}
 	}
 
 	/**

@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
@@ -56,26 +57,27 @@ public class ContactActivity2 extends BaseActivity {
     private WebContactFragment webContactFragment;
 
     @Override
-    public void refresh(Object... params) {
-
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
         layoutTab.setupWithViewPager(viewpager);
+        broadcastManager=LocalBroadcastManager.getInstance(this);
+        //registerBroadcastReceiver();
+        //webContactFragment=new WebContactFragment();
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    Log.i("active",imm.isActive()+"");
+                    if(imm.isActive())
+                        imm.hideSoftInputFromWindow(viewpager.getWindowToken(), 0);
             }
 
             @Override
             public void onPageSelected(int position) {
-             index=position;
+
             }
 
             @Override
@@ -83,9 +85,6 @@ public class ContactActivity2 extends BaseActivity {
 
             }
         });
-        broadcastManager=LocalBroadcastManager.getInstance(this);
-        //registerBroadcastReceiver();
-        //webContactFragment=new WebContactFragment();
     }
 
     public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {

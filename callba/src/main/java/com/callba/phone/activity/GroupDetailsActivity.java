@@ -104,10 +104,6 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
     private TextView title;
 	private TextView introduction;
 	private RelativeLayout rl_introduction;
-	@Override
-	public void refresh(Object... params) {
-
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

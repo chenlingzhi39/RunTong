@@ -61,14 +61,6 @@ public class AboutActivity extends BaseActivity {
             return null;
         }
     }
-
-
-
-    @Override
-    public void refresh(Object... params) {
-
-    }
-
     @OnClick({R.id.invite,R.id.url})
     public void onClick(View v) {
         switch (v.getId()){

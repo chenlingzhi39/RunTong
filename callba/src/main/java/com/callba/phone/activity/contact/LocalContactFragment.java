@@ -142,7 +142,6 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         Intent intent = new Intent(getActivity(), ContactDetailActivity2.class);
         contactMutliNumBean.setAvatar(null);
         intent.putExtra("contact", contactMutliNumBean);
-        intent.putExtra("activity", "ContactActivity");
         startActivity(intent);
     }
 

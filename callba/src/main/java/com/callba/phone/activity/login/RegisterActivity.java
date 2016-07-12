@@ -36,7 +36,6 @@ import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
-import com.callba.phone.view.CalldaToast;
 import com.callba.phone.view.MyProgressDialog;
 
 import java.lang.ref.WeakReference;
@@ -236,11 +235,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                 this.finish();
                 break;
 
-            case R.id.bn_mre_yijianzhuce:
-                Intent intent = new Intent(this, OnekeyRegisterAcitvity.class);
-                this.startActivity(intent);
-                this.finish();
-                break;
 
             case R.id.bn_mre_register:
                 //隐藏键盘
@@ -304,7 +298,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     /**
      * 获取短信key
      */
-    private void getVerifiCode() {
+   /* private void getVerifiCode() {
         username = et_account.getText().toString().trim();
         if ("".equals(username) || username.length() < 1) {
             CalldaToast calldaToast = new CalldaToast();
@@ -328,7 +322,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
         task.setTaskParams(taskParams);
         MainService.newTask(task);
     }
-
+*/
     /**
      * 注册之前校验
      *
@@ -411,16 +405,16 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                             progressDialog.dismiss();
                         }
 
-                        CalldaToast calldaToast = new CalldaToast();
-                        calldaToast.showToast(getApplicationContext(), content[1]);
+                       /* CalldaToast calldaToast = new CalldaToast();
+                        calldaToast.showToast(getApplicationContext(), content[1]);*/
                     }
                 } catch (Exception e) {
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
 
-                    CalldaToast calldaToast = new CalldaToast();
-                    calldaToast.showToast(getApplicationContext(), R.string.sin_hqsjsb);
+                 /*   CalldaToast calldaToast = new CalldaToast();
+                    calldaToast.showToast(getApplicationContext(), R.string.sin_hqsjsb);*/
 
                     e.printStackTrace();
                 }
@@ -428,9 +422,9 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-
+/*
                 CalldaToast calldaToast = new CalldaToast();
-                calldaToast.showToast(getApplicationContext(), R.string.sin_hqsjsb);
+                calldaToast.showToast(getApplicationContext(), R.string.sin_hqsjsb);*/
             }
         } else if (msg.what == Task.TASK_GET_VERFICA_CODE) {
             //获取验证码
@@ -443,19 +437,19 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                 String[] content = result.split("\\|");
 
                 if ("0".equals(content[0])) {
-                    CalldaToast calldaToast = new CalldaToast();
-                    calldaToast.showToast(getApplicationContext(), R.string.receive_yzm);
+                   /* CalldaToast calldaToast = new CalldaToast();
+                    calldaToast.showToast(getApplicationContext(), R.string.receive_yzm);*/
                 } else {
-                    CalldaToast calldaToast = new CalldaToast();
-                    calldaToast.showToast(getApplicationContext(), content[1]);
+                  /*  CalldaToast calldaToast = new CalldaToast();
+                    calldaToast.showToast(getApplicationContext(), content[1]);*/
                 }
             } else {
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
 
-                CalldaToast calldaToast = new CalldaToast();
-                calldaToast.showToast(getApplicationContext(), R.string.getyzm_failed);
+               /* CalldaToast calldaToast = new CalldaToast();
+                calldaToast.showToast(getApplicationContext(), R.string.getyzm_failed);*/
             }
         } else if (msg.what == Task.TASK_REGISTER) {
             if (progressDialog != null && progressDialog.isShowing()) {
@@ -520,8 +514,8 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                 progressDialog.dismiss();
             }
 
-            CalldaToast calldaToast = new CalldaToast();
-            calldaToast.showToast(getApplicationContext(), R.string.getyzm_failed);
+           /* CalldaToast calldaToast = new CalldaToast();
+            calldaToast.showToast(getApplicationContext(), R.string.getyzm_failed);*/
 
             e.printStackTrace();
         }

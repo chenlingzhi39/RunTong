@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.callba.R;
 import com.callba.phone.activity.contact.CalllogDetailActivity;
 import com.callba.phone.activity.contact.ContactActivity2;
-import com.callba.phone.activity.contact.ContactDetailActivity;
 import com.callba.phone.activity.contact.ContactDetailActivity2;
 import com.callba.phone.activity.contact.ContactMutliNumBean;
 import com.callba.phone.bean.CalllogDetailBean;

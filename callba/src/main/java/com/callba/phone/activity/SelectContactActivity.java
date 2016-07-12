@@ -17,7 +17,6 @@ import android.widget.ListView;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
-import com.callba.phone.activity.contact.ContactDetailActivity;
 import com.callba.phone.activity.contact.ContactMutliNumBean;
 import com.callba.phone.adapter.MealAdapter;
 import com.callba.phone.adapter.NumberAdapter;
@@ -86,10 +85,6 @@ public class SelectContactActivity extends BaseActivity implements View.OnClickL
                     .getLayoutParams();
             lp.setMargins(0, 0, 0, 0);
         }
-    }
-
-    @Override
-    public void refresh(Object... params) {
     }
 
     @Override

@@ -38,7 +38,8 @@
           android:layout_width="wrap_content"
           android:layout_height= "wrap_content"
           style="@style/RatingBar"
-          android:numStars="2"
+          android:numStars="5"
+          android:rating="2"
           />
     </LinearLayout>
 </RelativeLayout>
@@ -118,7 +119,7 @@
             android:id="@+id/commission_detail"
             android:drawableTop="@drawable/commision_detail"
             android:layout_weight="1"
-            android:text="@string/all_order"
+            android:text="@string/commission_detail"
             android:drawablePadding="10dp"
             android:padding="10dp"
             android:gravity="center"
@@ -136,7 +137,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/team"
             android:drawableTop="@drawable/my_team"
@@ -154,7 +155,7 @@
             android:background="@color/light_black"
             />
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/type"
             android:drawableTop="@drawable/a_type"
@@ -172,7 +173,7 @@
             android:background="@color/light_black"
             />
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/qr_code"
             android:drawableTop="@drawable/qr_code"

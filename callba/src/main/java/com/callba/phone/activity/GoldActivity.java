@@ -28,11 +28,6 @@ public class GoldActivity extends BaseActivity {
     Button exchange;
 
     @Override
-    public void refresh(Object... params) {
-
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);

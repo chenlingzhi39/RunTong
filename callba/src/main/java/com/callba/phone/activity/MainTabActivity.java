@@ -14,60 +14,47 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 
 import com.callba.phone.DemoHelper;
 import com.callba.phone.MyApplication;
-import com.callba.phone.activity.contact.ContactActivity;
 import com.callba.phone.activity.contact.ContactActivity2;
 import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.Constant;
 import com.callba.phone.logic.login.LoginController;
-import com.callba.phone.ui.EaseGroupRemoveListener;
 import com.callba.phone.util.ActivityUtil;
-import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMMessage;
-import com.hyphenate.chat.EMTextMessageBody;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * 主界面

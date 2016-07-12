@@ -32,6 +32,7 @@ import com.callba.phone.DemoHelper;
 import com.callba.phone.DemoHelper.DataSyncListener;
 import com.callba.phone.activity.BlacklistActivity;
 import com.callba.phone.activity.ChatActivity;
+import com.callba.phone.activity.CommunityActivity;
 import com.callba.phone.activity.FriendActivity;
 import com.callba.phone.activity.GroupsActivity;
 import com.callba.phone.activity.NewFriendsMsgActivity;
@@ -94,6 +95,7 @@ public class WebContactFragment extends BaseFragment {
     private ContactItemView applicationItem;
     private ContactItemView blackListItem;
     private ContactItemView nearByItem;
+    private ContactItemView communityItem;
     protected InputMethodManager inputMethodManager;
     private InviteMessgeDao inviteMessgeDao;
     private BroadcastReceiver broadcastReceiver;
@@ -128,6 +130,8 @@ public class WebContactFragment extends BaseFragment {
         blackListItem.setOnClickListener(clickListener);
         nearByItem=(ContactItemView) headerView.findViewById(R.id.nearby_item);
         nearByItem.setOnClickListener(clickListener);
+        communityItem=(ContactItemView) headerView.findViewById(R.id.community_item);
+        communityItem.setOnClickListener(clickListener);
         headerView.findViewById(R.id.group_item).setOnClickListener(clickListener);
         loadingView = LayoutInflater.from(getActivity()).inflate(R.layout.em_layout_loading_data, null);
         contentContainer.addView(loadingView);
@@ -244,6 +248,7 @@ public class WebContactFragment extends BaseFragment {
                                 user.setNick(baseUser.getNickname());
                                 user.setSign(baseUser.getSign());
                                 EaseCommonUtils.setUserInitialLetter(user);
+                                DemoHelper.getInstance().updateContactList(mList);
                                 mList.add(user);
                             }
                             refresh();
@@ -425,6 +430,10 @@ public class WebContactFragment extends BaseFragment {
                 case R.id.group_item:
                     // 进入群聊列表页面
                     startActivity(new Intent(getActivity(), GroupsActivity.class));
+                    break;
+                case R.id.community_item:
+                    toast("暂未开放");
+                    //startActivity(new Intent(getActivity(), CommunityActivity.class));
                     break;
                /* case R.id.chat_room_item:
                     //进入聊天室列表页面

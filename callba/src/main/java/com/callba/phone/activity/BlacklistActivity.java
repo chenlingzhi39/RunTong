@@ -40,12 +40,6 @@ public class BlacklistActivity extends BaseActivity {
 	private BlacklistAdapater adapter;
 
 
-
-	@Override
-	public void refresh(Object... params) {
-
-	}
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

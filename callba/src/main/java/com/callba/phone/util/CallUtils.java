@@ -50,7 +50,7 @@ public class CallUtils {
 		} else if (Constant.CALL_SETTING_ZHI_BO.equals(callSeting)) {
 //			directDial(context, callNum,callname);
 		} else if (Constant.CALL_SETTING_SHOU_DONG.equals(callSeting)) {
-			showChooseDialog(context, callNum,callname);
+			//showChooseDialog(context, callNum,callname);
 		} else if (Constant.CALL_SETTING_ZHI_NENG.equals(callSeting)) {
 			if (NetWorkUtil.getNetworkInfoLevel(context, 6, false)) {
 //				directDial(context, callNum,callname);
@@ -101,7 +101,7 @@ public class CallUtils {
 					callModeDialogDismissListener.onDialogDismiss();
 				}
 			});
-			showChooseDialog(context, callNumber, callUserName);
+			//showChooseDialog(context, callNumber, callUserName);
 		} else if (Constant.CALL_SETTING_ZHI_NENG.equals(callSeting)) {
 			
 			if (NetWorkUtil.getNetworkInfoLevel(context, 6, false)) {
@@ -165,7 +165,7 @@ public class CallUtils {
 		return callnum;
 	}
 
-	private void showChooseDialog(final Context context, final String callNum,final String callname) {
+	/*private void showChooseDialog(final Context context, final String callNum,final String callname) {
 		if(callModeChooserDialog == null) {
 			callModeChooserDialog = new Dialog(context, R.style.MyDialog);
 		}
@@ -210,7 +210,7 @@ public class CallUtils {
 
 		callModeChooserDialog.show();
 
-	}
+	}*/
 	
 	/*private void directDial(Context context, String callNum,String callname) {
 		if(!CalldaPhoneService.isReady()) {

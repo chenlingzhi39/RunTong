@@ -49,11 +49,6 @@ public class NewGroupActivity extends BaseActivity {
 	private TextView secondTextView;
 
 	@Override
-	public void refresh(Object... params) {
-
-	}
-
-	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		groupNameEditText = (EditText) findViewById(R.id.edit_group_name);

@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.DemoHelper;
-import com.callba.phone.bean.EaseUser;
 import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
@@ -28,8 +27,6 @@ import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.SharedPreferenceUtil;
-import com.callba.phone.util.download.DownLoadAdvertisement;
-import com.callba.phone.view.CalldaToast;
 
 
 /** 
@@ -187,7 +184,7 @@ public class LoginController {
 	 * @param context
 	 */
 	public static void parseLocalLoginFaildInfo(Context context, UserLoginErrorMsg errorMsg) {
-		CalldaToast calldaToast = new CalldaToast();
+
 		
 		switch (errorMsg) {
 			case UNKNOWN:

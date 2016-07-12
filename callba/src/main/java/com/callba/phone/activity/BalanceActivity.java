@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
-import com.callba.phone.activity.recharge.RechargeActivity;
+
 import com.callba.phone.activity.recharge.RechargeActivity2;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
@@ -32,12 +32,6 @@ public class BalanceActivity extends BaseActivity {
     UserDao userDao;
     @InjectView(R.id.balance)
     TextView balance;
-
-    @Override
-    public void refresh(Object... params) {
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

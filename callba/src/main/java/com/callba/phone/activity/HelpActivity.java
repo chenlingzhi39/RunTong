@@ -99,8 +99,4 @@ public class HelpActivity extends BaseActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    @Override
-    public void refresh(Object... params) {
-
-    }
 }

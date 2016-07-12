@@ -22,11 +22,6 @@ public class EditActivity extends BaseActivity {
 	private EditText editText;
 
 	@Override
-	public void refresh(Object... params) {
-
-	}
-
-	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		editText = (EditText) findViewById(R.id.edittext);

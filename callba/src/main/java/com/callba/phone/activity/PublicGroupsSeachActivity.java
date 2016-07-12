@@ -31,11 +31,6 @@ public class PublicGroupsSeachActivity extends BaseActivity {
     public static EMGroup searchedGroup;
 
     @Override
-    public void refresh(Object... params) {
-
-    }
-
-    @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         

@@ -1,13 +1,16 @@
 package com.callba.phone;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 import com.callba.R;
 import com.callba.phone.activity.ChatActivity;
 import com.callba.phone.activity.MainTabActivity;
+import com.callba.phone.activity.NewFriendsMsgActivity;
 import com.callba.phone.activity.parse.UserProfileManager;
 import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseEmojicon;
@@ -328,7 +332,7 @@ public class DemoHelper {
                     return getUserInfo(message.getFrom()).getNick() + ": " + ticker;
                 }else{
                     StringBuffer buffer = new StringBuffer(message.getFrom().substring(0,11));
-                    buffer.replace(3,8,"****");
+                    //buffer.replace(3,8,"****");
                     return buffer + ": " + ticker;
                 }
             }
@@ -337,7 +341,7 @@ public class DemoHelper {
             public String getLatestText(EMMessage message, int fromUsersNum, int messageNum) {
                 EaseUser user = getUserInfo(message.getFrom());
                 StringBuffer buffer = new StringBuffer(message.getFrom().substring(0,11));
-                buffer.replace(3,8,"****");
+                //buffer.replace(3,8,"****");
                 return (user!=null?user.getNick():buffer)+":"+EaseCommonUtils.getMessageDigest(message,appContext);
                 // return fromUsersNum + "个基友，发来了" + messageNum + "条消息";
             }
@@ -537,6 +541,7 @@ public class DemoHelper {
             msg.setStatus(InviteMesageStatus.GROUPINVITATION_ACCEPTED);
             notifyNewIviteMessage(msg);
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
+
         }
         
         @Override
@@ -613,6 +618,38 @@ public class DemoHelper {
             msg.setStatus(InviteMesageStatus.BEAPPLYED);
             notifyNewIviteMessage(msg);
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
+            if ((MyApplication.activities.get(MyApplication.activities.size()-1).getClass()!= NewFriendsMsgActivity.class)&&demoModel.getSettingMsgNotification())
+            {
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+                        appContext)
+                        .setSmallIcon(R.drawable.logo_notification)
+                        .setLargeIcon(
+                                BitmapFactory.decodeResource(appContext.getResources(),
+                                        R.drawable.logo))
+                        .setContentTitle("群信息")
+                        .setContentText(msg.getFrom()+"申请加入群"+"\""+msg.getGroupName()+"\"");
+                Intent notificationIntent = new Intent(appContext, NewFriendsMsgActivity.class);
+                notificationIntent.putExtra("username", username);
+                // TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                // stackBuilder.addParentStack(clazz);
+                // stackBuilder.addNextIntent(notificationIntent);
+                // PendingIntent resultPendingIntent =
+                // stackBuilder.getPendingIntent(
+                // 0,
+                // PendingIntent.FLAG_UPDATE_CURRENT
+                // );
+                PendingIntent contentIntent = PendingIntent.getActivity(
+                        appContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                mBuilder.setContentIntent(contentIntent);
+      /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            mBuilder.setFullScreenIntent(contentIntent, true);*/
+                mBuilder.setTicker(msg.getFrom()+"申请加入群"+"\""+msg.getGroupName()+"\"");
+                Notification notification = mBuilder.build();
+                notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
+                //notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                NotificationManager mNotificationManager = (NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                mNotificationManager.notify(10, notification);
+            }
         }
 
         @Override
@@ -625,12 +662,13 @@ public class DemoHelper {
             msg.setFrom(accepter);
             msg.setTo(groupId);
             msg.setMsgId(UUID.randomUUID().toString());
-            msg.addBody(new EMTextMessageBody(accepter + " " +st4));
+            StringBuffer buffer = new StringBuffer(accepter.substring(0,11));
+            msg.addBody(new EMTextMessageBody(getUserInfo(accepter)!=null?getUserInfo(accepter).getNick():buffer.toString() + " " +st4));
             msg.setStatus(Status.SUCCESS);
             // 保存同意消息
             EMClient.getInstance().chatManager().saveMessage(msg);
             // 提醒新消息
-            getNotifier().viberateAndPlayTone(msg);
+            //getNotifier().viberateAndPlayTone(msg);
             getNotifier().onNewMsg(msg);
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
         }
@@ -650,13 +688,13 @@ public class DemoHelper {
             msg.setTo(groupId);
             msg.setMsgId(UUID.randomUUID().toString());
             StringBuffer buffer = new StringBuffer(inviter.substring(0,11));
-            buffer.replace(3,8,"****");
+            //buffer.replace(3,8,"****");
             msg.addBody(new EMTextMessageBody((getUserInfo(inviter)!=null?getUserInfo(inviter).getNick():buffer.toString())+" " +st3));
             msg.setStatus(EMMessage.Status.SUCCESS);
             // 保存邀请消息
             EMClient.getInstance().chatManager().saveMessage(msg);
             // 提醒新消息
-            getNotifier().viberateAndPlayTone(msg);
+            //getNotifier().viberateAndPlayTone(msg);
             getNotifier().onNewMsg(msg);
             EMLog.d(TAG, "onAutoAcceptInvitationFromGroup groupId:" + groupId);
             //发送local广播
@@ -813,6 +851,7 @@ public class DemoHelper {
         inviteMessgeDao.saveMessage(msg);
         //保存未读数，这里没有精确计算
         inviteMessgeDao.saveUnreadMessageCount(1);
+        if(demoModel.getSettingMsgNotification())
         // 提示有新消息
         getNotifier().viberateAndPlayTone(null);
     }
