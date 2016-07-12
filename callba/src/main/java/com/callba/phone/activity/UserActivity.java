@@ -31,6 +31,7 @@ import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.service.MainService;
+import com.callba.phone.service.UpdateService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.SharedPreferenceUtil;
@@ -214,10 +215,10 @@ public class UserActivity extends BaseActivity {
     @Override
     public void refresh(Object... params) {
         Log.i("user", "refresh");
-        Message verionMessage = (Message) params[0];
+        Message versionMessage = (Message) params[0];
         // 解析版本返回数据
         AppVersionChecker.AppVersionBean appVersionBean = AppVersionChecker.parseVersionInfo(
-                this, verionMessage);
+                this, versionMessage);
 
 
         // 检查是否成功获取加密Key
@@ -270,11 +271,21 @@ public class UserActivity extends BaseActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             try {
-                                Uri uri = Uri.parse(appVersionBean
+                              /*  Uri uri = Uri.parse(appVersionBean
                                         .getDownloadUrl());
                                 Intent intent = new Intent(Intent.ACTION_VIEW,
                                         uri);
-                                startActivity(intent);
+                                startActivity(intent);*/
+                                if(!UpdateService.is_downloading)
+                                { Intent updateIntent = new Intent(
+                                        UserActivity.this,
+                                        UpdateService.class);
+                                updateIntent.putExtra(
+                                        "url",
+                                        appVersionBean
+                                                .getDownloadUrl());
+                                updateIntent.putExtra("version_code",appVersionBean.getServerVersionCode());
+                                startService(updateIntent);}else {toast("正在进行下载更新");}
                             } catch (ActivityNotFoundException e) {
                                 e.printStackTrace();
 
@@ -318,11 +329,21 @@ public class UserActivity extends BaseActivity {
                             public void onClick(DialogInterface dialog,
                                                 int which) {
                                 try {
-                                    Uri uri = Uri.parse(appVersionBean
+                                 /*   Uri uri = Uri.parse(appVersionBean
                                             .getDownloadUrl());
                                     Intent intent = new Intent(
                                             Intent.ACTION_VIEW, uri);
-                                    startActivity(intent);
+                                    startActivity(intent);*/
+                                    if(!UpdateService.is_downloading)
+                                    { Intent updateIntent = new Intent(
+                                            UserActivity.this,
+                                            UpdateService.class);
+                                        updateIntent.putExtra(
+                                                "url",
+                                                appVersionBean
+                                                        .getDownloadUrl());
+                                        updateIntent.putExtra("version_code",appVersionBean.getServerVersionCode());
+                                        startService(updateIntent);}else {toast("正在进行下载更新");}
                                 } catch (ActivityNotFoundException e) {
                                     e.printStackTrace();
                                     /*CalldaToast calldaToast = new CalldaToast();

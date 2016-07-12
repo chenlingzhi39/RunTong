@@ -63,7 +63,7 @@
             android:value="c2c0420b2f48ef7fa0e69e8d1d0cc17f" >
         </meta-data>-->
 
-
+        <service android:name=".phone.service.UpdateService"/>
         <activity
             android:name=".phone.activity.SelectDialPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />

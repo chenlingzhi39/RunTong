@@ -43,6 +43,7 @@ import com.callba.phone.controller.EaseUI;
 import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.service.MainService;
+import com.callba.phone.service.UpdateService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.AppVersionChecker.AppVersionBean;
@@ -345,11 +346,20 @@ public class WelcomeActivity extends BaseActivity {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
 							try {
-								Uri uri = Uri.parse(appVersionBean
+							/*	Uri uri = Uri.parse(appVersionBean
 										.getDownloadUrl());
 								Intent intent = new Intent(Intent.ACTION_VIEW,
 										uri);
-								startActivity(intent);
+								startActivity(intent);*/
+								Intent updateIntent = new Intent(
+										WelcomeActivity.this,
+										UpdateService.class);
+								updateIntent.putExtra(
+										"url",
+										appVersionBean
+												.getDownloadUrl());
+								updateIntent.putExtra("version_code",appVersionBean.getServerVersionCode());
+								startService(updateIntent);
 							} catch (ActivityNotFoundException e) {
 								e.printStackTrace();
 
@@ -394,11 +404,20 @@ public class WelcomeActivity extends BaseActivity {
 							public void onClick(DialogInterface dialog,
 									int which) {
 								try {
-									Uri uri = Uri.parse(appVersionBean
+									/*Uri uri = Uri.parse(appVersionBean
 											.getDownloadUrl());
 									Intent intent = new Intent(
 											Intent.ACTION_VIEW, uri);
-									startActivity(intent);
+									startActivity(intent);*/
+									Intent updateIntent = new Intent(
+											WelcomeActivity.this,
+											UpdateService.class);
+									updateIntent.putExtra(
+											"url",
+											appVersionBean
+													.getDownloadUrl());
+									updateIntent.putExtra("version_code",appVersionBean.getServerVersionCode());
+									startService(updateIntent);
 								} catch (ActivityNotFoundException e) {
 									e.printStackTrace();
 									/*CalldaToast calldaToast = new CalldaToast();
