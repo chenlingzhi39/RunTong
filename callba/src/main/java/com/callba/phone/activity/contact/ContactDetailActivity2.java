@@ -1,5 +1,6 @@
 package com.callba.phone.activity.contact;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -34,16 +35,23 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.callba.R;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.manager.ContactsManager;
+import com.callba.phone.util.Logger;
 import com.callba.phone.util.Utils;
 
 import java.io.BufferedInputStream;
@@ -61,13 +69,13 @@ import butterknife.OnClick;
  */
 public class ContactDetailActivity2 extends AppCompatActivity {
     @InjectView(R.id.header)
-    ImageView header;
+    ImageView image;
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
     @InjectView(R.id.tabs)
     TabLayout tabs;
     @InjectView(R.id.collapsing_toolbar)
-    CollapsingToolbarLayout collapsingToolbar;
+    CollapsingToolbarLayout content;
     @InjectView(R.id.appbar)
     AppBarLayout appbar;
     @InjectView(R.id.viewpager)
@@ -80,18 +88,42 @@ public class ContactDetailActivity2 extends AppCompatActivity {
     private static final int RESULT_CAMERA_CROP_PATH_RESULT = 4;
     private Uri imageUri;
     private Uri imageCropUri;
+    private int width,height;
+    private int image_height,image_max_height,hideHeight;
+    private DisplayMetrics displayMetrics;
+    private Bitmap resource;
+    private CollapsingToolbarLayout.LayoutParams lp;
+    private CoordinatorLayout.LayoutParams lp1;
+
+        public enum State {
+            EXPANDED,
+            COLLAPSED,
+            IDLE
+        }
+
+        private State mCurrentState = State.EXPANDED;
+
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contact_detail2);
         ButterKnife.inject(this);
+        displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        width=displayMetrics.widthPixels;
+        height=displayMetrics.heightPixels;
+        image_height=250*(int) displayMetrics.density;
+        Logger.i("image_height",image_height+"");
+        image_max_height=width;
         bean = (ContactMutliNumBean) getIntent()
                 .getSerializableExtra("contact");
         initToolbar();
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
         tabs.setupWithViewPager(viewpager);
-        collapsingToolbar.setTitleEnabled(false);
+        content.setTitleEnabled(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
@@ -102,14 +134,154 @@ public class ContactDetailActivity2 extends AppCompatActivity {
 
             window.setStatusBarColor(Color.TRANSPARENT);
         }
-        header.setImageBitmap(ContactsManager.getAvatar(this, bean.get_id(), true));
+        appbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+
+                    if (i == 0) {
+                        if (mCurrentState != State.EXPANDED) {
+
+                        }
+                        mCurrentState = State.EXPANDED;
+                    } else if (Math.abs(i) >= appBarLayout.getTotalScrollRange()) {
+                        if (mCurrentState != State.COLLAPSED) {
+
+                        }
+                        mCurrentState = State.COLLAPSED;
+                    } else {
+                        if (mCurrentState != State.IDLE) {
+
+                        }
+                        mCurrentState = State.IDLE;
+                    }
+
+            }
+        });
+        resource=ContactsManager.getAvatar(this, bean.get_id(), true);
+        if(resource!=null)
+            //setImage();
+        image.setImageBitmap(resource);
         String path = getSDCardPath();
         File file = new File(path + "/temp.jpg");
         imageUri = Uri.fromFile(file);
         File cropFile = new File(getSDCardPath() + "/temp_crop.jpg");
         imageCropUri = Uri.fromFile(cropFile);
-    }
 
+    }
+public void setImage(){
+    Log.i("bitmap_width", resource.getWidth() + "");
+    Log.i("bitmap_height",resource.getHeight()+"");
+    Log.i("width",width+"");
+    Log.i("height", height+"" );
+    Log.i("x1",(float)resource.getHeight()/(float)resource.getWidth()+"");
+    Log.i("x2",(float)image_height/(float)width+"");
+    Log.i("original",resource.getHeight() * width/ resource.getWidth()+"");
+    if(resource.getHeight() * width / resource.getWidth() <=image_height){
+        image.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,image_height));
+        content.setLayoutParams(new AppBarLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,image_height));
+    }
+        if (resource.getHeight() * width / resource.getWidth() >image_height && resource.getHeight() * width / resource.getWidth() <= image_max_height) {
+            Log.i("height1", resource.getHeight() *width / resource.getWidth() + "");
+            lp = new CollapsingToolbarLayout.LayoutParams(CollapsingToolbarLayout.LayoutParams.MATCH_PARENT, resource.getHeight() * width / resource.getWidth());
+            lp.setMargins(0, (image_height - resource.getHeight() * width / resource.getWidth()) / 2, 0, (image_height- resource.getHeight() * width / resource.getWidth()) / 2);
+            hideHeight = (image_height - resource.getHeight() * width / resource.getWidth()) / 2;
+            image.setLayoutParams(lp);
+            lp1=new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, resource.getHeight() * width / resource.getWidth());
+            lp1.setMargins(0,image_height - resource.getHeight() * width/ resource.getWidth(),0,0);
+            appbar.setLayoutParams(lp1);
+        }
+        if (resource.getHeight() * width/ resource.getWidth() > image_max_height) {
+            Log.i("height2", resource.getHeight() * width / resource.getWidth() + "");
+            lp = new CollapsingToolbarLayout.LayoutParams(CollapsingToolbarLayout.LayoutParams.MATCH_PARENT, image_max_height);
+            lp.setMargins(0, (image_height-image_max_height)/2, 0,(image_height-image_max_height)/2);
+            hideHeight = (image_height-image_max_height)/2;
+            Log.i("hide_height",hideHeight+"");
+            image.setLayoutParams(lp);
+            lp1=new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, image_max_height);
+            lp1.setMargins(0,image_height-image_max_height,0,0);
+            appbar.setLayoutParams(lp1);
+        }
+    image.setImageBitmap(resource);
+    mainContent.setOnTouchListener(new View.OnTouchListener() {
+        boolean IS_DOWN=true;
+        boolean IS_PULL = false;
+        boolean IS_RELEASE=false;
+        boolean IS_BACK=true;
+        int distance;
+        private float yDown,dy,yMove;
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            Log.i("touchevent",event.getAction()+"");
+                if (mCurrentState==State.EXPANDED&&lp!=null) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            yDown = event.getRawY();
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            if(!IS_RELEASE)
+                            {Log.i("hideheight",hideHeight+"");
+                                Log.i("distance",distance+"");
+                                Log.i("ydown",yDown+"");
+                                if(IS_DOWN)yDown=event.getRawY();
+                                IS_DOWN=false;
+                                if(yMove>0)dy=event.getRawY()-yMove;
+                                Log.i("dy",dy+"");
+                                yMove = event.getRawY();
+                                Log.i("ymove",yMove+"");
+                                distance = (int) (yMove - yDown);
+                                if(distance<=0&&dy<0)IS_DOWN=true;
+                                if (distance <= 0) {
+                                    IS_PULL=false;
+                                    return false;
+                                }
+                                if(distance/2>=-hideHeight){
+                                    if(dy>0)IS_BACK=true;
+                                    if(dy<=0&&IS_BACK){
+                                        yDown=yMove-2*lp.topMargin+2*hideHeight;
+                                        IS_BACK=false;
+                                    }
+                                    return true;
+                                }
+                                IS_PULL = true;
+                                lp.setMargins(0,(distance / 2) + hideHeight,0,(distance / 2) + hideHeight);
+                                lp1.setMargins(0,distance+hideHeight*2,0,0);
+                                image.setLayoutParams(lp);
+                                appbar.setLayoutParams(lp1);
+                                return  true;
+                            }
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            if (IS_PULL)
+                            {IS_RELEASE=true;
+                                IS_BACK=true;
+                                ValueAnimator mAnimator = ValueAnimator.ofInt(lp.topMargin,  hideHeight);
+                                mAnimator.setDuration(100);
+                                mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                    @Override
+                                    public void onAnimationUpdate(ValueAnimator animation) {
+                                        lp.setMargins(0,(int)animation.getAnimatedValue(),0, (int)animation.getAnimatedValue());
+                                        if ((int)animation.getAnimatedValue() <= hideHeight) {
+                                            IS_DOWN=true;
+                                            IS_PULL = false;
+                                            IS_RELEASE=false;
+                                            distance=0;
+                                        }
+                                        image.setLayoutParams(lp);
+                                        lp1.setMargins(0,2*lp.topMargin,0,0);
+                                        appbar.setLayoutParams(lp1);
+                                    }
+
+                                });
+                                mAnimator.start();
+                                return true;}
+                            break;
+                    }
+
+                }
+            return false;
+        }
+    });
+}
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -253,7 +425,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
                     try {
                         Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageCropUri));
                         updateAvatar(bitmap);
-                        header.setImageBitmap(bitmap);
+                        image.setImageBitmap(bitmap);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -282,26 +454,6 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         startActivityForResult(intent, RESULT_CAMERA_CROP_PATH_RESULT);
     }
 
-    /**
-     * save the picture data
-     *
-     * @param picdata
-     */
-    private void setPicToView(Intent picdata) {
-        Bundle extras = picdata.getExtras();
-        if (extras != null) {
-            final Bitmap photo = extras.getParcelable("data");
-            Drawable drawable = new BitmapDrawable(getResources(), photo);
-            header.setImageDrawable(drawable);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    updateAvatar(photo);
-                }
-            }).start();
-        }
-
-    }
 
     public static String getSDCardPath() {
         String cmd = "cat /proc/mounts";

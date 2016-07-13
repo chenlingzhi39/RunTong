@@ -9,6 +9,7 @@ import android.os.Bundle;
 import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.DialAd;
 import com.callba.phone.logic.contact.ContactPersonEntity;
+import com.callba.phone.util.AppVersionChecker;
 
 /** 
  * 存储程序全局变量
@@ -57,6 +58,15 @@ public class CalldaGlobalConfig implements Serializable{
 	private String signature;
     private int gold;
     private String commission;
+    private AppVersionChecker.AppVersionBean appVersionBean;
+
+	public AppVersionChecker.AppVersionBean getAppVersionBean() {
+		return appVersionBean;
+	}
+
+	public void setAppVersionBean(AppVersionChecker.AppVersionBean appVersionBean) {
+		this.appVersionBean = appVersionBean;
+	}
 
 	public DialAd getDialAd() {
 		return dialAd;
@@ -414,19 +424,22 @@ public class CalldaGlobalConfig implements Serializable{
 		outState.putString("signature",signature);
 		outState.putInt("gold",gold);
 		outState.putString("commission",commission);
+		outState.putSerializable("dialAd",dialAd);
+		outState.putSerializable("appVersion",appVersionBean);
 		ArrayList list1 = new ArrayList();
 		list1.add(advertisements1);
 		outState.putParcelableArrayList("advertisements1",list1);
 		ArrayList list2 = new ArrayList();
-		list2.add(advertisements1);
+		list2.add(advertisements2);
 		outState.putParcelableArrayList("advertisements2",list2);
 		ArrayList list3 = new ArrayList();
-		list3.add(advertisements1);
+		list3.add(advertisements3);
 		outState.putParcelableArrayList("advertisements3",list3);
 		@SuppressWarnings("rawtypes")
 		ArrayList list = new ArrayList();
 		list.add(contactBeans);
 		outState.putParcelableArrayList("contact", list);
+
 	}
 
 	/**
@@ -456,6 +469,8 @@ public class CalldaGlobalConfig implements Serializable{
 		nickname=savedInstanceState.getString("nickname",nickname);
 		signature=savedInstanceState.getString("signature",signature);
 		gold=savedInstanceState.getInt("gold",gold);
+		dialAd=(DialAd) savedInstanceState.getSerializable("dialAd");
+		appVersionBean=(AppVersionChecker.AppVersionBean) savedInstanceState.getSerializable("appVersion");
 		commission=savedInstanceState.getString("commission",commission);
 		advertisements1=(ArrayList<Advertisement>)savedInstanceState.getParcelableArrayList("advertisements1").get(0);
 		advertisements2=(ArrayList<Advertisement>)savedInstanceState.getParcelableArrayList("advertisements2").get(0);

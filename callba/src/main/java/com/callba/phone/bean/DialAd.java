@@ -1,9 +1,11 @@
 package com.callba.phone.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by PC-20160514 on 2016/7/11.
  */
-public class DialAd {
+public class DialAd implements Serializable{
     private String image;
     private String adWavUrl;
 

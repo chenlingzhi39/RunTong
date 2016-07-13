@@ -277,12 +277,16 @@ public class HomeActivity extends BaseActivity {
             userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
         }*/
         userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+        userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
         if (!mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()).equals(date)&& (boolean)SPUtils.get(HomeActivity.this,"settings","sign_key",false)) {
             String year = Calendar.getInstance().get(Calendar.YEAR) + "";
             String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
             if (month.length() == 1)
                 month = "0" + month;
             userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
+        }
+        if(CalldaGlobalConfig.getInstance().getAppVersionBean()!=null&&(boolean)SPUtils.get(this,"settings","update_key",true)){
+            check2Upgrade(CalldaGlobalConfig.getInstance().getAppVersionBean(),false);
         }
     }
 
@@ -533,6 +537,9 @@ public class HomeActivity extends BaseActivity {
                         }
                         userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
                         userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+                        if(CalldaGlobalConfig.getInstance().getAppVersionBean()!=null&&(boolean)SPUtils.get(HomeActivity.this,"settings","update_key",true)){
+                            check2Upgrade(CalldaGlobalConfig.getInstance().getAppVersionBean(),false);
+                        }
                         // 查询余额
                         //queryUserBalance();
                     }

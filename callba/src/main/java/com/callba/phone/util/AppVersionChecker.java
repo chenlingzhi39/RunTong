@@ -9,6 +9,8 @@ import android.os.Message;
 import android.text.TextUtils;
 import com.callba.phone.bean.Task;
 
+import java.io.Serializable;
+
 /**
  * 版本更新检测器
  * 
@@ -128,7 +130,7 @@ public class AppVersionChecker {
 	 * 封装解析的版本信息
 	 * @author zhw
 	 */
-	public static class AppVersionBean {
+	public static class AppVersionBean implements Serializable{
 		private String serverVersionCode;//新版本版本号
 		private String localVersionCode;//本地版本号
 		private String downloadUrl;		//新版本下载地址

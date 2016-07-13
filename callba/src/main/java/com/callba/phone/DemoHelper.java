@@ -15,6 +15,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.callba.R;
 import com.callba.phone.activity.ChatActivity;
 import com.callba.phone.activity.MainTabActivity;
@@ -316,6 +320,21 @@ public class DemoHelper {
 
             @Override
             public Bitmap getLargeIcon(EMMessage message) {
+                EaseUser user=getUserInfo(message.getFrom());
+                if(user!=null){
+                    if(!user.getAvatar().equals(""))
+                    try {
+                        Bitmap theBitmap = Glide.
+                                with(appContext).
+                                load(user.getAvatar()).
+                                asBitmap().
+                                into(100, 100). // Width and height
+                                get();
+                        return theBitmap;
+                    }catch (Exception e){
+
+                    }
+                  }
                 return BitmapFactory.decodeResource(appContext.getResources(),
                         R.drawable.logo);
             }
@@ -618,16 +637,32 @@ public class DemoHelper {
             msg.setStatus(InviteMesageStatus.BEAPPLYED);
             notifyNewIviteMessage(msg);
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
+            EaseUser user=getUserInfo(applyer);
+            Bitmap bitmap=  BitmapFactory.decodeResource(appContext.getResources(),
+                    R.drawable.logo);
+            if(user!=null){
+                if(!user.getAvatar().equals(""))
+                    try {
+                        bitmap = Glide.
+                                with(appContext).
+                                load(user.getAvatar()).
+                                asBitmap().
+                                into(100, 100). // Width and height
+                                get();
+                    }catch (Exception e){
+
+                    }
+            }
+
             if ((MyApplication.activities.get(MyApplication.activities.size()-1).getClass()!= NewFriendsMsgActivity.class)&&demoModel.getSettingMsgNotification())
             {
                 NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                         appContext)
                         .setSmallIcon(R.drawable.logo_notification)
                         .setLargeIcon(
-                                BitmapFactory.decodeResource(appContext.getResources(),
-                                        R.drawable.logo))
+                               bitmap)
                         .setContentTitle("群信息")
-                        .setContentText(msg.getFrom()+"申请加入群"+"\""+msg.getGroupName()+"\"");
+                        .setContentText(user!=null?user.getNick():msg.getFrom().substring(0,11)+"申请加入群"+"\""+msg.getGroupName()+"\"");
                 Intent notificationIntent = new Intent(appContext, NewFriendsMsgActivity.class);
                 notificationIntent.putExtra("username", username);
                 // TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -643,7 +678,7 @@ public class DemoHelper {
                 mBuilder.setContentIntent(contentIntent);
       /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             mBuilder.setFullScreenIntent(contentIntent, true);*/
-                mBuilder.setTicker(msg.getFrom()+"申请加入群"+"\""+msg.getGroupName()+"\"");
+                mBuilder.setTicker(user!=null?user.getNick():msg.getFrom().substring(0,11)+"申请加入群"+"\""+msg.getGroupName()+"\"");
                 Notification notification = mBuilder.build();
                 notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
                 //notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -851,7 +886,6 @@ public class DemoHelper {
         inviteMessgeDao.saveMessage(msg);
         //保存未读数，这里没有精确计算
         inviteMessgeDao.saveUnreadMessageCount(1);
-        if(demoModel.getSettingMsgNotification())
         // 提示有新消息
         getNotifier().viberateAndPlayTone(null);
     }

@@ -237,7 +237,7 @@ public class UserActivity extends BaseActivity {
 
         if (!TextUtils.isEmpty(appVersionBean.getSecretKey())) {
             // 成功获取key
-            check2Upgrade(appVersionBean);
+            check2Upgrade(appVersionBean,true);
         } else {
             // 统计获取版本失败次数
             //MobclickAgent.onEvent(this, "version_timeout");
@@ -252,136 +252,11 @@ public class UserActivity extends BaseActivity {
                 //alertUserGetVersionFailed();
                 toast(R.string.net_error_getdata_fail);
             } else {
-                check2Upgrade(appVersionBean);
+                check2Upgrade(appVersionBean,true);
             }
         }
     }
 
-    /**
-     * 检查升级
-     */
-    private void check2Upgrade(final AppVersionChecker.AppVersionBean appVersionBean) {
-        if (appVersionBean.isForceUpgrade()) {
-            // 强制升级
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.sjts);
-            builder.setMessage(R.string.sjtsxx);
-            builder.setPositiveButton(R.string.upgrade,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            try {
-                              /*  Uri uri = Uri.parse(appVersionBean
-                                        .getDownloadUrl());
-                                Intent intent = new Intent(Intent.ACTION_VIEW,
-                                        uri);
-                                startActivity(intent);*/
-                                if(!UpdateService.is_downloading)
-                                { Intent updateIntent = new Intent(
-                                        UserActivity.this,
-                                        UpdateService.class);
-                                updateIntent.putExtra(
-                                        "url",
-                                        appVersionBean
-                                                .getDownloadUrl());
-                                updateIntent.putExtra("version_code",appVersionBean.getServerVersionCode());
-                                startService(updateIntent);}else {toast("正在进行下载更新");}
-                            } catch (ActivityNotFoundException e) {
-                                e.printStackTrace();
-
-							/*	CalldaToast calldaToast = new CalldaToast();
-                                calldaToast.showToast(getApplicationContext(),
-										R.string.upgrade_openfailed);*/
-                                toast(getString(R.string.upgrade_openfailed));
-                            }
-                        }
-                    });
-            builder.setNegativeButton(R.string.exit,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    });
-
-            AlertDialog alertDialog = builder.create();
-            alertDialog.setCanceledOnTouchOutside(false);
-            alertDialog.setCancelable(false);
-            alertDialog.show();
-
-        } else {
-            // 是否已提示过升级
-          /*  boolean noticedUpgrade = mSharedPreferenceUtil.getBoolean(
-                    Constant.IS_NOTICE_UPGRADE, false);
-            if (noticedUpgrade) {
-                // 只提示一次
-                return;
-            }*/
-
-            if (appVersionBean.isHasNewVersion()) {
-                // 存在新版本
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(R.string.sjts);
-                builder.setMessage(R.string.upgrade_findnewversion);
-                builder.setPositiveButton(R.string.upgrade,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-                                try {
-                                 /*   Uri uri = Uri.parse(appVersionBean
-                                            .getDownloadUrl());
-                                    Intent intent = new Intent(
-                                            Intent.ACTION_VIEW, uri);
-                                    startActivity(intent);*/
-                                    if(!UpdateService.is_downloading)
-                                    { Intent updateIntent = new Intent(
-                                            UserActivity.this,
-                                            UpdateService.class);
-                                        updateIntent.putExtra(
-                                                "url",
-                                                appVersionBean
-                                                        .getDownloadUrl());
-                                        updateIntent.putExtra("version_code",appVersionBean.getServerVersionCode());
-                                        startService(updateIntent);}else {toast("正在进行下载更新");}
-                                } catch (ActivityNotFoundException e) {
-                                    e.printStackTrace();
-                                    /*CalldaToast calldaToast = new CalldaToast();
-                                    calldaToast.showToast(
-											getApplicationContext(),
-											R.string.upgrade_openfailed);*/
-                                    toast(getString(R.string.upgrade_openfailed));
-                                }
-
-                                mSharedPreferenceUtil
-                                        .putBoolean(Constant.IS_NOTICE_UPGRADE,
-                                                false, true);
-                            }
-                        });
-                builder.setNegativeButton(R.string.cancel,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-
-                                mSharedPreferenceUtil.putBoolean(
-                                        Constant.IS_NOTICE_UPGRADE, true, true);
-
-
-                            }
-                        });
-
-                AlertDialog alertDialog = builder.create();
-                alertDialog.setCanceledOnTouchOutside(true);
-                alertDialog.setCancelable(true);
-                alertDialog.show();
-
-            } else {
-                // 无新版本
-                toast(R.string.upgrade_no);
-            }
-        }
-    }
 
     /**
      * 重写onkeyDown 捕捉返回键

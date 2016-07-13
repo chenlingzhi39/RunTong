@@ -29,6 +29,7 @@ import com.bumptech.glide.Glide;
 import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.DialAd;
 import com.callba.phone.bean.UserDao;
+import com.callba.phone.manager.ContactsManager;
 import com.google.gson.Gson;
 import com.google.gson.internal.bind.ArrayTypeAdapter;
 import com.google.gson.reflect.TypeToken;
@@ -76,7 +77,7 @@ public class CallbackDisplayActivity extends BaseActivity {
     private Gson gson;
     private DialAd dialAd;
     private ImageView background;
-
+    private CircleImageView avatar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //loadADImage();
@@ -86,6 +87,7 @@ public class CallbackDisplayActivity extends BaseActivity {
         tv_status = (TextView) findViewById(R.id.tv_status);
         cancel = (Button) findViewById(R.id.cancel);
         background = (ImageView) findViewById(R.id.iv_call_bg);
+        avatar=(CircleImageView) findViewById(R.id.avatar);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +98,10 @@ public class CallbackDisplayActivity extends BaseActivity {
         Bundle bundle = intent.getExtras();
         name = bundle.getString("name");
         number = bundle.getString("number");
+        if(!bundle.getString("id").equals(""))
+        {Bitmap bitmap=ContactsManager.getAvatar(this,bundle.getString("id"),true);
+            if(bitmap!=null)
+        avatar.setImageBitmap(bitmap);}
         tv_name.setText(name);
         tv_num.setText(number);
         // tv_status.setText(number);

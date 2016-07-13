@@ -34,12 +34,10 @@ import com.callba.phone.BaseActivity;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.ContactData;
 import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalSetting;
-import com.callba.phone.controller.EaseUI;
 import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.service.MainService;
@@ -47,15 +45,11 @@ import com.callba.phone.service.UpdateService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.AppVersionChecker.AppVersionBean;
-import com.callba.phone.util.BitmapUtil;
-import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.ZipUtil;
-import com.hyphenate.chat.EMClient;
 
-import me.iwf.photopicker.PhotoPickerActivity;
 
 @ActivityFragmentInject(
 		contentViewId = R.layout.welcome_page
@@ -241,7 +235,7 @@ public class WelcomeActivity extends BaseActivity {
 			mSharedPreferenceUtil.putString(Constant.SECRET_KEY, secretKey,
 					true);
 		}
-
+        CalldaGlobalConfig.getInstance().setAppVersionBean(appVersionBean);
 		// 检查是否成功获取加密Key
 		checkLoginKey(appVersionBean);
 	}
@@ -259,7 +253,8 @@ public class WelcomeActivity extends BaseActivity {
 		if (!TextUtils.isEmpty(appVersionBean.getSecretKey())) {
 
 			// 成功获取key
-			check2Upgrade(appVersionBean);
+			//check2Upgrade(appVersionBean);
+			gotoActivity();
 		} else if (currentGetVersionTime <= Constant.GETVERSION_RETRY_TIMES) {
 
 			// 再次发送获取任务
@@ -278,7 +273,8 @@ public class WelcomeActivity extends BaseActivity {
 				// 提示用户获取失败
 				alertUserGetVersionFailed();
 			} else {
-				check2Upgrade(appVersionBean);
+				//check2Upgrade(appVersionBean);
+				gotoActivity();
 			}
 		}
 	}
@@ -330,132 +326,6 @@ public class WelcomeActivity extends BaseActivity {
 		alertDialog.setCanceledOnTouchOutside(false);
 		alertDialog.setCancelable(false);
 		alertDialog.show();
-	}
-
-	/**
-	 * 检查升级
-	 */
-	private void check2Upgrade(final AppVersionBean appVersionBean) {
-		if (appVersionBean.isForceUpgrade()) {
-			// 强制升级
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(R.string.sjts);
-			builder.setMessage(R.string.sjtsxx);
-			builder.setPositiveButton(R.string.upgrade,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							try {
-							/*	Uri uri = Uri.parse(appVersionBean
-										.getDownloadUrl());
-								Intent intent = new Intent(Intent.ACTION_VIEW,
-										uri);
-								startActivity(intent);*/
-								Intent updateIntent = new Intent(
-										WelcomeActivity.this,
-										UpdateService.class);
-								updateIntent.putExtra(
-										"url",
-										appVersionBean
-												.getDownloadUrl());
-								updateIntent.putExtra("version_code",appVersionBean.getServerVersionCode());
-								startService(updateIntent);
-							} catch (ActivityNotFoundException e) {
-								e.printStackTrace();
-
-							/*	CalldaToast calldaToast = new CalldaToast();
-								calldaToast.showToast(getApplicationContext(),
-										R.string.upgrade_openfailed);*/
-								toast(getString(R.string.upgrade_openfailed));
-							}
-						}
-					});
-			builder.setNegativeButton(R.string.exit,
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							finish();
-						}
-					});
-
-			AlertDialog alertDialog = builder.create();
-			alertDialog.setCanceledOnTouchOutside(false);
-			alertDialog.setCancelable(false);
-			alertDialog.show();
-
-		} else {
-			// 是否已提示过升级
-			boolean noticedUpgrade = mSharedPreferenceUtil.getBoolean(
-					Constant.IS_NOTICE_UPGRADE, false);
-			if (noticedUpgrade) {
-				// 只提示一次
-				gotoActivity();
-				return;
-			}
-
-			if (appVersionBean.isHasNewVersion()) {
-				// 存在新版本
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setTitle(R.string.sjts);
-				builder.setMessage(R.string.upgrade_findnewversion);
-				builder.setPositiveButton(R.string.upgrade,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								try {
-									/*Uri uri = Uri.parse(appVersionBean
-											.getDownloadUrl());
-									Intent intent = new Intent(
-											Intent.ACTION_VIEW, uri);
-									startActivity(intent);*/
-									Intent updateIntent = new Intent(
-											WelcomeActivity.this,
-											UpdateService.class);
-									updateIntent.putExtra(
-											"url",
-											appVersionBean
-													.getDownloadUrl());
-									updateIntent.putExtra("version_code",appVersionBean.getServerVersionCode());
-									startService(updateIntent);
-								} catch (ActivityNotFoundException e) {
-									e.printStackTrace();
-									/*CalldaToast calldaToast = new CalldaToast();
-									calldaToast.showToast(
-											getApplicationContext(),
-											R.string.upgrade_openfailed);*/
-									toast(getString(R.string.upgrade_openfailed));
-								}
-
-								mSharedPreferenceUtil
-										.putBoolean(Constant.IS_NOTICE_UPGRADE,
-												false, true);
-								gotoActivity();
-							}
-						});
-				builder.setNegativeButton(R.string.cancel,
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-
-								mSharedPreferenceUtil.putBoolean(
-										Constant.IS_NOTICE_UPGRADE, true, true);
-
-								gotoActivity();
-							}
-						});
-
-				AlertDialog alertDialog = builder.create();
-				alertDialog.setCanceledOnTouchOutside(false);
-				alertDialog.setCancelable(false);
-				alertDialog.show();
-
-			} else {
-				// 无新版本
-				gotoActivity();
-			}
-		}
 	}
 
 	/**

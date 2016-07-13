@@ -39,14 +39,14 @@ public class CallUtils {
 	 * @param callNum
 	 * @param callname
 	 */
-	public void judgeCallMode(Context context, String callNum, String callname) {
+	public void judgeCallMode(Context context, String callNum, String callname,String id) {
 		callSeting = CalldaGlobalConfig.getInstance().getCallSetting();
 		callNum = PhoneUtils.formatAvailPhoneNumber(callNum);
 		
 		callNum = addQuHao(context, callNum);
 		Log.i("callSetting",callSeting);
 		if (Constant.CALL_SETTING_HUI_BO.equals(callSeting)) {
-			dialCallback(context, callNum,callname);
+			dialCallback(context, callNum,callname,id);
 		} else if (Constant.CALL_SETTING_ZHI_BO.equals(callSeting)) {
 //			directDial(context, callNum,callname);
 		} else if (Constant.CALL_SETTING_SHOU_DONG.equals(callSeting)) {
@@ -55,7 +55,7 @@ public class CallUtils {
 			if (NetWorkUtil.getNetworkInfoLevel(context, 6, false)) {
 //				directDial(context, callNum,callname);
 			} else {
-				dialCallback(context, callNum,callname);
+				dialCallback(context, callNum,callname,id);
 			}
 		}
 	}
@@ -66,9 +66,11 @@ public class CallUtils {
 	 * @param callNumber
 	 */
 	public void judgeCallMode(Context context, String callNumber) {
-		judgeCallMode(context, callNumber, queryNameByPhoneNumber(callNumber));
+		judgeCallMode(context, callNumber, queryNameByPhoneNumber(callNumber),queryIdByPhoneNumber(callNumber));
 	}
-	
+	public void judgeCallMode(Context context,String callNumber, String name) {
+		judgeCallMode(context, callNumber, name,queryIdByPhoneNumber(callNumber));
+	}
 	/**
 	 * 自动选择呼叫方式呼叫 
 	 * @param context
@@ -84,7 +86,7 @@ public class CallUtils {
 		callNumber = addQuHao(context, callNumber);
 		if (Constant.CALL_SETTING_HUI_BO.equals(callSeting)) {
 			//回拨
-			dialCallback(context, callNumber, callUserName);
+			//dialCallback(context, callNumber, callUserName);
 			callModeDialogDismissListener.onDialogDismiss();
 		} else if (Constant.CALL_SETTING_ZHI_BO.equals(callSeting)) {
 			//直拨
@@ -107,7 +109,7 @@ public class CallUtils {
 			if (NetWorkUtil.getNetworkInfoLevel(context, 6, false)) {
 //				directDial(context, callNumber, callUserName);
 			} else {
-				dialCallback(context, callNumber, callUserName);
+				//dialCallback(context, callNumber, callUserName);
 			}
 			//智能选择拨打方式
 			callModeDialogDismissListener.onDialogDismiss();
@@ -144,7 +146,31 @@ public class CallUtils {
 		
 		return phoneNumber;
 	}
+	private String queryIdByPhoneNumber(String phoneNumber) {
+		if(TextUtils.isEmpty(phoneNumber)) {
+			return "";
+		}
 
+		List<ContactPersonEntity> personEntities =
+				CalldaGlobalConfig.getInstance().getContactBeans();
+
+		if(personEntities == null || personEntities.isEmpty()) {
+			return "";
+		}
+
+		for(ContactPersonEntity entity : personEntities) {
+			String phoneNum = entity.getPhoneNumber();
+			if(TextUtils.isEmpty(phoneNum)) {
+				continue;
+			}
+
+			if(phoneNumber.equals(phoneNum)) {
+				return entity.get_id();
+			}
+		}
+
+		return "";
+	}
 	/**
 	 * 添加区号
 	 * @param quhao
@@ -240,13 +266,14 @@ public class CallUtils {
 	/**
 	 * 回拨
 	 */
-	private void dialCallback(final Context context, final String callNum,String name) {
+	private void dialCallback(final Context context, final String callNum,String name,String id) {
 		Intent intent=new Intent();
 		intent.setClass(context, CallbackDisplayActivity.class);
 		Bundle bundle=new Bundle();
 		bundle.putString("name", name);
 		bundle.putString("number", callNum);
 		bundle.putString("callsetting", callSeting);
+		bundle.putString("id",id);
 		intent.putExtras(bundle);
 		context.startActivity(intent);
 		

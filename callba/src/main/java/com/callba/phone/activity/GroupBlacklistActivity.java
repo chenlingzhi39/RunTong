@@ -9,14 +9,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.util.EaseUserUtils;
 import com.hyphenate.chat.EMClient;
 
 import com.hyphenate.exceptions.HyphenateException;
@@ -83,6 +86,7 @@ public class GroupBlacklistActivity extends BaseActivity {
 			final String tobeRemoveUser = adapter.getItem(((AdapterContextMenuInfo) item.getMenuInfo()).position);
 			// 移出黑名单
 			removeOutBlacklist(tobeRemoveUser);
+			setResult(RESULT_OK);
 			return true;
 		}
 		return super.onContextItemSelected(item);
@@ -124,10 +128,10 @@ public class GroupBlacklistActivity extends BaseActivity {
 			if (convertView == null) {
 				convertView = View.inflate(getContext(), R.layout.ease_row_contact, null);
 			}
-
 			TextView name = (TextView) convertView.findViewById(R.id.name);
-			name.setText(getItem(position));
-
+			EaseUserUtils.setUserNick(getItem(position),name);
+			ImageView avatar=(ImageView) convertView.findViewById(R.id.avatar);
+			EaseUserUtils.setUserAvatar(GroupBlacklistActivity.this,getItem(position),avatar);
 			return convertView;
 		}
 

@@ -122,7 +122,7 @@ public class UpdateService extends Service {
 					notificationManager.notify(notification_id,builder.build() );
                     is_downloading=false;
 					startActivity(intent);
-					//stopSelf();
+					stopSelf();
 					break;
 				case DOWN_ERROR:
 					/*notification = new Notification(android.R.drawable.stat_notify_error, "下载失败", System.currentTimeMillis());
@@ -138,8 +138,8 @@ public class UpdateService extends Service {
 					builder.setTicker("下载失败");
 					notificationManager.notify(notification_id,builder.build() );
 					is_downloading=false;
+					stopSelf();
 					break;
-
 				default:
 					//stopSelf();
 					break;
@@ -291,6 +291,7 @@ public class UpdateService extends Service {
 			notification.setLatestEventInfo(UpdateService.this,
 					app_name, "下载失败", pendingIntent);*/
 			is_downloading=false;
+			stopSelf();
 			throw new Exception("fail!");
 		}
 		inputStream = httpURLConnection.getInputStream();

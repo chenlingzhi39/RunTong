@@ -118,10 +118,10 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                if(CalldaGlobalConfig.getInstance().getAdvertisements2() != null&&CalldaGlobalConfig.getInstance().getAdvertisements2().size()>0)
+                { Intent intent1 = new Intent(Intent.ACTION_VIEW);
                 intent1.setData(Uri.parse(CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getAdurl()));
-                if(CalldaGlobalConfig.getInstance().getAdvertisements2() != null)
-                startActivity(intent1);
+                startActivity(intent1);}
             }
         });
         banner.setViewRes(localImages);
@@ -269,17 +269,15 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             }
         });
         if (CalldaGlobalConfig.getInstance().getAdvertisements2() != null)
-        { if (CalldaGlobalConfig.getInstance().getAdvertisements2().size()>0) {
-            Logger.i("ad_image", CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getImage());
+        {Logger.i("ad_image", CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getImage());
             SimpleHandler.getInstance().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     Glide.with(FriendActivity.this).load(CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getImage()).into(imageView);
                 }
             }, 500);
-
         } else
-            userDao1.getAd(2, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());}
+            userDao1.getAd(2, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
 
     }
     private void showDialog(final NearByUser entity) {

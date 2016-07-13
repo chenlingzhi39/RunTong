@@ -76,7 +76,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 	private static final int REQUEST_CODE_EXIT = 1;
 	private static final int REQUEST_CODE_EXIT_DELETE = 2;
 	private static final int REQUEST_CODE_EDIT_GROUPNAME = 5;
-
+    private static final int MOVE_TO_BLACKLIST=6;
 
 	private EaseExpandGridView userGridview;
 	private String groupId;
@@ -261,6 +261,26 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 					setResult(REQUEST_CODE_EDIT_GROUPNAME,data);
 				}
 				break;
+				case MOVE_TO_BLACKLIST:
+					if(resultCode == RESULT_OK){
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								try {
+									EMClient.getInstance().groupManager().getGroupFromServer(groupId);
+								}catch (HyphenateException e){}
+								runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										group = EMClient.getInstance().groupManager().getGroup(groupId);
+										refreshMembers();
+									}
+								});
+							}
+						}).start();
+
+					}
+					break;
 			default:
 				break;
 			}
@@ -276,8 +296,10 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
         	public void run() {
         		try {
         			EMClient.getInstance().groupManager().blockUser(groupId, username);
+					EMClient.getInstance().groupManager().getGroupFromServer(groupId);
         			runOnUiThread(new Runnable() {
         				public void run() {
+							group = EMClient.getInstance().groupManager().getGroup(groupId);
         				    refreshMembers();
         				    pd.dismiss();
         					Toast.makeText(getApplicationContext(), R.string.Move_into_blacklist_success, 0).show();
@@ -460,7 +482,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 			break;
 
 		case R.id.rl_blacklist: // 黑名单列表
-			startActivity(new Intent(GroupDetailsActivity.this, GroupBlacklistActivity.class).putExtra("groupId", groupId));
+			startActivityForResult(new Intent(GroupDetailsActivity.this, GroupBlacklistActivity.class).putExtra("groupId", groupId),MOVE_TO_BLACKLIST);
 			break;
 
 		case R.id.rl_change_group_name:
@@ -771,7 +793,8 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
                                 public void onResult(boolean confirmed, Bundle bundle) {
                                     if(confirmed){
                                         addUserToBlackList(username);
-                                    }
+
+									}
                                 }
                             }, true).show();
 							
