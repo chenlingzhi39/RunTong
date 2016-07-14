@@ -208,7 +208,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.ACTION_TAB_ONRESUME);
         registerReceiver(mainTabOnResumeReceiver, filter);
-        //  userDao.getAd(3,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
+        userDao.getAd(3,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
 
     }
 
@@ -481,11 +481,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         if (CalldaGlobalConfig.getInstance().getAdvertisements3() != null)
             if (CalldaGlobalConfig.getInstance().getAdvertisements3().size() == 0)
                 userDao.getAd(3, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
-       // userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(MainCallActivity.this, "Call吧电话"));
-        /*if (phoneNumTextWatcher == null) {
-            phoneNumTextWatcher = new PhoneNumTextWatcher(et_number);
-            et_number.addTextChangedListener(phoneNumTextWatcher);
-        }*/
+
         super.onResume();
     }
 

@@ -49,7 +49,7 @@ public class CalllogFragment extends BaseFragment {
             public void onQueryCompleted(final List<CalldaCalllogBean> calldaCalllogBeans) {
                 if(calldaCalllogBeans.size()>0)
                 {  List<String> numbers=((ContactMutliNumBean)getArguments().get("contact")).getContactPhones();
-                   ArrayList<CalldaCalllogBean> beans=new ArrayList<>();
+                    ArrayList<CalldaCalllogBean> beans=new ArrayList<>();
                     for(CalldaCalllogBean bean:calldaCalllogBeans){
                          if(numbers.contains(bean.getCallLogNumber()))
                              beans.add(bean);
@@ -63,8 +63,8 @@ public class CalllogFragment extends BaseFragment {
                     @Override
                     public void onItemClick(int position) {
                         Intent intent=new Intent(getActivity(), SelectDialPopupWindow.class);
-                        intent.putExtra("name",calldaCalllogBeans.get(position).getDisplayName());
-                        intent.putExtra("number",calldaCalllogBeans.get(position).getCallLogNumber());
+                        intent.putExtra("name",calllogAdapter.getData().get(position).getDisplayName());
+                        intent.putExtra("number",calllogAdapter.getData().get(position).getCallLogNumber());
                         startActivity(intent);
                     }
                 });

@@ -106,8 +106,6 @@ public class CallbackDisplayActivity extends BaseActivity {
         tv_num.setText(number);
         // tv_status.setText(number);
         calllogService = new CalllogService(this, null);
-        if (CalldaGlobalConfig.getInstance().getKeyBoardSetting())
-            playSound();
         callback();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -181,6 +179,8 @@ public class CallbackDisplayActivity extends BaseActivity {
                             //回拨成功，开启自动接听
                             AutoAnswerReceiver.answerPhone(CallbackDisplayActivity.this);
                             calllogService.saveBackCallLog("", number);
+                            if (CalldaGlobalConfig.getInstance().getKeyBoardSetting())
+                                playSound();
                         } else {
                             //统计回拨失败数据
                             countCallbackFailedData(content[1]);

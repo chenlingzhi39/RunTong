@@ -107,7 +107,7 @@ public class UserActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.account, R.id.change_info, R.id.change_password, R.id.retrieve, R.id.logout, R.id.about, R.id.help, R.id.update})
+    @OnClick({R.id.account, R.id.change_info, R.id.change_password, R.id.retrieve, R.id.logout, R.id.about, R.id.help, R.id.update, R.id.user_head})
     public void onClick(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -185,6 +185,10 @@ public class UserActivity extends BaseActivity {
                 Log.i("click", "update");
                 sendGetVersionTask();
                 break;
+            case R.id.user_head:
+                intent = new Intent(UserActivity.this, ChangeInfoActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
@@ -237,7 +241,7 @@ public class UserActivity extends BaseActivity {
 
         if (!TextUtils.isEmpty(appVersionBean.getSecretKey())) {
             // 成功获取key
-            check2Upgrade(appVersionBean,true);
+            check2Upgrade(appVersionBean, true);
         } else {
             // 统计获取版本失败次数
             //MobclickAgent.onEvent(this, "version_timeout");
@@ -252,7 +256,7 @@ public class UserActivity extends BaseActivity {
                 //alertUserGetVersionFailed();
                 toast(R.string.net_error_getdata_fail);
             } else {
-                check2Upgrade(appVersionBean,true);
+                check2Upgrade(appVersionBean, true);
             }
         }
     }

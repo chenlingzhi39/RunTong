@@ -52,10 +52,6 @@ public class ContactActivity2 extends BaseActivity {
     @InjectView(R.id.viewpager)
     ViewPager viewpager;
     private int index;
-    private LocalBroadcastManager broadcastManager;
-    private BroadcastReceiver broadcastReceiver;
-    private WebContactFragment webContactFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,12 +59,10 @@ public class ContactActivity2 extends BaseActivity {
         ButterKnife.inject(this);
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
         layoutTab.setupWithViewPager(viewpager);
-        broadcastManager=LocalBroadcastManager.getInstance(this);
-        //registerBroadcastReceiver();
-        //webContactFragment=new WebContactFragment();
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                    index=position;
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     Log.i("active",imm.isActive()+"");
                     if(imm.isActive())
@@ -158,33 +152,9 @@ public class ContactActivity2 extends BaseActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    private void registerBroadcastReceiver() {
-        broadcastManager = LocalBroadcastManager.getInstance(this);
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constant.ACTION_CONTACT_CHANAGED);
-        broadcastReceiver = new BroadcastReceiver() {
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                SimpleHandler.getInstance().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(webContactFragment!=null)
-                        webContactFragment.refresh();
-                    }
-                });
-
-            }
-        };
-        broadcastManager.registerReceiver(broadcastReceiver, intentFilter);
-    }
-    private void unregisterBroadcastReceiver(){
-        broadcastManager.unregisterReceiver(broadcastReceiver);
-    }
 
     @Override
     protected void onDestroy() {
-        //unregisterBroadcastReceiver();
         super.onDestroy();
     }
     /**

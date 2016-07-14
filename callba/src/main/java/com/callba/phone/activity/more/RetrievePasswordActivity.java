@@ -4,6 +4,8 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -108,6 +110,15 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 		bn_submit.setOnClickListener(this);
 		
 		et_phoneNum = (EditText) this.findViewById(R.id.et_retrpass_phone);
+		et_phoneNum.requestFocus();
+		Timer timer = new Timer(); //设置定时器
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() { //弹出软键盘的代码
+				InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.toggleSoftInputFromWindow(et_phoneNum.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
+			}
+		}, 300); //设置300毫秒的时长
 	}
 
 	@Override

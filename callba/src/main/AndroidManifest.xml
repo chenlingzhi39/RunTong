@@ -368,7 +368,8 @@
             android:name="com.callba.phone.activity.more.RetrievePasswordActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme" />
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
 
         <!--
         <activity
@@ -562,7 +563,7 @@
     <uses-permission android:name="android.permission.RAISED_THREAD_PRIORITY" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <!-- 自动接听 -->
-   <!-- <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />-->
+    <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
 

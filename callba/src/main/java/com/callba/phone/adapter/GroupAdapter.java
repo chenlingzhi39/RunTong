@@ -14,6 +14,7 @@
 package com.callba.phone.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.callba.R;
+import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
 
 
@@ -112,7 +114,8 @@ public class GroupAdapter extends ArrayAdapter<EMGroup> {
 				convertView = inflater.inflate(R.layout.em_row_group, null);
 			}
 			((TextView) convertView.findViewById(R.id.name)).setText(getItem(position - 3).getGroupName());
-
+            if(getItem(position - 3).getOwner().equals(EMClient.getInstance().getCurrentUser()))
+				((TextView) convertView.findViewById(R.id.name)).setTextColor(Color.parseColor("#ffcc0000"));
 		}
 
 		return convertView;

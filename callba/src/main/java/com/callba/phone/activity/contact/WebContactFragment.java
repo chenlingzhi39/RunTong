@@ -89,7 +89,6 @@ public class WebContactFragment extends BaseFragment {
     @InjectView(R.id.content_container)
     FrameLayout contentContainer;
     protected ListView listView;
-    private List<String> usernames;
     protected List<EaseUser> contactList;
     Map<String, EaseUser> contactsMap;
     private ContactItemView applicationItem;
@@ -403,15 +402,6 @@ public class WebContactFragment extends BaseFragment {
 
 
     }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.inject(this, rootView);
-        return rootView;
-    }
-
     protected class HeaderItemClickListener implements View.OnClickListener {
 
         @Override

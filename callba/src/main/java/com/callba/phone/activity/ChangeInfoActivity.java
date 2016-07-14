@@ -3,6 +3,8 @@ package com.callba.phone.activity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,8 +16,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.Selection;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -28,6 +34,7 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.service.UpdateService;
 import com.callba.phone.util.BitmapUtil;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NumberAddressService;
@@ -41,6 +48,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -235,9 +244,36 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
                 Logger.i("sign",signature.getHint().toString().equals(CalldaGlobalConfig.getInstance().getSignature())+"");
                     userDao1.changeInfo(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(),!nickName.getHint().toString().equals(CalldaGlobalConfig.getInstance().getNickname())?nickName.getHint().toString():null,!signature.getHint().toString().equals(CalldaGlobalConfig.getInstance().getSignature())?signature.getHint().toString():null);
                 break;
+               case android.R.id.home:
+                Log.i("base", "finish");
+                   if(!nickName.getHint().toString().equals(CalldaGlobalConfig.getInstance().getNickname())||!signature.getHint().toString().equals(CalldaGlobalConfig.getInstance().getSignature())||f!=null)
+                   {android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+                   builder.setMessage("当前信息未保存,确定退出？");
+                   builder.setPositiveButton(R.string.ok,
+                           new DialogInterface.OnClickListener() {
+                               @Override
+                               public void onClick(DialogInterface dialog,
+                                                   int which) {
+                                    finish();
+                               }
+                           });
+                   builder.setNegativeButton(R.string.cancel,
+                           new DialogInterface.OnClickListener() {
+                               @Override
+                               public void onClick(DialogInterface dialog,
+                                                   int which) {
+                                  dialog.dismiss();
+                               }
+                           });
+                   android.app.AlertDialog alertDialog = builder.create();
+                   alertDialog.setCanceledOnTouchOutside(true);
+                   alertDialog.setCancelable(true);
+                   alertDialog.show();}else finish();
+                break;
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
+
     public class DialogHelper implements DialogInterface.OnDismissListener {
         private Dialog mDialog;
         private View mView;
@@ -246,12 +282,24 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         public DialogHelper(int id) {
             mView = getLayoutInflater().inflate(id, null);
             change = (EditText) mView.findViewById(R.id.et_change);
+            change.requestFocus();
+            Timer timer = new Timer(); //设置定时器
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() { //弹出软键盘的代码
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInputFromWindow(change.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }, 300); //设置300毫秒的时长
         }
 
         private String getText() {
             return change.getText().toString();
         }
-        public void setText(String s){change.setText(s);}
+        public void setText(String s){change.setText(s);
+            Editable etext = change.getText();
+            Selection.setSelection(etext, etext.length());
+        }
         @Override
         public void onDismiss(DialogInterface dialogInterface) {
             mDialog = null;
@@ -351,8 +399,8 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         intent.putExtra("crop", "true");
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 700);
-        intent.putExtra("outputY", 700);
+        intent.putExtra("outputX",150);
+        intent.putExtra("outputY",150);
         intent.putExtra("return-data", false);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageCropUri);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());

@@ -1,6 +1,8 @@
 package com.callba.phone.activity;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -14,6 +16,8 @@ import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.SharedPreferenceUtil;
 
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,6 +69,15 @@ public class ChangePasswordActivity extends BaseActivity implements UserDao.Post
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
         userDao=new UserDao(this,this);
+        oldPassword.requestFocus();
+        Timer timer = new Timer(); //设置定时器
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() { //弹出软键盘的代码
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInputFromWindow(oldPassword.getWindowToken(), 0,InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }, 300); //设置300毫秒的时长
     }
 
     @OnClick(R.id.ok)

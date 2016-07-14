@@ -11,17 +11,31 @@
         android:background="@drawable/dialback_bg"
         />
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:layout_marginTop="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1.9"
             android:gravity="center"
-            android:orientation="vertical" >
+            android:orientation="horizontal" >
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/avatar"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/answer_head"
+                android:layout_marginLeft="30dp"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tv_name"
@@ -62,20 +76,21 @@
                     android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
-
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="4"
             android:gravity="center_horizontal"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+       >
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/avatar"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:src="@drawable/answer_head"
-                />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -118,7 +133,8 @@
                     android:paddingBottom="5dp"
                     android:textColor="?attr/colorAccent" />
             </RelativeLayout>
-        </LinearLayout>
+
+            </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>
