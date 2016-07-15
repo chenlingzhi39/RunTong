@@ -1,5 +1,6 @@
 package com.callba.phone.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -69,12 +70,15 @@ public class FamilyActivity extends BaseActivity {
             case R.id.btn_commission:
                 break;
             case R.id.order:
+                startActivity(new Intent(this,OrderActivity.class));
                 break;
             case R.id.commission_detail:
                 break;
             case R.id.team:
+                startActivity(new Intent(this,TeamActivity.class));
                 break;
             case R.id.type:
+                startActivity(new Intent(this,ATypeActivity.class));
                 break;
             case R.id.qr_code:
                 break;

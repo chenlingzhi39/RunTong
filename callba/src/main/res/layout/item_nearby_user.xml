@@ -27,7 +27,6 @@
             android:layout_marginLeft="20dp"
             android:layout_toRightOf="@+id/user_head"
             android:orientation="horizontal"
-
             >
 
             <TextView

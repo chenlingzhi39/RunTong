@@ -85,7 +85,7 @@ public class UserActivity extends BaseActivity {
         ButterKnife.inject(this);
         number.setText(CalldaGlobalConfig.getInstance().getUsername());
         if (!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
-            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(userHead);
+            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).placeholder(R.drawable.logo).into(userHead);
         Log.i("head", CalldaGlobalConfig.getInstance().getUserhead());
         if (!CalldaGlobalConfig.getInstance().getNickname().equals("")) {
             word.setText(CalldaGlobalConfig.getInstance().getSignature());

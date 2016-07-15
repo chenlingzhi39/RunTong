@@ -1,16 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.callba"
-    android:versionCode="103"
+    android:versionCode="112"
     android:versionName="1.1.2">
 
-    <uses-sdk
-        android:minSdkVersion="8" />
+    <uses-sdk android:minSdkVersion="8" />
 
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
         android:normalScreens="true"
-        android:smallScreens="true"/>
+        android:smallScreens="true" />
 
     <application
         android:name="com.callba.phone.MyApplication"
@@ -47,9 +46,9 @@
         <service android:name="com.amap.api.location.APSService"></service>
         <service android:name="com.callba.phone.service.MainService"></service>
 
-     <!--   <meta-data
-            android:name="UMENG_APPKEY"
-            android:value="5371aef356240bac320264f5" />-->
+        <!--   <meta-data
+               android:name="UMENG_APPKEY"
+               android:value="5371aef356240bac320264f5" />-->
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="576b786be0f55a6321000048" />
@@ -63,130 +62,147 @@
             android:value="c2c0420b2f48ef7fa0e69e8d1d0cc17f" >
         </meta-data>-->
 
-        <service android:name=".phone.service.UpdateService"/>
+        <service android:name=".phone.service.UpdateService" />
+
         <activity
             android:name=".phone.activity.SelectDialPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />
         <activity
             android:name=".phone.activity.SelectPicPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />
-        <activity android:name=".phone.activity.FamilyActivity"
+        <activity android:name=".phone.activity.ATypeActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             />
-        <activity android:name=".phone.activity.contact.CalllogDetailActivity"
+        <activity android:name=".phone.activity.TeamActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.activity.contact.ContactDetailActivity2"
+            android:theme="@style/BaseAppTheme.AppTheme"/>
+        <activity
+            android:name=".phone.activity.FamilyActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/DetailTheme"
-            />
-        <activity android:name=".phone.activity.EditActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.OrderActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.contact.CalllogDetailActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.contact.ContactDetailActivity2"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/DetailTheme" />
+        <activity
+            android:name=".phone.activity.EditActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.ExitGroupDialog"
             android:screenOrientation="portrait"
             android:theme="@style/MyDialogStyleBottom"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
-        <activity android:name=".phone.activity.GroupBlacklistActivity"
+            android:windowSoftInputMode="adjustPan"></activity>
+        <activity
+            android:name=".phone.activity.GroupBlacklistActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.GroupDetailsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.activity.GroupDetailsActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".phone.activity.GroupSimpleDetailActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan"
-            />
-        <activity android:name=".phone.activity.GroupSimpleDetailActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".phone.activity.PublicGroupsSeachActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan"
-            />
-        <activity android:name=".phone.activity.PublicGroupsSeachActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".phone.activity.PublicGroupsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan"
-            />
-        <activity android:name=".phone.activity.PublicGroupsActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".phone.activity.GroupPickContactsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.NewGroupActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.GroupsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan"
-            />
-        <activity android:name=".phone.activity.GroupPickContactsActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".phone.activity.SettingsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"/>
-        <activity android:name=".phone.activity.NewGroupActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.GoldActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.activity.GroupsActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.BalanceActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan"
-            />
-        <activity android:name=".phone.activity.SettingsActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.GeocoderActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.activity.GoldActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"/>
-        <activity android:name=".phone.activity.BalanceActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"/>
-        <activity android:name=".phone.GeocoderActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.BlacklistActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.activity.BlacklistActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".phone.activity.SignInActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            />
-        <activity android:name=".phone.activity.SignInActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.activity.NewFriendsMsgActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.NewFriendsMsgActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            />
-        <activity android:name=".phone.activity.AddContactActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".phone.activity.AddContactActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize"
-            />
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".phone.activity.ChatActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="com.callba.phone.activity.WelcomeActivity"
             android:label="@string/app_name"
@@ -199,44 +215,44 @@
             </intent-filter>
         </activity>
         <!-- 显示下载大图页面 -->
-        <activity android:name=".phone.activity.contact.ContactActivity2"
+        <activity
+            android:name=".phone.activity.contact.ContactActivity2"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan"
-            />
-        <activity android:name=".phone.activity.ClauseActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".phone.activity.ClauseActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
+            android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name="com.callba.phone.widget.chatrow.EaseShowBigImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide" />
-        <activity android:name=".phone.activity.HelpActivity"
+        <activity
+            android:name=".phone.activity.HelpActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.activity.AboutActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.activity.AboutActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"/>
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity" />
         <activity
             android:name="com.alipay.sdk.app.H5PayActivity"
             android:configChanges="orientation|keyboardHidden|navigation"
             android:exported="false"
             android:screenOrientation="behind"
-            android:theme="@android:style/Theme.Light.NoTitleBar"/>
+            android:theme="@android:style/Theme.Light.NoTitleBar" />
         <activity
             android:name="com.alipay.sdk.auth.AuthActivity"
             android:configChanges="orientation|keyboardHidden|navigation"
             android:exported="false"
             android:screenOrientation="behind"
-            android:theme="@android:style/Theme.Light.NoTitleBar"/>
+            android:theme="@android:style/Theme.Light.NoTitleBar" />
         <activity
             android:name=".phone.activity.CropActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
@@ -308,7 +324,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="com.callba.phone.activity.UserActivity"
             android:launchMode="singleTop"
@@ -342,7 +358,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="com.callba.phone.activity.MainCallActivity"
             android:launchMode="singleTop"
@@ -357,7 +373,6 @@
              android:theme="@android:style/Theme.Black.NoTitleBar" />-->
 
 
-
         <activity
             android:name="com.callba.phone.activity.more.QueryCalllogActivity"
             android:launchMode="singleTop"
@@ -369,7 +384,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize"/>
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--
         <activity
@@ -415,47 +430,47 @@
             android:screenOrientation="portrait"
             android:taskAffinity="com.runtong.call"
             android:theme="@style/dialog_no_title">
-         <!--  <intent-filter>
-                <action android:name="android.intent.action.CALL_BUTTON" />
+            <!--  <intent-filter>
+                   <action android:name="android.intent.action.CALL_BUTTON" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.CALL_PRIVILEGED" />
+                   <category android:name="android.intent.category.DEFAULT" />
+               </intent-filter>
+               <intent-filter>
+                   <action android:name="android.intent.action.CALL_PRIVILEGED" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                   <category android:name="android.intent.category.DEFAULT" />
+                   <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="tel" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.CALL" />
+                   <data android:scheme="tel" />
+               </intent-filter>
+               <intent-filter>
+                   <action android:name="android.intent.action.CALL" />
 
-                <category android:name="android.intent.category.DEFAULT" />
+                   <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:scheme="tel" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.DIAL" />
+                   <data android:scheme="tel" />
+               </intent-filter>
+               <intent-filter>
+                   <action android:name="android.intent.action.DIAL" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.DIAL" />
+                   <category android:name="android.intent.category.DEFAULT" />
+               </intent-filter>
+               <intent-filter>
+                   <action android:name="android.intent.action.VIEW" />
+                   <action android:name="android.intent.action.DIAL" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                   <category android:name="android.intent.category.DEFAULT" />
+                   <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="tel" />
-            </intent-filter>-->
+                   <data android:scheme="tel" />
+               </intent-filter>-->
         </activity>
 
-       <!-- <receiver android:name="com.callba.phone.activity.CallChooserBroadCast">
-            <intent-filter android:priority="2147483647">
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
-            </intent-filter>
-        </receiver>-->
+        <!-- <receiver android:name="com.callba.phone.activity.CallChooserBroadCast">
+             <intent-filter android:priority="2147483647">
+                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+             </intent-filter>
+         </receiver>-->
         <!-- push消息广播接收 -->
         <!--
         <receiver
@@ -513,13 +528,12 @@
 
         <service
             android:name="com.sina.weibo.sdk.net.DownloadService"
-            android:exported="false">
-        </service>
+            android:exported="false"></service>
         <!-- 腾讯SSO授权的Activity注册 -->
         <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"
-            android:noHistory="true" >
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -530,17 +544,17 @@
             </intent-filter>
         </activity>
         <activity android:name="com.tencent.plus.ImageActivity" />
-        <activity android:name="com.tencent.connect.common.AssistActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name="com.umeng.socialize.view.ShareActivity"
             android:configChanges="orientation|keyboard"
             android:launchMode="singleTask"
             android:noHistory="true"
             android:theme="@style/Theme.UMDialog"
-            android:windowSoftInputMode="stateVisible|adjustResize" >
-        </activity>
+            android:windowSoftInputMode="stateVisible|adjustResize"></activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -585,7 +599,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- Needed to store received images if the user wants to -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!--<uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" />-->
+    <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <!-- Needed to use our own Contact editor -->
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
@@ -595,35 +609,31 @@
     <!-- Needed to pre fill the wizard email field (only if enabled in custom settings) -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <!-- V1.2.3新增的权限, GET_TASKS用于检测APP是否处于前台、是否活着；REORDER_TASKS用于将APP切换到前台 -->
-<!--    <uses-permission android:name="android.permission.GET_TASKS" />-->
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.REORDER_TASKS" />
 
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
 
     <uses-permission android:name="getui.permission.GetuiService.com.runtong" />
-   <!-- <uses-permission android:name="android.permission.WRITE_APN_SETTINGS"/>-->
+    <uses-permission android:name="android.permission.WRITE_APN_SETTINGS" />
     <!--umeng-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-   <!-- <uses-permission android:name="android.permission.GET_TASKS" />-->
     <uses-permission android:name="android.permission.SET_DEBUG_APP" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-
-    <!-- 自定义权限 -->
-    <permission
-        android:name="getui.permission.GetuiService.com.callba"
-        android:protectionLevel="normal"></permission>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
 
 </manifest>

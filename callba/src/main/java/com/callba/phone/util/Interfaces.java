@@ -232,6 +232,18 @@ public interface Interfaces {
 	 * 添加多个好友
 	 */
 	String ADD_FRIENDS="http://inter.boboit.cn/inter/friend/addfriends.jsp";
+	/**
+	 * 订单
+	 */
+	String ORDER="http://inter.boboit.cn/inter/myorder/myorder.jsp";
+	/**
+	 * 团队
+	 */
+	String TEAM="http://inter.boboit.cn/inter/myteam/myteam.jsp";
+	/**
+	 * A类客户
+	 */
+	String A_TYPE="http://inter.boboit.cn/inter/mypotentialcustomer/mypotentialcustomer.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

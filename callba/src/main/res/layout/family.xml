@@ -37,7 +37,7 @@
       <android.support.v7.widget.AppCompatRatingBar
           android:layout_width="wrap_content"
           android:layout_height= "wrap_content"
-          style="@style/RatingBar"
+          style="?android:attr/ratingBarStyleSmall"
           android:numStars="5"
           android:rating="2"
           />

@@ -93,7 +93,7 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         if(!CalldaGlobalConfig.getInstance().getUserhead().equals("")){
-            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(head);
+            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).placeholder(R.drawable.logo).into(head);
         }
         nickName.setHint(CalldaGlobalConfig.getInstance().getNickname());
         signature.setHint(CalldaGlobalConfig.getInstance().getSignature());

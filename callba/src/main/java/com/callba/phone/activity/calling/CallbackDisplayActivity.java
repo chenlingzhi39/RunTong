@@ -118,7 +118,7 @@ public class CallbackDisplayActivity extends BaseActivity {
             window.setStatusBarColor(Color.TRANSPARENT);
         }
         gson = new Gson();
-        userDao = new UserDao(new UserDao.PostListener() {
+        userDao = new UserDao(this,new UserDao.PostListener() {
             @Override
             public void start() {
 
@@ -141,7 +141,7 @@ public class CallbackDisplayActivity extends BaseActivity {
 
             @Override
             public void failure(String msg) {
-                toast(msg);
+
             }
         });
         if (CalldaGlobalConfig.getInstance().getDialAd() != null)

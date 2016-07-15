@@ -328,7 +328,7 @@ public class MainTabActivity extends TabActivity {
     @Override
     protected void onRestoreInstanceState(Bundle state) {
         CalldaGlobalConfig.getInstance().restoreGlobalCfg(state);
-        EMClient.getInstance().login(SharedPreferenceUtil.getInstance(this).getString(com.callba.phone.cfg.Constant.LOGIN_USERNAME)+"-callba",SharedPreferenceUtil.getInstance(this).getString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
+     /*   EMClient.getInstance().login(SharedPreferenceUtil.getInstance(this).getString(com.callba.phone.cfg.Constant.LOGIN_USERNAME)+"-callba",SharedPreferenceUtil.getInstance(this).getString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
             @Override
             public void onSuccess() {
 
@@ -348,7 +348,7 @@ public class MainTabActivity extends TabActivity {
             public void onError(int code, String message) {
                 Log.d("main", "登录聊天服务器失败！");
             }
-        });
+        });*/
         super.onRestoreInstanceState(state);
     }
 

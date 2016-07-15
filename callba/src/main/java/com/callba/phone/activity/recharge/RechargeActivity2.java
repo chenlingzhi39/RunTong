@@ -31,11 +31,6 @@ public class RechargeActivity2 extends BaseActivity{
     @InjectView(R.id.viewpager)
     ViewPager viewpager;
     @Override
-    public void refresh(Object... params) {
-
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);

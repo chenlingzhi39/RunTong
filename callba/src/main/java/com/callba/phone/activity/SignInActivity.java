@@ -704,8 +704,8 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
             @Override
             public void onComplete(SHARE_MEDIA platform, int eCode,
                                    SocializeEntity entity) {
-                Toast.makeText(SignInActivity.this, platform + " code = " + eCode, 0)
-                        .show();
+               /* Toast.makeText(SignInActivity.this, platform + " code = " + eCode, 0)
+                        .show();*/
             }
         });
 

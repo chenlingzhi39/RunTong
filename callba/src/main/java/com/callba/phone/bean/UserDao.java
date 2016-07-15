@@ -58,11 +58,6 @@ public class UserDao {
         httpUtils = new HttpUtils(6 * 1000);
         httpUtils.configRequestRetryCount(3);
     }
-    public UserDao(PostListener postListener) {
-        httpUtils = new HttpUtils(6 * 1000);
-        httpUtils.configRequestRetryCount(3);
-        this.postListener = postListener;
-    }
     public UserDao(Context context, Handler handler) {
         this.context = context;
         this.handler = handler;
@@ -727,59 +722,6 @@ public class UserDao {
                 }else{
                     postListener.failure(result[1]);
                 }
-            }
-        });
-    }
-    public void addFriend(String loginName,String password,final String phoneNumber){
-        RequestParams params = new RequestParams();
-        params.addBodyParameter("loginName", loginName);
-        params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("phoneNumber",phoneNumber);
-        httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.ADD_FRIEND, params, new RequestCallBack<String>(){
-            @Override
-            public void onFailure(HttpException error, String msg) {
-
-            }
-
-            @Override
-            public void onSuccess(ResponseInfo<String> responseInfo) {
-             Logger.i("add_result",responseInfo.result);
-                postListener.success(phoneNumber);
-            }
-        });
-    }
-    public void getFriends(String loginName,String password){
-        RequestParams params = new RequestParams();
-        params.addBodyParameter("loginName", loginName);
-        params.addBodyParameter("loginPwd", password);
-        httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.GET_FRIENDS, params, new RequestCallBack<String>(){
-            @Override
-            public void onFailure(HttpException error, String msg) {
-
-            }
-
-            @Override
-            public void onSuccess(ResponseInfo<String> responseInfo) {
-                Logger.i("get_result",responseInfo.result);
-
-            }
-        });
-    }
-    public void deleteFriends(String loginName,String password,String phoneNumber){
-        RequestParams params = new RequestParams();
-        params.addBodyParameter("loginName", loginName);
-        params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("phoneNumber",phoneNumber);
-        httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.DELETE_FRIENDS, params, new RequestCallBack<String>(){
-            @Override
-            public void onFailure(HttpException error, String msg) {
-
-            }
-
-            @Override
-            public void onSuccess(ResponseInfo<String> responseInfo) {
-                Logger.i("delete_result",responseInfo.result);
-
             }
         });
     }
