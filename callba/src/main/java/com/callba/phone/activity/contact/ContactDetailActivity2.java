@@ -327,7 +327,10 @@ public void setImage(){
                         }
                     }
                 });
-        builder.create().show();
+        android.app.AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(true);
+        alertDialog.setCancelable(true);
+        alertDialog.show();
     }
 
     public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {

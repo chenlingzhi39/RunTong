@@ -1,10 +1,15 @@
 package com.callba.phone.activity.recharge;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Contacts;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +30,9 @@ import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.NumberAddressService;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -34,7 +42,7 @@ import butterknife.OnClick;
  */
 @ActivityFragmentInject(
         contentViewId = R.layout.fragment_number)
-public  class NumberFragment extends BaseFragment implements UserDao.PostListener {
+public class NumberFragment extends BaseFragment implements UserDao.PostListener {
     @InjectView(R.id.number)
     TextView number;
     @InjectView(R.id.address)
@@ -47,6 +55,7 @@ public  class NumberFragment extends BaseFragment implements UserDao.PostListene
     LinearLayout change;
     @InjectView(R.id.relative)
     RelativeLayout relative;
+    ;
     private UserDao userDao;
     private String address;
 
@@ -96,13 +105,13 @@ public  class NumberFragment extends BaseFragment implements UserDao.PostListene
     public void success(String msg) {
         toast(msg);
         if (progressDialog != null) progressDialog.dismiss();
-        if (CalldaGlobalConfig.getInstance().getAdvertisements1()!=null)
-        CalldaGlobalConfig.getInstance().getAdvertisements1().clear();
-        if (CalldaGlobalConfig.getInstance().getAdvertisements2()!=null)
-        CalldaGlobalConfig.getInstance().getAdvertisements2().clear();
-        if (CalldaGlobalConfig.getInstance().getAdvertisements3()!=null)
-        CalldaGlobalConfig.getInstance().getAdvertisements3().clear();
-        if(CalldaGlobalConfig.getInstance().getDialAd()!=null)
+        if (CalldaGlobalConfig.getInstance().getAdvertisements1() != null)
+            CalldaGlobalConfig.getInstance().getAdvertisements1().clear();
+        if (CalldaGlobalConfig.getInstance().getAdvertisements2() != null)
+            CalldaGlobalConfig.getInstance().getAdvertisements2().clear();
+        if (CalldaGlobalConfig.getInstance().getAdvertisements3() != null)
+            CalldaGlobalConfig.getInstance().getAdvertisements3().clear();
+        if (CalldaGlobalConfig.getInstance().getDialAd() != null)
             CalldaGlobalConfig.getInstance().setDialAd(null);
     }
 
@@ -132,6 +141,21 @@ public  class NumberFragment extends BaseFragment implements UserDao.PostListene
         ButterKnife.reset(this);
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        ButterKnife.inject(this, rootView);
+        return rootView;
+    }
+
+    @OnClick(R.id.contacts)
+    public void onClick() {
+        Intent i = new Intent(Intent.ACTION_PICK);
+        i.setType("vnd.android.cursor.dir/phone");
+        startActivityForResult(i, 0);
+
+    }
 
 
     public class DialogHelper implements DialogInterface.OnDismissListener {
@@ -142,6 +166,15 @@ public  class NumberFragment extends BaseFragment implements UserDao.PostListene
         public DialogHelper() {
             mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_change_number, null);
             change = (EditText) mView.findViewById(R.id.et_change);
+            change.requestFocus();
+            Timer timer = new Timer(); //设置定时器
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() { //弹出软键盘的代码
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInputFromWindow(change.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }, 300); //设置300毫秒的时长
         }
 
         private String getNumber() {
@@ -195,14 +228,36 @@ public  class NumberFragment extends BaseFragment implements UserDao.PostListene
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        Log.i("number", "onStop");
-    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.i("number", "onPause");
+        switch (requestCode) {
+            case 0:
+                if (data == null) {
+                    return;
+                }
+                Uri uri = data.getData();
+                Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
+                cursor.moveToFirst();
+
+                String phone_number = cursor.getString(cursor.getColumnIndexOrThrow(Contacts.Phones.NUMBER));
+
+
+                if (phone_number.length() > 10) {
+                    address = NumberAddressService.getAddress(
+                            phone_number, Constant.DB_PATH,
+                            getActivity());
+                    //if (!address.equals("")) {
+                    number.setText(phone_number);
+                    tv_address.setHint(address);
+                           /* } else
+                                toast("请输入正确的手机号!");*/
+                } else
+                    toast("请选择手机号!");
+                break;
+
+            default:
+                break;
+        }
     }
 }

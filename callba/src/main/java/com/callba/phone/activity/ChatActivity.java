@@ -162,8 +162,6 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
           registerReceiver(chatReceiver, filter);
           if(EMClient.getInstance().chatManager().getConversation(userName)!=null)
               EMClient.getInstance().chatManager().getConversation(userName).markAllMessagesAsRead();
-          Intent intent = new Intent("com.callba.asread");
-          sendBroadcast(intent);
           extendMenuItemClickListener = new MyItemClickListener();
           registerExtendMenuItem();
           inputMenu.init(null);

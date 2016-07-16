@@ -112,7 +112,6 @@
                 android:fadingEdge="none"
                 android:fastScrollEnabled="false"
                 android:focusable="true"
-                android:listSelector="@drawable/listitem_bk"
                 android:scrollbars="none"
                 android:visibility="gone" />
 
@@ -145,7 +144,6 @@
                 android:scrollbars="none"
                 android:scrollingCache="false"
                 android:visibility="gone" />
-
             <com.callba.phone.view.BannerLayout
                 android:id="@+id/banner"
                 android:layout_width="match_parent"
@@ -336,7 +334,7 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <ImageButton
+            <ImageView
                 android:id="@id/dialupdown"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

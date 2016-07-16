@@ -182,8 +182,8 @@ public class HttpUtils {
 	 */
 	public static String getDatafFromPostConnClose(String path,
 			Map<String, String> params) throws Exception {
-		//return getDataFromHttpPost(path, params, "utf-8", false);
-		return post(path,params);
+		return getDataFromHttpPost(path, params, "utf-8", false);
+		//return post(path,params);
 	}
 
 	public static String post(String urlStr,Map<String, String> params) {

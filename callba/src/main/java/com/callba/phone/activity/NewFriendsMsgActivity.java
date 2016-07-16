@@ -13,6 +13,7 @@
  */
 package com.callba.phone.activity;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -78,6 +79,8 @@ public class NewFriendsMsgActivity extends BaseActivity {
 			}
 		};
 		localBroadcastManager.registerReceiver(broadcastReceiver,new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
+		NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		notificationManager.cancel(0526);
 	}
 
 	public void back(View view) {

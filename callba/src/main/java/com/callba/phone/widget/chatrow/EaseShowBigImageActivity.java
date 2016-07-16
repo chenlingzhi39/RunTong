@@ -23,12 +23,16 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.callba.R;
+import com.callba.phone.cfg.Constant;
 import com.callba.phone.model.EaseImageCache;
 import com.callba.phone.ui.EaseBaseActivity;
+import com.callba.phone.util.BitmapUtil;
 import com.callba.phone.util.EaseLoadLocalBigImgTask;
+import com.callba.phone.util.Logger;
 import com.callba.phone.widget.photoview.EasePhotoView;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
@@ -52,7 +56,7 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 	private Bitmap bitmap;
 	private boolean isDownloaded;
 	private ProgressBar loadLocalPb;
-
+    private Button save;
 	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,12 +66,12 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 		image = (EasePhotoView) findViewById(R.id.image);
 		loadLocalPb = (ProgressBar) findViewById(R.id.pb_load_local);
 		default_res = getIntent().getIntExtra("default_image", R.drawable.ease_default_avatar);
-		Uri uri = getIntent().getParcelableExtra("uri");
+		final Uri uri = getIntent().getParcelableExtra("uri");
 		String remotepath = getIntent().getExtras().getString("remotepath");
 		localFilePath = getIntent().getExtras().getString("localUrl");
 		String secret = getIntent().getExtras().getString("secret");
 		EMLog.d(TAG, "show big image uri:" + uri + " remotepath:" + remotepath);
-
+		Logger.i("localPath",localFilePath+"");
 		//本地存在，直接显示本地的图片
 		if (uri != null && new File(uri.getPath()).exists()) {
 			EMLog.d(TAG, "showbigimage file exists. directly show it");
@@ -97,11 +101,17 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 		} else {
 			image.setImageResource(default_res);
 		}
-
 		image.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				finish();
+			}
+		});
+		save=(Button) findViewById(R.id.save);
+		save.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				BitmapUtil.saveBitmap(EaseShowBigImageActivity.this,bitmap, Constant.PHOTO_PATH,System.currentTimeMillis()+"jpg");
 			}
 		});
 	}

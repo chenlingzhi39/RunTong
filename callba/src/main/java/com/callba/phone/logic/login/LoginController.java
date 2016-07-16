@@ -236,6 +236,9 @@ public class LoginController {
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
+					if(currentLoginTime < Constant.LOGIN_RETRY_TIMES) {
+						return true;
+					}
 					loginState = false;
 					loginListener.localLoginFailed(UserLoginErrorMsg.TIMEOUT);
 				}

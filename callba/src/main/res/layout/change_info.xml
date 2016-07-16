@@ -42,7 +42,7 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/more1"
             android:src="@drawable/head"
-            android:layout_marginRight="10dp"/>
+            android:layout_marginRight="10dp" />
     </RelativeLayout>
     <View
         android:layout_width="match_parent"

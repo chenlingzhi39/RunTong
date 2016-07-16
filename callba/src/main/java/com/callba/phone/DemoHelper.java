@@ -683,7 +683,7 @@ public class DemoHelper {
                 notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
                 //notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 NotificationManager mNotificationManager = (NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
-                mNotificationManager.notify(10, notification);
+                mNotificationManager.notify(0526, notification);
             }
         }
 

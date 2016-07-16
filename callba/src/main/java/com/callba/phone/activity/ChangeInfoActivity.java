@@ -93,7 +93,7 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         if(!CalldaGlobalConfig.getInstance().getUserhead().equals("")){
-            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).placeholder(R.drawable.logo).into(head);
+            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(head);
         }
         nickName.setHint(CalldaGlobalConfig.getInstance().getNickname());
         signature.setHint(CalldaGlobalConfig.getInstance().getSignature());
@@ -183,12 +183,11 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
                         dialog.dismiss();
                         switch (which) {
                             case 0:
-                                Intent intent = null;
-                                intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);//action is capture
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);//action is capture
                                 intent.putExtra("return-data", false);
                                 intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                                 intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-                                intent.putExtra("noFaceDetection", true);
+                                intent.putExtra("noFaceDetection", false);
                                 startActivityForResult(intent, REQUESTCODE_CAMERA);
                                 break;
                             case 1:
@@ -201,7 +200,10 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
                         }
                     }
                 });
-        builder.create().show();
+        android.app.AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(true);
+        alertDialog.setCancelable(true);
+        alertDialog.show();
     }
 
    /* @Override

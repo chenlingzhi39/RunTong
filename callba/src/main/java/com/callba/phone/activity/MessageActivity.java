@@ -85,7 +85,6 @@ public class MessageActivity extends BaseActivity {
     SwipeRefreshLayout refresh;
     private ConversationAdapter adapter;
     private ChatReceiver chatReceiver;
-    private AsReadReceiver asReadReceiver;
     private int index = -1;
     private BroadcastReceiver broadcastReceiver;
     private LocalBroadcastManager broadcastManager;
@@ -235,12 +234,8 @@ public class MessageActivity extends BaseActivity {
         conversationListview.setAdapter(adapter);
         IntentFilter filter = new IntentFilter(
                 "com.callba.chat");
-        IntentFilter filter1 = new IntentFilter(
-                "com.callba.asread");
         chatReceiver = new ChatReceiver();
         registerReceiver(chatReceiver, filter);
-        asReadReceiver = new AsReadReceiver();
-        registerReceiver(asReadReceiver, filter1);
         query.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 new MyFilter(copyList).filter(s);
@@ -342,7 +337,6 @@ public class MessageActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         unregisterReceiver(chatReceiver);
-        unregisterReceiver(asReadReceiver);
         broadcastManager.unregisterReceiver(broadcastReceiver);
         EMClient.getInstance().removeConnectionListener(connectionListener);
         super.onDestroy();
@@ -380,8 +374,11 @@ public class MessageActivity extends BaseActivity {
                   public void run() {
                       adapter.clear();
                       adapter.addAll(conversationList);
+                      Intent intent=new Intent("message_num");
+                      sendBroadcast(intent);
                   }
               });
+
           }
       }).start();
 
@@ -390,13 +387,6 @@ public class MessageActivity extends BaseActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
            refresh();
-        }
-    }
-
-    class AsReadReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            refresh();
         }
     }
 

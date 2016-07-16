@@ -173,7 +173,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     private LoginReceiver loginReceiver;
     private String[] result;
     List<SystemNumber> list;
-    private UserDao userDao1;
     PhoneNumTextWatcher phoneNumTextWatcher;
 
     @Override
@@ -182,7 +181,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         init();
         registerRedpointReceiver();
         ViewUtils.inject(this);
-        //loadADImage();
         mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
 
 
@@ -212,41 +210,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
     }
 
-    private void loadADImage() {
-        if (bitmapUtils == null) {
-            bitmapUtils = BitmapHelp.getBitmapUtils(this
-                    .getApplicationContext());
-        }
-        String imgUrl = CalldaGlobalConfig.getInstance().getIvPath();
-        Logger.i(TAG, "imgUrl=" + imgUrl);
-        if (imgUrl == null || "-1".equals(imgUrl)) {
-            //iv_ad.setImageResource(R.drawable.call_background);
-            return;
-        }
-        bigPicDisplayConfig = new BitmapDisplayConfig();
-        // bigPicDisplayConfig.setShowOriginal(true); // 显示原始图片,不压缩, 尽量不要使用,
-        // 图片太大时容易OOM。
-        bigPicDisplayConfig.setBitmapConfig(Bitmap.Config.RGB_565);
-        bigPicDisplayConfig.setBitmapMaxSize(BitmapCommonUtils
-                .getScreenSize(this));
 
-        BitmapLoadCallBack<ImageView> callback = new DefaultBitmapLoadCallBack<ImageView>() {
-            @Override
-            public void onLoadStarted(ImageView container, String uri,
-                                      BitmapDisplayConfig config) {
-                super.onLoadStarted(container, uri, config);
-            }
-
-            @Override
-            public void onLoadCompleted(ImageView container, String uri,
-                                        Bitmap bitmap, BitmapDisplayConfig config,
-                                        BitmapLoadFrom from) {
-                super.onLoadCompleted(container, uri, bitmap, config, from);
-            }
-        };
-
-        //bitmapUtils.display(iv_ad, imgUrl, bigPicDisplayConfig, callback);
-    }
 
 
     public void init() {
@@ -265,7 +229,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                                     int position, long id) {
                 beancallout = mergecalllists.get(position).getCalllogBean()
                         .get(0);
-                et_number.setText("");
                 Intent intent = new Intent(MainCallActivity.this, SelectDialPopupWindow.class);
                 intent.putExtra("name", beancallout.getDisplayName());
                 intent.putExtra("number", beancallout.getCallLogNumber());
@@ -418,48 +381,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
             }
         });
-        userDao1 = new UserDao(this, new UserDao.PostListener() {
-            @Override
-            public void start() {
-
-            }
-
-            @Override
-            public void success(String msg) {
-                Log.i("system_result", msg);
-                result = msg.split("\\|");
-                if (result[0].equals("0")) {
-                    list = new ArrayList<>();
-                    try {
-                        list = gson.fromJson(result[1], new TypeToken<List<SystemNumber>>() {
-                        }.getType());
-                    } catch (Exception e) {
-
-                    }
-                    ArrayList<String> numbers = new ArrayList<>();
-                    ContactData contactData = new ContactData();
-                    contactData.setContactName("Call吧电话");
-                    for (SystemNumber user : list) {
-                        numbers.add(user.getPhoneNumber());
-                        Logger.i("phonenumber", user.getPhoneNumber());
-                    }
-                    if (ContactsAccessPublic.hasName(MainCallActivity.this, "Call吧电话").equals("0"))
-                        ContactsAccessPublic.insertPhoneContact(MainCallActivity.this, contactData, numbers);
-                    else {
-                        ContactsAccessPublic.deleteContact(MainCallActivity.this, "Call吧电话");
-                        ContactsAccessPublic.insertPhoneContact(MainCallActivity.this, contactData, numbers);
-                    }
-                    //ContactsAccessPublic.updatePhoneContact(HomeActivity.this,"Call吧电话",numbers);
-                } else {
-
-                }
-            }
-
-            @Override
-            public void failure(String msg) {
-                // toast(msg);
-            }
-        });
     }
 
 
@@ -485,24 +406,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         super.onResume();
     }
 
-    /**
-     * 查询用户余额
-     */
-    private void queryUserBalance() {
-        String language = activityUtil.language(this);
-        Task task = new Task(Task.TASK_GET_USER_BALANCE);
-        Map<String, Object> taskParams = new HashMap<String, Object>();
-        taskParams.put("loginName", CalldaGlobalConfig.getInstance()
-                .getUsername());
-        taskParams.put("loginPwd", CalldaGlobalConfig.getInstance()
-                .getPassword());
-        taskParams.put("softType", "android");
-        taskParams.put("frompage", "MainCallActivity");
-        taskParams.put("lan", language);
-        task.setTaskParams(taskParams);
-
-        MainService.newTask(task);
-    }
 
     /**
      * 检测是否有拦截的未呼叫的号码需要拨打
@@ -608,6 +511,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 ll_diallayout.setVisibility(View.GONE);
                 iv_ad.setVisibility(View.GONE);
                 BaseActivity.flag = false;
+                sendBroadcast(new Intent("toggle_tab"));
                 break;
 
             case R.id.dialcall:
@@ -914,7 +818,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         if ("".equals(searchNumber)) {
             ll_number.setVisibility(View.GONE);
             ll_call.setVisibility(View.INVISIBLE);
-            //iv_ad.setVisibility(View.VISIBLE);
+            iv_ad.setVisibility(View.VISIBLE);
             Logger.i("input","change");
             //lv_calllog.setVisibility(View.VISIBLE);
             lv_filterNum.setVisibility(View.GONE);
@@ -1096,13 +1000,10 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         callName = bean.getDisplayName();
         Logger.v("检索列表拨号", bean.getPhoneNumber() + "callName:" + callName);
         callNum = et_number.getText().toString().trim();
-        et_number.setText("");
-      /*  et_number.removeTextChangedListener(phoneNumTextWatcher);
-        phoneNumTextWatcher = null;*/
-        Intent intent = new Intent(MainCallActivity.this, SelectDialPopupWindow.class);
+       /* Intent intent = new Intent(MainCallActivity.this, SelectDialPopupWindow.class);
         intent.putExtra("name", callName);
         intent.putExtra("number", callNum);
-        startActivity(intent);
+        startActivity(intent);*/
         // callUtils.judgeCallMode(MainCallActivity.this, callNum, callName);
     }
 

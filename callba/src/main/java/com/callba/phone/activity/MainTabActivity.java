@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
+import android.widget.TabWidget;
 import android.widget.TextView;
 
 import com.callba.R;
@@ -44,6 +45,7 @@ import com.callba.phone.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.SharedPreferenceUtil;
+import com.callba.phone.widget.BadgeView;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
@@ -79,8 +81,9 @@ public class MainTabActivity extends TabActivity {
     NotificationManager mNotificationManager;
     private static final int FLING_MIN_DISTANCE = 100;
     private static final int FLING_MIN_VELOCITY = 0;
-    BroadcastReceiver payReceiver;
+    BroadcastReceiver payReceiver,numReceiver,tabReceiver;
     private EMMessageListener messageListener;
+    private BadgeView badgeView;
    /* @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -144,37 +147,6 @@ public class MainTabActivity extends TabActivity {
         mTabhost.setCurrentTab(2);
         //获取第一个tabwidget
         final View view = mTabhost.getTabWidget().getChildAt(0);
-     /*   mTabhost.getTabContentView().setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x = 0;
-                float y = 0;
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        x = event.getX();
-                        y = event.getY();
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        if (Math.abs(event.getX() - x) > Math.abs(event.getY() - y))
-                            return true;
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        if (Math.abs(event.getX() - x) > Math.abs(event.getY() - y)) {
-                            if (event.getX() > x && Math.abs(event.getX() - x) >= 100)
-                                if (mTabhost.getCurrentTab() == mTabhost.getTabWidget().getChildCount() - 1)
-                                    mTabhost.setCurrentTab(0);
-                                else mTabhost.setCurrentTab(mTabhost.getCurrentTab() + 1);
-                            else if (mTabhost.getCurrentTab() == 0)
-                                mTabhost.setCurrentTab(mTabhost.getTabWidget().getChildCount() - 1);
-                            else mTabhost.setCurrentTab(mTabhost.getCurrentTab() - 1);
-                            return true;
-                        } else
-                            return false;
-
-                }
-                return  false;
-            }
-        });*/
         view.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -289,6 +261,33 @@ public class MainTabActivity extends TabActivity {
             }
         };
         registerReceiver(payReceiver, new IntentFilter("com.callba.pay"));
+        TabWidget tabs = (TabWidget) findViewById(android.R.id.tabs);
+        badgeView=new BadgeView(this,tabs,3);
+        int num=EMClient.getInstance().chatManager().getUnreadMsgsCount();
+        if(num==0)badgeView.hide();
+        else{badgeView.setText(num+"");
+        badgeView.show();}
+        numReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int i=EMClient.getInstance().chatManager().getUnreadMsgsCount();
+                if(i==0)badgeView.hide();
+                else {badgeView.setText(i+"");
+                    badgeView.show();}
+            }
+        };
+        registerReceiver(numReceiver,new IntentFilter("message_num"));
+        tabReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                ImageView iv = (ImageView) view
+                        .findViewById(R.id.iv_maintab_icon);
+                    iv.setBackgroundDrawable(getResources().getDrawable(
+                            R.drawable.call_menu_up));
+            }
+        };
+        registerReceiver(tabReceiver,new IntentFilter("toggle_tab"));
+
     }
 
 
@@ -328,7 +327,7 @@ public class MainTabActivity extends TabActivity {
     @Override
     protected void onRestoreInstanceState(Bundle state) {
         CalldaGlobalConfig.getInstance().restoreGlobalCfg(state);
-     /*   EMClient.getInstance().login(SharedPreferenceUtil.getInstance(this).getString(com.callba.phone.cfg.Constant.LOGIN_USERNAME)+"-callba",SharedPreferenceUtil.getInstance(this).getString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
+        EMClient.getInstance().login(SharedPreferenceUtil.getInstance(this).getString(com.callba.phone.cfg.Constant.LOGIN_USERNAME)+"-callba",SharedPreferenceUtil.getInstance(this).getString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
             @Override
             public void onSuccess() {
 
@@ -348,7 +347,7 @@ public class MainTabActivity extends TabActivity {
             public void onError(int code, String message) {
                 Log.d("main", "登录聊天服务器失败！");
             }
-        });*/
+        });
         super.onRestoreInstanceState(state);
     }
 
@@ -391,6 +390,8 @@ public class MainTabActivity extends TabActivity {
             mNotificationManager.cancel(10);
         //EMClient.getInstance().chatManager().removeMessageListener(messageListener);
         unregisterReceiver(payReceiver);
+        unregisterReceiver(numReceiver);
+        unregisterReceiver(tabReceiver);
         //unregisterBroadcastReceiver();
         super.onDestroy();
     }

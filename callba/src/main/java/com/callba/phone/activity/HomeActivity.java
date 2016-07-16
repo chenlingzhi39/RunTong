@@ -50,6 +50,7 @@ import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.logic.login.UserLoginErrorMsg;
 import com.callba.phone.logic.login.UserLoginListener;
+import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.ContactsAccessPublic;
@@ -151,8 +152,8 @@ public class HomeActivity extends BaseActivity {
                     } catch (Exception e) {
 
                     }
-                    ArrayList<String> numbers = new ArrayList<>();
-                    ContactData contactData = new ContactData();
+                    final ArrayList<String> numbers = new ArrayList<>();
+                    final ContactData contactData = new ContactData();
                     contactData.setContactName("Call吧电话");
                     for (SystemNumber user : list) {
                         numbers.add(user.getPhoneNumber());
@@ -161,15 +162,12 @@ public class HomeActivity extends BaseActivity {
                     if (ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话").equals("0"))
                         ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
                     else {
-                        ContactsAccessPublic.deleteContact(HomeActivity.this,"Call吧电话");
-                        ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
+                        ContactsAccessPublic.deleteContact(HomeActivity.this, new ContactsManager(getContentResolver()).getContactID("Call吧电话"));
+                                ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
                     }
-                    //ContactsAccessPublic.updatePhoneContact(HomeActivity.this,"Call吧电话",numbers);
                 } else {
 
                 }
-                //userDao3=new UserDao();
-                //userDao3.getFriends(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
 
             }
 

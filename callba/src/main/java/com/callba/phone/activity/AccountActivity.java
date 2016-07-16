@@ -57,7 +57,7 @@ public class AccountActivity extends BaseActivity {
         ButterKnife.inject(this);
         account.setHint(CalldaGlobalConfig.getInstance().getUsername());
         if (!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
-            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).placeholder(R.drawable.logo).into(head);
+            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(head);
         userDao = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void start() {

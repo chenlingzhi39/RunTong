@@ -89,7 +89,7 @@ public class EaseCommonUtils {
                 //从sdk中提到了ui中，使用更简单不犯错的获取string方法
 //              digest = EasyUtils.getAppResourceString(context, "location_recv");
                 digest = getString(context, R.string.location_recv);
-                digest = String.format(digest, message.getFrom());
+                digest = String.format(digest, message.getFrom().substring(0,11));
                 return digest;
             } else {
 //              digest = EasyUtils.getAppResourceString(context, "location_prefix");

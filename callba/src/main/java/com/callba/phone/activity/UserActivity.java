@@ -2,6 +2,7 @@ package com.callba.phone.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -78,7 +79,7 @@ public class UserActivity extends BaseActivity {
     @InjectView(R.id.version_code)
     TextView versionCode;
     private SharedPreferenceUtil mSharedPreferenceUtil;
-
+    private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +93,10 @@ public class UserActivity extends BaseActivity {
         }
         mSharedPreferenceUtil = SharedPreferenceUtil.getInstance(this);
         versionCode.setHint(BuildConfig.VERSION_NAME);
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("正在检查更新");
+        progressDialog.setCanceledOnTouchOutside(true);
+        progressDialog.setCancelable(true);
     }
 
     @Override
@@ -144,6 +149,8 @@ public class UserActivity extends BaseActivity {
                                     CalldaGlobalConfig.getInstance().getAdvertisements2().clear();
                                 if (CalldaGlobalConfig.getInstance().getAdvertisements3() != null)
                                     CalldaGlobalConfig.getInstance().getAdvertisements3().clear();
+                                if(CalldaGlobalConfig.getInstance().getDialAd()!=null)
+                                    CalldaGlobalConfig.getInstance().setDialAd(null);
                                 LoginController.getInstance().setUserLoginState(false);
                                 SharedPreferenceUtil.getInstance(UserActivity.this).putString(Constant.LOGIN_PASSWORD, "", true);
                                 Intent intent0 = new Intent("com.callba.location");
@@ -183,6 +190,7 @@ public class UserActivity extends BaseActivity {
                 break;
             case R.id.update:
                 Log.i("click", "update");
+                progressDialog.show();
                 sendGetVersionTask();
                 break;
             case R.id.user_head:
@@ -223,8 +231,7 @@ public class UserActivity extends BaseActivity {
         // 解析版本返回数据
         AppVersionChecker.AppVersionBean appVersionBean = AppVersionChecker.parseVersionInfo(
                 this, versionMessage);
-
-
+        progressDialog.dismiss();
         // 检查是否成功获取加密Key
         checkLoginKey(appVersionBean);
     }
