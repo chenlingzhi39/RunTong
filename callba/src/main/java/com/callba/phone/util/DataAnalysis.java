@@ -107,7 +107,6 @@ public class DataAnalysis {
 			// 连续出现的次数
 			map.put("occurrencenumber", allcalllists.get(i)
 					.getOccurrenceNumber());
-
 			data.add(map);
 		}
 		return data;

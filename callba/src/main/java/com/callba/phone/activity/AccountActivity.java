@@ -121,7 +121,6 @@ public class AccountActivity extends BaseActivity {
         public DialogHelper(ArrayList<Meal> meals) {
             mView = getLayoutInflater().inflate(R.layout.dialog_meal, null);
             mealList = (RecyclerView) mView.findViewById(R.id.meal_list);
-            mealList.setLayoutManager(new LinearLayoutManager(AccountActivity.this));
             mealAdapter = new MealAdapter(AccountActivity.this);
             mealAdapter.addAll(meals);
             mealList.setAdapter(mealAdapter);

@@ -128,7 +128,7 @@ public class UserProfileManager {
                 String[] result = response.split("\\|");
                 if (result[0].equals("0")) {
                     ArrayList<BaseUser> list;
-                    list = gson.fromJson(result[1], new TypeToken<List<BaseUser>>() {
+                    list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
                     }.getType());
                     List<EaseUser> mList = new ArrayList<EaseUser>();
                     for (BaseUser baseUser : list) {
@@ -194,7 +194,7 @@ public class UserProfileManager {
                 String[] result = response.split("\\|");
                 if (result[0].equals("0")) {
                     ArrayList<BaseUser> list;
-                    list = gson.fromJson(result[1], new TypeToken<List<BaseUser>>() {
+                    list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
                     }.getType());
                     List<EaseUser> mList = new ArrayList<EaseUser>();
                     for (BaseUser baseUser : list) {

@@ -67,11 +67,13 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 		loadLocalPb = (ProgressBar) findViewById(R.id.pb_load_local);
 		default_res = getIntent().getIntExtra("default_image", R.drawable.ease_default_avatar);
 		final Uri uri = getIntent().getParcelableExtra("uri");
-		String remotepath = getIntent().getExtras().getString("remotepath");
+		final String remotepath = getIntent().getExtras().getString("remotepath");
 		localFilePath = getIntent().getExtras().getString("localUrl");
 		String secret = getIntent().getExtras().getString("secret");
 		EMLog.d(TAG, "show big image uri:" + uri + " remotepath:" + remotepath);
 		Logger.i("localPath",localFilePath+"");
+		Logger.i("remotePath",remotepath+"");
+		//Logger.i("uriPath",uri.getPath()+"");
 		//本地存在，直接显示本地的图片
 		if (uri != null && new File(uri.getPath()).exists()) {
 			EMLog.d(TAG, "showbigimage file exists. directly show it");
@@ -111,7 +113,7 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 		save.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				BitmapUtil.saveBitmap(EaseShowBigImageActivity.this,bitmap, Constant.PHOTO_PATH,System.currentTimeMillis()+"jpg");
+				BitmapUtil.saveBitmap(EaseShowBigImageActivity.this,bitmap, Constant.PHOTO_PATH,uri!=null?uri.getPath().substring(uri.getPath().lastIndexOf("/")):remotepath.substring(remotepath.lastIndexOf("/"))+".jpg");
 			}
 		});
 	}

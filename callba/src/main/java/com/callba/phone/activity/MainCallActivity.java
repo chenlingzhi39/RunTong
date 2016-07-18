@@ -357,7 +357,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             public void success(String msg) {
                 final ArrayList<Advertisement> list;
                 gson = new Gson();
-                list = gson.fromJson(msg, new TypeToken<List<Advertisement>>() {
+                list = gson.fromJson(msg, new TypeToken<ArrayList<Advertisement>>() {
                 }.getType());
                 CalldaGlobalConfig.getInstance().setAdvertisements3(list);
                 webImages.clear();
@@ -607,7 +607,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                     intent1.setType("vnd.android.cursor.item/raw_contact");
                     //    intent.putExtra(android.provider.ContactsContract.Intents.Insert.NAME, name);
                     intent1.putExtra(android.provider.ContactsContract.Intents.Insert.PHONE, number2);
-                    intent1.putExtra(android.provider.ContactsContract.Intents.Insert.PHONE_TYPE, 3);
+                    intent1.putExtra(android.provider.ContactsContract.Intents.Insert.PHONE_TYPE, 2);
                     if (!isIntentAvailable(this, intent1)) {
                         break;
                     } else {

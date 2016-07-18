@@ -147,7 +147,7 @@ public class HomeActivity extends BaseActivity {
                 if (result[0].equals("0")) {
                     list = new ArrayList<>();
                     try {
-                        list = gson.fromJson(result[1], new TypeToken<List<SystemNumber>>() {
+                        list = gson.fromJson(result[1], new TypeToken<ArrayList<SystemNumber>>() {
                         }.getType());
                     } catch (Exception e) {
 
@@ -190,7 +190,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void success(String msg) {
                 final ArrayList<Advertisement> list;
-                list = gson.fromJson(msg, new TypeToken<List<Advertisement>>() {
+                list = gson.fromJson(msg, new TypeToken<ArrayList<Advertisement>>() {
                 }.getType());
                 CalldaGlobalConfig.getInstance().setAdvertisements1(list);
                 webImages.clear();

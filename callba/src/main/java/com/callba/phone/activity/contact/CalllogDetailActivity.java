@@ -1,5 +1,6 @@
 package com.callba.phone.activity.contact;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,6 +22,7 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.CalldaCalllogBean;
 import com.callba.phone.bean.CalllogDetailBean;
 import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.hyphenate.chat.EMClient;
 
 import java.util.ArrayList;
 
@@ -32,7 +34,8 @@ import butterknife.InjectView;
  */
 @ActivityFragmentInject(
         contentViewId = R.layout.calllog_detail,
-        navigationId = R.drawable.press_back
+        navigationId = R.drawable.press_back,
+        menuId = R.menu.menu_calllog_detail
 )
 public class CalllogDetailActivity extends BaseActivity {
 
@@ -105,35 +108,41 @@ public class CalllogDetailActivity extends BaseActivity {
         }
     }
     @Override
-    public boolean onCreateOptionsMenu(final Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_contact_detail, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.invite:
-                Dialog dialog=new android.support.v7.app.AlertDialog.Builder(this).setTitle("是否邀请此好友？").setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Uri smsToUri = Uri.parse("smsto://" + calllogBean.getCallLogNumber());
-                        Intent mIntent = new Intent(android.content.Intent.ACTION_SENDTO, smsToUri);
-                        mIntent.putExtra("sms_body", "我是"+ CalldaGlobalConfig.getInstance().getNickname()+"，我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
-                        startActivity(mIntent);
-                        dialog.dismiss();
-                    }
-                }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
-                dialog.show();
-                break;
-            case android.R.id.home:
-                finish();
-                break;
-            default:
+            case R.id.add:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("保存号码");
+                builder.setItems(new String[] { getString(R.string.add_contact), getString(R.string.save_contact) },
+                        new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                switch (which) {
+                                    case 0:
+                                        Intent intent = new Intent(Intent.ACTION_INSERT);
+                                        intent.setType("vnd.android.cursor.dir/person");
+                                        intent.setType("vnd.android.cursor.dir/contact");
+                                        intent.setType("vnd.android.cursor.dir/raw_contact");
+                                        intent.putExtra(android.provider.ContactsContract.Intents.Insert.PHONE, calllogBean.getCallLogNumber());
+                                        startActivity(intent);
+                                        break;
+                                    case 1:
+                                        Intent intent1 = new Intent(Intent.ACTION_INSERT_OR_EDIT);
+                                        intent1.setType("vnd.android.cursor.item/person");
+                                        intent1.setType("vnd.android.cursor.item/contact");
+                                        intent1.setType("vnd.android.cursor.item/raw_contact");
+                                        //    intent.putExtra(android.provider.ContactsContract.Intents.Insert.NAME, name);
+                                        intent1.putExtra(android.provider.ContactsContract.Intents.Insert.PHONE, calllogBean.getCallLogNumber());
+                                        intent1.putExtra(android.provider.ContactsContract.Intents.Insert.PHONE_TYPE, 2);
+                                        startActivity(intent1);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        });
+                builder.create().show();
                 break;
         }
         return super.onOptionsItemSelected(item);

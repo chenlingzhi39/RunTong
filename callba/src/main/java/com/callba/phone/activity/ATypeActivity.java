@@ -50,6 +50,8 @@ public class ATypeActivity extends BaseActivity {
     ProgressBar progressBar;
     @InjectView(R.id.retry)
     TextView retry;
+    @InjectView(R.id.hint)
+    TextView hint;
     private Gson gson;
 
     @Override
@@ -60,42 +62,47 @@ public class ATypeActivity extends BaseActivity {
         teams = new ArrayList<>();
         getATypes();
     }
-public void getATypes(){
-    OkHttpUtils.post().url(Interfaces.A_TYPE)
-            .addParams("loginPwd", CalldaGlobalConfig.getInstance().getPassword())
-            .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-            .build()
-            .execute(new StringCallback() {
-                @Override
-                public void onAfter(int id) {
-                  progressBar.setVisibility(View.GONE);
-                }
 
-                @Override
-                public void onBefore(Request request, int id) {
-                 progressBar.setVisibility(View.VISIBLE);
-                }
+    public void getATypes() {
+        OkHttpUtils.post().url(Interfaces.A_TYPE)
+                .addParams("loginPwd", CalldaGlobalConfig.getInstance().getPassword())
+                .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onAfter(int id) {
+                        progressBar.setVisibility(View.GONE);
+                    }
 
-                @Override
-                public void onError(Call call, Exception e, int id) {
-                   retry.setVisibility(View.VISIBLE);
-                }
+                    @Override
+                    public void onBefore(Request request, int id) {
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
 
-                @Override
-                public void onResponse(String response, int id) {
-                    Logger.i("order_result", response);
-                    String[] result = response.split("\\|");
-                    if (result[0].equals("0")) {
-                        teams = gson.fromJson(result[1], new TypeToken<List<List<Team>>>() {
-                        }.getType());
-                        viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), ATypeActivity.this));
-                        layoutTab.setupWithViewPager(viewpager);
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        retry.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
                         retry.setVisibility(View.GONE);
-                    } else  retry.setVisibility(View.VISIBLE);;
-                }
-            });
+                        Logger.i("order_result", response);
+                        String[] result = response.split("\\|");
+                        if (result[0].equals("0")) {
+                            teams = gson.fromJson(result[1], new TypeToken<ArrayList<ArrayList<Team>>>() {
+                            }.getType());
+                            viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), ATypeActivity.this));
+                            layoutTab.setupWithViewPager(viewpager);
+                        } else {
+                            hint.setText(result[1]);
+                            hint.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
 
-}
+    }
+
     @OnClick(R.id.retry)
     public void onClick() {
         getATypes();

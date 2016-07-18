@@ -1,11 +1,13 @@
 package com.callba.phone.activity.calling;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.http.conn.ConnectTimeoutException;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -128,7 +130,7 @@ public class CallbackDisplayActivity extends BaseActivity {
             public void success(String msg) {
                 try{
                 List<DialAd> dialAds;
-                dialAds = gson.fromJson(msg, new TypeToken<List<DialAd>>() {
+                dialAds = gson.fromJson(msg, new TypeToken<ArrayList<DialAd>>() {
                 }.getType());
                 if (dialAds.size() > 0) {
                     dialAd = dialAds.get(0);

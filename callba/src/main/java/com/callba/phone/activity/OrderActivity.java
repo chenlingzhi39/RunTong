@@ -50,6 +50,8 @@ public class OrderActivity extends BaseActivity {
     ProgressBar progressBar;
     @InjectView(R.id.retry)
     TextView retry;
+    @InjectView(R.id.hint)
+    TextView hint;
     private Gson gson;
 
     @Override
@@ -81,21 +83,23 @@ public class OrderActivity extends BaseActivity {
 
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        toast(R.string.network_error);
                         retry.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
+                        retry.setVisibility(View.GONE);
                         Logger.i("order_result", response);
                         String[] result = response.split("\\|");
                         if (result[0].equals("0")) {
-                            orders = gson.fromJson(result[1], new TypeToken<List<Order>>() {
+                            orders = gson.fromJson(result[1], new TypeToken<ArrayList<Order>>() {
                             }.getType());
                             viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), OrderActivity.this));
                             layoutTab.setupWithViewPager(viewpager);
-                            retry.setVisibility(View.GONE);
-                        } else retry.setVisibility(View.VISIBLE);
+                        } else {
+                            hint.setText(result[1]);
+                            hint.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
     }

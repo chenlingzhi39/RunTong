@@ -76,7 +76,6 @@ public class MessageActivity extends BaseActivity {
     @InjectView(R.id.conversation_list)
     RecyclerView conversationListview;
     //EaseConversationList conversationListView;
-    protected List<EMConversation> conversationList = new ArrayList<>();
     @InjectView(R.id.query)
     EditText query;
     @InjectView(R.id.search_clear)
@@ -191,12 +190,11 @@ public class MessageActivity extends BaseActivity {
         Logger.i("language", language);
         Locale.setDefault(new Locale("zh"));
         Logger.i("language", Locale.getDefault().getLanguage());
-        conversationList.addAll(loadConversationList());
         conversationListview.addItemDecoration(new DividerItemDecoration(
                 this, DividerItemDecoration.VERTICAL_LIST));
         conversationListview.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ConversationAdapter(this);
-        adapter.addAll(conversationList);
+        adapter.addAll(loadConversationList());
         adapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -274,10 +272,8 @@ public class MessageActivity extends BaseActivity {
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                conversationList.clear();
-                conversationList.addAll(loadConversationList());
                 adapter.clear();
-                adapter.addAll(conversationList);
+                adapter.addAll(loadConversationList());
                 refresh.setRefreshing(false);
             }
         });
@@ -367,13 +363,11 @@ public class MessageActivity extends BaseActivity {
       new Thread(new Runnable() {
           @Override
           public void run() {
-              conversationList.clear();
-              conversationList.addAll(loadConversationList());
               SimpleHandler.getInstance().post(new Runnable() {
                   @Override
                   public void run() {
                       adapter.clear();
-                      adapter.addAll(conversationList);
+                      adapter.addAll(loadConversationList());
                       Intent intent=new Intent("message_num");
                       sendBroadcast(intent);
                   }

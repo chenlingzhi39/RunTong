@@ -32,5 +32,12 @@
             android:clickable="true"
             android:text="网络错误,点击重试"
             android:visibility="gone" />
+        <TextView
+            android:id="@+id/hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="暂无信息"
+            android:visibility="gone"/>
     </RelativeLayout>
 </LinearLayout>

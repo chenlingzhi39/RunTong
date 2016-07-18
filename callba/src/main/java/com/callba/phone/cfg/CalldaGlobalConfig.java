@@ -460,7 +460,7 @@ public class CalldaGlobalConfig implements Serializable{
 		ivPath = savedInstanceState.getString("ivPath");
 		ivPathBack = savedInstanceState.getString("ivPathBack");
 		keyBoardSetting = savedInstanceState.getBoolean("keyBoardSetting");
-		contactBeans = (List<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0);
+		contactBeans = (ArrayList<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0);
 		longitude=savedInstanceState.getDouble("longitude",longitude);
 		latitude=savedInstanceState.getDouble("latitude",latitude);
 		address=savedInstanceState.getString("address",address);

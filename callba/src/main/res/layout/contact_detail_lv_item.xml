@@ -23,12 +23,20 @@
 			/>
 		<TextView
 			android:id="@+id/tv_phonelist_number"
-			android:layout_width="wrap_content"
+			android:layout_width="0dp"
 			android:layout_height="wrap_content"
+			android:layout_weight="1"
 			android:layout_marginLeft="10dp"
 			android:textSize="16sp"
 			android:text="号码"
 			android:textColor="@color/black" />
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:background="?attr/selectableItemBackground"
+			android:text="@string/send_message"
+			android:textColor="?attr/colorAccent"
+			android:id="@+id/send_message"/>
 	</LinearLayout>
 
 	<View

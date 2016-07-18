@@ -143,7 +143,7 @@ public class CommunityActivity extends BaseActivity implements UserDao.PostListe
         if(result[0].equals("0"))
         {moods = new ArrayList<>();
             try {
-                moods = gson.fromJson(result[1], new TypeToken<List<Mood>>() {
+                moods = gson.fromJson(result[1], new TypeToken<ArrayList<Mood>>() {
                 }.getType());
             } catch (Exception e) {
 

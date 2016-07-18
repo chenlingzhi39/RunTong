@@ -103,10 +103,10 @@ public class CalllogService {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				//totalCallLogBeans.addAll(queryBackCalllog());
+				totalCallLogBeans.addAll(queryBackCalllog());
 				totalCallLogBeans.addAll(queryLocalCalllog());
 
-				//Collections.sort(totalCallLogBeans, new MyComparator());
+				Collections.sort(totalCallLogBeans, new MyComparator());
 
 				Message message = mHandler.obtainMessage();
 				message.what = ASYNC_QUERY_COMPLETE;

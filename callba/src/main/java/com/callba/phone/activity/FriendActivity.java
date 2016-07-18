@@ -107,7 +107,6 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         location.setText(CalldaGlobalConfig.getInstance().getAddress());
             userDao = new UserDao(this, this);
         initRefreshLayout();
-        userList.setLayoutManager(new LinearLayoutManager(this));
         userList.setLoadingMoreEnabled(false);
         final View view = getLayoutInflater().inflate(R.layout.banner, null);
         final View view1 = getLayoutInflater().inflate(R.layout.ad, null);
@@ -139,7 +138,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             @Override
             public void success(String msg) {
                 final ArrayList<Advertisement> list;
-                list = gson.fromJson(msg, new TypeToken<List<Advertisement>>() {
+                list = gson.fromJson(msg, new TypeToken<ArrayList<Advertisement>>() {
                 }.getType());
                 SimpleHandler.getInstance().postDelayed(new Runnable() {
                     @Override
@@ -401,7 +400,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         if (result[0].equals("0")) {
             list = new ArrayList<>();
             try {
-                list = gson.fromJson(result[1], new TypeToken<List<NearByUser>>() {
+                list = gson.fromJson(result[1], new TypeToken<ArrayList<NearByUser>>() {
                 }.getType());
             } catch (Exception e) {
 

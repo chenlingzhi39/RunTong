@@ -504,4 +504,27 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if(this==MyApplication.activities.get(MyApplication.activities.size()-1)&&
+        this.getClass() == MainCallActivity.class&&
+                this.getClass() == ContactActivity2.class &&
+                this.getClass() == HomeActivity.class &&
+                this.getClass() == MessageActivity.class&&
+                this.getClass()==UserActivity.class)
+        CalldaGlobalConfig.getInstance().saveGlobalCfg(outState);
+        super.onSaveInstanceState(outState);
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle state) {
+        if(this==MyApplication.activities.get(MyApplication.activities.size()-1)&&
+                this.getClass() == MainCallActivity.class&&
+                this.getClass() == ContactActivity2.class &&
+                this.getClass() == HomeActivity.class &&
+                this.getClass() == MessageActivity.class&&
+                this.getClass()==UserActivity.class)
+        CalldaGlobalConfig.getInstance().restoreGlobalCfg(state);
+    super.onRestoreInstanceState(state);
+    }
 }

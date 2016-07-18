@@ -244,6 +244,18 @@ public interface Interfaces {
 	 * A类客户
 	 */
 	String A_TYPE="http://inter.boboit.cn/inter/mypotentialcustomer/mypotentialcustomer.jsp";
+	/**
+	 * 累计佣金明细
+	 */
+	String PROFIT="http://inter.boboit.cn/inter/myprofit/myprofit.jsp";
+	/**
+	 * 提现记录
+	 */
+	String TXRECORD="http://inter.boboit.cn/inter/mytxrecord/mytxrecord.jsp";
+	/**
+	 * 获取二维码
+	 */
+	String IMAGE_QR="http://inter.boboit.cn/inter/myqr/myqr.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

@@ -49,6 +49,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.callba.R;
+import com.callba.phone.MyApplication;
 import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.util.Logger;
@@ -109,6 +110,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MyApplication.activities.add(this);
         setContentView(R.layout.contact_detail2);
         ButterKnife.inject(this);
         displayMetrics = new DisplayMetrics();
@@ -381,24 +383,6 @@ public void setImage(){
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.invite:
-                Dialog dialog = new android.support.v7.app.AlertDialog.Builder(this).setTitle("是否邀请此好友？").setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Uri smsToUri = Uri.parse("smsto://" + bean.getContactPhones().get(0));
-                        Intent mIntent = new Intent(Intent.ACTION_SENDTO, smsToUri);
-                        mIntent.putExtra("sms_body", "我是" + CalldaGlobalConfig.getInstance().getNickname() + "，我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
-                        startActivity(mIntent);
-                        dialog.dismiss();
-                    }
-                }).setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
-                dialog.show();
-                break;
             case android.R.id.home:
                 finish();
                 break;
@@ -546,8 +530,8 @@ public void setImage(){
     }
 
     @Override
-    public boolean onCreateOptionsMenu(final Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_contact_detail, menu);
-        return super.onCreateOptionsMenu(menu);
+    protected void onDestroy() {
+        MyApplication.activities.remove(this);
+        super.onDestroy();
     }
 }

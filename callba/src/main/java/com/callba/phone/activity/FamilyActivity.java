@@ -73,6 +73,7 @@ public class FamilyActivity extends BaseActivity {
                 startActivity(new Intent(this,OrderActivity.class));
                 break;
             case R.id.commission_detail:
+                startActivity(new Intent(this,ProfitActivity.class));
                 break;
             case R.id.team:
                 startActivity(new Intent(this,TeamActivity.class));
@@ -81,6 +82,7 @@ public class FamilyActivity extends BaseActivity {
                 startActivity(new Intent(this,ATypeActivity.class));
                 break;
             case R.id.qr_code:
+                startActivity(new Intent(this,ImageQRActivity.class));
                 break;
         }
     }
