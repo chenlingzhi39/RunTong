@@ -20,8 +20,7 @@ import com.callba.phone.adapter.PhotoAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.CalldaGlobalConfig;
-import com.callba.phone.view.AlwaysMarqueeTextView;
+import com.callba.phone.cfg.GlobalConfig;
 
 import java.util.ArrayList;
 
@@ -59,7 +58,7 @@ public class PostActivity extends BaseActivity implements UserDao.UploadListener
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
-        location.setText(CalldaGlobalConfig.getInstance().getAddress());
+        location.setText(GlobalConfig.getInstance().getAddress());
         footerView = getLayoutInflater().inflate(R.layout.add_photo, null);
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -158,7 +157,7 @@ public class PostActivity extends BaseActivity implements UserDao.UploadListener
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.post:
-                userDao.sendMood(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),content.getText().toString(),(ArrayList<String>) photoAdapter.getData());
+                userDao.sendMood(getUsername(), getPassword(),content.getText().toString(),(ArrayList<String>) photoAdapter.getData());
                 break;
         }
         return super.onOptionsItemSelected(item);

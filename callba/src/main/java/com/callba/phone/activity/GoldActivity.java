@@ -7,7 +7,7 @@ import android.widget.TextView;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -31,7 +31,7 @@ public class GoldActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        gold.setText(CalldaGlobalConfig.getInstance().getGold() + "");
+        gold.setText(GlobalConfig.getInstance().getGold() + "");
     }
 
     @OnClick(R.id.exchange)

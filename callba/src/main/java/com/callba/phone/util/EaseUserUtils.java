@@ -8,7 +8,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.callba.R;
 import com.callba.phone.bean.EaseUser;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.controller.EaseUI;
 import com.callba.phone.controller.EaseUI.EaseUserProfileProvider;
 
@@ -38,9 +38,9 @@ public class EaseUserUtils {
      */
     public static void setUserAvatar(Context context, String username, ImageView imageView){
     	EaseUser user = getUserInfo(username);
-        if(username.equals(CalldaGlobalConfig.getInstance().getUsername()+"-callba")){
-            if(!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
-                Glide.with(context).load(CalldaGlobalConfig.getInstance().getUserhead()).into(imageView);
+        if(username.equals(GlobalConfig.getInstance().getUsername()+"-callba")){
+            if(!GlobalConfig.getInstance().getUserhead().equals(""))
+                Glide.with(context).load(GlobalConfig.getInstance().getUserhead()).into(imageView);
             return;
         }
         if(user != null && user.getAvatar() != null){
@@ -62,8 +62,8 @@ public class EaseUserUtils {
      */
     public static void setUserNick(String username, TextView textView){
         if(textView != null){
-            if(username.equals(CalldaGlobalConfig.getInstance().getUsername()+"-callba")){
-                textView.setText(CalldaGlobalConfig.getInstance().getNickname());
+            if(username.equals(GlobalConfig.getInstance().getUsername()+"-callba")){
+                textView.setText(GlobalConfig.getInstance().getNickname());
                 return;
             }
         	EaseUser user = getUserInfo(username);

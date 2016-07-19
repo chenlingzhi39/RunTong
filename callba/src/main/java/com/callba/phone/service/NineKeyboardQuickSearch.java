@@ -13,7 +13,7 @@ import android.text.TextUtils;
 
 import com.callba.phone.bean.CalldaCalllogBean;
 import com.callba.phone.bean.QuickQueryContactBean;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.util.Logger;
@@ -269,8 +269,8 @@ public class NineKeyboardQuickSearch {
 			}
 
 			// 整合通讯录数据
-			if (CalldaGlobalConfig.getInstance().getContactBeans() != null) {
-				for (ContactPersonEntity contactBean : CalldaGlobalConfig
+			if (GlobalConfig.getInstance().getContactBeans() != null) {
+				for (ContactPersonEntity contactBean : GlobalConfig
 						.getInstance().getContactBeans()) {
 					boolean isExist = false;
 					for (ContactPersonEntity bean : merageCalllogContacts) {

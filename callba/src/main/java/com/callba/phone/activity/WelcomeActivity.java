@@ -2,20 +2,17 @@ package com.callba.phone.activity;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,17 +28,17 @@ import android.widget.LinearLayout;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
-import com.callba.phone.DemoHelper;
 import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Task;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalSetting;
+import com.callba.phone.logic.contact.ContactPersonEntity;
+import com.callba.phone.logic.contact.QueryContactCallback;
 import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.service.MainService;
-import com.callba.phone.service.UpdateService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.AppVersionChecker.AppVersionBean;
@@ -93,7 +90,7 @@ public class WelcomeActivity extends BaseActivity {
 //				Logger.i(TAG, "初始化PushManager对象（初始化推送服务）" + clientid);
 				// 启动服务
 				//startService(new Intent(WelcomeActivity.this, MainService.class));
-				if (Constant.CALL_SETTING_HUI_BO.equals(CalldaGlobalConfig
+				if (Constant.CALL_SETTING_HUI_BO.equals(GlobalConfig
 						.getInstance().getCallSetting())) {
 					return;
 				}
@@ -142,19 +139,7 @@ public class WelcomeActivity extends BaseActivity {
 						asyncInitLoginEnvironment();
 					}
 				}, 500);
-				mHandler.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						// 检查网络
-						isNetworkAvail = NetworkDetector.detect(WelcomeActivity.this);
-						alertNetWork(isNetworkAvail);
-						if (isNetworkAvail) {
-							currentGetVersionTime = 0;
-							// 获取版本信息
-							sendGetVersionTask();
-						}
-					}
-				}, 500);
+
 			}
 
 			@Override
@@ -189,7 +174,19 @@ public class WelcomeActivity extends BaseActivity {
 		Logger.v("语言环境", s);
         Locale.setDefault(new Locale("zh"));
 		// 查询联系人
-		new QueryContacts(null).loadContact(this);
+		new QueryContacts(new QueryContactCallback() {
+			@Override
+			public void queryCompleted(List<ContactPersonEntity> contacts) {
+						// 检查网络
+						isNetworkAvail = NetworkDetector.detect(WelcomeActivity.this);
+						alertNetWork(isNetworkAvail);
+						if (isNetworkAvail) {
+							currentGetVersionTime = 0;
+							// 获取版本信息
+							sendGetVersionTask();
+						}
+			}
+		}).loadContact(this);
 
 		// 初始化环境参数
 		GlobalSetting.initEnvirment(this);
@@ -231,11 +228,11 @@ public class WelcomeActivity extends BaseActivity {
 
 		String secretKey = appVersionBean.getSecretKey();
 		if (!TextUtils.isEmpty(secretKey)) {
-			CalldaGlobalConfig.getInstance().setSecretKey(secretKey);
+			GlobalConfig.getInstance().setSecretKey(secretKey);
 			mSharedPreferenceUtil.putString(Constant.SECRET_KEY, secretKey,
 					true);
 		}
-        CalldaGlobalConfig.getInstance().setAppVersionBean(appVersionBean);
+        GlobalConfig.getInstance().setAppVersionBean(appVersionBean);
 		// 检查是否成功获取加密Key
 		checkLoginKey(appVersionBean);
 	}
@@ -247,7 +244,7 @@ public class WelcomeActivity extends BaseActivity {
 	 */
 	private void checkLoginKey(AppVersionBean appVersionBean) {
 		// Logger.i(TAG, "getSecretKey() : " +
-		// CalldaGlobalConfig.getInstance().getSecretKey());
+		// GlobalConfig.getInstance().getSecretKey());
 		Logger.i(TAG, "currentGetVersionTime : " + currentGetVersionTime);
 
 		if (!TextUtils.isEmpty(appVersionBean.getSecretKey())) {
@@ -265,7 +262,7 @@ public class WelcomeActivity extends BaseActivity {
 			//MobclickAgent.onEvent(this, "version_timeout");
 			String secretKey = mSharedPreferenceUtil
 					.getString(Constant.SECRET_KEY);
-			CalldaGlobalConfig.getInstance().setSecretKey(secretKey);
+			GlobalConfig.getInstance().setSecretKey(secretKey);
 
 			if (TextUtils.isEmpty(secretKey)) {
 				// Toast.makeText(this, R.string.getversionfailed,
@@ -348,7 +345,7 @@ public class WelcomeActivity extends BaseActivity {
 			mSharedPreferenceUtil.putBoolean(Constant.ISFRISTSTART, false);
 			mSharedPreferenceUtil.putBoolean(Constant.Auto_Login, true); // 默认自动启动
 			mSharedPreferenceUtil.commit();
-		} else if (CalldaGlobalConfig.getInstance().isAutoLogin()) {
+		} else if (GlobalConfig.getInstance().isAutoLogin()) {
 			String username = mSharedPreferenceUtil
 					.getString(Constant.LOGIN_USERNAME);
 			if (TextUtils.isEmpty(username)) {

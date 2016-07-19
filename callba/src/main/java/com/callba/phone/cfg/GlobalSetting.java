@@ -18,9 +18,9 @@ public class GlobalSetting {
 		//拨打方式
 		String callSetting = mSharedPreferenceUtil.getString(Constant.CALL_SETTING, Constant.CALL_SETTING_HUI_BO);
 		
-		CalldaGlobalConfig.getInstance().setCallBackAutoAnswer(isCallbackAutoAnswer);
-		CalldaGlobalConfig.getInstance().setAutoLogin(isAutoLogin);
-		CalldaGlobalConfig.getInstance().setKeyBoardSetting(iskeyboard);
-		CalldaGlobalConfig.getInstance().setCallSetting(callSetting);
+		GlobalConfig.getInstance().setCallBackAutoAnswer(isCallbackAutoAnswer);
+		GlobalConfig.getInstance().setAutoLogin(isAutoLogin);
+		GlobalConfig.getInstance().setKeyBoardSetting(iskeyboard);
+		GlobalConfig.getInstance().setCallSetting(callSetting);
 	}
 }

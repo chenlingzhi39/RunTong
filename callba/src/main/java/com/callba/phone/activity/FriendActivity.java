@@ -1,21 +1,16 @@
 package com.callba.phone.activity;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,13 +29,10 @@ import com.callba.phone.adapter.NearByUserAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Advertisement;
-import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.bean.NearByUser;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.CalldaGlobalConfig;
-import com.callba.phone.logic.contact.ContactPersonEntity;
-import com.callba.phone.util.ContactsAccessPublic;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -104,7 +96,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         ButterKnife.inject(this);
         gson = new Gson();
         location.setTextColor(getResources().getColor(R.color.black_2f));
-        location.setText(CalldaGlobalConfig.getInstance().getAddress());
+        location.setText(GlobalConfig.getInstance().getAddress());
             userDao = new UserDao(this, this);
         initRefreshLayout();
         userList.setLoadingMoreEnabled(false);
@@ -117,9 +109,9 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(CalldaGlobalConfig.getInstance().getAdvertisements2() != null&&CalldaGlobalConfig.getInstance().getAdvertisements2().size()>0)
+                if(GlobalConfig.getInstance().getAdvertisements2() != null&& GlobalConfig.getInstance().getAdvertisements2().size()>0)
                 { Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                intent1.setData(Uri.parse(CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getAdurl()));
+                intent1.setData(Uri.parse(GlobalConfig.getInstance().getAdvertisements2().get(0).getAdurl()));
                 startActivity(intent1);}
             }
         });
@@ -146,7 +138,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                         Glide.with(getApplicationContext()).load(list.get(0).getImage()).into(imageView);
                     }
                 }, 500);
-                CalldaGlobalConfig.getInstance().setAdvertisements2(list);
+                GlobalConfig.getInstance().setAdvertisements2(list);
               /*  for (Advertisement advertisement : list) {
                     webImages.add(advertisement.getImage());
                 }
@@ -187,7 +179,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             @Override
             public void onLoadMore() {
                 is_refresh=false;
-                userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), CalldaGlobalConfig.getInstance().getLatitude(), CalldaGlobalConfig.getInstance().getLongitude(), 1000,page+1);
+                userDao.getNearBy(getUsername(), getPassword(), GlobalConfig.getInstance().getLatitude(), GlobalConfig.getInstance().getLongitude(), 1000,page+1);
             }
         });
         nearByUserAdapter.setNoMore(R.layout.view_nomore);
@@ -199,7 +191,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             public void onRefresh() {
                 //refresh data here
                 is_refresh=true;
-                userDao.getNearBy(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), CalldaGlobalConfig.getInstance().getLatitude(), CalldaGlobalConfig.getInstance().getLongitude(), 1000,page);
+                userDao.getNearBy(getUsername(), getPassword(), GlobalConfig.getInstance().getLatitude(), GlobalConfig.getInstance().getLongitude(), 1000,page);
              }
 
             @Override
@@ -236,7 +228,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         locationOption.setGpsFirst(false);
         // 设置定位模式为高精度模式
         locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        // locationOption.setInterval(CalldaGlobalConfig.getInstance().getInterval());
+        // locationOption.setInterval(GlobalConfig.getInstance().getInterval());
         locationOption.setOnceLocation(true);
         locationClient.setLocationOption(locationOption);
         // 设置定位监听
@@ -250,10 +242,10 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                     Logger.i("address", aMapLocation.getAddress());
                     Logger.i("latitude", aMapLocation.getLatitude() + "");
                     Logger.i("longitude", aMapLocation.getLongitude() + "");
-                    CalldaGlobalConfig.getInstance().setAddress(aMapLocation.getAddress());
-                    CalldaGlobalConfig.getInstance().setLatitude(aMapLocation.getLatitude());
-                    CalldaGlobalConfig.getInstance().setLongitude(aMapLocation.getLongitude());
-                    userDao2.saveLocation(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                    GlobalConfig.getInstance().setAddress(aMapLocation.getAddress());
+                    GlobalConfig.getInstance().setLatitude(aMapLocation.getLatitude());
+                    GlobalConfig.getInstance().setLongitude(aMapLocation.getLongitude());
+                    userDao2.saveLocation(getUsername(), getPassword(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
                     location.setText(aMapLocation.getAddress());
                 } else {
                     //定位失败
@@ -267,16 +259,16 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
 
             }
         });
-        if (CalldaGlobalConfig.getInstance().getAdvertisements2() != null)
-        {Logger.i("ad_image", CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getImage());
+        if (GlobalConfig.getInstance().getAdvertisements2() != null)
+        {Logger.i("ad_image", GlobalConfig.getInstance().getAdvertisements2().get(0).getImage());
             SimpleHandler.getInstance().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Glide.with(FriendActivity.this).load(CalldaGlobalConfig.getInstance().getAdvertisements2().get(0).getImage()).into(imageView);
+                    Glide.with(FriendActivity.this).load(GlobalConfig.getInstance().getAdvertisements2().get(0).getImage()).into(imageView);
                 }
             }, 500);
         } else
-            userDao1.getAd(2, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+            userDao1.getAd(2, getUsername(), getPassword());
 
     }
     private void showDialog(final NearByUser entity) {
@@ -312,8 +304,8 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                                 OkHttpUtils
                                         .post()
                                         .url(Interfaces.ADD_FRIEND)
-                                        .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-                                        .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                                        .addParams("loginName", getUsername())
+                                        .addParams("loginPwd",  getPassword())
                                         .addParams("phoneNumber",entity.getPhoneNumber())
                                         .build()
                                         .execute(new StringCallback() {

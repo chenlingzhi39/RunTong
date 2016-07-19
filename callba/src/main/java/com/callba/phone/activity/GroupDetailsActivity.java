@@ -13,17 +13,12 @@
  */
 package com.callba.phone.activity;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,16 +36,9 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
-import com.callba.phone.MyApplication;
-import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.cfg.CalldaGlobalConfig;
-import com.callba.phone.cfg.Constant;
-import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.ui.ExitGroupDialog;
 import com.callba.phone.util.EaseUserUtils;
-import com.callba.phone.util.SharedPreferenceUtil;
-import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.widget.EaseAlertDialog;
 import com.callba.phone.widget.EaseExpandGridView;
 import com.callba.phone.widget.EaseSwitchButton;

@@ -15,7 +15,7 @@ import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Order;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.google.gson.Gson;
@@ -24,7 +24,6 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -66,8 +65,8 @@ public class OrderActivity extends BaseActivity {
 
     public void getOrders() {
         OkHttpUtils.post().url(Interfaces.ORDER)
-                .addParams("loginPwd", CalldaGlobalConfig.getInstance().getPassword())
-                .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+                .addParams("loginPwd", getPassword())
+                .addParams("loginName", getUsername())
                 .build()
                 .execute(new StringCallback() {
                     @Override

@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
@@ -19,9 +18,8 @@ import com.callba.phone.SocializeConfigDemo;
 import com.callba.phone.activity.recharge.RechargeActivity2;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CircleTextView;
 import com.callba.phone.widget.signcalendar.SignCalendar;
@@ -113,7 +111,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         // dbManager = new DBManager(this);
         configSso();
         markDao = MyApplication.getInstance().getDaoSession().getMarkDao();
-        gold.setText(getString(R.string.gold) + ":" + CalldaGlobalConfig.getInstance().getGold());
+        gold.setText(getString(R.string.gold) + ":" + GlobalConfig.getInstance().getGold());
         list = new ArrayList<>();
         cal = Calendar.getInstance();
         formatter = new SimpleDateFormat("yyyy-MM-dd");//获取当前时间
@@ -167,7 +165,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        mark.setUsername(CalldaGlobalConfig.getInstance().getUsername());
+                        mark.setUsername(getUsername());
                         mark.setMonth(calendar.getCalendarMonth());
                         markDao.insert(mark);
                         date = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
@@ -225,14 +223,14 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         btn_signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userDao.getSign(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+                userDao.getSign(getUsername(), getPassword());
 
             }
         });
         circle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userDao.getSign(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+                userDao.getSign(getUsername(), getPassword());
 
             }
         });
@@ -285,14 +283,14 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     @Override
     public void success(String msg) {
         toast(msg);
-        SharedPreferenceUtil.getInstance(this).putString(CalldaGlobalConfig.getInstance().getUsername(), date, true);
+        SharedPreferenceUtil.getInstance(this).putString(getUsername(), date, true);
            /* calendar.removeAllMarks();
            list.add(df.format(today));
            calendar.addMarks(list, 0);*/
         //将当前日期标示出来
         //add(df.format(today));
         Mark mark = new Mark();
-        mark.setUsername(CalldaGlobalConfig.getInstance().getUsername());
+        mark.setUsername(getUsername());
         mark.setMonth(cal.get(Calendar.MONTH) + 1);
         try {
             mark.setDate(formatter.parse(date1));
@@ -303,8 +301,8 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         calendar.addMark(date1, 0);
         //query();
         HashMap<String, Integer> bg = new HashMap<String, Integer>();
-        CalldaGlobalConfig.getInstance().setGold(CalldaGlobalConfig.getInstance().getGold() + 3);
-        gold.setText(getString(R.string.gold) + ":" + CalldaGlobalConfig.getInstance().getGold());
+        GlobalConfig.getInstance().setGold(GlobalConfig.getInstance().getGold() + 3);
+        gold.setText(getString(R.string.gold) + ":" + GlobalConfig.getInstance().getGold());
         calendar.setCalendarDayBgColor(date1, R.drawable.bg_sign_today);
         btn_signIn.setText("今日已签，明日继续");
         btn_signIn.setBackgroundResource(R.drawable.button_gray);
@@ -356,7 +354,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 String month = calendar.getCalendarMonth() + "";
                 if (month.length() == 1)
                     month = "0" + month;
-                userDao1.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
+                userDao1.getMarks(getUsername(),getPassword(), year + month);
             }
 
     }
@@ -381,7 +379,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     }
 
     public boolean getLocalMarks(int month) {
-        String where = MarkDao.Properties.Month.columnName + " = " + month + " and " + MarkDao.Properties.Username.columnName + " = '" + CalldaGlobalConfig.getInstance().getUsername() + "'";
+        String where = MarkDao.Properties.Month.columnName + " = " + month + " and " + MarkDao.Properties.Username.columnName + " = '" + getUsername() + "'";
         String orderBy = MarkDao.Properties.Date.columnName + " DESC";
         cursor = MyApplication.getInstance().getDb().query(markDao.getTablename(), markDao.getAllColumns(), where, null, null, null, orderBy);
         if (cursor.getCount() == 0 || cursor == null)

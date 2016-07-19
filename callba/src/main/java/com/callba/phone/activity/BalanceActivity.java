@@ -11,7 +11,7 @@ import com.callba.phone.BaseActivity;
 import com.callba.phone.activity.recharge.RechargeActivity2;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -53,7 +53,7 @@ public class BalanceActivity extends BaseActivity {
 
             }
         });
-        userDao.getBalance(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+        userDao.getBalance(getUsername(), getPassword());
     }
 
     @OnClick(R.id.recharge)

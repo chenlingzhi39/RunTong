@@ -14,7 +14,7 @@ import com.callba.R;
 import com.callba.phone.bean.CalldaCalllogBean;
 import com.callba.phone.bean.CalllogDetailBean;
 import com.callba.phone.bean.SearchSortKeyBean;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.service.CalllogService;
 import com.callba.phone.service.CalllogService.CalldaCalllogListener;
@@ -133,8 +133,8 @@ public class DataAnalysis {
 						}
 						// bean.setDisplayName("未知");
 						bean.setDisplayName(tempPhoneNumber);
-						if (CalldaGlobalConfig.getInstance().getContactBeans() != null) {
-							for (ContactPersonEntity contactBean : CalldaGlobalConfig
+						if (GlobalConfig.getInstance().getContactBeans() != null) {
+							for (ContactPersonEntity contactBean : GlobalConfig
 									.getInstance().getContactBeans()) {
 								if (contactBean.getPhoneNumber().equals(
 										tempPhoneNumber)) {
@@ -151,8 +151,8 @@ public class DataAnalysis {
 					}
 
 					if (bean.getSearchSortKeyBean() == null) {
-						if (CalldaGlobalConfig.getInstance().getContactBeans() != null) {
-							for (ContactPersonEntity contactBean : CalldaGlobalConfig
+						if (GlobalConfig.getInstance().getContactBeans() != null) {
+							for (ContactPersonEntity contactBean : GlobalConfig
 									.getInstance().getContactBeans()) {
 								if (contactBean.getPhoneNumber().equals(
 										bean.getCallLogNumber())) {

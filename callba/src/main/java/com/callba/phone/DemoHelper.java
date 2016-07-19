@@ -16,37 +16,29 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.callba.R;
 import com.callba.phone.activity.ChatActivity;
 import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.activity.NewFriendsMsgActivity;
 import com.callba.phone.activity.parse.UserProfileManager;
 import com.callba.phone.bean.BaseUser;
-import com.callba.phone.bean.EaseEmojicon;
-import com.callba.phone.bean.EaseEmojiconGroupEntity;
 import com.callba.phone.bean.EaseNotifier;
 import com.callba.phone.bean.EaseNotifier.*;
 import com.callba.phone.bean.EaseUser;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.controller.EaseUI;
 import com.callba.phone.controller.EaseUI.*;
 import com.callba.phone.db.DemoDBManager;
 import com.callba.phone.db.InviteMessage;
 import com.callba.phone.db.InviteMessage.*;
 import com.callba.phone.db.InviteMessgeDao;
-import com.callba.phone.db.InviteMessgeDao.*;
 import com.callba.phone.db.UserDao;
 import com.callba.phone.domain.RobotUser;
 import com.callba.phone.receiver.CallReceiver;
 import com.callba.phone.util.EaseCommonUtils;
-import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.PreferenceManager;
-import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.SimpleHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -68,18 +60,11 @@ import com.hyphenate.chat.EMOptions;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -754,13 +739,11 @@ public class DemoHelper {
             }
             toAddUsers.put(username, user);
             localUsers.putAll(toAddUsers);*/
-
-            Logger.i("get_friends",Interfaces.GET_FRIENDS+"?loginName="+ CalldaGlobalConfig.getInstance().getUsername()+"&loginPwd="+CalldaGlobalConfig.getInstance().getPassword());
             OkHttpUtils
                     .post()
                     .url(Interfaces.GET_FRIENDS)
-                    .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-                    .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                    .addParams("loginName", GlobalConfig.getInstance().getUsername())
+                    .addParams("loginPwd",  GlobalConfig.getInstance().getPassword())
                     .build().execute(new StringCallback() {
                 @Override
                 public void onError(Call call, Exception e, int id) {
@@ -793,10 +776,10 @@ public class DemoHelper {
            //发送好友变动广播
 
           /*  RequestParams params = new RequestParams();
-            params.addBodyParameter("loginName", CalldaGlobalConfig.getInstance().getUsername());
-            params.addBodyParameter("loginPwd", CalldaGlobalConfig.getInstance().getPassword());
+            params.addBodyParameter("loginName", GlobalConfig.getInstance().getUsername());
+            params.addBodyParameter("loginPwd", GlobalConfig.getInstance().getPassword());
             params.addBodyParameter("phoneNumber",username.substring(0,11));
-            Logger.i("add_url",Interfaces.ADD_FRIEND+"?loginName="+CalldaGlobalConfig.getInstance().getUsername()+"&loginPwd="+CalldaGlobalConfig.getInstance().getPassword()+"&phoneNumber="+username.substring(0,11));
+            Logger.i("add_url",Interfaces.ADD_FRIEND+"?loginName="+GlobalConfig.getInstance().getUsername()+"&loginPwd="+GlobalConfig.getInstance().getPassword()+"&phoneNumber="+username.substring(0,11));
             httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.ADD_FRIEND, params, new RequestCallBack<String>(){
                 @Override
                 public void onFailure(HttpException error, String msg) {

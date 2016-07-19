@@ -10,7 +10,7 @@ import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 
 import com.android.internal.telephony.ITelephony;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.ActivityUtil;
 
 public class AutoAnswerReceiver {
@@ -34,7 +34,7 @@ public class AutoAnswerReceiver {
 				case TelephonyManager.CALL_STATE_RINGING:
 					try {
 						ActivityUtil.finishCallBackDisplayPages();
-						if (!CalldaGlobalConfig.getInstance().isCallBackAutoAnswer()) {
+						if (!GlobalConfig.getInstance().isCallBackAutoAnswer()) {
 							//不自动接听来电
 							return;
 						}

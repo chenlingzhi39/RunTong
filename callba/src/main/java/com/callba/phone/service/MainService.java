@@ -2,6 +2,7 @@ package com.callba.phone.service;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,7 +26,6 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
-import com.callba.R;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.activity.HomeActivity;
 import com.callba.phone.activity.UserActivity;
@@ -34,103 +34,115 @@ import com.callba.phone.activity.login.RegisterActivity;
 import com.callba.phone.activity.more.QueryCalllogActivity;
 import com.callba.phone.bean.Task;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.logic.contact.ContactPersonEntity;
+import com.callba.phone.logic.contact.QueryContactCallback;
+import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.HttpUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
+import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 
 /**
  * 程序主服务，处理后台任务
+ *
  * @author Zhang
  */
-public class MainService extends Service implements Runnable{
-	private static final String TAG = MainService.class.getCanonicalName(); 
-	/**
-	 * 线程池最大线程数
-	 */
-	private static final int DEFAULT_MAXIMUM_POOL_SIZE = 2;
-	private Thread mThread;
-	private boolean isRun = true;// 线程开关
-	private static ExecutorService fixedThreadPool;	//线程池
-	/**
-	 * 存储任务集合
-	 */
-	private static LinkedList<Task> calldaTaskList = new LinkedList<Task>(); // 存储要处理的所有任务
-	private AMapLocationClient locationClient = null;
-	private AMapLocationClientOption locationOption = null;
-	UserDao userDao;
-	LocationReceiver receiver;
-	//监听联系人数据的监听对象
-	private  ContentObserver mObserver = new ContentObserver(
-			new Handler()) {
+public class MainService extends Service implements Runnable {
+    private static final String TAG = MainService.class.getCanonicalName();
+    /**
+     * 线程池最大线程数
+     */
+    private static final int DEFAULT_MAXIMUM_POOL_SIZE = 2;
+    private Thread mThread;
+    private boolean isRun = true;// 线程开关
+    private static ExecutorService fixedThreadPool;    //线程池
+    public static boolean system_contact = false;
+    /**
+     * 存储任务集合
+     */
+    private static LinkedList<Task> calldaTaskList = new LinkedList<Task>(); // 存储要处理的所有任务
+    private AMapLocationClient locationClient = null;
+    private AMapLocationClientOption locationOption = null;
+    UserDao userDao;
+    LocationReceiver receiver;
+    //监听联系人数据的监听对象
+    private ContentObserver mObserver = new ContentObserver(
+            new Handler()) {
 
-		@Override
-		public void onChange(boolean selfChange) {
-			// 当联系人表发生变化时进行相应的操作
+        @Override
+        public void onChange(boolean selfChange) {
+            // 当联系人表发生变化时进行相应的操作
+            if (!system_contact) {
+                new QueryContacts(new QueryContactCallback() {
+                    @Override
+                    public void queryCompleted(List<ContactPersonEntity> contacts) {
+                       sendBroadcast(new Intent("com.callba.contact"));
+                    }
+                }).loadContact(getApplicationContext());
+            }
+        }
+    };
 
+    public static ExecutorService getFixedThreadPool() {
+        return fixedThreadPool;
+    }
 
-		}
-	};
+    /**
+     * 新建任务
+     *
+     * @param task
+     */
+    public static void newTask(Task task) {
+        synchronized (calldaTaskList) {
+            calldaTaskList.add(task);
+            calldaTaskList.notify();
+            Logger.i(TAG, "MainService newTask -> " + task);
+        }
+    }
 
-	public static  ExecutorService getFixedThreadPool() {
-		return fixedThreadPool;
-	}
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mThread = new Thread(this);
+        mThread.start();
+        fixedThreadPool = Executors.newFixedThreadPool(DEFAULT_MAXIMUM_POOL_SIZE);
+        userDao = new UserDao();
+        Log.i("service", "oncreate");
+        IntentFilter filter = new IntentFilter(
+                "com.callba.location");
+        receiver = new LocationReceiver();
+        registerReceiver(receiver, filter);
+        getContentResolver().registerContentObserver(
+                ContactsContract.Contacts.CONTENT_URI, true, mObserver);
 
-	/**
-	 * 新建任务
-	 * 
-	 * @param task
-	 */
-	public static void newTask(Task task) {
-		synchronized (calldaTaskList) {
-			calldaTaskList.add(task);
-			calldaTaskList.notify();
-			Logger.i(TAG, "MainService newTask -> " + task);
-		}
-	}
+    }
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		mThread = new Thread(this);
-		mThread.start();
-		fixedThreadPool = Executors.newFixedThreadPool(DEFAULT_MAXIMUM_POOL_SIZE);
-		userDao=new UserDao();
-		Log.i("service","oncreate");
-		IntentFilter filter = new IntentFilter(
-				"com.callba.location");
-		receiver = new LocationReceiver();
-		registerReceiver(receiver, filter);
-		getContentResolver().registerContentObserver(
-				ContactsContract.Contacts.CONTENT_URI, true, mObserver);
+    @SuppressLint("HandlerLeak")
+    Handler mHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case Task.TASK_GET_VERSION:// 获取版本
+                    Bundle bundle = (Bundle) msg.obj;
+                    String fromPage = bundle.getString("fromPage");
+                    if ("UserActivity".equals(fromPage)) {
 
-	}
-
-	@SuppressLint("HandlerLeak")
-	Handler mHandler = new Handler() {
-		public void handleMessage(android.os.Message msg) {
-			switch (msg.what) {
-			case Task.TASK_GET_VERSION:// 获取版本
-				Bundle bundle = (Bundle) msg.obj;
-				String fromPage = bundle.getString("fromPage");
-				if("UserActivity".equals(fromPage)){
-					
-					UserActivity userActivity= (UserActivity) ActivityUtil.getActivityByName("UserActivity");
-					if (userActivity != null)
-						userActivity.refresh(msg);
-				}else if("WelcomeActivity".equals(fromPage)){
-					WelcomeActivity wa = (WelcomeActivity) ActivityUtil.getActivityByName("WelcomeActivity");
-					if (wa != null)
-						wa.refresh(msg);
-				}
-				break;
+                        UserActivity userActivity = (UserActivity) ActivityUtil.getActivityByName("UserActivity");
+                        if (userActivity != null)
+                            userActivity.refresh(msg);
+                    } else if ("WelcomeActivity".equals(fromPage)) {
+                        WelcomeActivity wa = (WelcomeActivity) ActivityUtil.getActivityByName("WelcomeActivity");
+                        if (wa != null)
+                            wa.refresh(msg);
+                    }
+                    break;
 
 //			case Task.TASK_LOGIN: // 登录
 //				Bundle bundle = (Bundle) msg.obj;
@@ -157,13 +169,13 @@ public class MainService extends Service implements Runnable{
 //				}
 //				break;
 
-			case Task.TASK_GET_USER_BALANCE: // 获取余额
-				HomeActivity homeActivity=(HomeActivity) ActivityUtil.getActivityByName("HomeActivity");
-				if (homeActivity!=null)
-					homeActivity.refresh(msg);
+                case Task.TASK_GET_USER_BALANCE: // 获取余额
+                    HomeActivity homeActivity = (HomeActivity) ActivityUtil.getActivityByName("HomeActivity");
+                    if (homeActivity != null)
+                        homeActivity.refresh(msg);
 
 			/*	String balancefromPage = null;
-				try {
+                try {
 					balancefromPage = balanceBundle.getString("frompage");
 				} catch (Exception e) {
 				}
@@ -184,492 +196,493 @@ public class MainService extends Service implements Runnable{
 						String[] balanceResult = ((String) msg.obj).split("\\|");
 						if("0".equals(balanceResult[0])) {
 							String balance = balanceResult[1];
-							CalldaGlobalConfig.getInstance().setAccountBalance(balance);
+							GlobalConfig.getInstance().setAccountBalance(balance);
 						}
 					} catch (Exception e) {}
 				}*/
-				break;
+                    break;
 
-			case Task.TASK_GET_SMS_KEY: // 获取短信key
-				Bundle bundle1 = (Bundle) msg.obj;
-				String fromPage1 = bundle1.getString("fromPage");
-				if ("RegisterActivity".equals(fromPage1)) {
-					RegisterActivity ra = (RegisterActivity) ActivityUtil.getActivityByName("RegisterActivity");
-					if (ra != null)
-						ra.refresh(msg);
-				} else if ("RetrievePasswordActivity".equals(fromPage1)) {
+                case Task.TASK_GET_SMS_KEY: // 获取短信key
+                    Bundle bundle1 = (Bundle) msg.obj;
+                    String fromPage1 = bundle1.getString("fromPage");
+                    if ("RegisterActivity".equals(fromPage1)) {
+                        RegisterActivity ra = (RegisterActivity) ActivityUtil.getActivityByName("RegisterActivity");
+                        if (ra != null)
+                            ra.refresh(msg);
+                    } else if ("RetrievePasswordActivity".equals(fromPage1)) {
 
-				}
-				break;
+                    }
+                    break;
 
-			case Task.TASK_GET_VERFICA_CODE:// 获取验证码
-			case Task.TASK_REGISTER: // 注册
-				RegisterActivity ra = (RegisterActivity) ActivityUtil.getActivityByName("RegisterActivity");
-				if (ra != null)
-					ra.refresh(msg);
-				break;
-				
-			case Task.TASK_VERIFY_USER_EXIST:	//验证用户是否已注册
+                case Task.TASK_GET_VERFICA_CODE:// 获取验证码
+                case Task.TASK_REGISTER: // 注册
+                    RegisterActivity ra = (RegisterActivity) ActivityUtil.getActivityByName("RegisterActivity");
+                    if (ra != null)
+                        ra.refresh(msg);
+                    break;
 
-				break;
+                case Task.TASK_VERIFY_USER_EXIST:    //验证用户是否已注册
 
-			case Task.TASK_SEND_SMS: // 发送短信
+                    break;
 
-				break;
+                case Task.TASK_SEND_SMS: // 发送短信
 
-			case Task.TASK_CHANGE_PWD: // 更改密码
+                    break;
 
-				break;
+                case Task.TASK_CHANGE_PWD: // 更改密码
 
-			case Task.TASK_RETRIEVE_PWD: // 找回密码
+                    break;
 
-				break;
+                case Task.TASK_RETRIEVE_PWD: // 找回密码
 
-			case Task.TASK_SIGN: // 每日签到
+                    break;
 
-				break;
+                case Task.TASK_SIGN: // 每日签到
 
-			case Task.TASK_SHOWNUMBER_QUERY:// 显号查询
+                    break;
 
-			case Task.TASK_SHOWNUMBER_SET:// 显号设置
+                case Task.TASK_SHOWNUMBER_QUERY:// 显号查询
 
-				break;
+                case Task.TASK_SHOWNUMBER_SET:// 显号设置
 
-			case Task.TASK_FEE_QUERY:
+                    break;
 
-				break;
+                case Task.TASK_FEE_QUERY:
 
-			case Task.TASK_GET_CONTACT_COUNT:
-			case Task.TASK_BACKUP_CONTACT:
+                    break;
 
-				break;
+                case Task.TASK_GET_CONTACT_COUNT:
+                case Task.TASK_BACKUP_CONTACT:
 
-			case Task.TASK_LOOK_REMOTE_CONTACT:
+                    break;
 
-				break;
+                case Task.TASK_LOOK_REMOTE_CONTACT:
 
-			case Task.TASK_GET_RECHARGE_INFO:
+                    break;
 
-				break;
+                case Task.TASK_GET_RECHARGE_INFO:
 
-			case Task.TASK_GET_RECHARGE_MEAL:
+                    break;
 
-				break;
+                case Task.TASK_GET_RECHARGE_MEAL:
 
-			case Task.TASK_GET_PREFERENTIAL_INFO:
+                    break;
 
-				break;
+                case Task.TASK_GET_PREFERENTIAL_INFO:
 
-			case Task.TASK_QUERY_MEAL:
+                    break;
 
-				break;
+                case Task.TASK_QUERY_MEAL:
 
-			case Task.TASK_QUERY_CALLLOG:
-				QueryCalllogActivity qca = (QueryCalllogActivity) ActivityUtil.getActivityByName("QueryCalllogActivity");
-				if (qca != null)
-					qca.refresh(msg);
-				break;
+                    break;
 
-			case Task.TASK_GET_SUBACCOUNT_NUM:
-			case Task.TASK_GET_SUBACCOUNT_LIST:
-			case Task.TASK_DELETE_SUBACCOUNT:
-			case Task.TASK_SUBACCOUNT_CHANGEPASS:
+                case Task.TASK_QUERY_CALLLOG:
+                    QueryCalllogActivity qca = (QueryCalllogActivity) ActivityUtil.getActivityByName("QueryCalllogActivity");
+                    if (qca != null)
+                        qca.refresh(msg);
+                    break;
 
-
-				break;
-
-			case Task.TASK_GET_SUBACCOUNT_YZM:
-			case Task.TASK_ADD_SUBACCOUNT:
-			case Task.TASK_ADD_SUBACCOUNT_GH:
+                case Task.TASK_GET_SUBACCOUNT_NUM:
+                case Task.TASK_GET_SUBACCOUNT_LIST:
+                case Task.TASK_DELETE_SUBACCOUNT:
+                case Task.TASK_SUBACCOUNT_CHANGEPASS:
 
 
-				break;
-			case Task.TASK_SHOW_USER:
-				
+                    break;
+
+                case Task.TASK_GET_SUBACCOUNT_YZM:
+                case Task.TASK_ADD_SUBACCOUNT:
+                case Task.TASK_ADD_SUBACCOUNT_GH:
+
+
+                    break;
+                case Task.TASK_SHOW_USER:
+
 //				AddSubAccountActivity asaa = (AddSubAccountActivity) ActivityUtil.getActivityByName("AddSubAccountActivity");
 //				if (asaa != null)
 //					asaa.refresh(msg);
-				break;
+                    break;
 
-			default:
-				break;
-			}
-		}
+                default:
+                    break;
+            }
+        }
 
-		/**
-		 * 当前页面不在，使用Toast弹出后台处理消息
-		 * 
-		 * @param msg
-		 */
-		private void showMessage(Message msg) {
-			try {
-				String message = ((String) msg.obj).split("\\|")[1];
-				
+        /**
+         * 当前页面不在，使用Toast弹出后台处理消息
+         *
+         * @param msg
+         */
+        private void showMessage(Message msg) {
+            try {
+                String message = ((String) msg.obj).split("\\|")[1];
 
-			} catch (Exception e) {
-				e.printStackTrace();
 
-			}
-		}
-	};
+            } catch (Exception e) {
+                e.printStackTrace();
 
-	@Override
-	public void run() {
-		while (isRun) {
-			Logger.i(TAG, "MainService tasklist size is -> " + calldaTaskList.size());
-			
-			synchronized (calldaTaskList) {
-				if (calldaTaskList.size() > 0) {
-					// 接受任务
-					final Task currentTask = calldaTaskList.poll();
-					Logger.i(TAG, "MainService thread Get out task -> " + currentTask);
-					
-					if(currentTask != null) {
-						Logger.i(TAG, "MainService thread do task -> " + currentTask.getTaskID());
-						if(fixedThreadPool == null) {
-							fixedThreadPool = Executors.newFixedThreadPool(DEFAULT_MAXIMUM_POOL_SIZE);
-						}
-						fixedThreadPool.execute(new Runnable() {
-							@Override
-							public void run() {
-								//处理任务
-								dotask(currentTask);
-							}
-						});
-					}
-					
-				} else {
-					Logger.i(TAG, "MainService thread No task .. wait.");
-					try {
-						calldaTaskList.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			
-			
-		}
-		
-		//关闭线程池
-		try {
-			if(fixedThreadPool != null) {
-				fixedThreadPool.shutdown();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		Logger.w(TAG, "Mainservice thread stop..");
-	}
+            }
+        }
+    };
 
-	/**
-	 * 处理任务
-	 * 
-	 * @param currentTask
-	 */
-	private void dotask(Task task) {
-		if(task == null) {
-			Logger.w(TAG, "MainService dotask() task is null, return.");
-			return;
-		}
-		Logger.i(TAG, "MainService dotask() task is -> " + task.getTaskID());
-		Message msg = mHandler.obtainMessage();
+    @Override
+    public void run() {
+        while (isRun) {
+            Logger.i(TAG, "MainService tasklist size is -> " + calldaTaskList.size());
 
-		switch (task.getTaskID()) {
-		case Task.TASK_GET_VERSION: // 获取版本
-			getAppVersion(task, msg);
-			break;
+            synchronized (calldaTaskList) {
+                if (calldaTaskList.size() > 0) {
+                    // 接受任务
+                    final Task currentTask = calldaTaskList.poll();
+                    Logger.i(TAG, "MainService thread Get out task -> " + currentTask);
+
+                    if (currentTask != null) {
+                        Logger.i(TAG, "MainService thread do task -> " + currentTask.getTaskID());
+                        if (fixedThreadPool == null) {
+                            fixedThreadPool = Executors.newFixedThreadPool(DEFAULT_MAXIMUM_POOL_SIZE);
+                        }
+                        fixedThreadPool.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                //处理任务
+                                dotask(currentTask);
+                            }
+                        });
+                    }
+
+                } else {
+                    Logger.i(TAG, "MainService thread No task .. wait.");
+                    try {
+                        calldaTaskList.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+
+        }
+
+        //关闭线程池
+        try {
+            if (fixedThreadPool != null) {
+                fixedThreadPool.shutdown();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Logger.w(TAG, "Mainservice thread stop..");
+    }
+
+    /**
+     * 处理任务
+     *
+     * @param currentTask
+     */
+    private void dotask(Task task) {
+        if (task == null) {
+            Logger.w(TAG, "MainService dotask() task is null, return.");
+            return;
+        }
+        Logger.i(TAG, "MainService dotask() task is -> " + task.getTaskID());
+        Message msg = mHandler.obtainMessage();
+
+        switch (task.getTaskID()) {
+            case Task.TASK_GET_VERSION: // 获取版本
+                getAppVersion(task, msg);
+                break;
 
 //		case Task.TASK_LOGIN: // 登录
 //			login(task, msg);
 //			break;
 
-		case Task.TASK_GET_SMS_KEY:// 获取短信发送key
-			getSmsCode(task, msg);
-			break;
+            case Task.TASK_GET_SMS_KEY:// 获取短信发送key
+                getSmsCode(task, msg);
+                break;
 
-		case Task.TASK_GET_VERFICA_CODE:// 获取验证码
-			getVerificaCode(task, msg);
-			break;
-			
-		case Task.TASK_VERIFY_USER_EXIST://验证注册的用户是否已存在
-			verifyUserExist(task, msg);
-			break;
+            case Task.TASK_GET_VERFICA_CODE:// 获取验证码
+                getVerificaCode(task, msg);
+                break;
 
-		case Task.TASK_REGISTER:// 注册
-			register(task, msg);
-			break;
+            case Task.TASK_VERIFY_USER_EXIST://验证注册的用户是否已存在
+                verifyUserExist(task, msg);
+                break;
 
-		case Task.TASK_SEND_SMS:	//发送短信
-			sendSMS(task, msg);
-			break;
+            case Task.TASK_REGISTER:// 注册
+                register(task, msg);
+                break;
 
-		case Task.TASK_CHANGE_PWD:	//更改密码
-			changePwd(task, msg);
-			break;
+            case Task.TASK_SEND_SMS:    //发送短信
+                sendSMS(task, msg);
+                break;
 
-		case Task.TASK_RETRIEVE_PWD:	//找回密码
-			retrievePwd(task, msg);
-			break;
+            case Task.TASK_CHANGE_PWD:    //更改密码
+                changePwd(task, msg);
+                break;
 
-		case Task.TASK_SIGN:
-			userSign(task, msg);
-			break;
+            case Task.TASK_RETRIEVE_PWD:    //找回密码
+                retrievePwd(task, msg);
+                break;
 
-		// case Task.TASK_INVITE_FRIEND:
-		// inviteFriend(task, msg);
-		// break;
+            case Task.TASK_SIGN:
+                userSign(task, msg);
+                break;
 
-		case Task.TASK_SHOWNUMBER_QUERY:
-			queryShowNum(task, msg);
-			break;
+            // case Task.TASK_INVITE_FRIEND:
+            // inviteFriend(task, msg);
+            // break;
 
-		case Task.TASK_SHOWNUMBER_SET:
-			setShowNum(task, msg);
-			break;
+            case Task.TASK_SHOWNUMBER_QUERY:
+                queryShowNum(task, msg);
+                break;
 
-		case Task.TASK_FEE_QUERY:
-			feeQuery(task, msg);
-			break;
+            case Task.TASK_SHOWNUMBER_SET:
+                setShowNum(task, msg);
+                break;
 
-		case Task.TASK_GET_CONTACT_COUNT:
-			getContactCount(task, msg);
-			break;
+            case Task.TASK_FEE_QUERY:
+                feeQuery(task, msg);
+                break;
 
-		case Task.TASK_BACKUP_CONTACT:
-			backupContacts(task, msg);
-			break;
+            case Task.TASK_GET_CONTACT_COUNT:
+                getContactCount(task, msg);
+                break;
 
-		case Task.TASK_LOOK_REMOTE_CONTACT:
-			getRemoteContact(task, msg);
-			break;
+            case Task.TASK_BACKUP_CONTACT:
+                backupContacts(task, msg);
+                break;
 
-		case Task.TASK_GET_RECHARGE_INFO:
-			getRechargeInfo(task, msg);
-			break;
+            case Task.TASK_LOOK_REMOTE_CONTACT:
+                getRemoteContact(task, msg);
+                break;
 
-		case Task.TASK_GET_USER_BALANCE:
-			getUserBalance(task, msg);
-			break;
+            case Task.TASK_GET_RECHARGE_INFO:
+                getRechargeInfo(task, msg);
+                break;
 
-		case Task.TASK_GET_RECHARGE_MEAL:
-			getRechargeMeal(task, msg);
-			break;
+            case Task.TASK_GET_USER_BALANCE:
+                getUserBalance(task, msg);
+                break;
 
-		case Task.TASK_GET_PREFERENTIAL_INFO:
-			getPreferentailInfo(task, msg);
-			break;
+            case Task.TASK_GET_RECHARGE_MEAL:
+                getRechargeMeal(task, msg);
+                break;
 
-		case Task.TASK_QUERY_MEAL: // 查询用户套餐
-			queryMeal(task, msg);
-			break;
+            case Task.TASK_GET_PREFERENTIAL_INFO:
+                getPreferentailInfo(task, msg);
+                break;
 
-		case Task.TASK_QUERY_CALLLOG: // 查询用户通话记录
-			queryCalllog(task, msg);
-			break;
+            case Task.TASK_QUERY_MEAL: // 查询用户套餐
+                queryMeal(task, msg);
+                break;
 
-		case Task.TASK_GET_SUBACCOUNT_NUM: // 获取子账户个数
-			getSubAccountNum(task, msg);
-			break;
+            case Task.TASK_QUERY_CALLLOG: // 查询用户通话记录
+                queryCalllog(task, msg);
+                break;
 
-		case Task.TASK_GET_SUBACCOUNT_LIST: // 获取子账户列表
-			getSubAccountList(task, msg);
-			break;
+            case Task.TASK_GET_SUBACCOUNT_NUM: // 获取子账户个数
+                getSubAccountNum(task, msg);
+                break;
 
-		case Task.TASK_GET_SUBACCOUNT_YZM: // 添加子账户 获取验证码
-			getSubAccountYZM(task, msg);
-			break;
+            case Task.TASK_GET_SUBACCOUNT_LIST: // 获取子账户列表
+                getSubAccountList(task, msg);
+                break;
 
-		case Task.TASK_ADD_SUBACCOUNT: // 添加子账户
-			addSubAccountPhone(task, msg);
-			break;
+            case Task.TASK_GET_SUBACCOUNT_YZM: // 添加子账户 获取验证码
+                getSubAccountYZM(task, msg);
+                break;
 
-		case Task.TASK_ADD_SUBACCOUNT_GH: // 添加子账户 固话
-			addSubAccountGH(task, msg);
-			break;
+            case Task.TASK_ADD_SUBACCOUNT: // 添加子账户
+                addSubAccountPhone(task, msg);
+                break;
 
-		case Task.TASK_DELETE_SUBACCOUNT: // 删除子账户
-			deleteSubAccount(task, msg);
-			break;
+            case Task.TASK_ADD_SUBACCOUNT_GH: // 添加子账户 固话
+                addSubAccountGH(task, msg);
+                break;
 
-		case Task.TASK_SUBACCOUNT_CHANGEPASS: // 修改子账户密码
-			changeSubAccountPass(task, msg);
-			break;
-		case Task.TASK_SHOW_USER: // 获取通讯录中注册用户
-			changeSubAccountPass(task, msg);
-			break;
+            case Task.TASK_DELETE_SUBACCOUNT: // 删除子账户
+                deleteSubAccount(task, msg);
+                break;
 
-		default:
-			break;
-		}
-	}
+            case Task.TASK_SUBACCOUNT_CHANGEPASS: // 修改子账户密码
+                changeSubAccountPass(task, msg);
+                break;
+            case Task.TASK_SHOW_USER: // 获取通讯录中注册用户
+                changeSubAccountPass(task, msg);
+                break;
+
+            default:
+                break;
+        }
+    }
 
 	/*-----------------------------Task----------------------------------- */
 
-	/**
-	 * 获取版本信息
-	 */
-	protected void getAppVersion(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String fromPage = (String) taskParams.get("fromPage");
-		String lan = (String) taskParams.get("lan");
-		Bundle bundle = new Bundle();
-		bundle.putString("fromPage", fromPage);
-		try {
-			String versionName = (String) task.getTaskParams().get(
-					"versionName");
-			Map<String, String> params = new HashMap<String, String>();
-			params.put("softType", Constant.SOFTWARE_TYPE);
-			params.put("download_from", Constant.DOWNLOAD_FROM);
-			params.put("v", versionName);
-			params.put("lan", lan);
-			String result = HttpUtils.getDatafFromPostConnClose(Interfaces.Version
-					, params);
-			Log.i("result",result);
-			msg.arg1 = Task.TASK_SUCCESS;
-			bundle.putString("result",
-					result.replace("\n", "").replace("\r", ""));
-		} catch (Exception e) {
-			msg.arg1 = Task.TASK_FAILED;
+    /**
+     * 获取版本信息
+     */
+    protected void getAppVersion(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String fromPage = (String) taskParams.get("fromPage");
+        String lan = (String) taskParams.get("lan");
+        Bundle bundle = new Bundle();
+        bundle.putString("fromPage", fromPage);
+        try {
+            String versionName = (String) task.getTaskParams().get(
+                    "versionName");
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("softType", Constant.SOFTWARE_TYPE);
+            params.put("download_from", Constant.DOWNLOAD_FROM);
+            params.put("v", versionName);
+            params.put("lan", lan);
+            String result = HttpUtils.getDatafFromPostConnClose(Interfaces.Version
+                    , params);
+            Log.i("result", result);
+            msg.arg1 = Task.TASK_SUCCESS;
+            bundle.putString("result",
+                    result.replace("\n", "").replace("\r", ""));
+        } catch (Exception e) {
+            msg.arg1 = Task.TASK_FAILED;
 //			msg.obj = e.getMessage();
-			e.printStackTrace();
-		} finally {
-			msg.what = task.getTaskID();
-			msg.obj = bundle;
-			mHandler.sendMessage(msg);
-		}
-	}
+            e.printStackTrace();
+        } finally {
+            msg.what = task.getTaskID();
+            msg.obj = bundle;
+            mHandler.sendMessage(msg);
+        }
+    }
 
-	/**
-	 * 获取短信发送key
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void getSmsCode(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String phoneNum = (String) taskParams.get("phoneNum");
-		String fromPage = (String) taskParams.get("fromPage");
-		String lan = (String) taskParams.get("lan");
-		Bundle bundle = new Bundle();
-		bundle.putString("fromPage", fromPage);
-		try {
-			String result = HttpUtils.getDataFromHttpGet(Interfaces.SMS_Key
-					+ phoneNum+"&lan="+lan);
-			msg.arg1 = Task.TASK_SUCCESS;
-			Logger.v("TASK_GET_SMS_KEY  http:", Interfaces.SMS_Key
-					+ phoneNum+"&lan="+lan);
-			bundle.putString("result",
-					result.replace("\n", "").replace("\r", ""));
-		} catch (Exception e) {
-			msg.arg1 = Task.TASK_FAILED;
-			e.printStackTrace();
-		} finally {
-			msg.what = task.getTaskID();
-			msg.obj = bundle;
-			mHandler.sendMessage(msg);
-		}
-	}
+    /**
+     * 获取短信发送key
+     *
+     * @param task
+     * @param msg
+     */
+    private void getSmsCode(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String phoneNum = (String) taskParams.get("phoneNum");
+        String fromPage = (String) taskParams.get("fromPage");
+        String lan = (String) taskParams.get("lan");
+        Bundle bundle = new Bundle();
+        bundle.putString("fromPage", fromPage);
+        try {
+            String result = HttpUtils.getDataFromHttpGet(Interfaces.SMS_Key
+                    + phoneNum + "&lan=" + lan);
+            msg.arg1 = Task.TASK_SUCCESS;
+            Logger.v("TASK_GET_SMS_KEY  http:", Interfaces.SMS_Key
+                    + phoneNum + "&lan=" + lan);
+            bundle.putString("result",
+                    result.replace("\n", "").replace("\r", ""));
+        } catch (Exception e) {
+            msg.arg1 = Task.TASK_FAILED;
+            e.printStackTrace();
+        } finally {
+            msg.what = task.getTaskID();
+            msg.obj = bundle;
+            mHandler.sendMessage(msg);
+        }
+    }
 
-	/**
-	 * 获取短信验证码
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void getVerificaCode(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String phoneNumber = (String) taskParams.get("encryptedPhoneNum");
-		String sign = (String) taskParams.get("verificaSign");
-		String lan = (String) taskParams.get("lan");
+    /**
+     * 获取短信验证码
+     *
+     * @param task
+     * @param msg
+     */
+    private void getVerificaCode(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String phoneNumber = (String) taskParams.get("encryptedPhoneNum");
+        String sign = (String) taskParams.get("verificaSign");
+        String lan = (String) taskParams.get("lan");
 
-		try {
-			String urlstring = Interfaces.Verification_Code + "phoneNumber="
-					+ phoneNumber + "&sign=" + sign +"&lan="+lan+ "&softType=android";
-			Logger.i("注册获取验证码URL", urlstring);
-			String result = HttpUtils.getDataFromHttpGet(urlstring);
+        try {
+            String urlstring = Interfaces.Verification_Code + "phoneNumber="
+                    + phoneNumber + "&sign=" + sign + "&lan=" + lan + "&softType=android";
+            Logger.i("注册获取验证码URL", urlstring);
+            String result = HttpUtils.getDataFromHttpGet(urlstring);
 
-			msg.arg1 = Task.TASK_SUCCESS;
-			msg.obj = result.replace("\n", "").replace("\r", "");
-		} catch (Exception e) {
-			msg.arg1 = Task.TASK_FAILED;
-			e.printStackTrace();
-		} finally {
-			msg.what = task.getTaskID();
-			mHandler.sendMessage(msg);
-		}
-	}
-	
-	/**
-	 * 验证用户是否已注册
-	 * @param task
-	 * @param msg
-	 */
-	private void verifyUserExist(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String v = (String) taskParams.get("v");
-		String lan = (String) taskParams.get("lan");
-		
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("v", v);
-		params.put("lan", lan);
-		
-		try {
-			String result = HttpUtils.getDataFromHttpPost(Interfaces.VerifyRegistedUserExist, params);
-			msg.obj = result;
-			msg.arg1 = Task.TASK_SUCCESS;
-		} catch (Exception e) {
-			msg.arg1 = Task.TASK_FAILED;
-			e.printStackTrace();
-		} finally {
-			msg.what = task.getTaskID();
-			mHandler.sendMessage(msg);
-		}
-	}
+            msg.arg1 = Task.TASK_SUCCESS;
+            msg.obj = result.replace("\n", "").replace("\r", "");
+        } catch (Exception e) {
+            msg.arg1 = Task.TASK_FAILED;
+            e.printStackTrace();
+        } finally {
+            msg.what = task.getTaskID();
+            mHandler.sendMessage(msg);
+        }
+    }
 
-	/**
-	 * 用户注册
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void register(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String username = (String) taskParams.get("phoneNumber");
-		String password = (String) taskParams.get("password");
-		String verifiCode = (String) taskParams.get("code");
-		String softType = (String) taskParams.get("softType");
-		String countryCode = (String) taskParams.get("countryCode");
+    /**
+     * 验证用户是否已注册
+     *
+     * @param task
+     * @param msg
+     */
+    private void verifyUserExist(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String v = (String) taskParams.get("v");
+        String lan = (String) taskParams.get("lan");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("phoneNumber", username);
-		params.put("password", password);
-		params.put("code", verifiCode);
-		params.put("softType", softType);
-		params.put("countryCode",countryCode);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("v", v);
+        params.put("lan", lan);
 
-		try {
-			if (NetworkDetector.detect(this)) {
-				String content = HttpUtils.getDataFromHttpPost(
-						Interfaces.Register, params);
-				Logger.i(TAG, Interfaces.Register+params);
-				msg.arg1 = Task.TASK_SUCCESS;
-				msg.obj = content.replace("\n", "").replace("\r", "");
-			} else {
-				msg.what = Task.TASK_NETWORK_ERROR;
-			}
-		} catch (Exception e) {
-			msg.arg1 = Task.TASK_FAILED;
-			e.printStackTrace();
-		} finally {
-			msg.what = task.getTaskID();
-			mHandler.sendMessage(msg);
-		}
-	}
+        try {
+            String result = HttpUtils.getDataFromHttpPost(Interfaces.VerifyRegistedUserExist, params);
+            msg.obj = result;
+            msg.arg1 = Task.TASK_SUCCESS;
+        } catch (Exception e) {
+            msg.arg1 = Task.TASK_FAILED;
+            e.printStackTrace();
+        } finally {
+            msg.what = task.getTaskID();
+            mHandler.sendMessage(msg);
+        }
+    }
 
-	/**
-	 * 用户登录
-	 */
+    /**
+     * 用户注册
+     *
+     * @param task
+     * @param msg
+     */
+    private void register(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String username = (String) taskParams.get("phoneNumber");
+        String password = (String) taskParams.get("password");
+        String verifiCode = (String) taskParams.get("code");
+        String softType = (String) taskParams.get("softType");
+        String countryCode = (String) taskParams.get("countryCode");
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("phoneNumber", username);
+        params.put("password", password);
+        params.put("code", verifiCode);
+        params.put("softType", softType);
+        params.put("countryCode", countryCode);
+
+        try {
+            if (NetworkDetector.detect(this)) {
+                String content = HttpUtils.getDataFromHttpPost(
+                        Interfaces.Register, params);
+                Logger.i(TAG, Interfaces.Register + params);
+                msg.arg1 = Task.TASK_SUCCESS;
+                msg.obj = content.replace("\n", "").replace("\r", "");
+            } else {
+                msg.what = Task.TASK_NETWORK_ERROR;
+            }
+        } catch (Exception e) {
+            msg.arg1 = Task.TASK_FAILED;
+            e.printStackTrace();
+        } finally {
+            msg.what = task.getTaskID();
+            mHandler.sendMessage(msg);
+        }
+    }
+
+    /**
+     * 用户登录
+     */
 //	private void login(Task task, Message msg) {
 //		Map<String, Object> taskParams = task.getTaskParams();
 //		String loginSign = (String) taskParams.get("loginSign");
@@ -704,404 +717,404 @@ public class MainService extends Service implements Runnable{
 //		}
 //	}
 
-	/**
-	 * 发送短信
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void sendSMS(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
-		String phoneNumber = (String) taskParams.get("phoneNumber");
-		String mesg = (String) taskParams.get("msg");
-		String lan = (String) taskParams.get("lan");
+    /**
+     * 发送短信
+     *
+     * @param task
+     * @param msg
+     */
+    private void sendSMS(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
+        String phoneNumber = (String) taskParams.get("phoneNumber");
+        String mesg = (String) taskParams.get("msg");
+        String lan = (String) taskParams.get("lan");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
-		params.put("phoneNumber", phoneNumber);
-		params.put("msg", mesg);
-		params.put("lan", lan);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
+        params.put("phoneNumber", phoneNumber);
+        params.put("msg", mesg);
+        params.put("lan", lan);
 
-		handleDataByPost(Interfaces.Send_SMS, task, msg, params);
-	}
+        handleDataByPost(Interfaces.Send_SMS, task, msg, params);
+    }
 
-	/**
-	 * 修改密码
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void changePwd(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
-		String oldPwd = (String) taskParams.get("oldPwd");
-		String newPwd = (String) taskParams.get("newPwd");
-		String lan = (String) taskParams.get("lan");
+    /**
+     * 修改密码
+     *
+     * @param task
+     * @param msg
+     */
+    private void changePwd(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
+        String oldPwd = (String) taskParams.get("oldPwd");
+        String newPwd = (String) taskParams.get("newPwd");
+        String lan = (String) taskParams.get("lan");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
-		params.put("oldPwd", oldPwd);
-		params.put("newPwd", newPwd);
-		params.put("lan", lan);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
+        params.put("oldPwd", oldPwd);
+        params.put("newPwd", newPwd);
+        params.put("lan", lan);
 
-		handleDataByPost(Interfaces.Change_Pass, task, msg, params);
-	}
+        handleDataByPost(Interfaces.Change_Pass, task, msg, params);
+    }
 
-	/**
-	 * 找回密码
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void retrievePwd(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String phoneNuber = (String) taskParams.get("phoneNuber");
-		String sign = (String) taskParams.get("sign");
-		String lan = (String) taskParams.get("lan");
+    /**
+     * 找回密码
+     *
+     * @param task
+     * @param msg
+     */
+    private void retrievePwd(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String phoneNuber = (String) taskParams.get("phoneNuber");
+        String sign = (String) taskParams.get("sign");
+        String lan = (String) taskParams.get("lan");
 
-		try {
-			String urlstring = Interfaces.Retrieve_Pass + "phoneNumber="
-					+ phoneNuber + "&sign=" + sign+"&lan="+lan;
-			Logger.i(TAG + "找回密码", urlstring);
-			String result = HttpUtils.getDataFromHttpGet(urlstring);
-			Logger.i(TAG + "找回密码", result);
-			msg.arg1 = Task.TASK_SUCCESS;
-			msg.obj = result.replace("\n", "").replace("\r", "");
-		} catch (Exception e) {
-			msg.arg1 = Task.TASK_FAILED;
-			e.printStackTrace();
-		} finally {
-			msg.what = task.getTaskID();
-			mHandler.sendMessage(msg);
-		}
-	}
+        try {
+            String urlstring = Interfaces.Retrieve_Pass + "phoneNumber="
+                    + phoneNuber + "&sign=" + sign + "&lan=" + lan;
+            Logger.i(TAG + "找回密码", urlstring);
+            String result = HttpUtils.getDataFromHttpGet(urlstring);
+            Logger.i(TAG + "找回密码", result);
+            msg.arg1 = Task.TASK_SUCCESS;
+            msg.obj = result.replace("\n", "").replace("\r", "");
+        } catch (Exception e) {
+            msg.arg1 = Task.TASK_FAILED;
+            e.printStackTrace();
+        } finally {
+            msg.what = task.getTaskID();
+            mHandler.sendMessage(msg);
+        }
+    }
 
-	/**
-	 * 用户签到
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void userSign(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
-		String lan = (String) taskParams.get("lan");
+    /**
+     * 用户签到
+     *
+     * @param task
+     * @param msg
+     */
+    private void userSign(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
+        String lan = (String) taskParams.get("lan");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
-		params.put("lan", lan);
-		handleDataByPost(Interfaces.Sign, task, msg, params);
-	}
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
+        params.put("lan", lan);
+        handleDataByPost(Interfaces.Sign, task, msg, params);
+    }
 
-	/**
-	 * 邀请好友
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	// private void inviteFriend(Task task, Message msg) {
-	// Map<String, Object> taskParams = task.getTaskParams();
-	// String loginName = (String) taskParams.get("loginName");
-	// String loginPwd = (String) taskParams.get("loginPwd");
-	// String softType = (String) taskParams.get("softType");
-	//
-	// Map<String, String> params = new HashMap<String, String>();
-	// params.put("loginName", loginName);
-	// params.put("loginPwd", loginPwd);
-	// params.put("softType", softType);
-	//
-	// handleDataByPost(Interfaces.Sign, task, msg, params);
-	// }
+    /**
+     * 邀请好友
+     *
+     * @param task
+     * @param msg
+     */
+    // private void inviteFriend(Task task, Message msg) {
+    // Map<String, Object> taskParams = task.getTaskParams();
+    // String loginName = (String) taskParams.get("loginName");
+    // String loginPwd = (String) taskParams.get("loginPwd");
+    // String softType = (String) taskParams.get("softType");
+    //
+    // Map<String, String> params = new HashMap<String, String>();
+    // params.put("loginName", loginName);
+    // params.put("loginPwd", loginPwd);
+    // params.put("softType", softType);
+    //
+    // handleDataByPost(Interfaces.Sign, task, msg, params);
+    // }
 
-	/**
-	 * 查询显号设置
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void queryShowNum(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
-		String lan = (String) taskParams.get("lan");
+    /**
+     * 查询显号设置
+     *
+     * @param task
+     * @param msg
+     */
+    private void queryShowNum(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
+        String lan = (String) taskParams.get("lan");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
-		params.put("lan", lan);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
+        params.put("lan", lan);
 
-		handleDataByPost(Interfaces.Query_ShowNumber, task, msg, params);
-	}
+        handleDataByPost(Interfaces.Query_ShowNumber, task, msg, params);
+    }
 
-	/**
-	 * 设置显号状态
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void setShowNum(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String type = (String) taskParams.get("type");
-		String callType = (String) taskParams.get("callType");
-		String softType = (String) taskParams.get("softType");
-		String lan = (String) taskParams.get("lan");
+    /**
+     * 设置显号状态
+     *
+     * @param task
+     * @param msg
+     */
+    private void setShowNum(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String type = (String) taskParams.get("type");
+        String callType = (String) taskParams.get("callType");
+        String softType = (String) taskParams.get("softType");
+        String lan = (String) taskParams.get("lan");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("type", type);
-		params.put("callType", callType);
-		params.put("softType", softType);
-		params.put("lan", lan);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("type", type);
+        params.put("callType", callType);
+        params.put("softType", softType);
+        params.put("lan", lan);
 
-		handleDataByPost(Interfaces.Set_ShowNumber, task, msg, params);
-	}
+        handleDataByPost(Interfaces.Set_ShowNumber, task, msg, params);
+    }
 
-	/**
-	 * 费率查询
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void feeQuery(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String searchText = (String) taskParams.get("searchText");
-		String softType = (String) taskParams.get("softType");
-		String lan = (String) taskParams.get("lan");
+    /**
+     * 费率查询
+     *
+     * @param task
+     * @param msg
+     */
+    private void feeQuery(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String searchText = (String) taskParams.get("searchText");
+        String softType = (String) taskParams.get("softType");
+        String lan = (String) taskParams.get("lan");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("searchText", searchText);
-		params.put("softType", softType);
-		params.put("lan", lan);
-		handleDataByPost(Interfaces.Query_fee, task, msg, params);
-	}
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("searchText", searchText);
+        params.put("softType", softType);
+        params.put("lan", lan);
+        handleDataByPost(Interfaces.Query_fee, task, msg, params);
+    }
 
-	/**
-	 * 备份联系人
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void backupContacts(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String name_callee = (String) taskParams.get("name_callee");
-		String softType = (String) taskParams.get("softType");
-		String lan = (String) taskParams.get("lan");
+    /**
+     * 备份联系人
+     *
+     * @param task
+     * @param msg
+     */
+    private void backupContacts(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String name_callee = (String) taskParams.get("name_callee");
+        String softType = (String) taskParams.get("softType");
+        String lan = (String) taskParams.get("lan");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("name_callee", name_callee);
-		params.put("softType", softType);
-		params.put("lan", lan);
-		
-		handleDataByPost(Interfaces.BackupContacts, task, msg, params);
-	}
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("name_callee", name_callee);
+        params.put("softType", softType);
+        params.put("lan", lan);
 
-	/**
-	 * 获取服务端联系人个数
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void getContactCount(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
-		String lan = (String) taskParams.get("lan");
+        handleDataByPost(Interfaces.BackupContacts, task, msg, params);
+    }
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
-		params.put("lan", lan);
+    /**
+     * 获取服务端联系人个数
+     *
+     * @param task
+     * @param msg
+     */
+    private void getContactCount(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
+        String lan = (String) taskParams.get("lan");
 
-		handleDataByPost(Interfaces.GetContactCount, task, msg, params);
-	}
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
+        params.put("lan", lan);
 
-	/**
-	 * 查看云端联系人
-	 */
-	private void getRemoteContact(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String type = taskParams.get("type") + "";
-		String softType = (String) taskParams.get("softType");
-		String lan = (String) taskParams.get("lan");
+        handleDataByPost(Interfaces.GetContactCount, task, msg, params);
+    }
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("type", type);
-		params.put("softType", softType);
-		params.put("lan", lan);
+    /**
+     * 查看云端联系人
+     */
+    private void getRemoteContact(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String type = taskParams.get("type") + "";
+        String softType = (String) taskParams.get("softType");
+        String lan = (String) taskParams.get("lan");
 
-		handleDataByPost(Interfaces.GetContactContent, task, msg, params);
-	}
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("type", type);
+        params.put("softType", softType);
+        params.put("lan", lan);
 
-	/**
-	 * 充值 获取充值优惠信息
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void getRechargeInfo(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
-		String lan = (String) taskParams.get("lan");
+        handleDataByPost(Interfaces.GetContactContent, task, msg, params);
+    }
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
-		params.put("lan", lan);
+    /**
+     * 充值 获取充值优惠信息
+     *
+     * @param task
+     * @param msg
+     */
+    private void getRechargeInfo(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
+        String lan = (String) taskParams.get("lan");
 
-		handleDataByPost(Interfaces.Recharge_ZS, task, msg, params);
-	}
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
+        params.put("lan", lan);
 
-	/**
-	 * 查询余额
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void getUserBalance(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
-		String fromPage = (String) taskParams.get("frompage");
-		String lan = (String) taskParams.get("lan");
+        handleDataByPost(Interfaces.Recharge_ZS, task, msg, params);
+    }
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
-		//params.put("lan", lan);
-		try {
-			String content = HttpUtils.getDataFromHttpPost(Interfaces.Query_Balance, params);
+    /**
+     * 查询余额
+     *
+     * @param task
+     * @param msg
+     */
+    private void getUserBalance(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
+        String fromPage = (String) taskParams.get("frompage");
+        String lan = (String) taskParams.get("lan");
 
-			msg.arg1 = Task.TASK_SUCCESS;
-			msg.obj = content.replace("\n", "").replace("\r", "");
-		} catch (Exception e) {
-			e.printStackTrace();
-			msg.arg1 = Task.TASK_FAILED;
-		} finally {
-			msg.what = task.getTaskID();
-			mHandler.sendMessage(msg);
-		}
-	}
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
+        //params.put("lan", lan);
+        try {
+            String content = HttpUtils.getDataFromHttpPost(Interfaces.Query_Balance, params);
 
-	/**
-	 * 获取充值套餐
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void getRechargeMeal(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
-		String lan = (String) taskParams.get("lan");
+            msg.arg1 = Task.TASK_SUCCESS;
+            msg.obj = content.replace("\n", "").replace("\r", "");
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.arg1 = Task.TASK_FAILED;
+        } finally {
+            msg.what = task.getTaskID();
+            mHandler.sendMessage(msg);
+        }
+    }
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
-		params.put("lan", lan);
+    /**
+     * 获取充值套餐
+     *
+     * @param task
+     * @param msg
+     */
+    private void getRechargeMeal(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
+        String lan = (String) taskParams.get("lan");
 
-		handleDataByPost(Interfaces.GET_RECHARGE_MEAL, task, msg, params);
-	}
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
+        params.put("lan", lan);
 
-	/**
-	 * 获取公告、优惠信息
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void getPreferentailInfo(Task task, Message msg) {
-		try {
-			String content = HttpUtils
-					.getDataFromHttpGet(Interfaces.Preferential_Push);
+        handleDataByPost(Interfaces.GET_RECHARGE_MEAL, task, msg, params);
+    }
 
-			msg.arg1 = Task.TASK_SUCCESS;
-			msg.obj = content.replace("\n", "").replace("\r", "");
-		} catch (Exception e) {
-			e.printStackTrace();
-			msg.arg1 = Task.TASK_FAILED;
-		} finally {
-			msg.what = task.getTaskID();
-			mHandler.sendMessage(msg);
-		}
-	}
+    /**
+     * 获取公告、优惠信息
+     *
+     * @param task
+     * @param msg
+     */
+    private void getPreferentailInfo(Task task, Message msg) {
+        try {
+            String content = HttpUtils
+                    .getDataFromHttpGet(Interfaces.Preferential_Push);
 
-	/**
-	 * 查询套餐
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void queryMeal(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
-		String lan = (String) taskParams.get("lan");
+            msg.arg1 = Task.TASK_SUCCESS;
+            msg.obj = content.replace("\n", "").replace("\r", "");
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.arg1 = Task.TASK_FAILED;
+        } finally {
+            msg.what = task.getTaskID();
+            mHandler.sendMessage(msg);
+        }
+    }
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
-		params.put("lan", lan);
+    /**
+     * 查询套餐
+     *
+     * @param task
+     * @param msg
+     */
+    private void queryMeal(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
+        String lan = (String) taskParams.get("lan");
 
-		handleDataByPost(Interfaces.QUERY_MEAL, task, msg, params);
-	}
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
+        params.put("lan", lan);
 
-	/**
-	 * 查询通话记录
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void queryCalllog(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-	/*	String softType = (String) taskParams.get("softType");
+        handleDataByPost(Interfaces.QUERY_MEAL, task, msg, params);
+    }
+
+    /**
+     * 查询通话记录
+     *
+     * @param task
+     * @param msg
+     */
+    private void queryCalllog(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+    /*	String softType = (String) taskParams.get("softType");
 		String lan = (String) taskParams.get("lan");
 		String year = (String) taskParams.get("year");
 		String month = (String) taskParams.get("month");
 		String type = (String) taskParams.get("type");
 		String currentPage = (String) taskParams.get("currentPage");
 		String pageNum = (String) taskParams.get("pageNum");*/
-        String date=(String)taskParams.get("date");
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
+        String date = (String) taskParams.get("date");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
 	/*	params.put("softType", softType);
 		params.put("year", year);
 		params.put("month", month);
@@ -1109,286 +1122,287 @@ public class MainService extends Service implements Runnable{
 		params.put("currentPage", currentPage);
 		params.put("pageNum", pageNum);
 		params.put("lan", lan);*/
-		params.put("date",date);
-		Logger.i("查询通话记录", params.toString());
-		handleDataByPost(Interfaces.QUERY_CALLLOG, task, msg, params);
-	}
+        params.put("date", date);
+        Logger.i("查询通话记录", params.toString());
+        handleDataByPost(Interfaces.QUERY_CALLLOG, task, msg, params);
+    }
 
-	/**
-	 * 获取子账户个数
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void getSubAccountNum(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
+    /**
+     * 获取子账户个数
+     *
+     * @param task
+     * @param msg
+     */
+    private void getSubAccountNum(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
 
-		handleDataByPost(Interfaces.GET_SUBACCOUNT_NUM, task, msg, params);
-	}
+        handleDataByPost(Interfaces.GET_SUBACCOUNT_NUM, task, msg, params);
+    }
 
-	/**
-	 * 获取子账户列表
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void getSubAccountList(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
+    /**
+     * 获取子账户列表
+     *
+     * @param task
+     * @param msg
+     */
+    private void getSubAccountList(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
 
-		handleDataByPost(Interfaces.GET_SUBACCOUNT_LIST, task, msg, params);
-	}
+        handleDataByPost(Interfaces.GET_SUBACCOUNT_LIST, task, msg, params);
+    }
 
-	/**
-	 * 获取子账户验证码
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void getSubAccountYZM(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
-		String childPhoneNumber = (String) taskParams.get("childPhoneNumber");
+    /**
+     * 获取子账户验证码
+     *
+     * @param task
+     * @param msg
+     */
+    private void getSubAccountYZM(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
+        String childPhoneNumber = (String) taskParams.get("childPhoneNumber");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
-		params.put("childPhoneNumber", childPhoneNumber);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
+        params.put("childPhoneNumber", childPhoneNumber);
 
-		handleDataByPost(Interfaces.GET_SUBACCOUNT_YZM, task, msg, params);
-	}
+        handleDataByPost(Interfaces.GET_SUBACCOUNT_YZM, task, msg, params);
+    }
 
-	/**
-	 * 添加手机子账户
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void addSubAccountPhone(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
-		String childPhoneNumber = (String) taskParams.get("childPhoneNumber");
-		String type = (String) taskParams.get("type");
-		String childPwd = (String) taskParams.get("childPwd");
-		String childCode = (String) taskParams.get("childCode");
+    /**
+     * 添加手机子账户
+     *
+     * @param task
+     * @param msg
+     */
+    private void addSubAccountPhone(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
+        String childPhoneNumber = (String) taskParams.get("childPhoneNumber");
+        String type = (String) taskParams.get("type");
+        String childPwd = (String) taskParams.get("childPwd");
+        String childCode = (String) taskParams.get("childCode");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
-		params.put("childPhoneNumber", childPhoneNumber);
-		params.put("type", type);
-		params.put("childPwd", childPwd);
-		params.put("childCode", childCode);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
+        params.put("childPhoneNumber", childPhoneNumber);
+        params.put("type", type);
+        params.put("childPwd", childPwd);
+        params.put("childCode", childCode);
 
-		handleDataByPost(Interfaces.ADD_SUBACCOUNT, task, msg, params);
-	}
+        handleDataByPost(Interfaces.ADD_SUBACCOUNT, task, msg, params);
+    }
 
-	/**
-	 * 添加固话子账户
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void addSubAccountGH(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String softType = (String) taskParams.get("softType");
-		String childPhoneNumber = (String) taskParams.get("childPhoneNumber");
-		String type = (String) taskParams.get("type");
+    /**
+     * 添加固话子账户
+     *
+     * @param task
+     * @param msg
+     */
+    private void addSubAccountGH(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String softType = (String) taskParams.get("softType");
+        String childPhoneNumber = (String) taskParams.get("childPhoneNumber");
+        String type = (String) taskParams.get("type");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("softType", softType);
-		params.put("childPhoneNumber", childPhoneNumber);
-		params.put("type", type);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("softType", softType);
+        params.put("childPhoneNumber", childPhoneNumber);
+        params.put("type", type);
 
-		handleDataByPost(Interfaces.ADD_SUBACCOUNT, task, msg, params);
-	}
+        handleDataByPost(Interfaces.ADD_SUBACCOUNT, task, msg, params);
+    }
 
-	/**
-	 * 删除子账号
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void deleteSubAccount(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String childPhoneNumber = (String) taskParams.get("childPhoneNumber");
+    /**
+     * 删除子账号
+     *
+     * @param task
+     * @param msg
+     */
+    private void deleteSubAccount(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String childPhoneNumber = (String) taskParams.get("childPhoneNumber");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("childPhoneNumber", childPhoneNumber);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("childPhoneNumber", childPhoneNumber);
 
-		handleDataByPost(Interfaces.DELETE_SUBACCOUNT, task, msg, params);
-	}
+        handleDataByPost(Interfaces.DELETE_SUBACCOUNT, task, msg, params);
+    }
 
-	/**
-	 * 修改子账户密码
-	 * 
-	 * @param task
-	 * @param msg
-	 */
-	private void changeSubAccountPass(Task task, Message msg) {
-		Map<String, Object> taskParams = task.getTaskParams();
-		String loginName = (String) taskParams.get("loginName");
-		String loginPwd = (String) taskParams.get("loginPwd");
-		String childPhoneNumber = (String) taskParams.get("childPhoneNumber");
-		String childNewPwd = (String) taskParams.get("childNewPwd");
+    /**
+     * 修改子账户密码
+     *
+     * @param task
+     * @param msg
+     */
+    private void changeSubAccountPass(Task task, Message msg) {
+        Map<String, Object> taskParams = task.getTaskParams();
+        String loginName = (String) taskParams.get("loginName");
+        String loginPwd = (String) taskParams.get("loginPwd");
+        String childPhoneNumber = (String) taskParams.get("childPhoneNumber");
+        String childNewPwd = (String) taskParams.get("childNewPwd");
 
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("loginName", loginName);
-		params.put("loginPwd", loginPwd);
-		params.put("childPhoneNumber", childPhoneNumber);
-		params.put("childNewPwd", childNewPwd);
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("loginName", loginName);
+        params.put("loginPwd", loginPwd);
+        params.put("childPhoneNumber", childPhoneNumber);
+        params.put("childNewPwd", childNewPwd);
 
-		handleDataByPost(Interfaces.CHANGE_SUBACCOUNT_PASS, task, msg, params);
-	}
+        handleDataByPost(Interfaces.CHANGE_SUBACCOUNT_PASS, task, msg, params);
+    }
 
-	/**
-	 * 通过HttpPost 处理dotask数据
-	 * 
-	 * @param task
-	 * @param msg
-	 * @param params
-	 */
-	private void handleDataByPost(String url, Task task, Message msg,
-			Map<String, String> params) {
-		try {
-			String content = HttpUtils.getDataFromHttpPost(url, params);
-			Logger.v(TAG, content);
+    /**
+     * 通过HttpPost 处理dotask数据
+     *
+     * @param task
+     * @param msg
+     * @param params
+     */
+    private void handleDataByPost(String url, Task task, Message msg,
+                                  Map<String, String> params) {
+        try {
+            String content = HttpUtils.getDataFromHttpPost(url, params);
+            Logger.v(TAG, content);
 
-			msg.arg1 = Task.TASK_SUCCESS;
-			msg.obj = content.replace("\n", "").replace("\r", "");
-			
+            msg.arg1 = Task.TASK_SUCCESS;
+            msg.obj = content.replace("\n", "").replace("\r", "");
+
 //			Logger.d(TAG, "Tast id:" + task.getTaskID() + " params: " + task.getTaskParams());
-			Logger.d(TAG, "Tast url:" + url+params);
-			Logger.d(TAG, "Tast result:" + msg.obj.toString());
-		} catch (Exception e) {
-			e.printStackTrace();
-			msg.arg1 = Task.TASK_FAILED;
-		} finally {
-			msg.what = task.getTaskID();
-			mHandler.sendMessage(msg);
-		}
-	}
+            Logger.d(TAG, "Tast url:" + url + params);
+            Logger.d(TAG, "Tast result:" + msg.obj.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg.arg1 = Task.TASK_FAILED;
+        } finally {
+            msg.what = task.getTaskID();
+            mHandler.sendMessage(msg);
+        }
+    }
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
-	@Override
-	public void onDestroy() {
-		isRun = false;
-		synchronized (calldaTaskList) {
-			calldaTaskList.notify();
-		}
-		getContentResolver().unregisterContentObserver(mObserver);
-		unregisterReceiver(receiver);
-		if (null != locationClient) {
-			/**
-			 * 如果AMapLocationClient是在当前Activity实例化的，
-			 * 在Activity的onDestroy中一定要执行AMapLocationClient的onDestroy
-			 */
-			locationClient.stopLocation();
-			locationClient.onDestroy();
-			locationClient = null;
-			locationOption = null;
-		}
-		//关闭通知
-		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		notificationManager.cancelAll();
-		super.onDestroy();
-		
+    @Override
+    public void onDestroy() {
+        isRun = false;
+        synchronized (calldaTaskList) {
+            calldaTaskList.notify();
+        }
+        getContentResolver().unregisterContentObserver(mObserver);
+        unregisterReceiver(receiver);
+        if (null != locationClient) {
+            /**
+             * 如果AMapLocationClient是在当前Activity实例化的，
+             * 在Activity的onDestroy中一定要执行AMapLocationClient的onDestroy
+             */
+            locationClient.stopLocation();
+            locationClient.onDestroy();
+            locationClient = null;
+            locationOption = null;
+        }
+        //关闭通知
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+        super.onDestroy();
+
 //		PushAgent.getInstance(this).disable();
 //		PushManager.getInstance().stopService(this.getApplicationContext());
-		mThread = null;
-		
-		//服务退出时，清空activity栈
-		ActivityUtil.finishAllActivity();
-		
-		//设置用户的登录状态
-		LoginController.getInstance().setUserLoginState(false);
-	}
-	class LocationReceiver extends BroadcastReceiver implements AMapLocationListener {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Log.i("location",intent.getStringExtra("action"));
-			if(intent.getStringExtra("action").equals("login")){
-				EMClient.getInstance().login(SharedPreferenceUtil.getInstance(context).getString(Constant.LOGIN_USERNAME)+"-callba",SharedPreferenceUtil.getInstance(context).getString(Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
-					@Override
-					public void onSuccess() {
+        mThread = null;
 
-						EMClient.getInstance().groupManager().loadAllGroups();
-						EMClient.getInstance().chatManager().loadAllConversations();
-						Log.d("main", "登录聊天服务器成功！");
+        //服务退出时，清空activity栈
+        ActivityUtil.finishAllActivity();
 
-						//DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
-					}
+        //设置用户的登录状态
+        LoginController.getInstance().setUserLoginState(false);
+    }
 
-					@Override
-					public void onProgress(int progress, String status) {
+    class LocationReceiver extends BroadcastReceiver implements AMapLocationListener {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("location", intent.getStringExtra("action"));
+            if (intent.getStringExtra("action").equals("login")) {
+                EMClient.getInstance().login(SharedPreferenceUtil.getInstance(context).getString(Constant.LOGIN_USERNAME) + "-callba", SharedPreferenceUtil.getInstance(context).getString(Constant.LOGIN_PASSWORD), new EMCallBack() {//回调
+                    @Override
+                    public void onSuccess() {
 
-					}
+                        EMClient.getInstance().groupManager().loadAllGroups();
+                        EMClient.getInstance().chatManager().loadAllConversations();
+                        Log.d("main", "登录聊天服务器成功！");
 
-					@Override
-					public void onError(int code, String message) {
-						Log.d("main", "登录聊天服务器失败！");
-					}
-				});
-				locationClient = new AMapLocationClient(context);
-				locationOption = new AMapLocationClientOption();
-				// 设置是否需要显示地址信息
-				locationOption.setNeedAddress(true);
-				/**
-				 * 设置是否优先返回GPS定位结果，如果30秒内GPS没有返回定位结果则进行网络定位
-				 * 注意：只有在高精度模式下的单次定位有效，其他方式无效
-				 */
-				locationOption.setGpsFirst(false);
-				// 设置定位模式为高精度模式
-				locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
-				locationOption.setInterval(CalldaGlobalConfig.getInstance().getInterval());
-				// 设置定位监听
-				locationClient.setLocationListener(this);
-				//locationOption.setOnceLocation(true);
-				locationClient.setLocationOption(locationOption);
-				fixedThreadPool.execute(new Runnable() {
-					@Override
-					public void run() {
-						//处理任务
+                        //DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
+                    }
 
-						// 启动定位
-						locationClient.startLocation();
-					}
-				});
+                    @Override
+                    public void onProgress(int progress, String status) {
 
-			}else{
+                    }
+
+                    @Override
+                    public void onError(int code, String message) {
+                        Log.d("main", "登录聊天服务器失败！");
+                    }
+                });
+                locationClient = new AMapLocationClient(context);
+                locationOption = new AMapLocationClientOption();
+                // 设置是否需要显示地址信息
+                locationOption.setNeedAddress(true);
+                /**
+                 * 设置是否优先返回GPS定位结果，如果30秒内GPS没有返回定位结果则进行网络定位
+                 * 注意：只有在高精度模式下的单次定位有效，其他方式无效
+                 */
+                locationOption.setGpsFirst(false);
+                // 设置定位模式为高精度模式
+                locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
+                locationOption.setInterval(GlobalConfig.getInstance().getInterval());
+                // 设置定位监听
+                locationClient.setLocationListener(this);
+                //locationOption.setOnceLocation(true);
+                locationClient.setLocationOption(locationOption);
+                fixedThreadPool.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        //处理任务
+
+                        // 启动定位
+                        locationClient.startLocation();
+                    }
+                });
+
+            } else {
 			/*	EMClient.getInstance().logout(false, new EMCallBack() {
 
 					@Override
@@ -1409,58 +1423,59 @@ public class MainService extends Service implements Runnable{
 						Log.d("main", "退出聊天服务器失败！");
 					}
 				});*/
-				DemoHelper.getInstance().logout(false,new EMCallBack() {
+                DemoHelper.getInstance().logout(false, new EMCallBack() {
 
-					@Override
-					public void onSuccess() {
-						// TODO Auto-generated method stub
-						Log.d("main", "退出聊天服务器成功！");
-					}
+                    @Override
+                    public void onSuccess() {
+                        // TODO Auto-generated method stub
+                        Log.d("main", "退出聊天服务器成功！");
+                    }
 
-					@Override
-					public void onProgress(int progress, String status) {
-						// TODO Auto-generated method stub
+                    @Override
+                    public void onProgress(int progress, String status) {
+                        // TODO Auto-generated method stub
 
-					}
+                    }
 
-					@Override
-					public void onError(int code, String message) {
-						// TODO Auto-generated method stub
-						Log.d("main", "退出聊天服务器失败！");
-					}
-				});
-				if (null != locationClient) {
-					/**
-					 * 如果AMapLocationClient是在当前Activity实例化的，
-					 * 在Activity的onDestroy中一定要执行AMapLocationClient的onDestroy
-					 */
-					locationClient.stopLocation();
-					locationClient.onDestroy();
-					locationClient = null;
-					locationOption = null;
-				}
-			}
-		}
-		@Override
-		public void onLocationChanged(AMapLocation aMapLocation) {
-			StringBuilder sb = new StringBuilder();
-			if (aMapLocation.getErrorCode() == 0) {
-				Logger.i("address", aMapLocation.getAddress());
-				Logger.i("latitude",aMapLocation.getLatitude()+"");
-				Logger.i("longitude",aMapLocation.getLongitude()+"");
-				CalldaGlobalConfig.getInstance().setAddress(aMapLocation.getAddress());
-				CalldaGlobalConfig.getInstance().setLatitude(aMapLocation.getLatitude());
-				CalldaGlobalConfig.getInstance().setLongitude(aMapLocation.getLongitude());
-				userDao.saveLocation(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),aMapLocation.getLatitude(),aMapLocation.getLongitude());
-			} else {
-				//定位失败
-				sb.append("定位失败" + "\n");
-				sb.append("错误码:" + aMapLocation.getErrorCode() + "\n");
-				sb.append("错误信息:" + aMapLocation.getErrorInfo() + "\n");
-				sb.append("错误描述:" + aMapLocation.getLocationDetail() + "\n");
-				Logger.i("error", sb.toString());
+                    @Override
+                    public void onError(int code, String message) {
+                        // TODO Auto-generated method stub
+                        Log.d("main", "退出聊天服务器失败！");
+                    }
+                });
+                if (null != locationClient) {
+                    /**
+                     * 如果AMapLocationClient是在当前Activity实例化的，
+                     * 在Activity的onDestroy中一定要执行AMapLocationClient的onDestroy
+                     */
+                    locationClient.stopLocation();
+                    locationClient.onDestroy();
+                    locationClient = null;
+                    locationOption = null;
+                }
+            }
+        }
 
-			}
-		}
-	}
+        @Override
+        public void onLocationChanged(AMapLocation aMapLocation) {
+            StringBuilder sb = new StringBuilder();
+            if (aMapLocation.getErrorCode() == 0) {
+                Logger.i("address", aMapLocation.getAddress());
+                Logger.i("latitude", aMapLocation.getLatitude() + "");
+                Logger.i("longitude", aMapLocation.getLongitude() + "");
+                GlobalConfig.getInstance().setAddress(aMapLocation.getAddress());
+                GlobalConfig.getInstance().setLatitude(aMapLocation.getLatitude());
+                GlobalConfig.getInstance().setLongitude(aMapLocation.getLongitude());
+                userDao.saveLocation((String) SPUtils.get(getApplicationContext(), Constant.PACKAGE_NAME, Constant.LOGIN_USERNAME, ""), (String) SPUtils.get(getApplicationContext(), Constant.PACKAGE_NAME, Constant.LOGIN_ENCODED_PASSWORD, ""), aMapLocation.getLatitude(), aMapLocation.getLongitude());
+            } else {
+                //定位失败
+                sb.append("定位失败" + "\n");
+                sb.append("错误码:" + aMapLocation.getErrorCode() + "\n");
+                sb.append("错误信息:" + aMapLocation.getErrorInfo() + "\n");
+                sb.append("错误描述:" + aMapLocation.getLocationDetail() + "\n");
+                Logger.i("error", sb.toString());
+
+            }
+        }
+    }
 }

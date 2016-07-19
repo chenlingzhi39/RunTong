@@ -6,7 +6,6 @@ import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.bean.CalldaCalllogBean;
-import com.callba.phone.cfg.CalldaGlobalConfig;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

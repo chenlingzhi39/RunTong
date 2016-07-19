@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.telephony.PhoneNumberUtils;
 
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
@@ -29,7 +29,7 @@ public class CallChooserBroadCast extends BroadcastReceiver {
 			return;
 			
 		} else if(System.currentTimeMillis() - 
-				CalldaGlobalConfig.getInstance().getLastInterceptCallTime() < 5000) {
+				GlobalConfig.getInstance().getLastInterceptCallTime() < 5000) {
 			setResultData(phoneNumber);
 			return;
 			

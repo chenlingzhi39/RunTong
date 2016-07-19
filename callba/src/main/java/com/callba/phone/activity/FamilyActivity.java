@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -53,9 +53,9 @@ public class FamilyActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
-        Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(avatar);
-        name.setText(CalldaGlobalConfig.getInstance().getUsername());
-        myCommission.setText("我的佣金:"+CalldaGlobalConfig.getInstance().getCommission());
+        Glide.with(this).load(GlobalConfig.getInstance().getUserhead()).into(avatar);
+        name.setText(getUsername());
+        myCommission.setText("我的佣金:"+ GlobalConfig.getInstance().getCommission());
     }
 
     @OnClick({R.id.name, R.id.my_commission, R.id.get_commission, R.id.btn_commission, R.id.order, R.id.commission_detail, R.id.team, R.id.type, R.id.qr_code})

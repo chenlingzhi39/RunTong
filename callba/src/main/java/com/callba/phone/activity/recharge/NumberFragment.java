@@ -1,6 +1,5 @@
 package com.callba.phone.activity.recharge;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -11,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Contacts;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +24,7 @@ import com.callba.R;
 import com.callba.phone.BaseFragment;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.NumberAddressService;
 
@@ -72,9 +70,9 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
-        number.setText(CalldaGlobalConfig.getInstance().getUsername());
+        number.setText(getUsername());
         String address = NumberAddressService.getAddress(
-                CalldaGlobalConfig.getInstance().getUsername(), Constant.DB_PATH,
+                getUsername(), Constant.DB_PATH,
                 getActivity());
         tv_address.setHint(address);
         userDao = new UserDao(getActivity(), this);
@@ -105,14 +103,14 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
     public void success(String msg) {
         toast(msg);
         if (progressDialog != null) progressDialog.dismiss();
-        if (CalldaGlobalConfig.getInstance().getAdvertisements1() != null)
-            CalldaGlobalConfig.getInstance().getAdvertisements1().clear();
-        if (CalldaGlobalConfig.getInstance().getAdvertisements2() != null)
-            CalldaGlobalConfig.getInstance().getAdvertisements2().clear();
-        if (CalldaGlobalConfig.getInstance().getAdvertisements3() != null)
-            CalldaGlobalConfig.getInstance().getAdvertisements3().clear();
-        if (CalldaGlobalConfig.getInstance().getDialAd() != null)
-            CalldaGlobalConfig.getInstance().setDialAd(null);
+        if (GlobalConfig.getInstance().getAdvertisements1() != null)
+            GlobalConfig.getInstance().getAdvertisements1().clear();
+        if (GlobalConfig.getInstance().getAdvertisements2() != null)
+            GlobalConfig.getInstance().getAdvertisements2().clear();
+        if (GlobalConfig.getInstance().getAdvertisements3() != null)
+            GlobalConfig.getInstance().getAdvertisements3().clear();
+        if (GlobalConfig.getInstance().getDialAd() != null)
+            GlobalConfig.getInstance().setDialAd(null);
     }
 
     @Override
@@ -131,7 +129,7 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
         if (card.getText().toString().equals(("")))
             toast(getString(R.string.input_card));
         else
-            userDao.recharge(number.getText().toString(), card.getText().toString(), CalldaGlobalConfig.getInstance().getUsername());
+            userDao.recharge(number.getText().toString(), card.getText().toString(), getUsername());
     }
 
 

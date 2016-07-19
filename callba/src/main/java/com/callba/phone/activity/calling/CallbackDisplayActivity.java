@@ -7,9 +7,7 @@ import java.util.Map;
 
 import org.apache.http.conn.ConnectTimeoutException;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -17,23 +15,23 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.callba.phone.bean.Advertisement;
+import com.callba.phone.bean.Contact;
 import com.callba.phone.bean.DialAd;
 import com.callba.phone.bean.UserDao;
+import com.callba.phone.cfg.Constant;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.ContactsManager;
+import com.callba.phone.util.SPUtils;
 import com.google.gson.Gson;
-import com.google.gson.internal.bind.ArrayTypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.ViewUtils;
@@ -42,12 +40,10 @@ import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 import com.lidroid.xutils.bitmap.callback.DefaultBitmapLoadCallBack;
-import com.lidroid.xutils.view.annotation.ViewInject;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Task;
-import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.service.AutoAnswerReceiver;
 import com.callba.phone.service.CalllogService;
 import com.callba.phone.util.ActivityUtil;
@@ -134,7 +130,7 @@ public class CallbackDisplayActivity extends BaseActivity {
                 }.getType());
                 if (dialAds.size() > 0) {
                     dialAd = dialAds.get(0);
-                    CalldaGlobalConfig.getInstance().setDialAd(dialAd);
+                    GlobalConfig.getInstance().setDialAd(dialAd);
                     Glide.with(CallbackDisplayActivity.this).load(dialAd.getImage()).into(background);
                 }}catch (Exception e){
                     e.printStackTrace();
@@ -146,10 +142,10 @@ public class CallbackDisplayActivity extends BaseActivity {
 
             }
         });
-        if (CalldaGlobalConfig.getInstance().getDialAd() != null)
-            Glide.with(CallbackDisplayActivity.this).load(CalldaGlobalConfig.getInstance().getDialAd().getImage()).into(background);
+        if (GlobalConfig.getInstance().getDialAd() != null)
+            Glide.with(CallbackDisplayActivity.this).load(GlobalConfig.getInstance().getDialAd().getImage()).into(background);
         else
-            userDao.getAd(4, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+            userDao.getAd(4, getUsername(),getPassword());
     }
 
     /**
@@ -181,7 +177,7 @@ public class CallbackDisplayActivity extends BaseActivity {
                             //回拨成功，开启自动接听
                             AutoAnswerReceiver.answerPhone(CallbackDisplayActivity.this);
                             calllogService.saveBackCallLog("", number);
-                            if (CalldaGlobalConfig.getInstance().getKeyBoardSetting())
+                            if (GlobalConfig.getInstance().getKeyBoardSetting())
                                 playSound();
                         } else {
                             //统计回拨失败数据
@@ -238,13 +234,10 @@ public class CallbackDisplayActivity extends BaseActivity {
                 ActivityUtil activityUtil = new ActivityUtil();
                 String lan = activityUtil.language(CallbackDisplayActivity.this);
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("loginName", CalldaGlobalConfig.getInstance()
-                        .getUsername());
-                params.put("loginPwd", CalldaGlobalConfig.getInstance()
-                        .getPassword());
+                params.put("loginName", getUsername());
+                params.put("loginPwd", getPassword());
                 params.put("softType", "android");
-                params.put("caller", CalldaGlobalConfig.getInstance()
-                        .getUsername());
+                params.put("caller", getUsername());
                 params.put("callee", number);
                 //params.put("lan", lan);
 
@@ -292,7 +285,7 @@ public class CallbackDisplayActivity extends BaseActivity {
             bitmapUtils = BitmapHelp.getBitmapUtils(this
                     .getApplicationContext());
         }
-        String imgUrl = CalldaGlobalConfig.getInstance().getIvPathBack();
+        String imgUrl = GlobalConfig.getInstance().getIvPathBack();
         if (imgUrl == null) {
             return;
         }

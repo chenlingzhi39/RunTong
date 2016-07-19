@@ -1,6 +1,5 @@
 package com.callba.phone;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +7,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 
 
 import com.amap.api.location.AMapLocation;
@@ -31,7 +29,6 @@ import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
 import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.util.AMapUtil;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.ToastUtil;

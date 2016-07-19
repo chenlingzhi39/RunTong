@@ -1,15 +1,10 @@
 package com.callba.phone.activity.contact;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -26,7 +21,7 @@ import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.CallUtils;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
@@ -41,7 +36,6 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import okhttp3.Call;
 
 /**
@@ -98,8 +92,8 @@ public class ContactDetailFragment extends BaseFragment {
                         OkHttpUtils
                                 .post()
                                 .url(Interfaces.ADD_FRIEND)
-                                .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-                                .addParams("loginPwd", CalldaGlobalConfig.getInstance().getPassword())
+                                .addParams("loginName", getUsername())
+                                .addParams("loginPwd", getPassword())
                                 .addParams("phoneNumber", bean.getContactPhones().get(0))
                                 .build()
                                 .execute(new StringCallback() {
@@ -128,8 +122,8 @@ public class ContactDetailFragment extends BaseFragment {
                                                 OkHttpUtils
                                                         .post()
                                                         .url(Interfaces.GET_FRIENDS)
-                                                        .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-                                                        .addParams("loginPwd", CalldaGlobalConfig.getInstance().getPassword())
+                                                        .addParams("loginName", getUsername())
+                                                        .addParams("loginPwd", getPassword())
                                                         .build().execute(new StringCallback() {
                                                     @Override
                                                     public void onError(Call call, Exception e, int id) {
@@ -191,7 +185,7 @@ public class ContactDetailFragment extends BaseFragment {
                     public void onClick(View v) {
                         Uri smsToUri = Uri.parse("smsto://" + bean.getContactPhones().get(0));
                         Intent mIntent = new Intent(Intent.ACTION_SENDTO, smsToUri);
-                        mIntent.putExtra("sms_body", "我是" + CalldaGlobalConfig.getInstance().getNickname() + "，我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+                        mIntent.putExtra("sms_body", "我是" + GlobalConfig.getInstance().getNickname() + "，我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
                         startActivity(mIntent);
                     }
                 });

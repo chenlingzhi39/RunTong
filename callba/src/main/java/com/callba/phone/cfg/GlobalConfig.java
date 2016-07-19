@@ -17,16 +17,16 @@ import com.callba.phone.util.AppVersionChecker;
  * @Version V1.0  
  * @Createtime：2014年5月10日 下午5:19:25 
  */
-public class CalldaGlobalConfig implements Serializable{
-	private static CalldaGlobalConfig calldaGlobalConfig;
-	private CalldaGlobalConfig(){}
+public class GlobalConfig implements Serializable{
+	private static GlobalConfig globalConfig;
+	private GlobalConfig(){}
 	
-	public static synchronized CalldaGlobalConfig getInstance() {
-		if(calldaGlobalConfig == null) {
-			calldaGlobalConfig = new CalldaGlobalConfig();
+	public static synchronized GlobalConfig getInstance() {
+		if(globalConfig == null) {
+			globalConfig = new GlobalConfig();
 		}
 		
-		return calldaGlobalConfig;
+		return globalConfig;
 	}
 	
 	

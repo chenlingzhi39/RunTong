@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
@@ -15,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -32,14 +30,13 @@ import com.callba.phone.DemoHelper;
 import com.callba.phone.DemoHelper.DataSyncListener;
 import com.callba.phone.activity.BlacklistActivity;
 import com.callba.phone.activity.ChatActivity;
-import com.callba.phone.activity.CommunityActivity;
 import com.callba.phone.activity.FriendActivity;
 import com.callba.phone.activity.GroupsActivity;
 import com.callba.phone.activity.NewFriendsMsgActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.db.InviteMessgeDao;
 import com.callba.phone.db.UserDao;
 import com.callba.phone.util.EaseCommonUtils;
@@ -53,11 +50,6 @@ import com.google.gson.reflect.TypeToken;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -219,8 +211,8 @@ public class WebContactFragment extends BaseFragment {
                 OkHttpUtils
                         .post()
                         .url(Interfaces.GET_FRIENDS)
-                        .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-                        .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                        .addParams("loginName", getUsername())
+                        .addParams("loginPwd",  getPassword())
                         .build().execute(new StringCallback() {
                     @Override
                     public void onAfter(int id) {
@@ -284,8 +276,8 @@ public class WebContactFragment extends BaseFragment {
                 OkHttpUtils
                         .post()
                         .url(Interfaces.DELETE_FRIENDS)
-                        .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-                        .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                        .addParams("loginName", getUsername())
+                        .addParams("loginPwd", getPassword())
                         .addParams("phoneNumber",toBeProcessUser.getUsername().substring(0,11))
                         .build().execute(new StringCallback() {
                     @Override

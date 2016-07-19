@@ -16,7 +16,7 @@ import android.widget.ListView;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.activity.contact.ContactChooserAdapter.ViewHolder_Item;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.logic.contact.ContactController;
 import com.callba.phone.logic.contact.ContactEntity;
 import com.callba.phone.logic.contact.ContactPersonEntity;
@@ -95,7 +95,7 @@ public class ContactChooseActivity extends BaseActivity implements OnClickListen
 			break;
 
 		case R.id.bn_choose_ok:
-			if (CalldaGlobalConfig.getInstance().getContactBeans() != null) {
+			if (GlobalConfig.getInstance().getContactBeans() != null) {
 				getChoosedContact();
 				finish();
 			}
@@ -110,8 +110,8 @@ public class ContactChooseActivity extends BaseActivity implements OnClickListen
 		// 获取到的联系人数据
 		List<ContactPersonEntity> personEntities;
 		
-		if (CalldaGlobalConfig.getInstance().getContactBeans() != null) {
-			personEntities = CalldaGlobalConfig.getInstance().getContactBeans();
+		if (GlobalConfig.getInstance().getContactBeans() != null) {
+			personEntities = GlobalConfig.getInstance().getContactBeans();
 		} else {
 
 			return;

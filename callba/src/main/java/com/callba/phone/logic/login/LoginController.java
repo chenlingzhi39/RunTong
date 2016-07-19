@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.callba.R;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.bean.Task;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.DesUtil;
@@ -63,8 +63,8 @@ public class LoginController {
 	public boolean getUserLoginState() {
 		Logger.d(TAG, "getUserLoginState loginState -> " + loginState);
 		if(loginState) {
-			String username = CalldaGlobalConfig.getInstance().getUsername();
-			String password = CalldaGlobalConfig.getInstance().getPassword();
+			String username = GlobalConfig.getInstance().getUsername();
+			String password = GlobalConfig.getInstance().getPassword();
 			if(TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
 				Logger.w(TAG, "getUserLoginState username or password is null.");
 				return false;
@@ -136,24 +136,24 @@ public class LoginController {
 	 */
 	public static void parseLoginSuccessResult(Context context, String username, String password, String[] resultInfo) {
 		if(resultInfo != null) {
-			CalldaGlobalConfig.getInstance().setLoginToken(resultInfo[2]);
-			CalldaGlobalConfig.getInstance().setUsername(username);
-			CalldaGlobalConfig.getInstance().setSipIP(resultInfo[4]);
-			CalldaGlobalConfig.getInstance().setUserhead(resultInfo[6]);
-			CalldaGlobalConfig.getInstance().setNickname(resultInfo[7]);
-			CalldaGlobalConfig.getInstance().setSignature(resultInfo[8]);
+			GlobalConfig.getInstance().setLoginToken(resultInfo[2]);
+			GlobalConfig.getInstance().setUsername(username);
+			GlobalConfig.getInstance().setSipIP(resultInfo[4]);
+			GlobalConfig.getInstance().setUserhead(resultInfo[6]);
+			GlobalConfig.getInstance().setNickname(resultInfo[7]);
+			GlobalConfig.getInstance().setSignature(resultInfo[8]);
 			if(!resultInfo[9].equals(""))
-			CalldaGlobalConfig.getInstance().setGold(Integer.parseInt(resultInfo[9]));
-			else CalldaGlobalConfig.getInstance().setGold(0);
-			CalldaGlobalConfig.getInstance().setCommission(resultInfo[10]);
+			GlobalConfig.getInstance().setGold(Integer.parseInt(resultInfo[9]));
+			else GlobalConfig.getInstance().setGold(0);
+			GlobalConfig.getInstance().setCommission(resultInfo[10]);
 			DemoHelper.getInstance().setCurrentUserName(username);
 			DemoHelper.getInstance().getUserProfileManager().setCurrentUserAvatar(resultInfo[6]);
 			DemoHelper.getInstance().getUserProfileManager().setCurrentUserNick(resultInfo[7]);
-    		Logger.v("处理登录成功信息", "当前SIP"+CalldaGlobalConfig.getInstance().getSipIP());
+    		Logger.v("处理登录成功信息", "当前SIP"+ GlobalConfig.getInstance().getSipIP());
 			try {
 				String encryptPwd = DesUtil.encrypt(password,
-						CalldaGlobalConfig.getInstance().getLoginToken());
-				CalldaGlobalConfig.getInstance().setPassword(encryptPwd);
+						GlobalConfig.getInstance().getLoginToken());
+				GlobalConfig.getInstance().setPassword(encryptPwd);
 			} catch (Exception e) {
 				e.printStackTrace();
 				Toast.makeText(context,context.getString(R.string.result_data_error),Toast.LENGTH_SHORT).show();
@@ -164,7 +164,7 @@ public class LoginController {
 			SharedPreferenceUtil mPreferenceUtil = SharedPreferenceUtil.getInstance(context);
 			mPreferenceUtil.putString(Constant.LOGIN_USERNAME, username);
 			mPreferenceUtil.putString(Constant.LOGIN_PASSWORD, password);
-			mPreferenceUtil.putString(Constant.LOGIN_ENCODED_PASSWORD, CalldaGlobalConfig.getInstance().getPassword());
+			mPreferenceUtil.putString(Constant.LOGIN_ENCODED_PASSWORD, GlobalConfig.getInstance().getPassword());
 			mPreferenceUtil.commit();
 			Intent intent=new Intent("com.callba.location");
 			intent.putExtra("action","login");
@@ -172,7 +172,7 @@ public class LoginController {
 			context.sendBroadcast(new Intent("com.callba.login"));
 		}
 		
-	/*	String callSetting = CalldaGlobalConfig.getInstance().getCallSetting();
+	/*	String callSetting = GlobalConfig.getInstance().getCallSetting();
 		Task task = new Task(Task.TASK_DOWNLOAD_AD);
 		Map<String, Object> taskParams = new HashMap<String, Object>();
 		task.setTaskParams(taskParams);

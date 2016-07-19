@@ -10,9 +10,8 @@ import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
-import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.SharedPreferenceUtil;
 
 
@@ -115,6 +114,6 @@ public class ChangePasswordActivity extends BaseActivity implements UserDao.Post
             toast(getString(R.string.pwd_type));
             return;
         }
-        userDao.changePassword(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),old_password,new_password);
+        userDao.changePassword(getUsername(), getPassword(),old_password,new_password);
     }
 }

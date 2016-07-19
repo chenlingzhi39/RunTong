@@ -6,32 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
-import com.callba.R;
-import com.callba.phone.Constant;
-import com.callba.phone.DemoHelper;
 import com.callba.phone.MyApplication;
 import com.callba.phone.activity.contact.ContactMutliNumBean;
-import com.callba.phone.bean.BaseUser;
-import com.callba.phone.bean.Contact;
-import com.callba.phone.bean.EaseUser;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.ContactsManager;
-import com.callba.phone.util.EaseCommonUtils;
-import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
-import com.callba.phone.widget.EaseAlertDialog;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.hyphenate.chat.EMClient;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
-
-import okhttp3.Call;
 
 /** 
  * 联系人业务逻辑管理
@@ -54,7 +37,7 @@ public class ContactController {
 	private Gson gson;
 	private Context contaxt;
 	public ContactController() {
-		mAllContactPersonEntities = CalldaGlobalConfig.getInstance().getContactBeans();
+		mAllContactPersonEntities = GlobalConfig.getInstance().getContactBeans();
 		gson=new Gson();
 	    contaxt=MyApplication.getInstance().getApplicationContext();
 	}
@@ -113,8 +96,8 @@ public class ContactController {
 		/*OkHttpUtils
 				.post()
 				.url(Interfaces.ADD_FRIENDS)
-				.addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-				.addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+				.addParams("loginName", GlobalConfig.getInstance().getUsername())
+				.addParams("loginPwd",  GlobalConfig.getInstance().getPassword())
 				.addParams("phoneNumbers",phoneNumbers)
 				.build().execute(new StringCallback() {
 			@Override
@@ -130,8 +113,8 @@ public class ContactController {
 						  OkHttpUtils
 								  .post()
 								  .url(Interfaces.GET_FRIENDS)
-								  .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-								  .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+								  .addParams("loginName", GlobalConfig.getInstance().getUsername())
+								  .addParams("loginPwd",  GlobalConfig.getInstance().getPassword())
 								  .build().execute(new StringCallback() {
 							  @Override
 							  public void onError(Call call, Exception e, int id) {

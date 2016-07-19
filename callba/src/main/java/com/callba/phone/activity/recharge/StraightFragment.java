@@ -3,11 +3,7 @@ package com.callba.phone.activity.recharge;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
@@ -17,9 +13,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -34,7 +28,7 @@ import com.callba.R;
 import com.callba.phone.BaseFragment;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NumberAddressService;
@@ -120,7 +114,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
-                        userDao1.pay(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),outTradeNo,"success");
+                        userDao1.pay(getUsername(), getPassword(),outTradeNo,"success");
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
                         // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
@@ -130,7 +124,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                         } else {
                             // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
                             Toast.makeText(getActivity(), "支付失败", Toast.LENGTH_SHORT).show();
-                            userDao1.pay(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),outTradeNo,"failure");
+                            userDao1.pay(getUsername(), getPassword(),outTradeNo,"failure");
                         }
                     }
                     break;
@@ -182,9 +176,9 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         spannable1.setSpan(new AbsoluteSizeSpan(size), 0, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannable1.setSpan(new AbsoluteSizeSpan(size / 2), 5, spannable1.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         price2.setText(spannable1);
-        number.setText(CalldaGlobalConfig.getInstance().getUsername());
+        number.setText(getUsername());
         String address = NumberAddressService.getAddress(
-                CalldaGlobalConfig.getInstance().getUsername(), Constant.DB_PATH,
+                getUsername(), Constant.DB_PATH,
                 getActivity());
         tv_address.setHint(address);
         userDao = new UserDao(getActivity(), this);
@@ -217,7 +211,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                userDao1.pay(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),outTradeNo,"success");
+                                userDao1.pay(getUsername(), getPassword(),outTradeNo,"success");
                             }
                         });
                 AlertDialog alertDialog = builder.create();
@@ -280,7 +274,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
 
     @OnClick(R.id.recharge)
     public void recharge() {
-        userDao.setOrder(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),price,"0","callback-unlimit-"+price);
+        userDao.setOrder(getUsername(), getPassword(),price,"0","callback-unlimit-"+price);
 
     }
 

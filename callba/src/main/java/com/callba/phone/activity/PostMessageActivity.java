@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -17,7 +16,7 @@ import android.widget.Toast;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 
@@ -58,7 +57,7 @@ public class PostMessageActivity extends BaseActivity {
         Intent intent;
         switch (v.getId()) {
             case R.id.submit:
-                if (number.getText().toString().equals("") || number.getText().toString().equals(CalldaGlobalConfig.getInstance().getUsername()))
+                if (number.getText().toString().equals("") || number.getText().toString().equals(getUsername()))
                     break;
                 EMMessage message = EMMessage.createTxtSendMessage(content.getText().toString(), number.getText().toString() + "-callba");
 //发送消息
@@ -71,7 +70,7 @@ public class PostMessageActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.submit_image:
-                if (number.getText().toString().equals("") || number.getText().toString().equals(CalldaGlobalConfig.getInstance().getUsername()))
+                if (number.getText().toString().equals("") || number.getText().toString().equals(getUsername()))
                     break;
                 if (Build.VERSION.SDK_INT < 19) {
                     intent = new Intent(Intent.ACTION_GET_CONTENT);

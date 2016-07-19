@@ -3,14 +3,11 @@ package com.callba.phone.activity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -32,22 +28,15 @@ import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.CalldaGlobalConfig;
-import com.callba.phone.cfg.Constant;
-import com.callba.phone.service.UpdateService;
-import com.callba.phone.util.BitmapUtil;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.NumberAddressService;
-import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.Utils;
-import com.callba.phone.view.CircleTextView;
 
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,8 +44,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
-import me.iwf.photopicker.PhotoPickerActivity;
-import me.iwf.photopicker.utils.PhotoPickerIntent;
 
 /**
  * Created by PC-20160514 on 2016/5/19.
@@ -92,11 +79,11 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        if(!CalldaGlobalConfig.getInstance().getUserhead().equals("")){
-            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(head);
+        if(!GlobalConfig.getInstance().getUserhead().equals("")){
+            Glide.with(this).load(GlobalConfig.getInstance().getUserhead()).into(head);
         }
-        nickName.setHint(CalldaGlobalConfig.getInstance().getNickname());
-        signature.setHint(CalldaGlobalConfig.getInstance().getSignature());
+        nickName.setHint(GlobalConfig.getInstance().getNickname());
+        signature.setHint(GlobalConfig.getInstance().getSignature());
         userDao=new UserDao(this,this);
         userDao1=new UserDao(this, new UserDao.PostListener() {
             @Override
@@ -107,8 +94,8 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
             @Override
             public void success(String msg) {
             toast(msg);
-                CalldaGlobalConfig.getInstance().setNickname(nickName.getHint().toString());
-                CalldaGlobalConfig.getInstance().setSignature(signature.getHint().toString());
+                GlobalConfig.getInstance().setNickname(nickName.getHint().toString());
+                GlobalConfig.getInstance().setSignature(signature.getHint().toString());
             }
 
             @Override
@@ -137,7 +124,7 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     @Override
     public void success(String msg) {
         toast(getString(R.string.change_success));
-        CalldaGlobalConfig.getInstance().setUserhead(msg);
+        GlobalConfig.getInstance().setUserhead(msg);
         dialog.dismiss();
         f=null;
     }
@@ -241,14 +228,14 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         switch(item.getItemId()){
             case R.id.save:
                 if(f!=null)
-                userDao.changeHead(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(),f);
-                Logger.i("nickname",nickName.getHint().toString().equals(CalldaGlobalConfig.getInstance().getNickname())+"");
-                Logger.i("sign",signature.getHint().toString().equals(CalldaGlobalConfig.getInstance().getSignature())+"");
-                    userDao1.changeInfo(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(),!nickName.getHint().toString().equals(CalldaGlobalConfig.getInstance().getNickname())?nickName.getHint().toString():null,!signature.getHint().toString().equals(CalldaGlobalConfig.getInstance().getSignature())?signature.getHint().toString():null);
+                userDao.changeHead(getUsername(), getPassword(),f);
+                Logger.i("nickname",nickName.getHint().toString().equals(GlobalConfig.getInstance().getNickname())+"");
+                Logger.i("sign",signature.getHint().toString().equals(GlobalConfig.getInstance().getSignature())+"");
+                    userDao1.changeInfo(getUsername(), getPassword(),!nickName.getHint().toString().equals(GlobalConfig.getInstance().getNickname())?nickName.getHint().toString():null,!signature.getHint().toString().equals(GlobalConfig.getInstance().getSignature())?signature.getHint().toString():null);
                 break;
                case android.R.id.home:
                 Log.i("base", "finish");
-                   if(!nickName.getHint().toString().equals(CalldaGlobalConfig.getInstance().getNickname())||!signature.getHint().toString().equals(CalldaGlobalConfig.getInstance().getSignature())||f!=null)
+                   if(!nickName.getHint().toString().equals(GlobalConfig.getInstance().getNickname())||!signature.getHint().toString().equals(GlobalConfig.getInstance().getSignature())||f!=null)
                    {android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
                    builder.setMessage("当前信息未保存,确定退出？");
                    builder.setPositiveButton(R.string.ok,

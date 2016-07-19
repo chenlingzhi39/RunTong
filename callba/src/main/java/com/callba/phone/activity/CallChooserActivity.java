@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.callba.R;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.CallUtils;
@@ -90,7 +90,7 @@ public class CallChooserActivity extends Activity implements OnClickListener {
 			break;
 			
 		case R.id.ll_call_phone:
-			CalldaGlobalConfig.getInstance().setLastInterceptCallTime(System.currentTimeMillis());
+			GlobalConfig.getInstance().setLastInterceptCallTime(System.currentTimeMillis());
 			
 			//手机拨打
 			if(!TextUtils.isEmpty(phoneNumber)) {
@@ -117,7 +117,7 @@ public class CallChooserActivity extends Activity implements OnClickListener {
 	 * @author zhw
 	 */
 	private void callByCallda() {
-		CalldaGlobalConfig.getInstance().setLastInterceptCallTime(System.currentTimeMillis());
+		GlobalConfig.getInstance().setLastInterceptCallTime(System.currentTimeMillis());
 		
 		//闰通电话
 		boolean isUserLogin = LoginController.getInstance().getUserLoginState();

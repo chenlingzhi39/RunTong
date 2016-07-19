@@ -1,7 +1,6 @@
 package com.callba.phone.activity;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,23 +8,18 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.FrameLayout;
@@ -34,20 +28,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amap.api.maps2d.model.Text;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.Constant;
 import com.callba.phone.adapter.ConversationAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.widget.DividerItemDecoration;
-import com.hyphenate.EMCallBack;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
@@ -151,8 +141,8 @@ public class MessageActivity extends BaseActivity {
      */
     protected void onConnectionDisconnected(){
         errorItemContainer.setVisibility(View.VISIBLE);
-       /* if(CalldaGlobalConfig.getInstance()!=null)
-            if(!CalldaGlobalConfig.getInstance().getUsername().equals("")){
+       /* if(GlobalConfig.getInstance()!=null)
+            if(!GlobalConfig.getInstance().getUsername().equals("")){
                 EMClient.getInstance().login(SharedPreferenceUtil.getInstance(MessageActivity.this).getString(com.callba.phone.cfg.Constant.LOGIN_USERNAME)+"-callba",SharedPreferenceUtil.getInstance(MessageActivity.this).getString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
                     @Override
                     public void onSuccess() {

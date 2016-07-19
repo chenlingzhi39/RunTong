@@ -1,7 +1,6 @@
 package com.callba.phone.activity;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -16,11 +15,10 @@ import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.activity.contact.CalllogDetailActivity;
-import com.callba.phone.activity.contact.ContactActivity2;
 import com.callba.phone.activity.contact.ContactDetailActivity2;
 import com.callba.phone.activity.contact.ContactMutliNumBean;
 import com.callba.phone.bean.CalllogDetailBean;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.util.Logger;
 
@@ -104,12 +102,12 @@ public class CalllogListAdapter extends BaseAdapter {
 				contactMutliNumBean.setLocation(location);
 
 				if (contactNumber.equals(contactName)
-						|| CalldaGlobalConfig.getInstance().getContactBeans() == null) {
+						|| GlobalConfig.getInstance().getContactBeans() == null) {
 					contactPhones.add(contactNumber);
 					contactMutliNumBean.setContactPhones(contactPhones);
 				} else { // 有姓名
-					if (CalldaGlobalConfig.getInstance().getContactBeans() != null) {
-						for (ContactPersonEntity bean : CalldaGlobalConfig
+					if (GlobalConfig.getInstance().getContactBeans() != null) {
+						for (ContactPersonEntity bean : GlobalConfig
 								.getInstance().getContactBeans()) {
 							if (contactName.equals(bean.getDisplayName())) {
 								contactPhones.add(bean.getPhoneNumber());

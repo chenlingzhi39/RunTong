@@ -1,10 +1,8 @@
 package com.callba.phone.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.telecom.Call;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +12,11 @@ import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.adapter.MoodAdapter;
-import com.callba.phone.adapter.NearByUserAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Mood;
-import com.callba.phone.bean.NearByUser;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.Logger;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.callba.phone.widget.refreshlayout.EasyRecyclerView;
@@ -29,12 +25,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.hdodenhof.circleimageview.CircleImageView;
-import me.iwf.photopicker.PhotoPickerActivity;
 
 /**
  * Created by PC-20160514 on 2016/5/25.
@@ -92,9 +86,9 @@ public class CommunityActivity extends BaseActivity implements UserDao.PostListe
             public void onBindView(View headerView) {
                 CircleImageView head=(CircleImageView) headerView.findViewById(R.id.head);
                 TextView number=(TextView) headerView.findViewById(R.id.number);
-                if(!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
-                Glide.with(CommunityActivity.this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(head);
-                number.setHint(CalldaGlobalConfig.getInstance().getUsername());
+                if(!GlobalConfig.getInstance().getUserhead().equals(""))
+                Glide.with(CommunityActivity.this).load(GlobalConfig.getInstance().getUserhead()).into(head);
+                number.setHint(getUsername());
             }
         });
         moodAdapter.setError(R.layout.view_more_error).setOnClickListener(new View.OnClickListener() {
@@ -107,12 +101,12 @@ public class CommunityActivity extends BaseActivity implements UserDao.PostListe
         moodAdapter.setNoMore(R.layout.view_nomore);
         moodList.setAdapter(moodAdapter);
         moodList.showRecycler();
-        userDao.getMoods(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),page+"",pageSize+"");
+        userDao.getMoods(getUsername(),getPassword(),page+"",pageSize+"");
     }
 
     @Override
     public void onLoadMore() {
-        userDao.getMoods(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),page+"",pageSize+"");
+        userDao.getMoods(getUsername(), getPassword(),page+"",pageSize+"");
     }
 
     @Override
@@ -122,7 +116,7 @@ public class CommunityActivity extends BaseActivity implements UserDao.PostListe
 
     @Override
     public void onHeaderRefresh() {
-        userDao.getMoods(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),"0",pageSize+"");
+        userDao.getMoods(getUsername(), getPassword(),"0",pageSize+"");
     }
 
     @Override
@@ -181,7 +175,7 @@ public class CommunityActivity extends BaseActivity implements UserDao.PostListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == 0) {
-            userDao.getMoods(CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword(),"0",pageSize+"");
+            userDao.getMoods(getUsername(), getPassword(),"0",pageSize+"");
         }
     }
 }

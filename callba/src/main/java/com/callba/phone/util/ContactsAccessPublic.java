@@ -221,7 +221,6 @@ public  class ContactsAccessPublic {
          * 首先向RawContacts.CONTENT_URI执行一个空值插入，目的是获取系统返回的rawContactId
          * 这时后面插入data表的依据，只有执行空值插入，才能使插入的联系人在通讯录里面可见
          */
-
         final ContentValues values = new ContentValues();
 //            ContentResolver resolver = context.getContentResolver();
         //首先向RawContacts.CONTENT_URI执行一个空值插入，目的是获取系统返回的rawContactId
@@ -258,6 +257,7 @@ public  class ContactsAccessPublic {
                         new QueryContacts(new QueryContactCallback() {
                             @Override
                             public void queryCompleted(List<ContactPersonEntity> contacts) {
+                                MainService.system_contact=false;
                                 context.sendBroadcast(new Intent("com.callba.contact"));
                             }
                         }).loadContact(context);
@@ -336,12 +336,6 @@ public  class ContactsAccessPublic {
             Logger.e(TAG, e.getMessage());
         }
         Logger.w(TAG, "**delete end**");
-        new QueryContacts(new QueryContactCallback() {
-            @Override
-            public void queryCompleted(List<ContactPersonEntity> contacts) {
-                context.sendBroadcast(new Intent("com.callba.contact"));
-            }
-        }).loadContact(context);
     }
 
     public static int deleteSIMContact(Context context, ContactData contact) throws Exception {

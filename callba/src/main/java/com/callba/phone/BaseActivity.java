@@ -122,8 +122,8 @@ public class BaseActivity extends AppCompatActivity {
 				&& this.getClass() != OnekeyRegisterAcitvity.class
 				&& this.getClass() != RetrievePasswordActivity.class) {
 			// 检查内存数据是否正常
-			String username = CalldaGlobalConfig.getInstance().getUsername();
-			String password = CalldaGlobalConfig.getInstance().getPassword();
+			String username = GlobalConfig.getInstance().getUsername();
+			String password = GlobalConfig.getInstance().getPassword();
 			if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
 				// 重新打开
 				Intent intent = new Intent();
@@ -404,7 +404,7 @@ public class BaseActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             try {
                             /*	Uri uri = Uri.parse(appVersionBean
-										.getDownloadUrl());
+                                        .getDownloadUrl());
 								Intent intent = new Intent(Intent.ACTION_VIEW,
 										uri);
 								startActivity(intent);*/
@@ -509,35 +509,11 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        if (this == MyApplication.activities.get(MyApplication.activities.size() - 1) &&
-                this.getClass() != MainCallActivity.class &&
-                this.getClass() != ContactActivity2.class &&
-                this.getClass() != HomeActivity.class &&
-                this.getClass() != MessageActivity.class &&
-                this.getClass() != UserActivity.class &&
-                this.getClass() != WelcomeActivity.class &&
-                this.getClass() != LoginActivity.class &&
-                this.getClass() != RegisterActivity.class &&
-                this.getClass() != FunIntroduceActivity.class)
-            CalldaGlobalConfig.getInstance().saveGlobalCfg(outState);
-        super.onSaveInstanceState(outState);
+    public String getUsername() {
+        return (String) SPUtils.get(this, Constant.PACKAGE_NAME, Constant.LOGIN_USERNAME, "");
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle state) {
-        if (this == MyApplication.activities.get(MyApplication.activities.size() - 1) &&
-                this.getClass() != MainCallActivity.class &&
-                this.getClass() != ContactActivity2.class &&
-                this.getClass() != HomeActivity.class &&
-                this.getClass() != MessageActivity.class &&
-                this.getClass() != UserActivity.class &&
-                this.getClass() != WelcomeActivity.class &&
-                this.getClass() != LoginActivity.class &&
-                this.getClass() != RegisterActivity.class &&
-                this.getClass() != FunIntroduceActivity.class)
-            CalldaGlobalConfig.getInstance().restoreGlobalCfg(state);
-        super.onRestoreInstanceState(state);
+    public String getPassword() {
+        return (String) SPUtils.get(this, Constant.PACKAGE_NAME, Constant.LOGIN_ENCODED_PASSWORD, "");
     }
 }

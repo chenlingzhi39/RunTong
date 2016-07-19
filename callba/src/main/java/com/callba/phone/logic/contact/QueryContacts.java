@@ -1,23 +1,19 @@
 package com.callba.phone.logic.contact;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 
 import com.callba.phone.bean.SearchSortKeyBean;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.Logger;
@@ -36,7 +32,7 @@ public class QueryContacts {
 		this.callback = queryContactCallback;
 	}
 	
-	public void loadContact(Context context) {
+	public synchronized void loadContact(Context context) {
 		mContext = context;
 		ContentResolver contentResolver = context.getContentResolver();
 		
@@ -124,10 +120,7 @@ public class QueryContacts {
 					}
 					contactLists.add(cb);
 				}
-				if(callback != null) {
-					callback.queryCompleted(contactLists);
-				}
-				CalldaGlobalConfig.getInstance().setContactBeans(contactLists);
+				GlobalConfig.getInstance().setContactBeans(contactLists);
 				Logger.i("contact_size",contactLists.size()+"");
 				//保存本地联系人个数
 				SharedPreferenceUtil mPreferenceUtil = SharedPreferenceUtil.getInstance(mContext);
@@ -135,6 +128,9 @@ public class QueryContacts {
 				mPreferenceUtil.putString(Constant.CONTACTS_SIZE, String.valueOf(contactsSize), true);
 				if (cursor!=null) {
 					cursor.close();
+				}
+				if(callback != null) {
+					callback.queryCompleted(contactLists);
 				}
 			}
 		}

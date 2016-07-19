@@ -12,7 +12,7 @@ import com.callba.phone.adapter.TXRecordAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Profit;
 import com.callba.phone.bean.TxRecord;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.widget.DividerItemDecoration;
@@ -63,8 +63,8 @@ public class TXRecordActivity extends BaseActivity {
 
     public void getTXRecords() {
         OkHttpUtils.post().url(Interfaces.TXRECORD)
-                .addParams("loginPwd", CalldaGlobalConfig.getInstance().getPassword())
-                .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+                .addParams("loginPwd", getPassword())
+                .addParams("loginName", getUsername())
                 .build()
                 .execute(new StringCallback() {
                     @Override

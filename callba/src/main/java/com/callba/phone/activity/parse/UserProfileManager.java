@@ -1,32 +1,23 @@
 package com.callba.phone.activity.parse;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 
-import com.callba.phone.Constant;
-import com.callba.phone.DemoHelper;
 import com.callba.phone.DemoHelper.*;
-import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.Constant;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.PreferenceManager;
+import com.callba.phone.util.SPUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMClient;
 import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
 import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.Callback;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 
@@ -34,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
-import okhttp3.Response;
 
 public class UserProfileManager {
 
@@ -71,6 +61,7 @@ public class UserProfileManager {
         httpUtils = new HttpUtils(6 * 1000);
         httpUtils.configRequestRetryCount(3);
         gson=new Gson();
+        appContext=context;
         return true;
     }
 
@@ -97,9 +88,9 @@ public class UserProfileManager {
             return;
         }*/
      /*   RequestParams params = new RequestParams();
-        params.addBodyParameter("loginName", CalldaGlobalConfig.getInstance().getUsername());
-        params.addBodyParameter("loginPwd", CalldaGlobalConfig.getInstance().getPassword());
-        Logger.i("get_friends",Interfaces.GET_FRIENDS+"?loginName="+ CalldaGlobalConfig.getInstance().getUsername()+"&loginPwd="+CalldaGlobalConfig.getInstance().getPassword());
+        params.addBodyParameter("loginName", GlobalConfig.getInstance().getUsername());
+        params.addBodyParameter("loginPwd", GlobalConfig.getInstance().getPassword());
+        Logger.i("get_friends",Interfaces.GET_FRIENDS+"?loginName="+ GlobalConfig.getInstance().getUsername()+"&loginPwd="+GlobalConfig.getInstance().getPassword());
         httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_FRIENDS, params, new RequestCallBack<String>() {
             @Override
             public void onFailure(HttpException error, String msg) {
@@ -114,8 +105,8 @@ public class UserProfileManager {
         OkHttpUtils
                 .post()
                 .url(Interfaces.GET_FRIENDS)
-                .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-                .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                .addParams("loginName",(String) SPUtils.get(appContext, Constant.PACKAGE_NAME, Constant.LOGIN_USERNAME, ""))
+                .addParams("loginPwd", (String) SPUtils.get(appContext, Constant.PACKAGE_NAME, Constant.LOGIN_ENCODED_PASSWORD, ""))
                 .build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
@@ -180,8 +171,8 @@ public class UserProfileManager {
         OkHttpUtils
                 .post()
                 .url(Interfaces.GET_FRIENDS)
-                .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-                .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                .addParams("loginName", GlobalConfig.getInstance().getUsername())
+                .addParams("loginPwd",  GlobalConfig.getInstance().getPassword())
                 .build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {

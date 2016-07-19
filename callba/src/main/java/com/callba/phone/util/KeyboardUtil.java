@@ -5,7 +5,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 
 public class KeyboardUtil {
 	private static final int TONE_RELATIVE_VOLUME = 80;
@@ -17,9 +17,9 @@ public class KeyboardUtil {
 	private boolean keyflag;
 
 	public void startDTMF(int number, Context context) {
-		keyflag=CalldaGlobalConfig.getInstance().getKeyBoardSetting();
+		keyflag= GlobalConfig.getInstance().getKeyBoardSetting();
 		Logger.i(TAG, keyflag+"");
-		if (!CalldaGlobalConfig.getInstance().getKeyBoardSetting()) {
+		if (!GlobalConfig.getInstance().getKeyBoardSetting()) {
 			return;
 		}
 		@SuppressWarnings("static-access")

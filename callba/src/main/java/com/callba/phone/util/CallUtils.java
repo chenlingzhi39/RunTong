@@ -13,14 +13,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.activity.calling.CallbackDisplayActivity;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 
@@ -40,7 +36,7 @@ public class CallUtils {
 	 * @param callname
 	 */
 	public void judgeCallMode(Context context, String callNum, String callname,String id) {
-		callSeting = CalldaGlobalConfig.getInstance().getCallSetting();
+		callSeting = GlobalConfig.getInstance().getCallSetting();
 		callNum = PhoneUtils.formatAvailPhoneNumber(callNum);
 		
 		callNum = addQuHao(context, callNum);
@@ -80,7 +76,7 @@ public class CallUtils {
 	public void judgeCallMode(Context context, String callNumber, final onCallModeDialogDismissListener callModeDialogDismissListener) {
 		String callUserName = queryNameByPhoneNumber(callNumber);
 		
-		callSeting = CalldaGlobalConfig.getInstance().getCallSetting();
+		callSeting = GlobalConfig.getInstance().getCallSetting();
 		callNumber = PhoneUtils.formatAvailPhoneNumber(callNumber);
 		
 		callNumber = addQuHao(context, callNumber);
@@ -127,7 +123,7 @@ public class CallUtils {
 		}
 		
 		List<ContactPersonEntity> personEntities =
-				CalldaGlobalConfig.getInstance().getContactBeans();
+				GlobalConfig.getInstance().getContactBeans();
 		
 		if(personEntities == null || personEntities.isEmpty()) {
 			return phoneNumber;
@@ -152,7 +148,7 @@ public class CallUtils {
 		}
 
 		List<ContactPersonEntity> personEntities =
-				CalldaGlobalConfig.getInstance().getContactBeans();
+				GlobalConfig.getInstance().getContactBeans();
 
 		if(personEntities == null || personEntities.isEmpty()) {
 			return "";

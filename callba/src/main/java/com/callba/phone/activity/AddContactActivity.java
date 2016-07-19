@@ -21,7 +21,7 @@ import com.callba.phone.DemoHelper;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -146,8 +146,8 @@ public class AddContactActivity extends BaseActivity {
         OkHttpUtils
                 .post()
                 .url(Interfaces.ADD_FRIEND)
-                .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-                .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                .addParams("loginName", getUsername())
+                .addParams("loginPwd",  getPassword())
                 .addParams("phoneNumber",nameText.getText().toString())
                 .build()
                 .execute(new StringCallback() {
@@ -176,8 +176,8 @@ public class AddContactActivity extends BaseActivity {
                             OkHttpUtils
                                     .post()
                                     .url(Interfaces.GET_FRIENDS)
-                                    .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
-                                    .addParams("loginPwd",  CalldaGlobalConfig.getInstance().getPassword())
+                                    .addParams("loginName", getUsername())
+                                    .addParams("loginPwd",  getPassword())
                                     .build().execute(new StringCallback() {
                                 @Override
                                 public void onError(Call call, Exception e, int id) {

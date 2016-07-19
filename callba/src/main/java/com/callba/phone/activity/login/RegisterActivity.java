@@ -1,7 +1,6 @@
 package com.callba.phone.activity.login;
 
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
-import android.telephony.SmsMessage;
 import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
@@ -30,7 +28,7 @@ import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Task;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.service.MainService;
@@ -39,11 +37,8 @@ import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.SmsTools;
-import com.callba.phone.view.MyProgressDialog;
 
 import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -213,9 +208,9 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
             }
         });
         et_account = (EditText) this.findViewById(R.id.et_mre_account);
-        if (!"".equals(CalldaGlobalConfig.getInstance().getUsername())) {
-            et_account.setText(CalldaGlobalConfig.getInstance().getUsername());
-        }
+    /*    if (!"".equals(GlobalConfig.getInstance().getUsername())) {
+            et_account.setText(GlobalConfig.getInstance().getUsername());
+        }*/
         et_verification = (EditText) this.findViewById(R.id.et_mre_yzm);
         et_password = (EditText) this.findViewById(R.id.et_mre_password);
 
@@ -487,7 +482,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                     preferenceUtil.commit();
                     Intent intent = new Intent(this, MainTabActivity.class);
                     LoginController.getInstance().setUserLoginState(false);
-                    CalldaGlobalConfig.getInstance().setAutoLogin(true);
+                    GlobalConfig.getInstance().setAutoLogin(true);
                     intent.putExtra("isLogin", false);
 				/*	new Thread(new Runnable() {
 						@Override

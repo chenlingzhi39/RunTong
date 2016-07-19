@@ -1,22 +1,16 @@
 package com.callba.phone.activity;
 
-import android.annotation.TargetApi;
-import android.app.ActionBar.LayoutParams;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,21 +32,16 @@ import android.widget.TextView;
 
 
 import com.callba.phone.bean.Advertisement;
-import com.callba.phone.bean.ContactData;
 import com.callba.phone.bean.SystemNumber;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.util.ContactsAccessPublic;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.ViewUtils;
-import com.lidroid.xutils.bitmap.BitmapCommonUtils;
 import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
-import com.lidroid.xutils.bitmap.callback.DefaultBitmapLoadCallBack;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -60,17 +49,13 @@ import com.callba.phone.bean.CalldaCalllogBean;
 import com.callba.phone.bean.CalllogDetailBean;
 import com.callba.phone.bean.QuickQueryContactBean;
 import com.callba.phone.bean.SearchSortKeyBean;
-import com.callba.phone.bean.Task;
-import com.callba.phone.cfg.CalldaGlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.service.CalllogService;
 import com.callba.phone.service.CalllogService.CalldaCalllogListener;
 import com.callba.phone.service.DialCallListAdapter;
-import com.callba.phone.service.MainService;
 import com.callba.phone.service.NineKeyboardQuickSearch;
 import com.callba.phone.util.ActivityUtil;
-import com.callba.phone.util.BitmapHelp;
 import com.callba.phone.util.CallUtils;
 import com.callba.phone.util.CalldaClipBoardHelper;
 import com.callba.phone.util.DataAnalysis;
@@ -81,7 +66,6 @@ import com.callba.phone.util.PhoneUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -206,7 +190,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.ACTION_TAB_ONRESUME);
         registerReceiver(mainTabOnResumeReceiver, filter);
-        userDao.getAd(3,CalldaGlobalConfig.getInstance().getUsername(),CalldaGlobalConfig.getInstance().getPassword());
+        userDao.getAd(3, getUsername(), getPassword());
 
     }
 
@@ -331,7 +315,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         add_contact.setOnClickListener(this);
         send_message.setOnClickListener(this);
         add_to_contact.setOnClickListener(this);
-        if (!CalldaGlobalConfig.getInstance().isAutoLogin()) {
+        if (!GlobalConfig.getInstance().isAutoLogin()) {
             // 查询余额
             //queryUserBalance();
         }
@@ -359,7 +343,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 gson = new Gson();
                 list = gson.fromJson(msg, new TypeToken<ArrayList<Advertisement>>() {
                 }.getType());
-                CalldaGlobalConfig.getInstance().setAdvertisements3(list);
+                GlobalConfig.getInstance().setAdvertisements3(list);
                 webImages.clear();
                 for (Advertisement advertisement : list) {
                     webImages.add(advertisement.getImage());
@@ -393,15 +377,15 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
         // 检测键盘音设置是否改变
         if (num1 != null) {
-            if (CalldaGlobalConfig.getInstance().getKeyBoardSetting()) {
+            if (GlobalConfig.getInstance().getKeyBoardSetting()) {
                 num1.setImageResource(R.drawable.call_1);
             } else {
                 num1.setImageResource(R.drawable.call_1);
             }
         }
-        if (CalldaGlobalConfig.getInstance().getAdvertisements3() != null)
-            if (CalldaGlobalConfig.getInstance().getAdvertisements3().size() == 0)
-                userDao.getAd(3, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+        if (GlobalConfig.getInstance().getAdvertisements3() != null)
+            if (GlobalConfig.getInstance().getAdvertisements3().size() == 0)
+                userDao.getAd(3, getUsername(), getPassword());
 
         super.onResume();
     }
@@ -1044,8 +1028,8 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                         }
                         // bean.setDisplayName("未知");
                         bean.setDisplayName(tempPhoneNumber);
-                        if (CalldaGlobalConfig.getInstance().getContactBeans() != null) {
-                            for (ContactPersonEntity contactBean : CalldaGlobalConfig
+                        if (GlobalConfig.getInstance().getContactBeans() != null) {
+                            for (ContactPersonEntity contactBean : GlobalConfig
                                     .getInstance().getContactBeans()) {
                                 if (contactBean.getPhoneNumber().equals(
                                         tempPhoneNumber)) {
@@ -1070,8 +1054,8 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                     // Logger.v("归属地", bean.getCallLogNumber()+":"+address);
 
                     if (bean.getSearchSortKeyBean() == null) {
-                        if (CalldaGlobalConfig.getInstance().getContactBeans() != null) {
-                            for (ContactPersonEntity contactBean : CalldaGlobalConfig
+                        if (GlobalConfig.getInstance().getContactBeans() != null) {
+                            for (ContactPersonEntity contactBean : GlobalConfig
                                     .getInstance().getContactBeans()) {
                                 if (contactBean.getPhoneNumber().equals(
                                         bean.getCallLogNumber())) {
@@ -1158,15 +1142,15 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
             case R.id.num1:
                /* // 号码1 长按快速开启/关闭键盘音
-                boolean isKeyboardToneOn = CalldaGlobalConfig.getInstance()
+                boolean isKeyboardToneOn = GlobalConfig.getInstance()
                         .getKeyBoardSetting();
 
-                CalldaGlobalConfig.getInstance().setKeyBoardSetting(
+                GlobalConfig.getInstance().setKeyBoardSetting(
                         !isKeyboardToneOn);
                 SharedPreferenceUtil.getInstance(this).putBoolean(
                         Constant.KeyboardSetting, !isKeyboardToneOn, true);
 
-                if (CalldaGlobalConfig.getInstance().getKeyBoardSetting()) {
+                if (GlobalConfig.getInstance().getKeyBoardSetting()) {
                     // 键盘音开
                     num1.setImageResource(R.drawable.call_1);
                     toast(R.string.keyboard_tone_on);
@@ -1203,7 +1187,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     public class LoginReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            userDao.getAd(3, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+            userDao.getAd(3, getUsername(),getPassword());
         }
     }
 
@@ -1214,7 +1198,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (CalldaGlobalConfig.getInstance().getKeyBoardSetting())
+        if (GlobalConfig.getInstance().getKeyBoardSetting())
             getMenuInflater().inflate(R.menu.menu_open_ring, menu);
         else getMenuInflater().inflate(R.menu.menu_close_ring, menu);
         return super.onCreateOptionsMenu(menu);
@@ -1224,14 +1208,14 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ring:
-                boolean isKeyboardToneOn = CalldaGlobalConfig.getInstance()
+                boolean isKeyboardToneOn = GlobalConfig.getInstance()
                         .getKeyBoardSetting();
 
-                CalldaGlobalConfig.getInstance().setKeyBoardSetting(
+                GlobalConfig.getInstance().setKeyBoardSetting(
                         !isKeyboardToneOn);
                 SharedPreferenceUtil.getInstance(this).putBoolean(
                         Constant.KeyboardSetting, !isKeyboardToneOn, true);
-                if (CalldaGlobalConfig.getInstance().getKeyBoardSetting()) {
+                if (GlobalConfig.getInstance().getKeyBoardSetting()) {
                     item.setIcon(R.drawable.open_ring);
                     item.setTitle(R.string.close_ring);
                 } else {

@@ -40,7 +40,7 @@ import com.callba.phone.DemoHelper;
 import com.callba.phone.MyApplication;
 import com.callba.phone.activity.contact.ContactActivity2;
 import com.callba.phone.activity.login.LoginActivity;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.ActivityUtil;
@@ -320,13 +320,13 @@ public class MainTabActivity extends TabActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //保存全局参数
-        CalldaGlobalConfig.getInstance().saveGlobalCfg(outState);
+        GlobalConfig.getInstance().saveGlobalCfg(outState);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle state) {
-        CalldaGlobalConfig.getInstance().restoreGlobalCfg(state);
+        GlobalConfig.getInstance().restoreGlobalCfg(state);
         EMClient.getInstance().login(SharedPreferenceUtil.getInstance(this).getString(com.callba.phone.cfg.Constant.LOGIN_USERNAME)+"-callba",SharedPreferenceUtil.getInstance(this).getString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
             @Override
             public void onSuccess() {
@@ -498,9 +498,9 @@ public class MainTabActivity extends TabActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                CalldaGlobalConfig.getInstance().setUsername("");
-                CalldaGlobalConfig.getInstance().setPassword("");
-                CalldaGlobalConfig.getInstance().setIvPath("");
+                GlobalConfig.getInstance().setUsername("");
+                GlobalConfig.getInstance().setPassword("");
+                GlobalConfig.getInstance().setIvPath("");
                 LoginController.getInstance().setUserLoginState(false);
                 SharedPreferenceUtil.getInstance(MainTabActivity.this).putString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD, "", true);
                 Intent intent0 = new Intent("com.callba.location");
@@ -530,9 +530,9 @@ public class MainTabActivity extends TabActivity {
         Dialog dialog = new AlertDialog.Builder(this).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                CalldaGlobalConfig.getInstance().setUsername("");
-                CalldaGlobalConfig.getInstance().setPassword("");
-                CalldaGlobalConfig.getInstance().setIvPath("");
+                GlobalConfig.getInstance().setUsername("");
+                GlobalConfig.getInstance().setPassword("");
+                GlobalConfig.getInstance().setIvPath("");
                 LoginController.getInstance().setUserLoginState(false);
                 SharedPreferenceUtil.getInstance(MainTabActivity.this).putString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD, "", true);
                 Intent intent0 = new Intent("com.callba.location");

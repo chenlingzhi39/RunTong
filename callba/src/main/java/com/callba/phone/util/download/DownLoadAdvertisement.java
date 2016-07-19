@@ -1,6 +1,5 @@
 package com.callba.phone.util.download;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,24 +10,17 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.callba.phone.activity.MainCallActivity;
-import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.AdvertisementBean;
-import com.callba.phone.bean.SystemNumber;
 import com.callba.phone.bean.Task;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.UserLoginErrorMsg;
 import com.callba.phone.util.ActivityUtil;
-import com.callba.phone.util.HttpUtils;
-import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetWorkUtil;
 import com.callba.phone.util.download.AdvertisementUtil.AdvertisementListener;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 public class DownLoadAdvertisement {
 	private static final String TAG = DownLoadAdvertisement.class
@@ -92,9 +84,9 @@ public class DownLoadAdvertisement {
 		Logger.i(TAG, "download");
 
 		Map<String, String> taskParams = new HashMap<String, String>();
-		taskParams.put("loginName", CalldaGlobalConfig.getInstance()
+		taskParams.put("loginName", GlobalConfig.getInstance()
 				.getUsername());
-		taskParams.put("loginPwd", CalldaGlobalConfig.getInstance()
+		taskParams.put("loginPwd", GlobalConfig.getInstance()
 				.getPassword());
 		taskParams.put("softType", "android");
 		// taskParams.put("softType", "android");
@@ -114,7 +106,7 @@ public class DownLoadAdvertisement {
 				ArrayList<Advertisement> list;
 				list = gson.fromJson(result1[1], new TypeToken<List<Advertisement>>() {
 				}.getType());
-				CalldaGlobalConfig.getInstance().setAdvertisements(list);
+				GlobalConfig.getInstance().setAdvertisements(list);
 				Intent intent=new Intent("com.callba.getad");
 				mContext.sendBroadcast(intent);*/
 			} else {
@@ -209,7 +201,7 @@ public class DownLoadAdvertisement {
 			final String imageName1 = imageUrl1.substring(imageUrl1.lastIndexOf("/") + 1, imageUrl1.length());
 			advertisementBean.setIvName(imageName1);
 			advertisementBean.setIvPath(imageUrl1);
-			CalldaGlobalConfig.getInstance().setIvPath(imageUrl1);
+			GlobalConfig.getInstance().setIvPath(imageUrl1);
 			Logger.i(TAG, "imageName=" + imageName1 );
 //			if (content.length<=1) {
 //				Intent msgIntent = new Intent(MainCallActivity.KEYBOARD_MESSAGE_RECEIVED_ACTION);
@@ -222,7 +214,7 @@ public class DownLoadAdvertisement {
 			final String  imageNameback = imageUrl1.substring(imageUrl1.lastIndexOf("/") + 1, imageUrl1.length());
 			advertisementBean.setVideoName(imageNameback);
 			advertisementBean.setVideoPath(imageUrlback);
-			CalldaGlobalConfig.getInstance().setIvPathBack(imageUrlback);
+			GlobalConfig.getInstance().setIvPathBack(imageUrlback);
 			final AdvertisementUtil advertisementUtil = new AdvertisementUtil(
 					context, new AdvertisementListener() {
 						@Override

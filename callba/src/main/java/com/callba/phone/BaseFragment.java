@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.cfg.*;
+import com.callba.phone.util.SPUtils;
 
 /**
  * Created by PC-20160514 on 2016/5/18.
@@ -82,4 +84,11 @@ public abstract class BaseFragment extends Fragment {
      * 子类必须重写此方法
      */
     protected abstract void lazyLoad();
+    public String getUsername() {
+        return (String) SPUtils.get(getActivity(), com.callba.phone.cfg.Constant.PACKAGE_NAME, com.callba.phone.cfg.Constant.LOGIN_USERNAME, "");
+    }
+
+    public String getPassword() {
+        return (String) SPUtils.get(getActivity(), com.callba.phone.cfg.Constant.PACKAGE_NAME, com.callba.phone.cfg.Constant.LOGIN_ENCODED_PASSWORD, "");
+    }
 }

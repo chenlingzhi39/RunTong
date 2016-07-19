@@ -2,7 +2,6 @@ package com.callba.phone.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -16,29 +15,22 @@ import com.bumptech.glide.request.target.Target;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.Profit;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.BitmapUtil;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SimpleHandler;
-import com.callba.phone.widget.DividerItemDecoration;
-import com.google.gson.reflect.TypeToken;
-import com.lidroid.xutils.BitmapUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.io.File;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;
-import rx.Subscription;
 
 /**
  * Created by PC-20160514 on 2016/7/18.
@@ -69,8 +61,8 @@ public class ImageQRActivity extends BaseActivity {
 
     public void getImage() {
         OkHttpUtils.post().url(Interfaces.IMAGE_QR)
-                .addParams("loginPwd", CalldaGlobalConfig.getInstance().getPassword())
-                .addParams("loginName", CalldaGlobalConfig.getInstance().getUsername())
+                .addParams("loginPwd", getPassword())
+                .addParams("loginName",getUsername())
                 .build()
                 .execute(new StringCallback() {
                     @Override

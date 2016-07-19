@@ -3,12 +3,10 @@ package com.callba.phone.activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
@@ -28,11 +26,10 @@ import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.activity.more.RetrievePasswordActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Task;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.service.MainService;
-import com.callba.phone.service.UpdateService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.SharedPreferenceUtil;
@@ -84,12 +81,12 @@ public class UserActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        number.setText(CalldaGlobalConfig.getInstance().getUsername());
-        if (!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
-            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).placeholder(R.drawable.logo).into(userHead);
-        Log.i("head", CalldaGlobalConfig.getInstance().getUserhead());
-        if (!CalldaGlobalConfig.getInstance().getNickname().equals("")) {
-            word.setText(CalldaGlobalConfig.getInstance().getSignature());
+        number.setText(getUsername());
+        if (!GlobalConfig.getInstance().getUserhead().equals(""))
+            Glide.with(this).load(GlobalConfig.getInstance().getUserhead()).placeholder(R.drawable.logo).into(userHead);
+        Log.i("head", GlobalConfig.getInstance().getUserhead());
+        if (!GlobalConfig.getInstance().getNickname().equals("")) {
+            word.setText(GlobalConfig.getInstance().getSignature());
         }
         mSharedPreferenceUtil = SharedPreferenceUtil.getInstance(this);
         versionCode.setHint(BuildConfig.VERSION_NAME);
@@ -101,13 +98,13 @@ public class UserActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
-        if (!CalldaGlobalConfig.getInstance().getUserhead().equals(""))
-            Glide.with(this).load(CalldaGlobalConfig.getInstance().getUserhead()).into(userHead);
-        if (!CalldaGlobalConfig.getInstance().getSignature().equals("")) {
-            word.setText(CalldaGlobalConfig.getInstance().getSignature());
+        if (!GlobalConfig.getInstance().getUserhead().equals(""))
+            Glide.with(this).load(GlobalConfig.getInstance().getUserhead()).into(userHead);
+        if (!GlobalConfig.getInstance().getSignature().equals("")) {
+            word.setText(GlobalConfig.getInstance().getSignature());
         }
-        if (!CalldaGlobalConfig.getInstance().getNickname().equals(""))
-            number.setText(CalldaGlobalConfig.getInstance().getUsername());
+        if (!GlobalConfig.getInstance().getNickname().equals(""))
+            number.setText(getUsername());
         super.onResume();
     }
 
@@ -140,17 +137,17 @@ public class UserActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                CalldaGlobalConfig.getInstance().setUsername("");
-                                CalldaGlobalConfig.getInstance().setPassword("");
-                                CalldaGlobalConfig.getInstance().setIvPath("");
-                                if (CalldaGlobalConfig.getInstance().getAdvertisements1() != null)
-                                    CalldaGlobalConfig.getInstance().getAdvertisements1().clear();
-                                if (CalldaGlobalConfig.getInstance().getAdvertisements2() != null)
-                                    CalldaGlobalConfig.getInstance().getAdvertisements2().clear();
-                                if (CalldaGlobalConfig.getInstance().getAdvertisements3() != null)
-                                    CalldaGlobalConfig.getInstance().getAdvertisements3().clear();
-                                if(CalldaGlobalConfig.getInstance().getDialAd()!=null)
-                                    CalldaGlobalConfig.getInstance().setDialAd(null);
+                                GlobalConfig.getInstance().setUsername("");
+                                GlobalConfig.getInstance().setPassword("");
+                                GlobalConfig.getInstance().setIvPath("");
+                                if (GlobalConfig.getInstance().getAdvertisements1() != null)
+                                    GlobalConfig.getInstance().getAdvertisements1().clear();
+                                if (GlobalConfig.getInstance().getAdvertisements2() != null)
+                                    GlobalConfig.getInstance().getAdvertisements2().clear();
+                                if (GlobalConfig.getInstance().getAdvertisements3() != null)
+                                    GlobalConfig.getInstance().getAdvertisements3().clear();
+                                if(GlobalConfig.getInstance().getDialAd()!=null)
+                                    GlobalConfig.getInstance().setDialAd(null);
                                 LoginController.getInstance().setUserLoginState(false);
                                 SharedPreferenceUtil.getInstance(UserActivity.this).putString(Constant.LOGIN_PASSWORD, "", true);
                                 Intent intent0 = new Intent("com.callba.location");
@@ -243,7 +240,7 @@ public class UserActivity extends BaseActivity {
      */
     private void checkLoginKey(AppVersionChecker.AppVersionBean appVersionBean) {
         // Logger.i(TAG, "getSecretKey() : " +
-        // CalldaGlobalConfig.getInstance().getSecretKey());
+        // GlobalConfig.getInstance().getSecretKey());
         //Logger.i(TAG, "currentGetVersionTime : " + currentGetVersionTime);
 
         if (!TextUtils.isEmpty(appVersionBean.getSecretKey())) {
@@ -254,7 +251,7 @@ public class UserActivity extends BaseActivity {
             //MobclickAgent.onEvent(this, "version_timeout");
             String secretKey = mSharedPreferenceUtil
                     .getString(Constant.SECRET_KEY);
-            CalldaGlobalConfig.getInstance().setSecretKey(secretKey);
+            GlobalConfig.getInstance().setSecretKey(secretKey);
 
             if (TextUtils.isEmpty(secretKey)) {
                 // Toast.makeText(this, R.string.getversionfailed,

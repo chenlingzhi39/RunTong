@@ -1,52 +1,35 @@
 package com.callba.phone.activity;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
-import android.telephony.gsm.GsmCellLocation;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
-import com.callba.phone.MyApplication;
 import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.activity.recharge.RechargeActivity2;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.ContactData;
-import com.callba.phone.bean.NearByUser;
 import com.callba.phone.bean.SystemNumber;
 import com.callba.phone.bean.Task;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.CalldaGlobalConfig;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
-import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.logic.login.UserLoginErrorMsg;
 import com.callba.phone.logic.login.UserLoginListener;
@@ -58,12 +41,9 @@ import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
-import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -159,6 +139,7 @@ public class HomeActivity extends BaseActivity {
                         numbers.add(user.getPhoneNumber());
                         Logger.i("phonenumber", user.getPhoneNumber());
                     }
+                    MainService.system_contact=true;
                     if (ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话").equals("0"))
                         ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
                     else {
@@ -192,7 +173,7 @@ public class HomeActivity extends BaseActivity {
                 final ArrayList<Advertisement> list;
                 list = gson.fromJson(msg, new TypeToken<ArrayList<Advertisement>>() {
                 }.getType());
-                CalldaGlobalConfig.getInstance().setAdvertisements1(list);
+                GlobalConfig.getInstance().setAdvertisements1(list);
                 webImages.clear();
                 for (Advertisement advertisement : list) {
                     webImages.add(advertisement.getImage());
@@ -220,10 +201,10 @@ public class HomeActivity extends BaseActivity {
                 if (result[0].equals("0")) {
                     String[] dates = result[1].split(",");
                     if (date.equals(dates[dates.length - 1])) {
-                        mPreferenceUtil.putString(CalldaGlobalConfig.getInstance().getUsername(), date, true);
+                        mPreferenceUtil.putString(getUsername(), date, true);
 
                     } else {
-                        mPreferenceUtil.putString(CalldaGlobalConfig.getInstance().getUsername(), dates[dates.length - 1], true);
+                        mPreferenceUtil.putString(getUsername(), dates[dates.length - 1], true);
                         Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
                         startActivity(intent);
                     }} else {
@@ -245,7 +226,7 @@ public class HomeActivity extends BaseActivity {
         banner.setViewRes(localImages);
         // 判断是否自动启动
         if (savedInstanceState == null
-                && CalldaGlobalConfig.getInstance().isAutoLogin()
+                && GlobalConfig.getInstance().isAutoLogin()
                 && !LoginController.getInstance().getUserLoginState()) {
             Log.i("MainCallActivity", "auto");
             Logger.i("MainCallActivity", "MainCallActivity  oncreate autoLogin");
@@ -255,45 +236,45 @@ public class HomeActivity extends BaseActivity {
         }/* else {
 
             // 检查内存数据是否正常
-            String username = CalldaGlobalConfig.getInstance().getUsername();
-            String password = CalldaGlobalConfig.getInstance().getPassword();
+            String username = GlobalConfig.getInstance().getUsername();
+            String password = GlobalConfig.getInstance().getPassword();
             if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
                 // 重新打开
                 gotoWelcomePage();
             }
             sendBroadcast(new Intent("com.callba.login"));
             Logger.i("date",date);
-            Logger.i("save_date",mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()));
-            if (!mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()).equals(date)) {
+            Logger.i("save_date",mPreferenceUtil.getString(GlobalConfig.getInstance().getUsername()));
+            if (!mPreferenceUtil.getString(GlobalConfig.getInstance().getUsername()).equals(date)) {
                 String year = Calendar.getInstance().get(Calendar.YEAR) + "";
                 String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
                 if (month.length() == 1)
                     month = "0" + month;
-                userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
+                userDao.getMarks(GlobalConfig.getInstance().getUsername(), GlobalConfig.getInstance().getPassword(), year + month);
             }
-            userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
-            userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+            userDao1.getSystemPhoneNumber(GlobalConfig.getInstance().getUsername(), GlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+            userDao2.getAd(1, GlobalConfig.getInstance().getUsername(), GlobalConfig.getInstance().getPassword());
         }*/
-        userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
-        userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
-        if (!mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()).equals(date)&& (boolean)SPUtils.get(HomeActivity.this,"settings","sign_key",false)) {
+        userDao1.getSystemPhoneNumber(getUsername(), getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+        userDao2.getAd(1, getUsername(), getPassword());
+        if (!mPreferenceUtil.getString(getUsername()).equals(date)&& (boolean)SPUtils.get(HomeActivity.this,"settings","sign_key",false)) {
             String year = Calendar.getInstance().get(Calendar.YEAR) + "";
             String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
             if (month.length() == 1)
                 month = "0" + month;
-            userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
+            userDao.getMarks(getUsername(), getPassword(), year + month);
         }
-        if(CalldaGlobalConfig.getInstance().getAppVersionBean()!=null&&(boolean)SPUtils.get(this,"settings","update_key",true)){
-            check2Upgrade(CalldaGlobalConfig.getInstance().getAppVersionBean(),false);
+        if(GlobalConfig.getInstance().getAppVersionBean()!=null&&(boolean)SPUtils.get(this,"settings","update_key",true)){
+            check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(),false);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (CalldaGlobalConfig.getInstance().getAdvertisements1()!=null)
-         if( CalldaGlobalConfig.getInstance().getAdvertisements1().size()==0)
-            userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
+        if (GlobalConfig.getInstance().getAdvertisements1()!=null)
+         if( GlobalConfig.getInstance().getAdvertisements1().size()==0)
+            userDao2.getAd(1, getUsername(), getPassword());
     }
 
     // 跳转到起始页
@@ -321,7 +302,7 @@ public class HomeActivity extends BaseActivity {
                     if ("0".equals(result[0])) {
                         // 成功fanhui数据
                         String accountBalance = result[1];
-                        CalldaGlobalConfig.getInstance().setAccountBalance(
+                        GlobalConfig.getInstance().setAccountBalance(
                                 accountBalance);
                         Log.i("yue", accountBalance);
                         yue = result[1];
@@ -393,10 +374,10 @@ public class HomeActivity extends BaseActivity {
         public YueDialogHelper() {
             mView = getLayoutInflater().inflate(R.layout.dialog_yue, null);
             ButterKnife.inject(this, mView);
-            number.setText(number.getText().toString() + "   " + CalldaGlobalConfig.getInstance().getUsername());
+            number.setText(number.getText().toString() + "   " + getUsername());
             if (!yue.equals(""))
                 tv_yue.setText(tv_yue.getText().toString() + "   " + yue);
-            gold.setText(gold.getText().toString() + "   " + CalldaGlobalConfig.getInstance().getGold() + "");
+            gold.setText(gold.getText().toString() + "   " + GlobalConfig.getInstance().getGold() + "");
         }
 
         @OnClick(R.id.recharge)
@@ -440,13 +421,13 @@ public class HomeActivity extends BaseActivity {
     private void queryUserBalance() {
         Task task = new Task(Task.TASK_GET_USER_BALANCE);
         Map<String, Object> taskParams = new HashMap<String, Object>();
-        Log.i("name", CalldaGlobalConfig.getInstance()
+        Log.i("name", GlobalConfig.getInstance()
                 .getUsername());
-        Log.i("pwd", CalldaGlobalConfig.getInstance()
+        Log.i("pwd", GlobalConfig.getInstance()
                 .getPassword());
-        taskParams.put("loginName", CalldaGlobalConfig.getInstance()
+        taskParams.put("loginName", GlobalConfig.getInstance()
                 .getUsername());
-        taskParams.put("loginPwd", CalldaGlobalConfig.getInstance()
+        taskParams.put("loginPwd", GlobalConfig.getInstance()
                 .getPassword());
         taskParams.put("softType", "android");
         taskParams.put("frompage", "MainCallActivity");
@@ -462,7 +443,7 @@ public class HomeActivity extends BaseActivity {
         username = mPreferenceUtil.getString(Constant.LOGIN_USERNAME);
         password = mPreferenceUtil.getString(Constant.LOGIN_PASSWORD);
 
-        if ("".equals(CalldaGlobalConfig.getInstance().getSecretKey())) {
+        if ("".equals(GlobalConfig.getInstance().getSecretKey())) {
             Log.i("home", "nosecret");
             // 跳转到起始页
             gotoWelcomePage();
@@ -480,7 +461,7 @@ public class HomeActivity extends BaseActivity {
         String source = username + "," + password;
         String sign = null;
         try {
-            sign = DesUtil.encrypt(source, CalldaGlobalConfig.getInstance()
+            sign = DesUtil.encrypt(source, GlobalConfig.getInstance()
                     .getSecretKey());
         } catch (Exception e) {
             e.printStackTrace();
@@ -526,17 +507,17 @@ public class HomeActivity extends BaseActivity {
                                 HomeActivity.this, username, password,
                                 resultInfo);
 
-                        if (!mPreferenceUtil.getString(CalldaGlobalConfig.getInstance().getUsername()).equals(date)&& (boolean)SPUtils.get(HomeActivity.this,"settings","sign_key",false)) {
+                        if (!mPreferenceUtil.getString(getUsername()).equals(date)&& (boolean)SPUtils.get(HomeActivity.this,"settings","sign_key",false)) {
                             String year = Calendar.getInstance().get(Calendar.YEAR) + "";
                             String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
                             if (month.length() == 1)
                                 month = "0" + month;
-                            userDao.getMarks(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), year + month);
+                            userDao.getMarks(getUsername(), getPassword(), year + month);
                         }
-                        userDao1.getSystemPhoneNumber(CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
-                        userDao2.getAd(1, CalldaGlobalConfig.getInstance().getUsername(), CalldaGlobalConfig.getInstance().getPassword());
-                        if(CalldaGlobalConfig.getInstance().getAppVersionBean()!=null&&(boolean)SPUtils.get(HomeActivity.this,"settings","update_key",true)){
-                            check2Upgrade(CalldaGlobalConfig.getInstance().getAppVersionBean(),false);
+                        userDao1.getSystemPhoneNumber(getUsername(),getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+                        userDao2.getAd(1, getUsername(), getPassword());
+                        if(GlobalConfig.getInstance().getAppVersionBean()!=null&&(boolean)SPUtils.get(HomeActivity.this,"settings","update_key",true)){
+                            check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(),false);
                         }
                         // 查询余额
                         //queryUserBalance();
