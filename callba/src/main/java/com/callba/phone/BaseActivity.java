@@ -26,12 +26,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.activity.FunIntroduceActivity;
 import com.callba.phone.activity.HomeActivity;
 import com.callba.phone.activity.MainCallActivity;
 import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.activity.MessageActivity;
 import com.callba.phone.activity.UserActivity;
+import com.callba.phone.activity.WelcomeActivity;
 import com.callba.phone.activity.contact.ContactActivity2;
+import com.callba.phone.activity.login.LoginActivity;
+import com.callba.phone.activity.login.RegisterActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.*;
 import com.callba.phone.cfg.Constant;
@@ -399,7 +403,7 @@ public class BaseActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             try {
-							/*	Uri uri = Uri.parse(appVersionBean
+                            /*	Uri uri = Uri.parse(appVersionBean
 										.getDownloadUrl());
 								Intent intent = new Intent(Intent.ACTION_VIEW,
 										uri);
@@ -507,24 +511,33 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if(this==MyApplication.activities.get(MyApplication.activities.size()-1)&&
-        this.getClass() == MainCallActivity.class&&
-                this.getClass() == ContactActivity2.class &&
-                this.getClass() == HomeActivity.class &&
-                this.getClass() == MessageActivity.class&&
-                this.getClass()==UserActivity.class)
-        CalldaGlobalConfig.getInstance().saveGlobalCfg(outState);
+        if (this == MyApplication.activities.get(MyApplication.activities.size() - 1) &&
+                this.getClass() != MainCallActivity.class &&
+                this.getClass() != ContactActivity2.class &&
+                this.getClass() != HomeActivity.class &&
+                this.getClass() != MessageActivity.class &&
+                this.getClass() != UserActivity.class &&
+                this.getClass() != WelcomeActivity.class &&
+                this.getClass() != LoginActivity.class &&
+                this.getClass() != RegisterActivity.class &&
+                this.getClass() != FunIntroduceActivity.class)
+            CalldaGlobalConfig.getInstance().saveGlobalCfg(outState);
         super.onSaveInstanceState(outState);
     }
+
     @Override
     protected void onRestoreInstanceState(Bundle state) {
-        if(this==MyApplication.activities.get(MyApplication.activities.size()-1)&&
-                this.getClass() == MainCallActivity.class&&
-                this.getClass() == ContactActivity2.class &&
-                this.getClass() == HomeActivity.class &&
-                this.getClass() == MessageActivity.class&&
-                this.getClass()==UserActivity.class)
-        CalldaGlobalConfig.getInstance().restoreGlobalCfg(state);
-    super.onRestoreInstanceState(state);
+        if (this == MyApplication.activities.get(MyApplication.activities.size() - 1) &&
+                this.getClass() != MainCallActivity.class &&
+                this.getClass() != ContactActivity2.class &&
+                this.getClass() != HomeActivity.class &&
+                this.getClass() != MessageActivity.class &&
+                this.getClass() != UserActivity.class &&
+                this.getClass() != WelcomeActivity.class &&
+                this.getClass() != LoginActivity.class &&
+                this.getClass() != RegisterActivity.class &&
+                this.getClass() != FunIntroduceActivity.class)
+            CalldaGlobalConfig.getInstance().restoreGlobalCfg(state);
+        super.onRestoreInstanceState(state);
     }
 }

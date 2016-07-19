@@ -145,7 +145,8 @@
                             android:hint="@string/manregedit_yzm_hint"
                             android:inputType="number"
                             android:padding="10dp"
-                            android:textSize="16sp" />
+                            android:textSize="16sp"
+                            android:maxLength="4"/>
 
                         <Button
                             android:id="@+id/send_yzm"

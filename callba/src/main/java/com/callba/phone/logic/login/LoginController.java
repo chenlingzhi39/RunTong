@@ -308,9 +308,7 @@ public class LoginController {
 		params.put("callType", "all");
 		Message msg = handler.obtainMessage();
 		String results = null;
-		int i=0;
-		/*for (i=0;i<5;i++)
-		{*/try {
+		try {
 			String content = HttpUtils.getDatafFromPostConnClose(
 					Interfaces.Login, params);
 			Logger.v(TAG, Interfaces.Login+ params);
@@ -330,12 +328,11 @@ public class LoginController {
 			msg.arg1 = Task.TASK_NETWORK_ERROR;
 		} catch (Exception e) {
 			e.printStackTrace();
-			msg.arg1 = Task.TASK_FAILED;
+			msg.arg1 = Task.TASK_TIMEOUT;
 		} finally {
 			msg.what = task.getTaskID();
 			msg.obj = results;
 			handler.sendMessage(msg);
-			/*break;
-		}*/}
+        }
 	}
 }

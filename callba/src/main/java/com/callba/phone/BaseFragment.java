@@ -20,7 +20,7 @@ public abstract class BaseFragment extends Fragment {
     public boolean is_first=true;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        super.onCreateView(inflater,container,savedInstanceState);
         if (null == fragmentRootView) {
             if (getClass().isAnnotationPresent(ActivityFragmentInject.class)) {
                 ActivityFragmentInject annotation = getClass()

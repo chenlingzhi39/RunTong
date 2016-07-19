@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -36,6 +38,7 @@ import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
+import com.callba.phone.util.SmsTools;
 import com.callba.phone.view.MyProgressDialog;
 
 import java.lang.ref.WeakReference;
@@ -73,17 +76,37 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     String[] results;
     UserDao userDao;
     String key;
-    private SMSBroadcastReceiver mSMSBroadcastReceiver;
     private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
-
+    ContentObserver c;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
         init();
+        c=new ContentObserver(han) {
+            @Override
+            public void onChange(boolean selfChange) {
+                // TODO Auto-generated method stub
+                super.onChange(selfChange);
+                Logger.i("sms_change",true+"");
+                han.sendEmptyMessage(0);
+            }
+        };
+        getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, c);
     }
-
+    Handler han = new Handler() {
+        @SuppressWarnings("deprecation")
+        public void handleMessage(android.os.Message msg) {
+            String codestr = null;
+            try {
+                codestr = SmsTools.getsmsyzm(RegisterActivity.this);
+               et_yzm.setText(codestr);
+            } catch (Exception e) {
+                Log.e("yung", "验证码提取失败:" + codestr);
+            }
+        };
+    };
     @OnClick(R.id.private_clause)
     public void onClick() {
         Intent intent=new Intent(RegisterActivity.this, ClauseActivity.class);
@@ -197,14 +220,11 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
         et_password = (EditText) this.findViewById(R.id.et_mre_password);
 
         imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-        //生成广播处理
-        mSMSBroadcastReceiver = new SMSBroadcastReceiver();
-
         //实例化过滤器并设置要过滤的广播
         IntentFilter intentFilter = new IntentFilter(ACTION);
         intentFilter.setPriority(Integer.MAX_VALUE);
         //注册广播
-        registerReceiver(mSMSBroadcastReceiver, intentFilter);
+        //registerReceiver(mSMSBroadcastReceiver, intentFilter);
     }
 
     @Override
@@ -513,17 +533,13 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
-
-           /* CalldaToast calldaToast = new CalldaToast();
-            calldaToast.showToast(getApplicationContext(), R.string.getyzm_failed);*/
-
             e.printStackTrace();
         }
     }
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(mSMSBroadcastReceiver);
+        getContentResolver().unregisterContentObserver(c);
         super.onDestroy();
     }
 
@@ -539,35 +555,9 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
         return super.onOptionsItemSelected(item);
     }
 
-    public class SMSBroadcastReceiver extends BroadcastReceiver {
-        public static final String SMS_RECEIVED_ACTION = "android.provider.Telephony.SMS_RECEIVED";
-
-        public SMSBroadcastReceiver() {
-            super();
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(SMS_RECEIVED_ACTION)) {
-                Object[] pdus = (Object[]) intent.getExtras().get("pdus");
-                for (Object pdu : pdus) {
-                    SmsMessage smsMessage = SmsMessage.createFromPdu((byte[]) pdu);
-                    String sender = smsMessage.getDisplayOriginatingAddress();
-                    //短信内容
-                    String content = smsMessage.getDisplayMessageBody();
-                    long date = smsMessage.getTimestampMillis();
-                    Date tiemDate = new Date(date);
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String time = simpleDateFormat.format(tiemDate);
-                    String regEx = "[^0-9]";
-                    Pattern p = Pattern.compile(regEx);
-                    Matcher m = p.matcher(content);
-                    et_yzm.setText(m.toString());
-                }
-            }
-
-        }
 
 
-    }
+
+
+
 }

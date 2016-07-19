@@ -71,12 +71,11 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         IntentFilter intentFilter = new IntentFilter("com.callba.contact");
         broadcastReceiver = new ContactBroadcastReceiver();
         getActivity().registerReceiver(broadcastReceiver, intentFilter);
-        initContactListView();
     }
 
     @Override
     protected void lazyLoad() {
-
+        initContactListView();
     }
 
 
@@ -90,11 +89,13 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         @Override
         public void onReceive(Context context, Intent intent) {
             Logger.i("contact", "change");
+            progressBar.setVisibility(View.VISIBLE);
             initContactListView();
         }
     }
 
-    private void initContactListView() {
+    private synchronized void  initContactListView() {
+        if(progressBar!=null)
         progressBar.setVisibility(View.VISIBLE);
         final ContactController contactController = new ContactController();
         new Thread(new Runnable() {

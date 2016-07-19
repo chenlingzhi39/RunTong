@@ -121,11 +121,11 @@ public class CalllogService {
 	 * 
 	 * @param calllogBean
 	 */
-	public void deleteSingleCallLog(final CalldaCalllogBean calllogBean) {
+	public void deleteSingleCallLog(final CalllogDetailBean calllogBean) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				int callLogMIME = calllogBean.getCallLogMIME();
+				int callLogMIME = calllogBean.getCalllogBean().get(0).getCallLogMIME();
 				switch (callLogMIME) {
 				case CalldaCalllogBean.LOCAL_CALLLOG:
 					// 本地
@@ -133,7 +133,7 @@ public class CalllogService {
 							.delete(CallLog.Calls.CONTENT_URI,
 									CallLog.Calls._ID + "=?",
 									new String[] { String.valueOf(calllogBean
-											.getId()) });
+											.getCalllogBean().get(0).getId()) });
 					break;
 				
 				case CalldaCalllogBean.BACK_CALLLOG:
@@ -143,7 +143,7 @@ public class CalllogService {
 								.getWritableDatabase();
 						database.delete(DBopenHelper.BACK_CALL_TABLE_NAME, "_id=?",
 								new String[] { String.valueOf(calllogBean
-										.getId()) });
+										.getCalllogBean().get(0).getId()) });
 						database.close();
 					}
 					break;

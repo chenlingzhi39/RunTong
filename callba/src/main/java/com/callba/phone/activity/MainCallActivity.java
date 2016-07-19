@@ -887,7 +887,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             if (allcalllists == null)
                 return false;
             CalldaCalllogBean bean = allcalllists.get(position);
-            showDeleteDialog(context, allcalllists.get(position), mergecalllists.get(position));
+            showDeleteDialog(context, mergecalllists.get(position));
             return true;
         }
 
@@ -898,7 +898,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
      *
      * @param context
      */
-    private void showDeleteDialog(Context context, final CalldaCalllogBean bean0,
+    private void showDeleteDialog(Context context,
                                   final CalllogDetailBean bean) {
       /*  final Dialog dialog = new Dialog(context, R.style.MyDialog);
         View view = View.inflate(context, R.layout.calllog_delete_dialog_bg,
@@ -949,7 +949,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                         dialog.dismiss();
                         switch (which) {
                             case 0:
-                                calllogService.deleteSingleCallLog(bean0);
+                                calllogService.deleteSingleCallLog(bean);
                                 break;
                             case 1:
                                 calllogService.deleteAllCallLog();

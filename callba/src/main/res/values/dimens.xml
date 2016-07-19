@@ -3,7 +3,7 @@
     <dimen name="title_text">20sp</dimen>
     <dimen name="mydialog_height">120dp</dimen>
     <dimen name="mydialog_minwidth">200dp</dimen>
-    <dimen name="tab_contact_ll">51dp</dimen>
+    <dimen name="tab_contact_ll">53dp</dimen>
     
     <dimen name="top_title_bar_height">60dp</dimen>
     <dimen name="top_menu_bar_height">50dp</dimen>
