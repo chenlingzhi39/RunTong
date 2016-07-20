@@ -75,6 +75,7 @@ public class ATypeActivity extends BaseActivity {
 
                     @Override
                     public void onBefore(Request request, int id) {
+                        retry.setVisibility(View.GONE);
                         progressBar.setVisibility(View.VISIBLE);
                     }
 

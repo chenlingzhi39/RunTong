@@ -20,7 +20,7 @@ public class SmsTools {
         String[] selectionArgs = new String[] {};
         String sortOrder = "date desc";
         @SuppressWarnings("deprecation")
-        Cursor cur = c.managedQuery(uri, projection, selection, selectionArgs,
+        Cursor cur = c.managedQuery(uri, projection, null, selectionArgs,
                 sortOrder);
         if(cur!=null&&cur.getCount()>0){
             cur.moveToFirst();

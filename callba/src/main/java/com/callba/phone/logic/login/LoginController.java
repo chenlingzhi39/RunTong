@@ -20,6 +20,7 @@ import com.callba.phone.DemoHelper;
 import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.HttpUtils;
@@ -160,12 +161,16 @@ public class LoginController {
 			/*	CalldaToast calldaToast = new CalldaToast();
 				calldaToast.showToast(context, R.string.result_data_error);*/
 			}
-			
-			SharedPreferenceUtil mPreferenceUtil = SharedPreferenceUtil.getInstance(context);
-			mPreferenceUtil.putString(Constant.LOGIN_USERNAME, username);
-			mPreferenceUtil.putString(Constant.LOGIN_PASSWORD, password);
-			mPreferenceUtil.putString(Constant.LOGIN_ENCODED_PASSWORD, GlobalConfig.getInstance().getPassword());
-			mPreferenceUtil.commit();
+			UserManager.putUserAvatar(context,resultInfo[6]);
+			UserManager.putCommission(context,resultInfo[10]);
+			UserManager.putUsername(context,username);
+			UserManager.putPassword(context,GlobalConfig.getInstance().getPassword());
+			UserManager.putOriginalPassword(context,password);
+//			SharedPreferenceUtil mPreferenceUtil = SharedPreferenceUtil.getInstance(context);
+//			mPreferenceUtil.putString(Constant.LOGIN_USERNAME, username);
+//			mPreferenceUtil.putString(Constant.LOGIN_PASSWORD, password);
+//			mPreferenceUtil.putString(Constant.LOGIN_ENCODED_PASSWORD, GlobalConfig.getInstance().getPassword());
+//			mPreferenceUtil.commit();
 			Intent intent=new Intent("com.callba.location");
 			intent.putExtra("action","login");
 			context.sendBroadcast(intent);

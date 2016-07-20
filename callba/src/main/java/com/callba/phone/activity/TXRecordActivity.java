@@ -69,6 +69,7 @@ public class TXRecordActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onBefore(Request request, int id) {
+                        retry.setVisibility(View.GONE);
                         progressBar.setVisibility(View.VISIBLE);
                     }
 

@@ -64,10 +64,13 @@ public class FamilyActivity extends BaseActivity {
             case R.id.name:
                 break;
             case R.id.my_commission:
+
                 break;
             case R.id.get_commission:
+                startActivity(new Intent(this,TXActivity.class));
                 break;
             case R.id.btn_commission:
+                startActivity(new Intent(this,TXRecordActivity.class));
                 break;
             case R.id.order:
                 startActivity(new Intent(this,OrderActivity.class));

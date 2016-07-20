@@ -341,8 +341,8 @@ public class HomeActivity extends BaseActivity {
                 toast("暂未开放");
                 break;
             case R.id.family:
-                //startActivity(new Intent(HomeActivity.this,FamilyActivity.class));
-                toast("暂未开放");
+                startActivity(new Intent(HomeActivity.this,FamilyActivity.class));
+                //toast("暂未开放");
                 /*intent = new Intent(HomeActivity.this, CommunityActivity.class);
                 startActivity(intent);*/
                 break;

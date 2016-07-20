@@ -141,30 +141,6 @@ public class MessageActivity extends BaseActivity {
      */
     protected void onConnectionDisconnected(){
         errorItemContainer.setVisibility(View.VISIBLE);
-       /* if(GlobalConfig.getInstance()!=null)
-            if(!GlobalConfig.getInstance().getUsername().equals("")){
-                EMClient.getInstance().login(SharedPreferenceUtil.getInstance(MessageActivity.this).getString(com.callba.phone.cfg.Constant.LOGIN_USERNAME)+"-callba",SharedPreferenceUtil.getInstance(MessageActivity.this).getString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
-                    @Override
-                    public void onSuccess() {
-
-                        EMClient.getInstance().groupManager().loadAllGroups();
-                        EMClient.getInstance().chatManager().loadAllConversations();
-                        Log.d("main", "登录聊天服务器成功！");
-                        refresh();
-                        //DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
-                    }
-
-                    @Override
-                    public void onProgress(int progress, String status) {
-
-                    }
-
-                    @Override
-                    public void onError(int code, String message) {
-                        Log.d("main", "登录聊天服务器失败！");
-                    }
-                });
-            }*/
     }
 
     @Override
@@ -377,6 +353,7 @@ public class MessageActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Locale.setDefault(new Locale("zh"));
         refresh();
     }
 

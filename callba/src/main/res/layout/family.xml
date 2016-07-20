@@ -9,15 +9,17 @@
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    android:background="@drawable/family_background"
+    android:background="@drawable/sign_background_pic"
     >
  <de.hdodenhof.circleimageview.CircleImageView
      android:layout_width="70dp"
      android:layout_height="70dp"
-    android:layout_marginTop="40dp"
+     android:layout_marginTop="40dp"
      android:layout_marginLeft="30dp"
      android:src="@drawable/logo"
-     android:id="@+id/avatar"/>
+     android:id="@+id/avatar"
+     app:border_width="1dp"
+     app:border_color="@color/white"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -83,7 +85,7 @@
             android:id="@+id/btn_commission"
             android:drawableTop="@drawable/my_commission"
             android:layout_weight="1"
-            android:text="@string/my_commission"
+            android:text="@string/tx_record"
             android:drawablePadding="10dp"
             android:padding="10dp"
             android:gravity="center"

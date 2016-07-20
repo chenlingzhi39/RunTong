@@ -256,6 +256,10 @@ public interface Interfaces {
 	 * 获取二维码
 	 */
 	String IMAGE_QR="http://inter.boboit.cn/inter/myqr/myqr.jsp";
+	/**
+	 * 提现
+	 */
+	String TX="http://inter.boboit.cn/inter/tx/tx.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

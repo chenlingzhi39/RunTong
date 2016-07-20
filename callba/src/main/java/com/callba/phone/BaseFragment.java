@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.*;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.SPUtils;
 
 /**
@@ -85,10 +86,10 @@ public abstract class BaseFragment extends Fragment {
      */
     protected abstract void lazyLoad();
     public String getUsername() {
-        return (String) SPUtils.get(getActivity(), com.callba.phone.cfg.Constant.PACKAGE_NAME, com.callba.phone.cfg.Constant.LOGIN_USERNAME, "");
+        return UserManager.getUsername(getActivity());
     }
 
     public String getPassword() {
-        return (String) SPUtils.get(getActivity(), com.callba.phone.cfg.Constant.PACKAGE_NAME, com.callba.phone.cfg.Constant.LOGIN_ENCODED_PASSWORD, "");
+        return UserManager.getPassword(getActivity());
     }
 }

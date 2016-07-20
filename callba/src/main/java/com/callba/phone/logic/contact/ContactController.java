@@ -66,7 +66,7 @@ public class ContactController {
 	 * 获取用于ListView显示的数据(默认数据为当前联系人，根据姓名排列，多个号码只显示一条数据)
 	 * @return
 	 */
-	public List<ContactEntity> getFilterListContactEntitiesNoDuplicate() {
+	public synchronized List<ContactEntity> getFilterListContactEntitiesNoDuplicate() {
 		final List<ContactMutliNumBean> personEntities = new ArrayList<ContactMutliNumBean>();
 		String phoneNumbers="";
 				List<String> contactPhones=new ArrayList<>();

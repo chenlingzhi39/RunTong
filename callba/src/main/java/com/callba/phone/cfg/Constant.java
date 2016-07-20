@@ -60,7 +60,6 @@ public class Constant {
 	public static final String LOGIN_USERNAME = "username";
 	public static final String LOGIN_PASSWORD = "pd_key";
 	public static final String LOGIN_ENCODED_PASSWORD = "encode_key";
-	
 	/**
 	 * 是否显示升级提示
 	 */
@@ -174,7 +173,11 @@ public class Constant {
 			.getExternalStorageDirectory().getPath();
 
 	public static final String PHOTO_PATH=SDCARD + "/callba/";
-	public static final String ACCOUNT_REMOVED = "account_removed";
-	public static final String ACCOUNT_CONFLICT = "conflict";
-	public static final boolean IS_MIUI=false;
+	public static final String LATITUDE="latitude";
+	public static final String LONGITUDE="longitude";
+	public static final String USER_AVATAR="user_avatar";
+	public static final String NICKNAME="nickname";
+	public static final String gold="gold";
+	public static final String COMMISSION="commission";
+	public static final String ADDRESS="address";
 }

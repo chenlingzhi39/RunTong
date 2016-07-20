@@ -43,7 +43,6 @@ public class AutoAnswerReceiver {
 						e.printStackTrace();
 						answerPhoneHeadsethook(context);
 					}
-					
 					ActivityUtil.finishCallBackDisplayPages();
 					mTelephonyManager.listen(this, PhoneStateListener.LISTEN_NONE);
 					break;

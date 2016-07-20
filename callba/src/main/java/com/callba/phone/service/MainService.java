@@ -40,6 +40,7 @@ import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.logic.contact.QueryContactCallback;
 import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.HttpUtils;
 import com.callba.phone.util.Interfaces;
@@ -1463,9 +1464,9 @@ public class MainService extends Service implements Runnable {
                 Logger.i("address", aMapLocation.getAddress());
                 Logger.i("latitude", aMapLocation.getLatitude() + "");
                 Logger.i("longitude", aMapLocation.getLongitude() + "");
-                GlobalConfig.getInstance().setAddress(aMapLocation.getAddress());
-                GlobalConfig.getInstance().setLatitude(aMapLocation.getLatitude());
-                GlobalConfig.getInstance().setLongitude(aMapLocation.getLongitude());
+                UserManager.putAddress(MainService.this,aMapLocation.getAddress());
+                UserManager.putLatitude(MainService.this,aMapLocation.getLatitude());
+                UserManager.putLongitude(MainService.this,aMapLocation.getLongitude());
                 userDao.saveLocation((String) SPUtils.get(getApplicationContext(), Constant.PACKAGE_NAME, Constant.LOGIN_USERNAME, ""), (String) SPUtils.get(getApplicationContext(), Constant.PACKAGE_NAME, Constant.LOGIN_ENCODED_PASSWORD, ""), aMapLocation.getLatitude(), aMapLocation.getLongitude());
             } else {
                 //定位失败
@@ -1474,7 +1475,6 @@ public class MainService extends Service implements Runnable {
                 sb.append("错误信息:" + aMapLocation.getErrorInfo() + "\n");
                 sb.append("错误描述:" + aMapLocation.getLocationDetail() + "\n");
                 Logger.i("error", sb.toString());
-
             }
         }
     }

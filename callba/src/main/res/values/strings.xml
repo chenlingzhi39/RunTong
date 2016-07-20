@@ -68,9 +68,13 @@
     <string name="my_number">我的账号</string>
     <string name="my_commission">我的佣金</string>
     <string name="get_commission">提现</string>
+    <string name="commission_number">佣金数量：</string>
+    <string name="commission_require">必须是一百的整数倍</string>
+    <string name="alipay_account">支付宝账户</string>
+    <string name="alipay_name">真实姓名</string>
     <string name="tx_record">提现记录</string>
     <string name="all_order">全部订单</string>
-    <string name="commission_detail">佣金明细</string>
+    <string name="commission_detail">累计佣金</string>
     <string name="my_team">我的团队</string>
     <string name="a_type">A类客户</string>
     <string name="qr_code">我的二维码</string>
@@ -690,4 +694,5 @@
     <string name="The_file_is_not_greater_than_10_m">文件不能大于10M</string>
     <string name="no_result">对不起，没有搜索到相关数据！</string>
     <string name="clear">清空</string>
+
 </resources>

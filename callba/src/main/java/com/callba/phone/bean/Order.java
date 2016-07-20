@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * Created by PC-20160514 on 2016/7/15.
  */
-public class Order {
+public class Order implements Serializable{
     private String title;
     private String imgUrl;
     private String inTime;

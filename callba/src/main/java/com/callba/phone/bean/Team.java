@@ -1,9 +1,11 @@
 package com.callba.phone.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by PC-20160514 on 2016/7/15.
  */
-public class Team {
+public class Team implements Serializable{
     private String url_head;
     private String nickname;
     private String inTime;

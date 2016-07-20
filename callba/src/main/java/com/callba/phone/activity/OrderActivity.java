@@ -71,6 +71,7 @@ public class OrderActivity extends BaseActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onBefore(Request request, int id) {
+                        retry.setVisibility(View.GONE);
                         progressBar.setVisibility(View.VISIBLE);
                     }
 
@@ -159,7 +160,7 @@ public class OrderActivity extends BaseActivity {
     public ArrayList<Order> filterList(int i) {
         ArrayList<Order> newOrders = new ArrayList<>();
         for (Order order : orders) {
-            if (order.getState() == i) newOrders.add(order);
+            if (order.getState()== i) newOrders.add(order);
         }
         return newOrders;
     }

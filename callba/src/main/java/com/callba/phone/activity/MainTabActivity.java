@@ -32,6 +32,7 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TabWidget;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
@@ -43,6 +44,7 @@ import com.callba.phone.activity.login.LoginActivity;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.Constant;
 import com.callba.phone.logic.login.LoginController;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.widget.BadgeView;
@@ -82,7 +84,6 @@ public class MainTabActivity extends TabActivity {
     private static final int FLING_MIN_DISTANCE = 100;
     private static final int FLING_MIN_VELOCITY = 0;
     BroadcastReceiver payReceiver,numReceiver,tabReceiver;
-    private EMMessageListener messageListener;
     private BadgeView badgeView;
    /* @Override
     protected void attachBaseContext(Context newBase) {
@@ -210,50 +211,12 @@ public class MainTabActivity extends TabActivity {
             } catch (Exception e) {
             }
         }
-        messageListener = new EMMessageListener() {
 
-            @Override
-            public void onMessageReceived(List<EMMessage> messages) {
-                //收到消息
-                for (EMMessage message : messages) {
-                    Log.i("get_message", message.getBody().toString());
-                    //sendNotification1(ChatActivity.class, "你有一条新消息", EaseCommonUtils.getMessageDigest(message,MainTabActivity.this), message.getFrom());
-
-                    DemoHelper.getInstance().getNotifier().onNewMsg(message);
-                    Intent intent = new Intent("com.callba.chat");
-                    intent.putExtra("username", message.getFrom());
-                    intent.putExtra("message", message);
-                    sendBroadcast(intent);
-                }
-            }
-
-            @Override
-            public void onCmdMessageReceived(List<EMMessage> messages) {
-                //收到透传消息me
-            }
-
-            @Override
-            public void onMessageReadAckReceived(List<EMMessage> messages) {
-                //收到已读回执
-            }
-
-            @Override
-            public void onMessageDeliveryAckReceived(List<EMMessage> message) {
-                //收到已送达回执
-            }
-
-            @Override
-            public void onMessageChanged(EMMessage message, Object change) {
-                //消息状态变动
-            }
-
-        };
         if (getIntent().getBooleanExtra(Constant.ACCOUNT_CONFLICT, false) && !isConflictDialogShow) {
             showConflictDialog();
         } else if (getIntent().getBooleanExtra(Constant.ACCOUNT_REMOVED, false) && !isAccountRemovedDialogShow) {
             showAccountRemovedDialog();
         }
-        //registerBroadcastReceiver();
         payReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -327,7 +290,7 @@ public class MainTabActivity extends TabActivity {
     @Override
     protected void onRestoreInstanceState(Bundle state) {
         GlobalConfig.getInstance().restoreGlobalCfg(state);
-        EMClient.getInstance().login(SharedPreferenceUtil.getInstance(this).getString(com.callba.phone.cfg.Constant.LOGIN_USERNAME)+"-callba",SharedPreferenceUtil.getInstance(this).getString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD),new EMCallBack() {//回调
+        EMClient.getInstance().login(UserManager.getUsername(this)+"-callba",UserManager.getPassword(this),new EMCallBack() {//回调
             @Override
             public void onSuccess() {
 
@@ -426,67 +389,6 @@ public class MainTabActivity extends TabActivity {
         //notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(10, notification);
-    }
-
-    /**
-     * 获取会话列表
-     *
-     * @param context
-     * @return +
-     */
-    protected List<EMConversation> loadConversationList() {
-        // 获取所有会话，包括陌生人
-        Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
-        // 过滤掉messages size为0的conversation
-        /**
-         * 如果在排序过程中有新消息收到，lastMsgTime会发生变化
-         * 影响排序过程，Collection.sort会产生异常
-         * 保证Conversation在Sort过程中最后一条消息的时间不变
-         * 避免并发问题
-         */
-        List<Pair<Long, EMConversation>> sortList = new ArrayList<Pair<Long, EMConversation>>();
-        synchronized (conversations) {
-            for (EMConversation conversation : conversations.values()) {
-                if (conversation.getAllMessages().size() != 0) {
-                    //if(conversation.getType() != EMConversationType.ChatRoom){
-                    sortList.add(new Pair<Long, EMConversation>(conversation.getLastMessage().getMsgTime(), conversation));
-                    //}
-                }
-            }
-        }
-        try {
-            // Internal is TimSort algorithm, has bug
-            sortConversationByLastChatTime(sortList);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        List<EMConversation> list = new ArrayList<EMConversation>();
-        for (Pair<Long, EMConversation> sortItem : sortList) {
-            list.add(sortItem.second);
-        }
-        return list;
-    }
-
-    /**
-     * 根据最后一条消息的时间排序
-     *
-     * @param usernames
-     */
-    private void sortConversationByLastChatTime(List<Pair<Long, EMConversation>> conversationList) {
-        Collections.sort(conversationList, new Comparator<Pair<Long, EMConversation>>() {
-            @Override
-            public int compare(final Pair<Long, EMConversation> con1, final Pair<Long, EMConversation> con2) {
-
-                if (con1.first == con2.first) {
-                    return 0;
-                } else if (con2.first > con1.first) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            }
-
-        });
     }
 
     /**

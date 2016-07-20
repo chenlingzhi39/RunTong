@@ -35,6 +35,7 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.EaseEmojicon;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.controller.EaseUI;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.ui.EaseChatFragmentListener;
 import com.callba.phone.ui.EaseGroupRemoveListener;
 import com.callba.phone.util.EaseCommonUtils;
@@ -617,8 +618,8 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                     break;
                 case ITEM_LOCATION: // 位置
                     Intent intent=new Intent(ChatActivity.this, GeocoderActivity.class);
-                    intent.putExtra("latitude", GlobalConfig.getInstance().getLatitude());
-                    intent.putExtra("longitude", GlobalConfig.getInstance().getLongitude());
+                    intent.putExtra("latitude", UserManager.getLatitude(ChatActivity.this));
+                    intent.putExtra("longitude", UserManager.getLongitude(ChatActivity.this));
                     startActivityForResult(new Intent(ChatActivity.this, GeocoderActivity.class), REQUEST_CODE_MAP);
                     break;
 

@@ -94,7 +94,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         }
     }
 
-    private synchronized void  initContactListView() {
+    private void  initContactListView() {
         if(progressBar!=null)
         progressBar.setVisibility(View.VISIBLE);
         final ContactController contactController = new ContactController();

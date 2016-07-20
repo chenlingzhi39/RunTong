@@ -33,6 +33,8 @@ import com.callba.phone.bean.EaseUser;
 import com.callba.phone.bean.NearByUser;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.manager.UserManager;
+import com.callba.phone.service.MainService;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -179,7 +181,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             @Override
             public void onLoadMore() {
                 is_refresh=false;
-                userDao.getNearBy(getUsername(), getPassword(), GlobalConfig.getInstance().getLatitude(), GlobalConfig.getInstance().getLongitude(), 1000,page+1);
+                userDao.getNearBy(getUsername(), getPassword(), UserManager.getLatitude(FriendActivity.this), UserManager.getLongitude(FriendActivity.this), 1000,page+1);
             }
         });
         nearByUserAdapter.setNoMore(R.layout.view_nomore);
@@ -191,7 +193,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             public void onRefresh() {
                 //refresh data here
                 is_refresh=true;
-                userDao.getNearBy(getUsername(), getPassword(), GlobalConfig.getInstance().getLatitude(), GlobalConfig.getInstance().getLongitude(), 1000,page);
+                userDao.getNearBy(getUsername(), getPassword(), UserManager.getLatitude(FriendActivity.this), UserManager.getLongitude(FriendActivity.this), 1000,page);
              }
 
             @Override
@@ -242,9 +244,9 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                     Logger.i("address", aMapLocation.getAddress());
                     Logger.i("latitude", aMapLocation.getLatitude() + "");
                     Logger.i("longitude", aMapLocation.getLongitude() + "");
-                    GlobalConfig.getInstance().setAddress(aMapLocation.getAddress());
-                    GlobalConfig.getInstance().setLatitude(aMapLocation.getLatitude());
-                    GlobalConfig.getInstance().setLongitude(aMapLocation.getLongitude());
+                    UserManager.putAddress(FriendActivity.this,aMapLocation.getAddress());
+                    UserManager.putLatitude(FriendActivity.this,aMapLocation.getLatitude());
+                    UserManager.putLongitude(FriendActivity.this,aMapLocation.getLongitude());
                     userDao2.saveLocation(getUsername(), getPassword(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
                     location.setText(aMapLocation.getAddress());
                 } else {

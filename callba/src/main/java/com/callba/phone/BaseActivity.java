@@ -39,6 +39,7 @@ import com.callba.phone.activity.login.RegisterActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.*;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.service.MainService;
 import com.callba.phone.service.UpdateService;
 import com.callba.phone.util.ActivityUtil;
@@ -510,10 +511,10 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public String getUsername() {
-        return (String) SPUtils.get(this, Constant.PACKAGE_NAME, Constant.LOGIN_USERNAME, "");
+        return UserManager.getUsername(this);
     }
 
     public String getPassword() {
-        return (String) SPUtils.get(this, Constant.PACKAGE_NAME, Constant.LOGIN_ENCODED_PASSWORD, "");
+        return UserManager.getPassword(this);
     }
 }
