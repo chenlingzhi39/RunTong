@@ -29,6 +29,7 @@ import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.LoginController;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
@@ -82,12 +83,6 @@ public class UserActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         number.setText(getUsername());
-        if (!GlobalConfig.getInstance().getUserhead().equals(""))
-            Glide.with(this).load(GlobalConfig.getInstance().getUserhead()).placeholder(R.drawable.logo).into(userHead);
-        Log.i("head", GlobalConfig.getInstance().getUserhead());
-        if (!GlobalConfig.getInstance().getNickname().equals("")) {
-            word.setText(GlobalConfig.getInstance().getSignature());
-        }
         mSharedPreferenceUtil = SharedPreferenceUtil.getInstance(this);
         versionCode.setHint(BuildConfig.VERSION_NAME);
         progressDialog=new ProgressDialog(this);
@@ -98,13 +93,11 @@ public class UserActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
-        if (!GlobalConfig.getInstance().getUserhead().equals(""))
-            Glide.with(this).load(GlobalConfig.getInstance().getUserhead()).into(userHead);
-        if (!GlobalConfig.getInstance().getSignature().equals("")) {
-            word.setText(GlobalConfig.getInstance().getSignature());
+        if (!UserManager.getUserAvatar(this).equals(""))
+            Glide.with(this).load(UserManager.getUserAvatar(this)).into(userHead);
+        if (!UserManager.getSignature(this).equals("")) {
+            word.setText(UserManager.getSignature(this));
         }
-        if (!GlobalConfig.getInstance().getNickname().equals(""))
-            number.setText(getUsername());
         super.onResume();
     }
 
@@ -137,8 +130,8 @@ public class UserActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                GlobalConfig.getInstance().setUsername("");
-                                GlobalConfig.getInstance().setPassword("");
+                                UserManager.putUsername(UserActivity.this,"");
+                                UserManager.putPassword(UserActivity.this,"");
                                 GlobalConfig.getInstance().setIvPath("");
                                 if (GlobalConfig.getInstance().getAdvertisements1() != null)
                                     GlobalConfig.getInstance().getAdvertisements1().clear();
@@ -251,7 +244,7 @@ public class UserActivity extends BaseActivity {
             //MobclickAgent.onEvent(this, "version_timeout");
             String secretKey = mSharedPreferenceUtil
                     .getString(Constant.SECRET_KEY);
-            GlobalConfig.getInstance().setSecretKey(secretKey);
+            UserManager.putSecretKey(this,secretKey);
 
             if (TextUtils.isEmpty(secretKey)) {
                 // Toast.makeText(this, R.string.getversionfailed,

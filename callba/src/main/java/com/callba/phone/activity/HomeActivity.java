@@ -34,6 +34,7 @@ import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.logic.login.UserLoginErrorMsg;
 import com.callba.phone.logic.login.UserLoginListener;
 import com.callba.phone.manager.ContactsManager;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.ContactsAccessPublic;
@@ -377,7 +378,7 @@ public class HomeActivity extends BaseActivity {
             number.setText(number.getText().toString() + "   " + getUsername());
             if (!yue.equals(""))
                 tv_yue.setText(tv_yue.getText().toString() + "   " + yue);
-            gold.setText(gold.getText().toString() + "   " + GlobalConfig.getInstance().getGold() + "");
+            gold.setText(gold.getText().toString() + "   " + UserManager.getGold(HomeActivity.this) + "");
         }
 
         @OnClick(R.id.recharge)
@@ -443,7 +444,7 @@ public class HomeActivity extends BaseActivity {
         username = mPreferenceUtil.getString(Constant.LOGIN_USERNAME);
         password = mPreferenceUtil.getString(Constant.LOGIN_PASSWORD);
 
-        if ("".equals(GlobalConfig.getInstance().getSecretKey())) {
+        if ("".equals(UserManager.getSecretKey(this))) {
             Log.i("home", "nosecret");
             // 跳转到起始页
             gotoWelcomePage();
@@ -461,8 +462,8 @@ public class HomeActivity extends BaseActivity {
         String source = username + "," + password;
         String sign = null;
         try {
-            sign = DesUtil.encrypt(source, GlobalConfig.getInstance()
-                    .getSecretKey());
+            sign = DesUtil.encrypt(source, UserManager
+                    .getSecretKey(this));
         } catch (Exception e) {
             e.printStackTrace();
 

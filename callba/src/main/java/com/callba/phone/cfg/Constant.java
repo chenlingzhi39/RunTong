@@ -177,7 +177,8 @@ public class Constant {
 	public static final String LONGITUDE="longitude";
 	public static final String USER_AVATAR="user_avatar";
 	public static final String NICKNAME="nickname";
-	public static final String gold="gold";
+	public static final String GOLD="gold";
 	public static final String COMMISSION="commission";
 	public static final String ADDRESS="address";
+	public static final String SIGNATURE="signature";
 }

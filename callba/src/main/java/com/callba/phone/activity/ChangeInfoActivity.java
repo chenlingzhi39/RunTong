@@ -28,7 +28,7 @@ import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.Utils;
 
@@ -79,11 +79,11 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        if(!GlobalConfig.getInstance().getUserhead().equals("")){
-            Glide.with(this).load(GlobalConfig.getInstance().getUserhead()).into(head);
+        if(!UserManager.getUserAvatar(this).equals("")){
+            Glide.with(this).load(UserManager.getUserAvatar(this)).into(head);
         }
-        nickName.setHint(GlobalConfig.getInstance().getNickname());
-        signature.setHint(GlobalConfig.getInstance().getSignature());
+        nickName.setHint(UserManager.getNickname(this));
+        signature.setHint(UserManager.getSignature(this));
         userDao=new UserDao(this,this);
         userDao1=new UserDao(this, new UserDao.PostListener() {
             @Override
@@ -94,8 +94,8 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
             @Override
             public void success(String msg) {
             toast(msg);
-                GlobalConfig.getInstance().setNickname(nickName.getHint().toString());
-                GlobalConfig.getInstance().setSignature(signature.getHint().toString());
+                UserManager.putNickname(ChangeInfoActivity.this,nickName.getHint().toString());
+                UserManager.putSignature(ChangeInfoActivity.this,signature.getHint().toString());
             }
 
             @Override
@@ -124,7 +124,7 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     @Override
     public void success(String msg) {
         toast(getString(R.string.change_success));
-        GlobalConfig.getInstance().setUserhead(msg);
+        UserManager.putUserAvatar(this,msg);
         dialog.dismiss();
         f=null;
     }
@@ -229,13 +229,13 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
             case R.id.save:
                 if(f!=null)
                 userDao.changeHead(getUsername(), getPassword(),f);
-                Logger.i("nickname",nickName.getHint().toString().equals(GlobalConfig.getInstance().getNickname())+"");
-                Logger.i("sign",signature.getHint().toString().equals(GlobalConfig.getInstance().getSignature())+"");
-                    userDao1.changeInfo(getUsername(), getPassword(),!nickName.getHint().toString().equals(GlobalConfig.getInstance().getNickname())?nickName.getHint().toString():null,!signature.getHint().toString().equals(GlobalConfig.getInstance().getSignature())?signature.getHint().toString():null);
+                Logger.i("nickname",nickName.getHint().toString().equals(UserManager.getNickname(this))+"");
+                Logger.i("sign",signature.getHint().toString().equals(UserManager.getSignature(this))+"");
+                    userDao1.changeInfo(getUsername(), getPassword(),!nickName.getHint().toString().equals(UserManager.getNickname(this))?nickName.getHint().toString():null,!signature.getHint().toString().equals(UserManager.getSignature(this))?signature.getHint().toString():null);
                 break;
                case android.R.id.home:
                 Log.i("base", "finish");
-                   if(!nickName.getHint().toString().equals(GlobalConfig.getInstance().getNickname())||!signature.getHint().toString().equals(GlobalConfig.getInstance().getSignature())||f!=null)
+                   if(!nickName.getHint().toString().equals(UserManager.getNickname(this))||!signature.getHint().toString().equals(UserManager.getSignature(this))||f!=null)
                    {android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
                    builder.setMessage("当前信息未保存,确定退出？");
                    builder.setPositiveButton(R.string.ok,

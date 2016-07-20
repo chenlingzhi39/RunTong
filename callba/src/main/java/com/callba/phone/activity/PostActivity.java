@@ -21,6 +21,7 @@ import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.manager.UserManager;
 
 import java.util.ArrayList;
 
@@ -58,7 +59,7 @@ public class PostActivity extends BaseActivity implements UserDao.UploadListener
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
-        location.setText(GlobalConfig.getInstance().getAddress());
+        location.setText(UserManager.getAddress(this));
         footerView = getLayoutInflater().inflate(R.layout.add_photo, null);
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);

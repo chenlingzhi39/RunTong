@@ -19,6 +19,7 @@ import com.callba.phone.activity.recharge.RechargeActivity2;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CircleTextView;
@@ -111,7 +112,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         // dbManager = new DBManager(this);
         configSso();
         markDao = MyApplication.getInstance().getDaoSession().getMarkDao();
-        gold.setText(getString(R.string.gold) + ":" + GlobalConfig.getInstance().getGold());
+        gold.setText(getString(R.string.gold) + ":" + UserManager.getGold(this));
         list = new ArrayList<>();
         cal = Calendar.getInstance();
         formatter = new SimpleDateFormat("yyyy-MM-dd");//获取当前时间
@@ -301,8 +302,8 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         calendar.addMark(date1, 0);
         //query();
         HashMap<String, Integer> bg = new HashMap<String, Integer>();
-        GlobalConfig.getInstance().setGold(GlobalConfig.getInstance().getGold() + 3);
-        gold.setText(getString(R.string.gold) + ":" + GlobalConfig.getInstance().getGold());
+        UserManager.putGold(this,UserManager.getGold(this) + 3);
+        gold.setText(getString(R.string.gold) + ":" + UserManager.getGold(this));
         calendar.setCalendarDayBgColor(date1, R.drawable.bg_sign_today);
         btn_signIn.setText("今日已签，明日继续");
         btn_signIn.setBackgroundResource(R.drawable.button_gray);

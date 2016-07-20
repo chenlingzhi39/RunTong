@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.DemoHelper;
+import com.callba.phone.MyApplication;
 import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
@@ -64,8 +65,8 @@ public class LoginController {
 	public boolean getUserLoginState() {
 		Logger.d(TAG, "getUserLoginState loginState -> " + loginState);
 		if(loginState) {
-			String username = GlobalConfig.getInstance().getUsername();
-			String password = GlobalConfig.getInstance().getPassword();
+			String username = UserManager.getUsername(MyApplication.getInstance());
+			String password = UserManager.getPassword(MyApplication.getInstance());
 			if(TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
 				Logger.w(TAG, "getUserLoginState username or password is null.");
 				return false;
@@ -161,6 +162,10 @@ public class LoginController {
 			/*	CalldaToast calldaToast = new CalldaToast();
 				calldaToast.showToast(context, R.string.result_data_error);*/
 			}
+			UserManager.putSignature(context,resultInfo[8]);
+			UserManager.putNickname(context,resultInfo[7]);
+			if(!resultInfo[9].equals(""))
+			UserManager.putGold(context,Integer.parseInt(resultInfo[9]));
 			UserManager.putUserAvatar(context,resultInfo[6]);
 			UserManager.putCommission(context,resultInfo[10]);
 			UserManager.putUsername(context,username);

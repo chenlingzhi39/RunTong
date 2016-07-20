@@ -98,7 +98,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         ButterKnife.inject(this);
         gson = new Gson();
         location.setTextColor(getResources().getColor(R.color.black_2f));
-        location.setText(GlobalConfig.getInstance().getAddress());
+        location.setText(UserManager.getAddress(this));
             userDao = new UserDao(this, this);
         initRefreshLayout();
         userList.setLoadingMoreEnabled(false);
@@ -245,8 +245,8 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                     Logger.i("latitude", aMapLocation.getLatitude() + "");
                     Logger.i("longitude", aMapLocation.getLongitude() + "");
                     UserManager.putAddress(FriendActivity.this,aMapLocation.getAddress());
-                    UserManager.putLatitude(FriendActivity.this,aMapLocation.getLatitude());
-                    UserManager.putLongitude(FriendActivity.this,aMapLocation.getLongitude());
+                    UserManager.putLatitude(FriendActivity.this,aMapLocation.getLatitude()+"");
+                    UserManager.putLongitude(FriendActivity.this,aMapLocation.getLongitude()+"");
                     userDao2.saveLocation(getUsername(), getPassword(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
                     location.setText(aMapLocation.getAddress());
                 } else {

@@ -295,7 +295,7 @@ public class UserDao {
         });
     }
 
-    public void getNearBy(String loginName, String password, double latitude, double longitude, int radius,int page) {
+    public void getNearBy(String loginName, String password, String latitude, String longitude, int radius,int page) {
         final RequestParams params = new RequestParams();
         Logger.i("nearby_url",Interfaces.GET_NEARBY+"?"+"loginName="+loginName+"&loginPwd="+password+"&latitude="+latitude+"&longitude="+longitude+"&radius="+radius+"&page="+page);
         params.addBodyParameter("loginName", loginName);

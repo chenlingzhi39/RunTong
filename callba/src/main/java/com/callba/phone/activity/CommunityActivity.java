@@ -17,6 +17,7 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Mood;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.Logger;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.callba.phone.widget.refreshlayout.EasyRecyclerView;
@@ -86,8 +87,8 @@ public class CommunityActivity extends BaseActivity implements UserDao.PostListe
             public void onBindView(View headerView) {
                 CircleImageView head=(CircleImageView) headerView.findViewById(R.id.head);
                 TextView number=(TextView) headerView.findViewById(R.id.number);
-                if(!GlobalConfig.getInstance().getUserhead().equals(""))
-                Glide.with(CommunityActivity.this).load(GlobalConfig.getInstance().getUserhead()).into(head);
+                if(!UserManager.getUserAvatar(CommunityActivity.this).equals(""))
+                Glide.with(CommunityActivity.this).load(UserManager.getUserAvatar(CommunityActivity.this)).into(head);
                 number.setHint(getUsername());
             }
         });

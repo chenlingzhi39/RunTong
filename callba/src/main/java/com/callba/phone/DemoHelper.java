@@ -34,6 +34,7 @@ import com.callba.phone.db.InviteMessage.*;
 import com.callba.phone.db.InviteMessgeDao;
 import com.callba.phone.db.UserDao;
 import com.callba.phone.domain.RobotUser;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.receiver.CallReceiver;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
@@ -742,8 +743,8 @@ public class DemoHelper {
             OkHttpUtils
                     .post()
                     .url(Interfaces.GET_FRIENDS)
-                    .addParams("loginName", GlobalConfig.getInstance().getUsername())
-                    .addParams("loginPwd",  GlobalConfig.getInstance().getPassword())
+                    .addParams("loginName", UserManager.getUsername(appContext))
+                    .addParams("loginPwd",  UserManager.getPassword(appContext))
                     .build().execute(new StringCallback() {
                 @Override
                 public void onError(Call call, Exception e, int id) {

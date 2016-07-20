@@ -27,6 +27,7 @@ import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.logic.login.UserLoginErrorMsg;
 import com.callba.phone.logic.login.UserLoginListener;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.SharedPreferenceUtil;
@@ -139,7 +140,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         String source = username + "," + password;
         String sign = null;
         try {
-            sign = DesUtil.encrypt(source, GlobalConfig.getInstance().getSecretKey());
+            sign = DesUtil.encrypt(source, UserManager.getSecretKey(this));
         } catch (Exception e) {
             e.printStackTrace();
 			

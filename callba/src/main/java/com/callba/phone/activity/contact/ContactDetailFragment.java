@@ -22,6 +22,7 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.CallUtils;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
@@ -185,7 +186,7 @@ public class ContactDetailFragment extends BaseFragment {
                     public void onClick(View v) {
                         Uri smsToUri = Uri.parse("smsto://" + bean.getContactPhones().get(0));
                         Intent mIntent = new Intent(Intent.ACTION_SENDTO, smsToUri);
-                        mIntent.putExtra("sms_body", "我是" + GlobalConfig.getInstance().getNickname() + "，我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+                        mIntent.putExtra("sms_body", "我是" + UserManager.getNickname(getActivity()) + "，我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
                         startActivity(mIntent);
                     }
                 });

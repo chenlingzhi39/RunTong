@@ -8,6 +8,7 @@ import android.widget.EditText;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -88,6 +89,7 @@ public class TXActivity extends BaseActivity {
                        String[] results=response.split("\\|");
                         if(results[0].equals("0")){
                             toast(results[1]);
+                            UserManager.putCommission(TXActivity.this,Double.parseDouble(UserManager.getCommission(TXActivity.this))-Double.parseDouble(commission.getText().toString())+"");
                         }else toast(results[1]);
                     }
                 });

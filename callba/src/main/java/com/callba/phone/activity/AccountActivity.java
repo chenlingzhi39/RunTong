@@ -20,6 +20,7 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Meal;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.Logger;
 
 import java.util.ArrayList;
@@ -55,8 +56,8 @@ public class AccountActivity extends BaseActivity {
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
         account.setHint(getUsername());
-        if (!GlobalConfig.getInstance().getUserhead().equals(""))
-            Glide.with(this).load(GlobalConfig.getInstance().getUserhead()).into(head);
+        if (!UserManager.getUserAvatar(this).equals(""))
+            Glide.with(this).load(UserManager.getUserAvatar(this)).into(head);
         userDao = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void start() {
@@ -87,7 +88,7 @@ public class AccountActivity extends BaseActivity {
                 toast(msg);
             }
         });
-      commission.setText(GlobalConfig.getInstance().getCommission());
+      commission.setText(UserManager.getCommission(this));
     }
 
     @OnClick({R.id.calllog_search, R.id.meal_search,R.id.balance,R.id.gold})

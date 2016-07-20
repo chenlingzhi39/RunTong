@@ -400,8 +400,8 @@ public class MainTabActivity extends TabActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                GlobalConfig.getInstance().setUsername("");
-                GlobalConfig.getInstance().setPassword("");
+                UserManager.putUsername(MainTabActivity.this,"");
+                UserManager.putPassword(MainTabActivity.this,"");
                 GlobalConfig.getInstance().setIvPath("");
                 LoginController.getInstance().setUserLoginState(false);
                 SharedPreferenceUtil.getInstance(MainTabActivity.this).putString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD, "", true);
@@ -432,8 +432,8 @@ public class MainTabActivity extends TabActivity {
         Dialog dialog = new AlertDialog.Builder(this).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                GlobalConfig.getInstance().setUsername("");
-                GlobalConfig.getInstance().setPassword("");
+                UserManager.putUsername(MainTabActivity.this,"");
+                UserManager.putPassword(MainTabActivity.this,"");
                 GlobalConfig.getInstance().setIvPath("");
                 LoginController.getInstance().setUserLoginState(false);
                 SharedPreferenceUtil.getInstance(MainTabActivity.this).putString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD, "", true);

@@ -1465,8 +1465,8 @@ public class MainService extends Service implements Runnable {
                 Logger.i("latitude", aMapLocation.getLatitude() + "");
                 Logger.i("longitude", aMapLocation.getLongitude() + "");
                 UserManager.putAddress(MainService.this,aMapLocation.getAddress());
-                UserManager.putLatitude(MainService.this,aMapLocation.getLatitude());
-                UserManager.putLongitude(MainService.this,aMapLocation.getLongitude());
+                UserManager.putLatitude(MainService.this,aMapLocation.getLatitude()+"");
+                UserManager.putLongitude(MainService.this,aMapLocation.getLongitude()+"");
                 userDao.saveLocation((String) SPUtils.get(getApplicationContext(), Constant.PACKAGE_NAME, Constant.LOGIN_USERNAME, ""), (String) SPUtils.get(getApplicationContext(), Constant.PACKAGE_NAME, Constant.LOGIN_ENCODED_PASSWORD, ""), aMapLocation.getLatitude(), aMapLocation.getLongitude());
             } else {
                 //定位失败

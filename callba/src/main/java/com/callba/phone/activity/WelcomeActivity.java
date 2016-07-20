@@ -38,6 +38,7 @@ import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.logic.contact.QueryContactCallback;
 import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
@@ -228,7 +229,7 @@ public class WelcomeActivity extends BaseActivity {
 
 		String secretKey = appVersionBean.getSecretKey();
 		if (!TextUtils.isEmpty(secretKey)) {
-			GlobalConfig.getInstance().setSecretKey(secretKey);
+			UserManager.putSecretKey(WelcomeActivity.this,secretKey);
 			mSharedPreferenceUtil.putString(Constant.SECRET_KEY, secretKey,
 					true);
 		}
@@ -262,7 +263,6 @@ public class WelcomeActivity extends BaseActivity {
 			//MobclickAgent.onEvent(this, "version_timeout");
 			String secretKey = mSharedPreferenceUtil
 					.getString(Constant.SECRET_KEY);
-			GlobalConfig.getInstance().setSecretKey(secretKey);
 
 			if (TextUtils.isEmpty(secretKey)) {
 				// Toast.makeText(this, R.string.getversionfailed,
