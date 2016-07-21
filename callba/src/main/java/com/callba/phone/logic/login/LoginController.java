@@ -138,30 +138,22 @@ public class LoginController {
 	 */
 	public static void parseLoginSuccessResult(Context context, String username, String password, String[] resultInfo) {
 		if(resultInfo != null) {
-			GlobalConfig.getInstance().setLoginToken(resultInfo[2]);
-			GlobalConfig.getInstance().setUsername(username);
 			GlobalConfig.getInstance().setSipIP(resultInfo[4]);
-			GlobalConfig.getInstance().setUserhead(resultInfo[6]);
-			GlobalConfig.getInstance().setNickname(resultInfo[7]);
-			GlobalConfig.getInstance().setSignature(resultInfo[8]);
-			if(!resultInfo[9].equals(""))
-			GlobalConfig.getInstance().setGold(Integer.parseInt(resultInfo[9]));
-			else GlobalConfig.getInstance().setGold(0);
-			GlobalConfig.getInstance().setCommission(resultInfo[10]);
 			DemoHelper.getInstance().setCurrentUserName(username);
 			DemoHelper.getInstance().getUserProfileManager().setCurrentUserAvatar(resultInfo[6]);
 			DemoHelper.getInstance().getUserProfileManager().setCurrentUserNick(resultInfo[7]);
     		Logger.v("处理登录成功信息", "当前SIP"+ GlobalConfig.getInstance().getSipIP());
 			try {
 				String encryptPwd = DesUtil.encrypt(password,
-						GlobalConfig.getInstance().getLoginToken());
-				GlobalConfig.getInstance().setPassword(encryptPwd);
+						resultInfo[2]);
+				UserManager.putPassword(context,encryptPwd);
 			} catch (Exception e) {
 				e.printStackTrace();
 				Toast.makeText(context,context.getString(R.string.result_data_error),Toast.LENGTH_SHORT).show();
 			/*	CalldaToast calldaToast = new CalldaToast();
 				calldaToast.showToast(context, R.string.result_data_error);*/
 			}
+			UserManager.putLoginToken(context,resultInfo[2]);
 			UserManager.putSignature(context,resultInfo[8]);
 			UserManager.putNickname(context,resultInfo[7]);
 			if(!resultInfo[9].equals(""))
@@ -169,7 +161,6 @@ public class LoginController {
 			UserManager.putUserAvatar(context,resultInfo[6]);
 			UserManager.putCommission(context,resultInfo[10]);
 			UserManager.putUsername(context,username);
-			UserManager.putPassword(context,GlobalConfig.getInstance().getPassword());
 			UserManager.putOriginalPassword(context,password);
 //			SharedPreferenceUtil mPreferenceUtil = SharedPreferenceUtil.getInstance(context);
 //			mPreferenceUtil.putString(Constant.LOGIN_USERNAME, username);

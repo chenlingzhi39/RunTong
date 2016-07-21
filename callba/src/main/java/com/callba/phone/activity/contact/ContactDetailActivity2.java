@@ -75,28 +75,30 @@ public class ContactDetailActivity2 extends AppCompatActivity {
     ViewPager viewpager;
     @InjectView(R.id.main_content)
     CoordinatorLayout mainContent;
+    @InjectView(R.id.shadow)
+    View shadow;
+    @InjectView(R.id.shadow_reverse)
+    View shadowReverse;
     private ContactMutliNumBean bean;
     private static final int REQUESTCODE_PICK = 1;
     private static final int REQUESTCODE_CAMERA = 3;
     private static final int RESULT_CAMERA_CROP_PATH_RESULT = 4;
     private Uri imageUri;
     private Uri imageCropUri;
-    private int width,height;
-    private int image_height,image_max_height,hideHeight;
+    private int width, height;
+    private int image_height, image_max_height, hideHeight;
     private DisplayMetrics displayMetrics;
     private Bitmap resource;
     private CollapsingToolbarLayout.LayoutParams lp;
     private CoordinatorLayout.LayoutParams lp1;
 
-        public enum State {
-            EXPANDED,
-            COLLAPSED,
-            IDLE
-        }
+    public enum State {
+        EXPANDED,
+        COLLAPSED,
+        IDLE
+    }
 
-        private State mCurrentState = State.EXPANDED;
-
-
+    private State mCurrentState = State.EXPANDED;
 
 
     @Override
@@ -107,11 +109,11 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         ButterKnife.inject(this);
         displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        width=displayMetrics.widthPixels;
-        height=displayMetrics.heightPixels;
-        image_height=250*(int) displayMetrics.density;
-        Logger.i("image_height",image_height+"");
-        image_max_height=width;
+        width = displayMetrics.widthPixels;
+        height = displayMetrics.heightPixels;
+        image_height = 250 * (int) displayMetrics.density;
+        Logger.i("image_height", image_height + "");
+        image_max_height = width;
         bean = (ContactMutliNumBean) getIntent()
                 .getSerializableExtra("contact");
         initToolbar();
@@ -132,150 +134,156 @@ public class ContactDetailActivity2 extends AppCompatActivity {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
 
-                    if (i == 0) {
-                        if (mCurrentState != State.EXPANDED) {
-
-                        }
-                        mCurrentState = State.EXPANDED;
-                    } else if (Math.abs(i) >= appBarLayout.getTotalScrollRange()) {
-                        if (mCurrentState != State.COLLAPSED) {
-
-                        }
-                        mCurrentState = State.COLLAPSED;
-                    } else {
-                        if (mCurrentState != State.IDLE) {
-
-                        }
-                        mCurrentState = State.IDLE;
+                if (i == 0) {
+                    if (mCurrentState != State.EXPANDED) {
+                    shadow.setVisibility(View.VISIBLE);
+                        shadowReverse.setVisibility(View.VISIBLE);
                     }
+                    mCurrentState = State.EXPANDED;
+                } else if (Math.abs(i) >= appBarLayout.getTotalScrollRange()) {
+                    if (mCurrentState != State.COLLAPSED) {
+                        shadow.setVisibility(View.GONE);
+                        shadowReverse.setVisibility(View.GONE);
+                    }
+                    mCurrentState = State.COLLAPSED;
+                } else {
+                    if (mCurrentState != State.IDLE) {
+                        shadow.setVisibility(View.GONE);
+                        shadowReverse.setVisibility(View.GONE);
+                    }
+                    mCurrentState = State.IDLE;
+                }
 
             }
         });
-        resource=ContactsManager.getAvatar(this, bean.get_id(), true);
-        if(resource!=null)
+        resource = ContactsManager.getAvatar(this, bean.get_id(), true);
+        if (resource != null)
             //setImage();
-        image.setImageBitmap(resource);
+            image.setImageBitmap(resource);
         String path = getSDCardPath();
         File file = new File(path + "/temp.jpg");
         imageUri = Uri.fromFile(file);
         File cropFile = new File(getSDCardPath() + "/temp_crop.jpg");
         imageCropUri = Uri.fromFile(cropFile);
+    }
 
-    }
-public void setImage(){
-    Log.i("bitmap_width", resource.getWidth() + "");
-    Log.i("bitmap_height",resource.getHeight()+"");
-    Log.i("width",width+"");
-    Log.i("height", height+"" );
-    Log.i("x1",(float)resource.getHeight()/(float)resource.getWidth()+"");
-    Log.i("x2",(float)image_height/(float)width+"");
-    Log.i("original",resource.getHeight() * width/ resource.getWidth()+"");
-    if(resource.getHeight() * width / resource.getWidth() <=image_height){
-        image.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,image_height));
-        content.setLayoutParams(new AppBarLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,image_height));
-    }
-        if (resource.getHeight() * width / resource.getWidth() >image_height && resource.getHeight() * width / resource.getWidth() <= image_max_height) {
-            Log.i("height1", resource.getHeight() *width / resource.getWidth() + "");
+    public void setImage() {
+        Log.i("bitmap_width", resource.getWidth() + "");
+        Log.i("bitmap_height", resource.getHeight() + "");
+        Log.i("width", width + "");
+        Log.i("height", height + "");
+        Log.i("x1", (float) resource.getHeight() / (float) resource.getWidth() + "");
+        Log.i("x2", (float) image_height / (float) width + "");
+        Log.i("original", resource.getHeight() * width / resource.getWidth() + "");
+        if (resource.getHeight() * width / resource.getWidth() <= image_height) {
+            image.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, image_height));
+            content.setLayoutParams(new AppBarLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, image_height));
+        }
+        if (resource.getHeight() * width / resource.getWidth() > image_height && resource.getHeight() * width / resource.getWidth() <= image_max_height) {
+            Log.i("height1", resource.getHeight() * width / resource.getWidth() + "");
             lp = new CollapsingToolbarLayout.LayoutParams(CollapsingToolbarLayout.LayoutParams.MATCH_PARENT, resource.getHeight() * width / resource.getWidth());
-            lp.setMargins(0, (image_height - resource.getHeight() * width / resource.getWidth()) / 2, 0, (image_height- resource.getHeight() * width / resource.getWidth()) / 2);
+            lp.setMargins(0, (image_height - resource.getHeight() * width / resource.getWidth()) / 2, 0, (image_height - resource.getHeight() * width / resource.getWidth()) / 2);
             hideHeight = (image_height - resource.getHeight() * width / resource.getWidth()) / 2;
             image.setLayoutParams(lp);
-            lp1=new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, resource.getHeight() * width / resource.getWidth());
-            lp1.setMargins(0,image_height - resource.getHeight() * width/ resource.getWidth(),0,0);
+            lp1 = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, resource.getHeight() * width / resource.getWidth());
+            lp1.setMargins(0, image_height - resource.getHeight() * width / resource.getWidth(), 0, 0);
             appbar.setLayoutParams(lp1);
         }
-        if (resource.getHeight() * width/ resource.getWidth() > image_max_height) {
+        if (resource.getHeight() * width / resource.getWidth() > image_max_height) {
             Log.i("height2", resource.getHeight() * width / resource.getWidth() + "");
             lp = new CollapsingToolbarLayout.LayoutParams(CollapsingToolbarLayout.LayoutParams.MATCH_PARENT, image_max_height);
-            lp.setMargins(0, (image_height-image_max_height)/2, 0,(image_height-image_max_height)/2);
-            hideHeight = (image_height-image_max_height)/2;
-            Log.i("hide_height",hideHeight+"");
+            lp.setMargins(0, (image_height - image_max_height) / 2, 0, (image_height - image_max_height) / 2);
+            hideHeight = (image_height - image_max_height) / 2;
+            Log.i("hide_height", hideHeight + "");
             image.setLayoutParams(lp);
-            lp1=new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, image_max_height);
-            lp1.setMargins(0,image_height-image_max_height,0,0);
+            lp1 = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, image_max_height);
+            lp1.setMargins(0, image_height - image_max_height, 0, 0);
             appbar.setLayoutParams(lp1);
         }
-    image.setImageBitmap(resource);
-    mainContent.setOnTouchListener(new View.OnTouchListener() {
-        boolean IS_DOWN=true;
-        boolean IS_PULL = false;
-        boolean IS_RELEASE=false;
-        boolean IS_BACK=true;
-        int distance;
-        private float yDown,dy,yMove;
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            Log.i("touchevent",event.getAction()+"");
-                if (mCurrentState==State.EXPANDED&&lp!=null) {
+        image.setImageBitmap(resource);
+        mainContent.setOnTouchListener(new View.OnTouchListener() {
+            boolean IS_DOWN = true;
+            boolean IS_PULL = false;
+            boolean IS_RELEASE = false;
+            boolean IS_BACK = true;
+            int distance;
+            private float yDown, dy, yMove;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.i("touchevent", event.getAction() + "");
+                if (mCurrentState == State.EXPANDED && lp != null) {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             yDown = event.getRawY();
                             break;
                         case MotionEvent.ACTION_MOVE:
-                            if(!IS_RELEASE)
-                            {Log.i("hideheight",hideHeight+"");
-                                Log.i("distance",distance+"");
-                                Log.i("ydown",yDown+"");
-                                if(IS_DOWN)yDown=event.getRawY();
-                                IS_DOWN=false;
-                                if(yMove>0)dy=event.getRawY()-yMove;
-                                Log.i("dy",dy+"");
+                            if (!IS_RELEASE) {
+                                Log.i("hideheight", hideHeight + "");
+                                Log.i("distance", distance + "");
+                                Log.i("ydown", yDown + "");
+                                if (IS_DOWN) yDown = event.getRawY();
+                                IS_DOWN = false;
+                                if (yMove > 0) dy = event.getRawY() - yMove;
+                                Log.i("dy", dy + "");
                                 yMove = event.getRawY();
-                                Log.i("ymove",yMove+"");
+                                Log.i("ymove", yMove + "");
                                 distance = (int) (yMove - yDown);
-                                if(distance<=0&&dy<0)IS_DOWN=true;
+                                if (distance <= 0 && dy < 0) IS_DOWN = true;
                                 if (distance <= 0) {
-                                    IS_PULL=false;
+                                    IS_PULL = false;
                                     return false;
                                 }
-                                if(distance/2>=-hideHeight){
-                                    if(dy>0)IS_BACK=true;
-                                    if(dy<=0&&IS_BACK){
-                                        yDown=yMove-2*lp.topMargin+2*hideHeight;
-                                        IS_BACK=false;
+                                if (distance / 2 >= -hideHeight) {
+                                    if (dy > 0) IS_BACK = true;
+                                    if (dy <= 0 && IS_BACK) {
+                                        yDown = yMove - 2 * lp.topMargin + 2 * hideHeight;
+                                        IS_BACK = false;
                                     }
                                     return true;
                                 }
                                 IS_PULL = true;
-                                lp.setMargins(0,(distance / 2) + hideHeight,0,(distance / 2) + hideHeight);
-                                lp1.setMargins(0,distance+hideHeight*2,0,0);
+                                lp.setMargins(0, (distance / 2) + hideHeight, 0, (distance / 2) + hideHeight);
+                                lp1.setMargins(0, distance + hideHeight * 2, 0, 0);
                                 image.setLayoutParams(lp);
                                 appbar.setLayoutParams(lp1);
-                                return  true;
+                                return true;
                             }
                             break;
                         case MotionEvent.ACTION_UP:
-                            if (IS_PULL)
-                            {IS_RELEASE=true;
-                                IS_BACK=true;
-                                ValueAnimator mAnimator = ValueAnimator.ofInt(lp.topMargin,  hideHeight);
+                            if (IS_PULL) {
+                                IS_RELEASE = true;
+                                IS_BACK = true;
+                                ValueAnimator mAnimator = ValueAnimator.ofInt(lp.topMargin, hideHeight);
                                 mAnimator.setDuration(100);
                                 mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                     @Override
                                     public void onAnimationUpdate(ValueAnimator animation) {
-                                        lp.setMargins(0,(int)animation.getAnimatedValue(),0, (int)animation.getAnimatedValue());
-                                        if ((int)animation.getAnimatedValue() <= hideHeight) {
-                                            IS_DOWN=true;
+                                        lp.setMargins(0, (int) animation.getAnimatedValue(), 0, (int) animation.getAnimatedValue());
+                                        if ((int) animation.getAnimatedValue() <= hideHeight) {
+                                            IS_DOWN = true;
                                             IS_PULL = false;
-                                            IS_RELEASE=false;
-                                            distance=0;
+                                            IS_RELEASE = false;
+                                            distance = 0;
                                         }
                                         image.setLayoutParams(lp);
-                                        lp1.setMargins(0,2*lp.topMargin,0,0);
+                                        lp1.setMargins(0, 2 * lp.topMargin, 0, 0);
                                         appbar.setLayoutParams(lp1);
                                     }
 
                                 });
                                 mAnimator.start();
-                                return true;}
+                                return true;
+                            }
                             break;
                     }
 
                 }
-            return false;
-        }
-    });
-}
+                return false;
+            }
+        });
+    }
+
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
@@ -321,7 +329,7 @@ public void setImage(){
                         }
                     }
                 });
-        android.app.AlertDialog alertDialog = builder.create();
+        AlertDialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(true);
         alertDialog.setCancelable(true);
         alertDialog.show();
@@ -415,7 +423,6 @@ public void setImage(){
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
 
 
     public void cropImg(Uri uri) {

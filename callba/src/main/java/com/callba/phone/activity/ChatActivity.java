@@ -136,7 +136,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
               // 设置标题
               if(EaseUserUtils.getUserInfo(toChatUsername) != null){
                   title.setText(EaseUserUtils.getUserInfo(toChatUsername).getNick());
-              }else title.setText(toChatUsername.substring(0,11));
+              }else title.setText(toChatUsername.length()>=11?toChatUsername.substring(0,11):toChatUsername);
               //titleBar.setRightImageResource(R.drawable.ease_mm_title_remove);
           } else {
               //titleBar.setRightImageResource(R.drawable.ease_to_group_details_normal);

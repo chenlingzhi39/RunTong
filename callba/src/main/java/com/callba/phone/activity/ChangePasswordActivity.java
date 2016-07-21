@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
@@ -12,6 +13,8 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.manager.UserManager;
+import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.SharedPreferenceUtil;
 
 
@@ -53,6 +56,18 @@ public class ChangePasswordActivity extends BaseActivity implements UserDao.Post
     public void success(String msg) {
         toast(msg);
         ok.setClickable(true);
+        UserManager.putOriginalPassword(this,new_password);
+        try {
+            String encryptPwd = DesUtil.encrypt(new_password,
+                    UserManager.getToken(this));
+            UserManager.putPassword(this,encryptPwd);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this,getString(R.string.result_data_error),Toast.LENGTH_SHORT).show();
+			/*	CalldaToast calldaToast = new CalldaToast();
+				calldaToast.showToast(context, R.string.result_data_error);*/
+            UserManager.putOriginalPassword(this,new_password);
+        }
         finish();
     }
 

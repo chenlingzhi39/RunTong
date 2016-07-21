@@ -172,7 +172,7 @@ public  class ContactsAccessPublic {
                 projection, // Which columns to return.
                 Data.DISPLAY_NAME + " =?", // WHERE clause.
                 new String[]{name}, // WHERE clause value substitution
-                null); // Sort order.
+                Data.RAW_CONTACT_ID+" DESC"); // Sort order.
         Logger.i("count",cursor.getCount()+"");
       try {
           if (cursor != null) {

@@ -60,6 +60,7 @@ public class Constant {
 	public static final String LOGIN_USERNAME = "username";
 	public static final String LOGIN_PASSWORD = "pd_key";
 	public static final String LOGIN_ENCODED_PASSWORD = "encode_key";
+	public static final String LOGIN_TOKEN="token";
 	/**
 	 * 是否显示升级提示
 	 */
@@ -181,4 +182,5 @@ public class Constant {
 	public static final String COMMISSION="commission";
 	public static final String ADDRESS="address";
 	public static final String SIGNATURE="signature";
+	public static final String BALANCE="balance";
 }

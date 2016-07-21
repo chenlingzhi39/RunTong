@@ -7,6 +7,7 @@ import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -171,8 +172,8 @@ public class UserProfileManager {
         OkHttpUtils
                 .post()
                 .url(Interfaces.GET_FRIENDS)
-                .addParams("loginName", GlobalConfig.getInstance().getUsername())
-                .addParams("loginPwd",  GlobalConfig.getInstance().getPassword())
+                .addParams("loginName", UserManager.getUsername(appContext))
+                .addParams("loginPwd",  UserManager.getPassword(appContext))
                 .build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {

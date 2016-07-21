@@ -53,7 +53,6 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
     LinearLayout change;
     @InjectView(R.id.relative)
     RelativeLayout relative;
-    ;
     private UserDao userDao;
     private String address;
 
@@ -149,8 +148,8 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
 
     @OnClick(R.id.contacts)
     public void onClick() {
-        Intent i = new Intent(Intent.ACTION_PICK);
-        i.setType("vnd.android.cursor.dir/phone");
+        Uri uri = Uri.parse("content://contacts/people");
+        Intent i = new Intent(Intent.ACTION_PICK,uri);
         startActivityForResult(i, 0);
 
     }

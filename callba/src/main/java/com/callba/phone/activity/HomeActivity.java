@@ -303,8 +303,6 @@ public class HomeActivity extends BaseActivity {
                     if ("0".equals(result[0])) {
                         // 成功fanhui数据
                         String accountBalance = result[1];
-                        GlobalConfig.getInstance().setAccountBalance(
-                                accountBalance);
                         Log.i("yue", accountBalance);
                         yue = result[1];
                         showYueDialog();
@@ -422,14 +420,10 @@ public class HomeActivity extends BaseActivity {
     private void queryUserBalance() {
         Task task = new Task(Task.TASK_GET_USER_BALANCE);
         Map<String, Object> taskParams = new HashMap<String, Object>();
-        Log.i("name", GlobalConfig.getInstance()
-                .getUsername());
-        Log.i("pwd", GlobalConfig.getInstance()
-                .getPassword());
-        taskParams.put("loginName", GlobalConfig.getInstance()
-                .getUsername());
-        taskParams.put("loginPwd", GlobalConfig.getInstance()
-                .getPassword());
+        taskParams.put("loginName", UserManager
+                .getUsername(this));
+        taskParams.put("loginPwd",UserManager
+                .getPassword(this));
         taskParams.put("softType", "android");
         taskParams.put("frompage", "MainCallActivity");
         task.setTaskParams(taskParams);

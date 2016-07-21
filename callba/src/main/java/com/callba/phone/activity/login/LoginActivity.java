@@ -30,6 +30,7 @@ import com.callba.phone.logic.login.UserLoginListener;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.DesUtil;
+import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CleanableEditText;
 
@@ -69,7 +70,8 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
             et_username.setText(getIntent().getStringExtra("number"));
             et_password.setText(getIntent().getStringExtra("password"));
         }
-        username = mPreferenceUtil.getString(Constant.LOGIN_USERNAME);
+        Logger.i("username",UserManager.getUsername(this)+" ");
+        username = UserManager.getUsername(this);
         if (!"".equals(username)) {
             et_username.setText(username);
         }

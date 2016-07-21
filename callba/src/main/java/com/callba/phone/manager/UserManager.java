@@ -11,6 +11,9 @@ import com.callba.phone.util.SPUtils;
  * Created by PC-20160514 on 2016/7/20.
  */
 public class UserManager {
+    public static String getToken(Context context){
+        return (String)SPUtils.get(context,Constant.PACKAGE_NAME,Constant.LOGIN_TOKEN,"");
+    }
     public static String getSecretKey(Context context){
         return (String)SPUtils.get(context,Constant.PACKAGE_NAME,Constant.SECRET_KEY,"");
     }
@@ -22,6 +25,9 @@ public class UserManager {
     public static String getPassword(Context context) {
         return (String) SPUtils.get(context, Constant.PACKAGE_NAME, Constant.LOGIN_ENCODED_PASSWORD, "");
        // return  GlobalConfig.getInstance().getPassword();
+    }
+    public static String getOriginalPassword(Context context){
+        return (String)SPUtils.get(context,Constant.PACKAGE_NAME,Constant.LOGIN_PASSWORD,"");
     }
     public static String getUserAvatar(Context context){
         return (String)SPUtils.get(context,Constant.PACKAGE_NAME,Constant.USER_AVATAR,"");
@@ -46,6 +52,12 @@ public class UserManager {
     }
     public static int getGold(Context context){
         return (int)SPUtils.get(context,Constant.PACKAGE_NAME,Constant.GOLD,0);
+    }
+    public static String getbalnace(Context context){
+        return (String)SPUtils.get(context,Constant.PACKAGE_NAME,Constant.BALANCE,"");
+    }
+    public static void putLoginToken(Context context,String loginToken){
+        SPUtils.put(context,Constant.PACKAGE_NAME,Constant.LOGIN_TOKEN,loginToken);
     }
     public  static void putSecretKey(Context context,String secretkey){
         SPUtils.put(context,Constant.PACKAGE_NAME,Constant.SECRET_KEY,secretkey);
@@ -82,5 +94,8 @@ public class UserManager {
     }
     public static void putGold(Context context,int gold){
         SPUtils.put(context,Constant.PACKAGE_NAME,Constant.GOLD,gold);
+    }
+    public static void putBalance(Context context,String balance){
+        SPUtils.put(context,Constant.PACKAGE_NAME,Constant.BALANCE,balance);
     }
 }
