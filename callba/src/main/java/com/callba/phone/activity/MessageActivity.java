@@ -334,8 +334,6 @@ public class MessageActivity extends BaseActivity {
                   public void run() {
                       adapter.clear();
                       adapter.addAll(loadConversationList());
-                      Intent intent=new Intent("message_num");
-                      sendBroadcast(intent);
                   }
               });
 

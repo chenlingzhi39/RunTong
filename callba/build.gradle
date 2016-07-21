@@ -60,4 +60,3 @@ android {
         compile 'com.github.dexafree:materiallist:3.2.1'
     }
 }
-

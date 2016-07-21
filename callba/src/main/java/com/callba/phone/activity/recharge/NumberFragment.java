@@ -150,6 +150,7 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
     public void onClick() {
         Uri uri = Uri.parse("content://contacts/people");
         Intent i = new Intent(Intent.ACTION_PICK,uri);
+        i.setType("vnd.android.cursor.dir/phone");
         startActivityForResult(i, 0);
 
     }

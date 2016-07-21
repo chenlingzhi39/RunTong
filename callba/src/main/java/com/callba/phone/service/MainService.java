@@ -1363,7 +1363,7 @@ public class MainService extends Service implements Runnable {
                         EMClient.getInstance().groupManager().loadAllGroups();
                         EMClient.getInstance().chatManager().loadAllConversations();
                         Log.d("main", "登录聊天服务器成功！");
-
+                        sendBroadcast(new Intent(("message_num")));
                         //DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
                     }
 

@@ -33,6 +33,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -45,6 +46,7 @@ import com.callba.R;
 import com.callba.phone.MyApplication;
 import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.ScrimUtil;
 import com.callba.phone.util.Utils;
 
 import java.io.BufferedInputStream;
@@ -107,6 +109,16 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         MyApplication.activities.add(this);
         setContentView(R.layout.contact_detail2);
         ButterKnife.inject(this);
+       shadow.setBackground(
+                ScrimUtil.makeCubicGradientScrimDrawable(
+                        Color.parseColor("#aa000000"), //颜色
+                        8, //渐变层数
+                        Gravity.TOP));
+        shadowReverse.setBackground(
+                ScrimUtil.makeCubicGradientScrimDrawable(
+                        Color.parseColor("#aa000000"), //颜色
+                        8, //渐变层数
+                        Gravity.BOTTOM));
         displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         width = displayMetrics.widthPixels;
@@ -158,8 +170,8 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         });
         resource = ContactsManager.getAvatar(this, bean.get_id(), true);
         if (resource != null)
-            //setImage();
-            image.setImageBitmap(resource);
+            setImage();
+            //image.setImageBitmap(resource);
         String path = getSDCardPath();
         File file = new File(path + "/temp.jpg");
         imageUri = Uri.fromFile(file);
@@ -176,8 +188,8 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         Log.i("x2", (float) image_height / (float) width + "");
         Log.i("original", resource.getHeight() * width / resource.getWidth() + "");
         if (resource.getHeight() * width / resource.getWidth() <= image_height) {
-            image.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, image_height));
-            content.setLayoutParams(new AppBarLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, image_height));
+            //image.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, image_height));
+            appbar.setLayoutParams(new AppBarLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, image_height));
         }
         if (resource.getHeight() * width / resource.getWidth() > image_height && resource.getHeight() * width / resource.getWidth() <= image_max_height) {
             Log.i("height1", resource.getHeight() * width / resource.getWidth() + "");
@@ -187,7 +199,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
             image.setLayoutParams(lp);
             lp1 = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, resource.getHeight() * width / resource.getWidth());
             lp1.setMargins(0, image_height - resource.getHeight() * width / resource.getWidth(), 0, 0);
-            appbar.setLayoutParams(lp1);
+            //appbar.setLayoutParams(lp1);
         }
         if (resource.getHeight() * width / resource.getWidth() > image_max_height) {
             Log.i("height2", resource.getHeight() * width / resource.getWidth() + "");
@@ -198,10 +210,10 @@ public class ContactDetailActivity2 extends AppCompatActivity {
             image.setLayoutParams(lp);
             lp1 = new CoordinatorLayout.LayoutParams(CoordinatorLayout.LayoutParams.MATCH_PARENT, image_max_height);
             lp1.setMargins(0, image_height - image_max_height, 0, 0);
-            appbar.setLayoutParams(lp1);
+            //appbar.setLayoutParams(lp1);
         }
         image.setImageBitmap(resource);
-        mainContent.setOnTouchListener(new View.OnTouchListener() {
+        View.OnTouchListener touchListener=new View.OnTouchListener() {
             boolean IS_DOWN = true;
             boolean IS_PULL = false;
             boolean IS_RELEASE = false;
@@ -240,13 +252,17 @@ public class ContactDetailActivity2 extends AppCompatActivity {
                                         yDown = yMove - 2 * lp.topMargin + 2 * hideHeight;
                                         IS_BACK = false;
                                     }
+                                    shadow.setVisibility(View.GONE);
+                                    shadowReverse.setVisibility(View.GONE);
                                     return true;
                                 }
                                 IS_PULL = true;
                                 lp.setMargins(0, (distance / 2) + hideHeight, 0, (distance / 2) + hideHeight);
                                 lp1.setMargins(0, distance + hideHeight * 2, 0, 0);
                                 image.setLayoutParams(lp);
-                                appbar.setLayoutParams(lp1);
+                                //appbar.setLayoutParams(lp1);
+                                shadow.setVisibility(View.GONE);
+                                shadowReverse.setVisibility(View.GONE);
                                 return true;
                             }
                             break;
@@ -255,7 +271,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
                                 IS_RELEASE = true;
                                 IS_BACK = true;
                                 ValueAnimator mAnimator = ValueAnimator.ofInt(lp.topMargin, hideHeight);
-                                mAnimator.setDuration(100);
+                                mAnimator.setDuration(500);
                                 mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                     @Override
                                     public void onAnimationUpdate(ValueAnimator animation) {
@@ -268,11 +284,13 @@ public class ContactDetailActivity2 extends AppCompatActivity {
                                         }
                                         image.setLayoutParams(lp);
                                         lp1.setMargins(0, 2 * lp.topMargin, 0, 0);
-                                        appbar.setLayoutParams(lp1);
+                                        //appbar.setLayoutParams(lp1);
                                     }
 
                                 });
                                 mAnimator.start();
+                                shadow.setVisibility(View.VISIBLE);
+                                shadowReverse.setVisibility(View.VISIBLE);
                                 return true;
                             }
                             break;
@@ -281,7 +299,8 @@ public class ContactDetailActivity2 extends AppCompatActivity {
                 }
                 return false;
             }
-        });
+        };
+        mainContent.setOnTouchListener(touchListener);
     }
 
     private void initToolbar() {

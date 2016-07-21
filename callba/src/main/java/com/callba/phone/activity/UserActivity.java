@@ -130,8 +130,8 @@ public class UserActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                UserManager.putUsername(UserActivity.this,"");
                                 UserManager.putPassword(UserActivity.this,"");
+                                UserManager.putOriginalPassword(UserActivity.this,"");
                                 GlobalConfig.getInstance().setIvPath("");
                                 if (GlobalConfig.getInstance().getAdvertisements1() != null)
                                     GlobalConfig.getInstance().getAdvertisements1().clear();
@@ -142,7 +142,6 @@ public class UserActivity extends BaseActivity {
                                 if(GlobalConfig.getInstance().getDialAd()!=null)
                                     GlobalConfig.getInstance().setDialAd(null);
                                 LoginController.getInstance().setUserLoginState(false);
-                                SharedPreferenceUtil.getInstance(UserActivity.this).putString(Constant.LOGIN_PASSWORD, "", true);
                                 Intent intent0 = new Intent("com.callba.location");
                                 intent0.putExtra("action", "logout");
                                 sendBroadcast(intent0);
