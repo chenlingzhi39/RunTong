@@ -90,7 +90,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
     private Uri imageUri;
     private Uri imageCropUri;
     private int width, height;
-    private int image_height, image_max_height, hideHeight;
+    private int image_height, image_max_height, hideHeight,toolbarHeight,statusbarHeight;
     private DisplayMetrics displayMetrics;
     private Bitmap resource;
     private CollapsingToolbarLayout.LayoutParams lp;
@@ -128,6 +128,8 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         image_height = 250 * (int) displayMetrics.density;
         Logger.i("image_height", image_height + "");
         image_max_height = width;
+        toolbarHeight=Utils.getToolbarHeight(this);
+        statusbarHeight=Utils.getStatusBarHeight(this);
         bean = (ContactMutliNumBean) getIntent()
                 .getSerializableExtra("contact");
         initToolbar();
@@ -199,12 +201,20 @@ public class ContactDetailActivity2 extends AppCompatActivity {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     yDown = event.getRawY();
-                    y=event.getY();
-                    x=event.getY();
+                    y = event.getRawY();
+                    x = event.getRawX();
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if(Math.abs(event.getX()-x)>Math.abs(event.getY()-y))
+                    Log.i("getx",event.getRawX()-x+"");
+                    Log.i("gety",event.getRawY()-y+"");
+                    if(event.getRawY()<toolbarHeight+statusbarHeight&&event.getRawX()<toolbarHeight)
                         return super.dispatchTouchEvent(event);
+                    if(event.getRawY()>image_height-toolbarHeight)
+                    if (Math.abs(event.getRawX() - x) > Math.abs(event.getRawY() - y)-image_height/4&&distance<=0)
+                    {
+                        return super.dispatchTouchEvent(event);
+                     }
+
                     if (!IS_RELEASE) {
                         Log.i("hideheight", hideHeight + "");
                         Log.i("distance", distance + "");
@@ -246,7 +256,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
                         IS_RELEASE = true;
                         IS_BACK = true;
                         ValueAnimator mAnimator = ValueAnimator.ofInt(lp.topMargin, hideHeight);
-                        mAnimator.setDuration(500);
+                        mAnimator.setDuration(500*(hideHeight-lp.topMargin)/hideHeight);
                         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                             @Override
                             public void onAnimationUpdate(ValueAnimator animation) {
@@ -258,13 +268,13 @@ public class ContactDetailActivity2 extends AppCompatActivity {
                                     IS_PULL = false;
                                     IS_RELEASE = false;
                                     distance = 0;
+                                    shadow.setVisibility(View.VISIBLE);
+                                    shadowReverse.setVisibility(View.VISIBLE);
                                 }
                                 //appbar.setLayoutParams(lp1);
                             }
 
                         });
-                        shadow.setVisibility(View.VISIBLE);
-                        shadowReverse.setVisibility(View.VISIBLE);
                         mAnimator.start();
                         return true;
                     }
