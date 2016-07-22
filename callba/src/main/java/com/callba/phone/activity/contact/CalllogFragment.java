@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -40,10 +41,10 @@ public class CalllogFragment extends BaseFragment {
     ArrayList<CalldaCalllogBean> beans;
     CalllogService calllogService;
     CalllogAdapter calllogAdapter;
+
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
-
         calllogService=new CalllogService(getActivity(), new CalllogService.CalldaCalllogListener() {
             @Override
             public void onQueryCompleted(final List<CalldaCalllogBean> calldaCalllogBeans) {

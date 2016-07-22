@@ -37,8 +37,7 @@
                 android:hint="@string/commission_require"
                 android:inputType="number"
                 android:padding="10dp"
-                android:textSize="16sp"
-                android:text="0"/>
+                android:textSize="16sp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

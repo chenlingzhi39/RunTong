@@ -48,7 +48,7 @@ public class TXRecordActivity extends BaseActivity {
     TextView retry;
     @InjectView(R.id.hint)
     TextView hint;
-    private List<TxRecord> txRecords;
+    private ArrayList<TxRecord> txRecords;
     private TXRecordAdapter txRecordAdapter;
     private Gson gson = new Gson();
 
@@ -90,7 +90,7 @@ public class TXRecordActivity extends BaseActivity {
                         Logger.i("order_result", response);
                         String[] result = response.split("\\|");
                         if (result[0].equals("0")) {
-                            txRecords = gson.fromJson(result[1], new TypeToken<ArrayList<Profit>>() {
+                            txRecords = gson.fromJson(result[1], new TypeToken<ArrayList<TxRecord>>() {
                             }.getType());
                             txRecordAdapter.addAll(txRecords);
                             list.setAdapter(txRecordAdapter);

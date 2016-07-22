@@ -400,11 +400,10 @@ public class MainTabActivity extends TabActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                UserManager.putUsername(MainTabActivity.this,"");
+                UserManager.putOriginalPassword(MainTabActivity.this,"");
                 UserManager.putPassword(MainTabActivity.this,"");
                 GlobalConfig.getInstance().setIvPath("");
                 LoginController.getInstance().setUserLoginState(false);
-                SharedPreferenceUtil.getInstance(MainTabActivity.this).putString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD, "", true);
                 Intent intent0 = new Intent("com.callba.location");
                 intent0.putExtra("action", "logout");
                 sendBroadcast(intent0);

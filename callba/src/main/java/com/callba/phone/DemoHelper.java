@@ -410,7 +410,7 @@ public class DemoHelper {
         // create the global connection listener
         connectionListener = new EMConnectionListener() {
             @Override
-            public void onDisconnected(int error) {
+            public void onDisconnected(final int error) {
                 if (error == EMError.USER_REMOVED) {
                     onCurrentAccountRemoved();
                 }else if (error == EMError.USER_LOGIN_ANOTHER_DEVICE) {

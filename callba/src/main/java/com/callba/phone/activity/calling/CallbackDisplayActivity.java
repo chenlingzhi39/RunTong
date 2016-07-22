@@ -31,6 +31,7 @@ import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.util.SPUtils;
+import com.callba.phone.util.SimpleHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.BitmapUtils;
@@ -176,7 +177,7 @@ public class CallbackDisplayActivity extends BaseActivity {
                         if ("0".equals(content[0])) {
                             //回拨成功，开启自动接听
                             AutoAnswerReceiver.answerPhone(CallbackDisplayActivity.this);
-                            calllogService.saveBackCallLog("", number);
+                            calllogService.saveBackCallLog(name, number);
                             if (GlobalConfig.getInstance().getKeyBoardSetting())
                                 playSound();
                         } else {
@@ -220,7 +221,7 @@ public class CallbackDisplayActivity extends BaseActivity {
              */
             private void delayFinish() {
                 //呼叫失败，延迟关闭
-                this.postDelayed(new Runnable() {
+                SimpleHandler.getInstance().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         finish();
@@ -279,39 +280,6 @@ public class CallbackDisplayActivity extends BaseActivity {
         super.onResume();
     }
 
-    private void loadADImage() {
-        ViewUtils.inject(this);
-        if (bitmapUtils == null) {
-            bitmapUtils = BitmapHelp.getBitmapUtils(this
-                    .getApplicationContext());
-        }
-        String imgUrl = GlobalConfig.getInstance().getIvPathBack();
-        if (imgUrl == null) {
-            return;
-        }
-        bigPicDisplayConfig = new BitmapDisplayConfig();
-        // bigPicDisplayConfig.setShowOriginal(true); // 显示原始图片,不压缩, 尽量不要使用,
-        // 图片太大时容易OOM。
-        bigPicDisplayConfig.setBitmapConfig(Bitmap.Config.RGB_565);
-        bigPicDisplayConfig.setBitmapMaxSize(BitmapCommonUtils
-                .getScreenSize(this));
-
-        BitmapLoadCallBack<ImageView> callback = new DefaultBitmapLoadCallBack<ImageView>() {
-            @Override
-            public void onLoadStarted(ImageView container, String uri,
-                                      BitmapDisplayConfig config) {
-                super.onLoadStarted(container, uri, config);
-            }
-
-            @Override
-            public void onLoadCompleted(ImageView container, String uri,
-                                        Bitmap bitmap, BitmapDisplayConfig config,
-                                        BitmapLoadFrom from) {
-                super.onLoadCompleted(container, uri, bitmap, config, from);
-            }
-        };
-        bitmapUtils.display(iv_ad, imgUrl, bigPicDisplayConfig, callback);
-    }
 
     /**
      * 播放声音

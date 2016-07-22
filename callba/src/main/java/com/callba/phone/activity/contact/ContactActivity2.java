@@ -45,8 +45,6 @@ import butterknife.InjectView;
         menuId=R.menu.menu_contact
 )
 public class ContactActivity2 extends BaseActivity {
-
-
     @InjectView(R.id.layout_tab)
     TabLayout layoutTab;
     @InjectView(R.id.viewpager)

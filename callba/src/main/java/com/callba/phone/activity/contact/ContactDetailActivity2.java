@@ -39,6 +39,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -54,6 +55,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -109,7 +111,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         MyApplication.activities.add(this);
         setContentView(R.layout.contact_detail2);
         ButterKnife.inject(this);
-       shadow.setBackground(
+        shadow.setBackground(
                 ScrimUtil.makeCubicGradientScrimDrawable(
                         Color.parseColor("#aa000000"), //颜色
                         8, //渐变层数
@@ -145,10 +147,9 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         appbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
-
                 if (i == 0) {
                     if (mCurrentState != State.EXPANDED) {
-                    shadow.setVisibility(View.VISIBLE);
+                        shadow.setVisibility(View.VISIBLE);
                         shadowReverse.setVisibility(View.VISIBLE);
                     }
                     mCurrentState = State.EXPANDED;
@@ -171,13 +172,111 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         resource = ContactsManager.getAvatar(this, bean.get_id(), true);
         if (resource != null)
             setImage();
-            //image.setImageBitmap(resource);
+        //image.setImageBitmap(resource);
         String path = getSDCardPath();
         File file = new File(path + "/temp.jpg");
         imageUri = Uri.fromFile(file);
         File cropFile = new File(getSDCardPath() + "/temp_crop.jpg");
         imageCropUri = Uri.fromFile(cropFile);
     }
+
+    boolean IS_DOWN = true;
+    boolean IS_PULL = false;
+    boolean IS_RELEASE = false;
+    boolean IS_BACK = true;
+    int distance=0;
+    float yDown=0, dy=0, yMove=0,y,x;
+
+    /**
+     * 分发触摸事件给所有注册了MyTouchListener的接口
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+
+        // TODO Auto-generated method stub
+        Log.i("touchevent", event.getAction() + "");
+        if (mCurrentState == State.EXPANDED && lp != null) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    yDown = event.getRawY();
+                    y=event.getY();
+                    x=event.getY();
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    if(Math.abs(event.getX()-x)>Math.abs(event.getY()-y))
+                        return super.dispatchTouchEvent(event);
+                    if (!IS_RELEASE) {
+                        Log.i("hideheight", hideHeight + "");
+                        Log.i("distance", distance + "");
+                        Log.i("ydown", yDown + "");
+                        if (IS_DOWN) yDown = event.getRawY();
+                        IS_DOWN = false;
+                        if (yMove > 0) dy = event.getRawY() - yMove;
+                        Log.i("dy", dy + "");
+                        yMove = event.getRawY();
+                        Log.i("ymove", yMove + "");
+                        distance = (int) (yMove - yDown);
+                        if (distance <= 0 && dy < 0) IS_DOWN = true;
+                        if (distance <= 0) {
+                            IS_PULL = false;
+                            return super.dispatchTouchEvent(event);
+                        }
+                        if (distance / 2 >= -hideHeight) {
+                            if (dy > 0) IS_BACK = true;
+                            if (dy <= 0 && IS_BACK) {
+                                yDown = yMove - 2 * lp.topMargin + 2 * hideHeight;
+                                IS_BACK = false;
+                            }
+                            shadow.setVisibility(View.GONE);
+                            shadowReverse.setVisibility(View.GONE);
+                            return true;
+                        }
+                        IS_PULL = true;
+                        lp.setMargins(0, (distance / 2) + hideHeight, 0, (distance / 2) + hideHeight);
+                        lp1.setMargins(0, distance + hideHeight * 2, 0, 0);
+                        image.setLayoutParams(lp);
+                        //appbar.setLayoutParams(lp1);
+                        shadow.setVisibility(View.GONE);
+                        shadowReverse.setVisibility(View.GONE);
+                        return true;
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if (IS_PULL) {
+                        IS_RELEASE = true;
+                        IS_BACK = true;
+                        ValueAnimator mAnimator = ValueAnimator.ofInt(lp.topMargin, hideHeight);
+                        mAnimator.setDuration(500);
+                        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator animation) {
+                                lp.setMargins(0, (int) animation.getAnimatedValue(), 0, (int) animation.getAnimatedValue());
+                                image.setLayoutParams(lp);
+                                lp1.setMargins(0, 2 * lp.topMargin, 0, 0);
+                                if ((int) animation.getAnimatedValue() <= hideHeight) {
+                                    IS_DOWN = true;
+                                    IS_PULL = false;
+                                    IS_RELEASE = false;
+                                    distance = 0;
+                                }
+                                //appbar.setLayoutParams(lp1);
+                            }
+
+                        });
+                        shadow.setVisibility(View.VISIBLE);
+                        shadowReverse.setVisibility(View.VISIBLE);
+                        mAnimator.start();
+                        return true;
+                    }
+                    break;
+            }
+
+        }
+        return super.dispatchTouchEvent(event);
+
+    }
+
+
 
     public void setImage() {
         Log.i("bitmap_width", resource.getWidth() + "");
@@ -213,94 +312,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
             //appbar.setLayoutParams(lp1);
         }
         image.setImageBitmap(resource);
-        View.OnTouchListener touchListener=new View.OnTouchListener() {
-            boolean IS_DOWN = true;
-            boolean IS_PULL = false;
-            boolean IS_RELEASE = false;
-            boolean IS_BACK = true;
-            int distance;
-            private float yDown, dy, yMove;
 
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Log.i("touchevent", event.getAction() + "");
-                if (mCurrentState == State.EXPANDED && lp != null) {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            yDown = event.getRawY();
-                            break;
-                        case MotionEvent.ACTION_MOVE:
-                            if (!IS_RELEASE) {
-                                Log.i("hideheight", hideHeight + "");
-                                Log.i("distance", distance + "");
-                                Log.i("ydown", yDown + "");
-                                if (IS_DOWN) yDown = event.getRawY();
-                                IS_DOWN = false;
-                                if (yMove > 0) dy = event.getRawY() - yMove;
-                                Log.i("dy", dy + "");
-                                yMove = event.getRawY();
-                                Log.i("ymove", yMove + "");
-                                distance = (int) (yMove - yDown);
-                                if (distance <= 0 && dy < 0) IS_DOWN = true;
-                                if (distance <= 0) {
-                                    IS_PULL = false;
-                                    return false;
-                                }
-                                if (distance / 2 >= -hideHeight) {
-                                    if (dy > 0) IS_BACK = true;
-                                    if (dy <= 0 && IS_BACK) {
-                                        yDown = yMove - 2 * lp.topMargin + 2 * hideHeight;
-                                        IS_BACK = false;
-                                    }
-                                    shadow.setVisibility(View.GONE);
-                                    shadowReverse.setVisibility(View.GONE);
-                                    return true;
-                                }
-                                IS_PULL = true;
-                                lp.setMargins(0, (distance / 2) + hideHeight, 0, (distance / 2) + hideHeight);
-                                lp1.setMargins(0, distance + hideHeight * 2, 0, 0);
-                                image.setLayoutParams(lp);
-                                //appbar.setLayoutParams(lp1);
-                                shadow.setVisibility(View.GONE);
-                                shadowReverse.setVisibility(View.GONE);
-                                return true;
-                            }
-                            break;
-                        case MotionEvent.ACTION_UP:
-                            if (IS_PULL) {
-                                IS_RELEASE = true;
-                                IS_BACK = true;
-                                ValueAnimator mAnimator = ValueAnimator.ofInt(lp.topMargin, hideHeight);
-                                mAnimator.setDuration(500);
-                                mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                                    @Override
-                                    public void onAnimationUpdate(ValueAnimator animation) {
-                                        lp.setMargins(0, (int) animation.getAnimatedValue(), 0, (int) animation.getAnimatedValue());
-                                        if ((int) animation.getAnimatedValue() <= hideHeight) {
-                                            IS_DOWN = true;
-                                            IS_PULL = false;
-                                            IS_RELEASE = false;
-                                            distance = 0;
-                                        }
-                                        image.setLayoutParams(lp);
-                                        lp1.setMargins(0, 2 * lp.topMargin, 0, 0);
-                                        //appbar.setLayoutParams(lp1);
-                                    }
-
-                                });
-                                mAnimator.start();
-                                shadow.setVisibility(View.VISIBLE);
-                                shadowReverse.setVisibility(View.VISIBLE);
-                                return true;
-                            }
-                            break;
-                    }
-
-                }
-                return false;
-            }
-        };
-        mainContent.setOnTouchListener(touchListener);
     }
 
     private void initToolbar() {
@@ -544,7 +556,8 @@ public class ContactDetailActivity2 extends AppCompatActivity {
                     Data.CONTENT_URI,
                     values);
         }
-
+        resource = bit;
+        setImage();
     }
 
     @Override

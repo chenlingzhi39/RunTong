@@ -70,7 +70,6 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
             et_username.setText(getIntent().getStringExtra("number"));
             et_password.setText(getIntent().getStringExtra("password"));
         }
-        Logger.i("username",UserManager.getUsername(this)+" ");
         username = UserManager.getUsername(this);
         if (!"".equals(username)) {
             et_username.setText(username);

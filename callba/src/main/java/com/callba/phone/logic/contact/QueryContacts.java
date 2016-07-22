@@ -45,13 +45,13 @@ public class QueryContacts {
 				ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY }; // 查询的列
 		List<ContactPersonEntity> contactLists = new ArrayList<ContactPersonEntity>();
 		final MyAsyncQueryHandler asyncQuery = new MyAsyncQueryHandler(contentResolver, contactLists);
-		MainService.getFixedThreadPool().execute(new Runnable() {
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				asyncQuery.startQuery(0, null, uri, projection, null, null,
 						"sort_key COLLATE LOCALIZED asc"); // 按照sort_key升序查询
 			}
-		});
+		}).start();
 
 	}
 	
