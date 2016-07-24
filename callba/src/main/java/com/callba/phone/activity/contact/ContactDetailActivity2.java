@@ -95,7 +95,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
     private Bitmap resource;
     private CollapsingToolbarLayout.LayoutParams lp;
     private CoordinatorLayout.LayoutParams lp1;
-
+    private int index;
     public enum State {
         EXPANDED,
         COLLAPSED,
@@ -135,6 +135,22 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         initToolbar();
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
         tabs.setupWithViewPager(viewpager);
+        viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+               index=position;
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         content.setTitleEnabled(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -154,7 +170,9 @@ public class ContactDetailActivity2 extends AppCompatActivity {
                         shadow.setVisibility(View.VISIBLE);
                         shadowReverse.setVisibility(View.VISIBLE);
                     }
-                    mCurrentState = State.EXPANDED;
+                        mCurrentState = State.EXPANDED;
+
+
                 } else if (Math.abs(i) >= appBarLayout.getTotalScrollRange()) {
                     if (mCurrentState != State.COLLAPSED) {
                         shadow.setVisibility(View.GONE);
@@ -166,7 +184,8 @@ public class ContactDetailActivity2 extends AppCompatActivity {
                         shadow.setVisibility(View.GONE);
                         shadowReverse.setVisibility(View.GONE);
                     }
-                    mCurrentState = State.IDLE;
+                     mCurrentState = State.IDLE;
+
                 }
 
             }
@@ -208,9 +227,9 @@ public class ContactDetailActivity2 extends AppCompatActivity {
                     Log.i("getx",event.getRawX()-x+"");
                     Log.i("gety",event.getRawY()-y+"");
                     if(event.getRawY()<toolbarHeight+statusbarHeight&&event.getRawX()<toolbarHeight)
-                        return super.dispatchTouchEvent(event);
+                    return super.dispatchTouchEvent(event);
                     if(event.getRawY()>image_height-toolbarHeight)
-                    if (Math.abs(event.getRawX() - x) > Math.abs(event.getRawY() - y)-image_height/4&&distance<=0)
+                    if (Math.abs(event.getRawX() - x) > Math.abs(event.getRawY() - y))
                     {
                         return super.dispatchTouchEvent(event);
                      }
@@ -242,7 +261,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
                             return true;
                         }
                         IS_PULL = true;
-                        lp.setMargins(0, (distance / 2) + hideHeight, 0, (distance / 2) + hideHeight);
+                        lp.setMargins(0, (distance / 2) + hideHeight,0, (distance / 2) + hideHeight);
                         lp1.setMargins(0, distance + hideHeight * 2, 0, 0);
                         image.setLayoutParams(lp);
                         //appbar.setLayoutParams(lp1);
@@ -276,6 +295,9 @@ public class ContactDetailActivity2 extends AppCompatActivity {
 
                         });
                         mAnimator.start();
+                        viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
+                        tabs.setupWithViewPager(viewpager);
+                        viewpager.setCurrentItem(index);
                         return true;
                     }
                     break;
