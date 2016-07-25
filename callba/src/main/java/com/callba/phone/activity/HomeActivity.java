@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.activity.login.LoginActivity;
+import com.callba.phone.activity.recharge.FlowActivity;
 import com.callba.phone.activity.recharge.RechargeActivity2;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Advertisement;
@@ -74,8 +75,8 @@ public class HomeActivity extends BaseActivity {
     TextView search;
     @InjectView(R.id.mall)
     TextView mall;
-    @InjectView(R.id.finance)
-    TextView finance;
+    @InjectView(R.id.flow)
+    TextView flow;
     @InjectView(R.id.game)
     TextView game;
     @InjectView(R.id.sign_in)
@@ -142,10 +143,20 @@ public class HomeActivity extends BaseActivity {
                     }
                     MainService.system_contact=true;
                     if (ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话").equals("0"))
-                        ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
-                    else {
-                        ContactsAccessPublic.deleteContact(HomeActivity.this, new ContactsManager(getContentResolver()).getContactID("Call吧电话"));
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
                                 ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
+                            }
+                        }).start();
+                    else {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ContactsAccessPublic.deleteContact(HomeActivity.this, new ContactsManager(getContentResolver()).getContactID("Call吧电话"));
+                                ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
+                            }
+                        }).start();
                     }
                 } else {
 
@@ -316,7 +327,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.recharge, R.id.search, R.id.sale, R.id.mall, R.id.finance, R.id.family, R.id.game, R.id.sign_in})
+    @OnClick({R.id.recharge, R.id.search, R.id.sale, R.id.mall, R.id.flow, R.id.family, R.id.game, R.id.sign_in})
     public void onClick(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -336,8 +347,9 @@ public class HomeActivity extends BaseActivity {
             case R.id.mall:
                 toast("暂未开放");
                 break;
-            case R.id.finance:
-                toast("暂未开放");
+            case R.id.flow:
+                startActivity(new Intent(HomeActivity.this,FlowActivity.class));
+                //toast("暂未开放");
                 break;
             case R.id.family:
                 startActivity(new Intent(HomeActivity.this,FamilyActivity.class));

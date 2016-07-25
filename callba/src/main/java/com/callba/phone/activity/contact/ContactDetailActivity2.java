@@ -95,6 +95,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
     private Bitmap resource;
     private CollapsingToolbarLayout.LayoutParams lp;
     private CoordinatorLayout.LayoutParams lp1;
+    SimpleFragmentPagerAdapter simpleFragmentPagerAdapter;
     private int index;
     public enum State {
         EXPANDED,
@@ -133,7 +134,8 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         bean = (ContactMutliNumBean) getIntent()
                 .getSerializableExtra("contact");
         initToolbar();
-        viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
+        simpleFragmentPagerAdapter=new SimpleFragmentPagerAdapter(getSupportFragmentManager(),this);
+        viewpager.setAdapter(simpleFragmentPagerAdapter);
         tabs.setupWithViewPager(viewpager);
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -295,7 +297,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
 
                         });
                         mAnimator.start();
-                        viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
+                        viewpager.setAdapter(simpleFragmentPagerAdapter);
                         tabs.setupWithViewPager(viewpager);
                         viewpager.setCurrentItem(index);
                         return true;

@@ -720,7 +720,7 @@ public class UserDao {
                 if(result[0].equals("0")){
                     postListener.success(result[1]);
                 }else{
-                    postListener.failure(result[1]);
+                    //postListener.failure(result[1]);
                 }
             }
         });

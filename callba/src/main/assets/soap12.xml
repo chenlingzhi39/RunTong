@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
+  <soap12:Body>
+    <getMobileCodeInfo xmlns="http://WebXml.com.cn/">
+    <!-- 输入参数：mobileCode = 字符串（手机号码，最少前7位数字），userID = 字符串（商业用户ID） 免费用户为空字符串；返回数据：字符串（手机号码：省份 城市 手机卡类型）。 -->
+      <mobileCode>$mobile</mobileCode>
+      <userID></userID>
+    </getMobileCodeInfo>
+  </soap12:Body>
+</soap12:Envelope>

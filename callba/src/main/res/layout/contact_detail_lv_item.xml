@@ -39,10 +39,6 @@
 			android:id="@+id/send_message"/>
 	</LinearLayout>
 
-	<View
-		android:layout_width="match_parent"
-		android:layout_height="1px"
-		android:background="@color/light_black"/>
 	<!-- <ImageView
 	    android:id="@+id/iv_phonelist_sms"
 	    android:layout_width="52px"

@@ -27,6 +27,7 @@ import com.callba.phone.util.CallUtils;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
+import com.callba.phone.widget.DividerItemDecoration;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -193,6 +194,8 @@ public class ContactDetailFragment extends BaseFragment {
             }
         });
         contactNumberAdapter.addAll(phoneNums);
+        lvPhoneNums.addItemDecoration(new DividerItemDecoration(
+                getActivity(), DividerItemDecoration.VERTICAL_LIST));
         lvPhoneNums.setAdapter(contactNumberAdapter);
         callUtils = new CallUtils();
 

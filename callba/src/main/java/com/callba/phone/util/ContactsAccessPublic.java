@@ -237,9 +237,7 @@ public  class ContactsAccessPublic {
         // values.put(StructuredName.GIVEN_NAME,contact.getContactName());
         values.put(StructuredName.DISPLAY_NAME, contact.getContactName());
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+
                 Uri rcUri = context.getContentResolver().insert(android.provider.ContactsContract.Data.CONTENT_URI, values);
                 for (int i = 1; i <= numbers.size(); i++)
                 {    if (rcUri != null) {
@@ -263,11 +261,6 @@ public  class ContactsAccessPublic {
                         }).loadContact(context);
                     }
                 });
-
-            }
-        }).start();
-
-
         return false;
     }
 
