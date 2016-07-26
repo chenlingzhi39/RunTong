@@ -1,46 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <RelativeLayout
+        android:id="@+id/relative"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
         android:background="?attr/selectableItemBackground"
-        android:id="@+id/relative">
+        android:padding="20dp">
 
 
         <LinearLayout
+            android:id="@+id/change_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:orientation="vertical"
-            android:id="@+id/change_number">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:hint="@string/input_number"
                 android:text="156-5698-8945"
-                android:textSize="20sp"
-                android:hint="@string/input_number" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="账户绑定号码(江苏移动)"
-                />
+                android:hint="账户绑定号码(江苏移动)" />
         </LinearLayout>
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:src="@drawable/contacts"
             android:layout_centerVertical="true"
-            android:visibility="gone"
-            />
+            android:src="@drawable/contacts"
+            android:id="@+id/contacts"
+            android:clickable="true"/>
     </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/shape_line" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/flow_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"/>
+   <!-- <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/price1"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/flow_button"
+                android:button="@null"
+                android:checked="true"
+                android:gravity="center"
+                android:text="100M"
+                android:textColor="@drawable/price_text_selector"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/price2"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/flow_button"
+                android:button="@null"
+                android:gravity="center"
+                android:text="100M"
+                android:textColor="@drawable/price_text_selector"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/price3"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/flow_button"
+                android:button="@null"
+                android:gravity="center"
+                android:text="100M"
+                android:textColor="@drawable/price_text_selector"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/price4"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/flow_button"
+                android:button="@null"
+                android:gravity="center"
+                android:text="100M"
+                android:textColor="@drawable/price_text_selector"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/price5"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/flow_button"
+                android:button="@null"
+                android:gravity="center"
+                android:text="100M"
+                android:textColor="@drawable/price_text_selector"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/price6"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@drawable/flow_button"
+                android:button="@null"
+                android:gravity="center"
+                android:text="100M"
+                android:textColor="@drawable/price_text_selector"
+                android:textSize="20sp" />
+        </LinearLayout>
+    </RadioGroup>
+-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="流量包"
+        android:padding="10dp"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/flow_name"/>
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dp"
@@ -48,66 +167,98 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="20dp"
         android:orientation="horizontal"
-        android:padding="20dp">
-        <Button
-            android:layout_width="wrap_content"
+        android:gravity="center_vertical">
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_button"
-            android:text="100M"
-            android:textSize="20sp"
-            android:textColor="?attr/colorAccent"
-            android:layout_weight="1"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_button"
-            android:text="200M"
-            android:textSize="20sp"
-            android:textColor="?attr/colorAccent"
             android:layout_weight="1"
-            android:layout_marginLeft="20dp"/>
-        <Button
+            android:orientation="vertical">
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="24元"
+            android:id="@+id/now_price_local"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="30元"
+                android:layout_marginLeft="20dp"
+                android:id="@+id/past_price_local"/>
+        </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="本地可用，即时生效，当月有效，不支持4G用户，每月限充5次"
+                android:layout_marginTop="10dp"/>
+        </LinearLayout>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:background="@drawable/bg_button"
-            android:text="300M"
-            android:textSize="20sp"
-            android:textColor="?attr/colorAccent"
-            android:layout_weight="1"
+            android:text="充值"
+            android:textColor="@color/orange"
             android:layout_marginLeft="20dp"/>
     </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/shape_line"
+        android:layout_marginLeft="20dp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="20dp"
         android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
-        <Button
-            android:layout_width="wrap_content"
+        android:gravity="center_vertical">
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_button"
-            android:text="500M"
-            android:textSize="20sp"
-            android:textColor="?attr/colorAccent"
-            android:layout_weight="1"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_button"
-            android:text="1000M"
-            android:textSize="20sp"
-            android:textColor="?attr/colorAccent"
             android:layout_weight="1"
-            android:layout_marginLeft="20dp"/>
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="24元"
+                    android:id="@+id/now_price_nation"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="30元"
+                    android:layout_marginLeft="20dp"
+                    android:id="@+id/past_price_nation"/>
+            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="全国可用，即时生效，当月有效，每月限冲5次"
+                android:layout_marginTop="10dp"/>
+        </LinearLayout>
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:background="@drawable/bg_button"
-            android:text="2000M"
-            android:textSize="20sp"
-            android:textColor="?attr/colorAccent"
-            android:layout_weight="1"
+            android:text="充值"
+            android:textColor="@color/orange"
             android:layout_marginLeft="20dp"/>
     </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/shape_line" />
 </LinearLayout>

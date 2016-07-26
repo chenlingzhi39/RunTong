@@ -116,7 +116,7 @@
             android:name=".phone.activity.contact.ContactDetailActivity2"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/DetailTheme" />
+            android:theme="@style/DetailTheme.AppTheme" />
         <activity
             android:name=".phone.activity.EditActivity"
             android:launchMode="singleTop"

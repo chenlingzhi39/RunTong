@@ -260,6 +260,10 @@ public interface Interfaces {
 	 * 提现
 	 */
 	String TX="http://inter.boboit.cn/inter/tx/tx.jsp";
+	/**
+	 * 流量卡充值
+	 */
+	String FLOW_CARD="http://inter.boboit.cn/inter/pay/pay_card_flow.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

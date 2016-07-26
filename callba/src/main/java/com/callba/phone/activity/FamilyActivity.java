@@ -54,6 +54,7 @@ public class FamilyActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
+        if(!UserManager.getUserAvatar(this).equals(""))
         Glide.with(this).load(UserManager.getUserAvatar(this)).into(avatar);
         name.setText(getUsername());
     }

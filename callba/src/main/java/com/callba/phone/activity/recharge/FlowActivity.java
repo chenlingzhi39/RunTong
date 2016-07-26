@@ -82,7 +82,7 @@ public class FlowActivity extends BaseActivity {
                     return NumberFragment2.newInstance();
 
                 case 1:
-                    return TestFragment.newInstance();
+                    return StraightFragment2.newInstance();
 
                 default:
                     return null;

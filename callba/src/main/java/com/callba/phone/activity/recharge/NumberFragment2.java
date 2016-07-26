@@ -28,7 +28,10 @@ import com.callba.phone.BaseFragment;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.service.AddressService;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.NumberAddressService;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -36,6 +39,8 @@ import java.util.TimerTask;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.Request;
 
 /**
  * Created by PC-20160514 on 2016/7/25.
@@ -62,7 +67,30 @@ public class NumberFragment2 extends BaseFragment {
         ButterKnife.inject(this, fragmentRootView);
         number.setText(getUsername());
         query(getUsername());
+        card.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+
+            private void hideKeyboard(View v) {
+                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm.isActive()) {
+                    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+                }
+            }
+        });
+        card.requestFocus();
+        Timer timer = new Timer(); //设置定时器
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() { //弹出软键盘的代码
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInputFromWindow(card.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }, 300); //设置300毫秒的时长
     }
     public static NumberFragment2 newInstance() {
         NumberFragment2 numberFragment = new NumberFragment2();
@@ -80,12 +108,13 @@ public class NumberFragment2 extends BaseFragment {
                   getActivity().runOnUiThread(new Runnable() {
                       @Override
                       public void run() {
-                          tv_address.setHint(address);
+                          if(address.equals("没有此号码记录"))
+                              tv_address.setHint(address);
+                         else {String[] result=address.split(" ");
+                              tv_address.setHint(result[2]);}
                           progressDialog.dismiss();
                       }
                   });
-
-
               } catch (Exception e) {
                   // TODO Auto-generated catch block
                   e.printStackTrace();
@@ -93,6 +122,7 @@ public class NumberFragment2 extends BaseFragment {
                       @Override
                       public void run() {
                           Toast.makeText(getActivity(),"查询归属地失败", 1).show();
+                          tv_address.setHint("");
                           progressDialog.dismiss();
                       }
                   });
@@ -100,6 +130,7 @@ public class NumberFragment2 extends BaseFragment {
               }
           }
       }).start();
+
   }
     @Override
     protected void lazyLoad() {
@@ -133,6 +164,32 @@ public class NumberFragment2 extends BaseFragment {
                 showDialog();
                 break;
             case R.id.recharge:
+                OkHttpUtils.post()
+                    .url(Interfaces.FLOW_CARD)
+                    .addParams("loginName", getUsername())
+                    .addParams("loginPwd",  getPassword())
+                    .addParams("cardNumber",card.getText().toString())
+                    .build().execute(new StringCallback() {
+                    @Override
+                    public void onAfter(int id) {
+                        progressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onBefore(Request request, int id) {
+                        progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.on_recharge));
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                   Toast.makeText(getActivity(),R.string.network_error,Toast.LENGTH_SHORT).show();
+                    }
+                    @Override
+                    public void onResponse(String response, int id) {
+                      String[] results=response.split("\\|");
+                        toast(results[1]);
+                    }
+                });
                 break;
         }
     }

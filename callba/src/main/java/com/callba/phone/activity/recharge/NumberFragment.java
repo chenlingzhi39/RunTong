@@ -91,6 +91,15 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
                 }
             }
         });
+        card.requestFocus();
+        Timer timer = new Timer(); //设置定时器
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() { //弹出软键盘的代码
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInputFromWindow(card.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }, 300); //设置300毫秒的时长
     }
 
     @Override

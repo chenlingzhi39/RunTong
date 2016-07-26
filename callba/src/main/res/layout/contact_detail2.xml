@@ -30,7 +30,8 @@
                 android:background="@drawable/center_background_pic"
                 android:scaleType="centerCrop"
                 android:fitsSystemWindows="true"
-                app:layout_collapseMode="parallax" />
+                app:layout_collapseMode="parallax"
+                android:transitionName="photos"/>
             <View
                 android:id="@+id/shadow"
                 android:layout_width="match_parent"
