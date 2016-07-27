@@ -76,7 +76,7 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
         tv_address.setHint(address);
         userDao = new UserDao(getActivity(), this);
 
-        card.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+       /* card.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
@@ -90,7 +90,7 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
                     imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
                 }
             }
-        });
+        });*/
         card.requestFocus();
         Timer timer = new Timer(); //设置定时器
         timer.schedule(new TimerTask() {

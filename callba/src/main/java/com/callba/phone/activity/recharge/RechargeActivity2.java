@@ -98,5 +98,4 @@ public class RechargeActivity2 extends BaseActivity{
         }
     }
 
-
 }

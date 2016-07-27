@@ -121,7 +121,7 @@ public class ContactListAdapter extends BaseAdapter {
 
 	static class ViewHolder_Item {
 		TextView tvDisplayName;
-		CircleImageView avatar;
+		ImageView avatar;
 	}
 }
  

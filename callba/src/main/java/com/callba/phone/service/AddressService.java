@@ -16,8 +16,7 @@ import java.net.URL;
 
 public class AddressService {
 
-	/**
-	 * 获取手机号的归属地
+	/*** 获取手机号的归属地
 	 * @param mobile
 	 * @return
 	 * @throws Exception

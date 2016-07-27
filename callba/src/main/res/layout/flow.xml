@@ -30,8 +30,7 @@
             <TextView
                 android:id="@+id/address"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="账户绑定号码(江苏移动)" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <ImageView
@@ -48,6 +47,12 @@
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="@drawable/shape_line" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/content"
+        android:visibility="gone">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/flow_list"
         android:layout_width="match_parent"
@@ -169,7 +174,8 @@
         android:layout_height="wrap_content"
         android:padding="20dp"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:visibility="gone">
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -212,7 +218,8 @@
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="@drawable/shape_line"
-        android:layout_marginLeft="20dp"/>
+        android:layout_marginLeft="20dp"
+        android:visibility="gone"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -244,7 +251,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="全国可用，即时生效，当月有效，每月限冲5次"
+                android:hint="全国可用，即时生效，当月有效"
                 android:layout_marginTop="10dp"/>
         </LinearLayout>
         <Button
@@ -261,4 +268,5 @@
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="@drawable/shape_line" />
+    </LinearLayout>
 </LinearLayout>

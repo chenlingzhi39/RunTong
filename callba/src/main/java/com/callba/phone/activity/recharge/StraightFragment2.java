@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,9 +29,9 @@ import com.callba.phone.adapter.RadioAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Flow;
 import com.callba.phone.service.AddressService;
+import com.callba.phone.util.Logger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -64,6 +65,8 @@ public class StraightFragment2 extends BaseFragment {
     TextView nowPriceNation;
     @InjectView(R.id.past_price_nation)
     TextView pastPriceNation;
+    @InjectView(R.id.content)
+    LinearLayout content;
 
 
     public static StraightFragment2 newInstance() {
@@ -74,7 +77,7 @@ public class StraightFragment2 extends BaseFragment {
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
-        final List<Flow> flows =new ArrayList<>();
+      /*  final List<Flow> flows =new ArrayList<>();
         flows.add(new Flow("100M","7.50","9.50","10.0","10.0"));
         flows.add(new Flow("200M","16.00","19.0","20.0","20.0"));
         flows.add(new Flow("300M","16.00","19.0","20.0","20.0"));
@@ -86,28 +89,28 @@ public class StraightFragment2 extends BaseFragment {
         pastPriceLocal.setHint(flows.get(0).getPast_price_local()+"元");
         nowPriceNation.setText(flows.get(0).getNow_price_nation()+"元");
         pastPriceNation.setHint(flows.get(0).getPast_price_nation()+"元");
-        flowAdapter = new FlowAdapter(getActivity(), flows);
+        flowAdapter = new FlowAdapter(getActivity(), flows);*/
         flowList.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-        flowList.setAdapter(flowAdapter);
+        // flowList.setAdapter(flowAdapter);
         number.setText(getUsername());
         query(getUsername());
-        flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
+        /*flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
             @Override
             public void onClick(int position) {
-                flowName.setText(flows.get(position).getName() + "流量包");
                 flowName.setText(flows.get(position).getName() + "流量包");
                 nowPriceLocal.setText(flows.get(position).getNow_price_local()+"元");
                 pastPriceLocal.setHint(flows.get(position).getPast_price_local()+"元");
                 nowPriceNation.setText(flows.get(position).getNow_price_nation()+"元");
                 pastPriceNation.setHint(flows.get(position).getPast_price_nation()+"元");
             }
-        });
+        });*/
         pastPriceLocal.getPaint().setAntiAlias(true);//抗锯齿
         pastPriceLocal.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
         pastPriceLocal.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         pastPriceNation.getPaint().setAntiAlias(true);//抗锯齿
         pastPriceNation.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
         pastPriceNation.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+
     }
 
     @Override
@@ -218,11 +221,48 @@ public class StraightFragment2 extends BaseFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            Logger.i("address",address);
                             if (address.equals("没有此号码记录"))
-                                tv_address.setHint(address);
+                            { tv_address.setHint(address);
+                            content.setVisibility(View.GONE);}
                             else {
                                 String[] result = address.split(" ");
                                 tv_address.setHint(result[2]);
+                                final List<Flow> flows = new ArrayList<>();
+                                if (result[2].contains("移动")) {
+                                    flows.add(new Flow("500M", "22.50", "28.50", "30.0", "30.0"));
+                                    flows.add(new Flow("1000M", "37.50", "48.0", "50.0", "50.0"));
+                                    flows.add(new Flow("2000M", "55.00", "66.0", "70.0", "70.0"));
+
+                                }
+                                if (result[2].contains("联通")) {
+                                    flows.add(new Flow("500M", "22.50", "30.0", "30.0", "30.0"));
+                                }
+                                if (result[2].contains("电信")) {
+                                    flows.add(new Flow("500M", "22.50", "28.50", "30.0", "30.0"));
+                                    flows.add(new Flow("1000M", "37.50", "47.50", "50.0", "50.0"));
+                                }
+                                flowName.setText(flows.get(0).getName() + "流量包");
+                                nowPriceNation.setText(flows.get(0).getNow_price_nation() + "元");
+                                pastPriceNation.setHint(flows.get(0).getPast_price_nation() + "元");
+                                if(flows.get(0).getNow_price_nation().equals(flows.get(0).getPast_price_nation()))
+                                    pastPriceNation.setVisibility(View.GONE);
+                                flowAdapter = new FlowAdapter(getActivity(), flows);
+                                flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
+                                    @Override
+                                    public void onClick(int position) {
+                                        flowName.setText(flows.get(position).getName() + "流量包");
+                                        nowPriceLocal.setText(flows.get(position).getNow_price_local() + "元");
+                                        pastPriceLocal.setHint(flows.get(position).getPast_price_local() + "元");
+                                        nowPriceNation.setText(flows.get(position).getNow_price_nation() + "元");
+                                        pastPriceNation.setHint(flows.get(position).getPast_price_nation() + "元");
+                                        if(flows.get(position).getNow_price_nation().equals(flows.get(position).getPast_price_nation()))
+                                            pastPriceNation.setVisibility(View.GONE);
+                                        else    pastPriceNation.setVisibility(View.VISIBLE);
+                                    }
+                                });
+                                flowList.setAdapter(flowAdapter);
+                                content.setVisibility(View.VISIBLE);
                             }
                             progressDialog.dismiss();
                         }
@@ -236,6 +276,7 @@ public class StraightFragment2 extends BaseFragment {
                             Toast.makeText(getActivity(), "查询归属地失败", 1).show();
                             tv_address.setHint("");
                             progressDialog.dismiss();
+                            content.setVisibility(View.GONE);
                         }
                     });
 
@@ -263,7 +304,6 @@ public class StraightFragment2 extends BaseFragment {
                 if (phone_number.length() > 10) {
                     number.setText(phone_number);
                     query(phone_number);
-
                 } else
                     toast("请选择手机号!");
                 break;

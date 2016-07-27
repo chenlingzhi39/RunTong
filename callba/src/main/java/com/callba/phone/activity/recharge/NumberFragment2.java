@@ -67,7 +67,7 @@ public class NumberFragment2 extends BaseFragment {
         ButterKnife.inject(this, fragmentRootView);
         number.setText(getUsername());
         query(getUsername());
-        card.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+    /*    card.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
@@ -81,7 +81,7 @@ public class NumberFragment2 extends BaseFragment {
                     imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
                 }
             }
-        });
+        });*/
         card.requestFocus();
         Timer timer = new Timer(); //设置定时器
         timer.schedule(new TimerTask() {

@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -38,6 +39,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by PC-20160514 on 2016/6/21.
@@ -56,7 +58,6 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
     LinearLayout tabContactLl;
     @InjectView(R.id.progressBar)
     ProgressBar progressBar;
-
     private ContactPersonEntity contact;
     private List<ContactEntity> mContactListData; // 填充ListView的数据
     private ContactListAdapter mContactListAdapter;    //联系人适配器
@@ -139,11 +140,15 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         Intent intent = new Intent(getActivity(), ContactDetailActivity2.class);
         contactMutliNumBean.setAvatar(null);
         intent.putExtra("contact", contactMutliNumBean);
-      /*  if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            ActivityOptionsCompat options=  ActivityOptionsCompat
+      /*  if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {try {
+            ActivityOptions options=  ActivityOptions
                     .makeSceneTransitionAnimation(getActivity(),
-                            view.findViewById(R.id.avatar), "photos");
-            ActivityCompat.startActivity(getActivity(),intent, options.toBundle());
+                          view.findViewById(R.id.avatar), "photo");
+            getActivity().startActivity(intent, options.toBundle());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         } else {
             //让新的Activity从一个小的范围扩大到全屏
             ActivityOptionsCompat options = ActivityOptionsCompat
@@ -151,7 +156,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
                             view.getHeight() / 2, 0, 0);
             ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
         }*/
-        startActivity(intent);
+       startActivity(intent);
     }
 
     @Override
