@@ -49,7 +49,6 @@ import okhttp3.Call;
         menuId = R.menu.menu_add_contact
 )
 public class AddContactActivity extends BaseActivity {
-
     @InjectView(R.id.edit_note)
     EditText editText;
     @InjectView(R.id.avatar)

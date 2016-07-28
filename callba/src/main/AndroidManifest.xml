@@ -330,14 +330,12 @@
             android:name="com.callba.phone.activity.recharge.FlowActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan" />
+            android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name="com.callba.phone.activity.recharge.RechargeActivity2"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan" />
+            android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.activity.HomeActivity"
             android:launchMode="singleTop"

@@ -25,7 +25,10 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseFragment;
+import com.callba.phone.adapter.FlowAdapter;
+import com.callba.phone.adapter.RadioAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.bean.Flow;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.service.AddressService;
 import com.callba.phone.util.Interfaces;
@@ -33,6 +36,11 @@ import com.callba.phone.util.NumberAddressService;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -82,7 +90,7 @@ public class NumberFragment2 extends BaseFragment {
                 }
             }
         });*/
-        card.requestFocus();
+       /* card.requestFocus();
         Timer timer = new Timer(); //设置定时器
         timer.schedule(new TimerTask() {
             @Override
@@ -90,7 +98,7 @@ public class NumberFragment2 extends BaseFragment {
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInputFromWindow(card.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
             }
-        }, 300); //设置300毫秒的时长
+        }, 300); //设置300毫秒的时长*/
     }
     public static NumberFragment2 newInstance() {
         NumberFragment2 numberFragment = new NumberFragment2();
@@ -98,7 +106,46 @@ public class NumberFragment2 extends BaseFragment {
     }
 
   public void query(final String number){
-      progressDialog=ProgressDialog.show(getActivity(),"","正在查询归属地");
+      OkHttpUtils.get().url("http://apis.juhe.cn/mobile/get")
+              .addParams("phone",number)
+              .addParams("key","1dfd68c50bbf3f58755f1d537fe817a4")
+              .build().execute(new StringCallback() {
+          @Override
+          public void onBefore(Request request, int id) {
+              progressDialog = ProgressDialog.show(getActivity(), "", "正在查询归属地");
+          }
+
+          @Override
+          public void onAfter(int id) {
+              progressDialog.dismiss();
+          }
+
+          @Override
+          public void onError(Call call, Exception e, int id) {
+              Toast.makeText(getActivity(), "查询归属地失败", 1).show();
+              tv_address.setHint("");
+          }
+
+          @Override
+          public void onResponse(String response, int id) {
+              try {
+                  JSONObject jsonObject=new JSONObject(response);
+                  if(jsonObject.getString("resultcode").equals("200")){
+                      JSONObject result=new JSONObject(jsonObject.getString("result"));
+                      String address=result.getString("company");
+                      tv_address.setHint(address);
+
+                  }
+              }catch (JSONException e){
+                  e.printStackTrace();
+                  Toast.makeText(getActivity(), "查询归属地失败", 1).show();
+                  tv_address.setHint("");
+
+              }
+
+          }
+      });
+    /*  progressDialog=ProgressDialog.show(getActivity(),"","正在查询归属地");
       new Thread(new Runnable() {
           @Override
           public void run() {
@@ -130,7 +177,7 @@ public class NumberFragment2 extends BaseFragment {
               }
           }
       }).start();
-
+*/
   }
     @Override
     protected void lazyLoad() {

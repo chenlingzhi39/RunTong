@@ -262,7 +262,8 @@
             android:background="@drawable/bg_button"
             android:text="充值"
             android:textColor="@color/orange"
-            android:layout_marginLeft="20dp"/>
+            android:layout_marginLeft="20dp"
+            android:id="@+id/recharge"/>
     </LinearLayout>
     <View
         android:layout_width="fill_parent"

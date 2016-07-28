@@ -66,12 +66,8 @@ public class CallbackDisplayActivity extends BaseActivity {
     private TextView tv_num;
     private TextView tv_status;
     private CalllogService calllogService;
-    private ImageView iv_ad;
-    private BitmapUtils bitmapUtils;
     private Button cancel;
-    private BitmapDisplayConfig bigPicDisplayConfig;
     private MediaPlayer mp;
-    private CircleImageView circleImageView;
     private UserDao userDao;
     private Gson gson;
     private DialAd dialAd;

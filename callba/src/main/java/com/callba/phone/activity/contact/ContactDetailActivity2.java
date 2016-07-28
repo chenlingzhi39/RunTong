@@ -97,7 +97,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
     private CollapsingToolbarLayout.LayoutParams lp;
     private CoordinatorLayout.LayoutParams lp1;
     SimpleFragmentPagerAdapter simpleFragmentPagerAdapter;
-    private int index;
+    private int index=1;
     public enum State {
         EXPANDED,
         COLLAPSED,
@@ -144,6 +144,7 @@ public class ContactDetailActivity2 extends AppCompatActivity {
         simpleFragmentPagerAdapter=new SimpleFragmentPagerAdapter(getSupportFragmentManager(),this);
         viewpager.setAdapter(simpleFragmentPagerAdapter);
         tabs.setupWithViewPager(viewpager);
+        viewpager.setCurrentItem(index);
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

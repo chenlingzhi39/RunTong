@@ -3,6 +3,7 @@ package com.callba.phone.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -10,7 +11,6 @@ import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.UserManager;
 
 import butterknife.ButterKnife;
@@ -54,14 +54,15 @@ public class FamilyActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
-        if(!UserManager.getUserAvatar(this).equals(""))
-        Glide.with(this).load(UserManager.getUserAvatar(this)).into(avatar);
+        if (!UserManager.getUserAvatar(this).equals(""))
+            Glide.with(this).load(UserManager.getUserAvatar(this)).into(avatar);
         name.setText(getUsername());
+
     }
 
     @Override
     protected void onResume() {
-        myCommission.setText("我的佣金:"+ UserManager.getCommission(this));
+        myCommission.setText(UserManager.getCommission(this));
         super.onResume();
     }
 
@@ -74,25 +75,25 @@ public class FamilyActivity extends BaseActivity {
 
                 break;
             case R.id.get_commission:
-                startActivity(new Intent(this,TXActivity.class));
+                startActivity(new Intent(this, TXActivity.class));
                 break;
             case R.id.btn_commission:
-                startActivity(new Intent(this,TXRecordActivity.class));
+                startActivity(new Intent(this, TXRecordActivity.class));
                 break;
             case R.id.order:
-                startActivity(new Intent(this,OrderActivity.class));
+                startActivity(new Intent(this, OrderActivity.class));
                 break;
             case R.id.commission_detail:
-                startActivity(new Intent(this,ProfitActivity.class));
+                startActivity(new Intent(this, ProfitActivity.class));
                 break;
             case R.id.team:
-                startActivity(new Intent(this,TeamActivity.class));
+                startActivity(new Intent(this, TeamActivity.class));
                 break;
             case R.id.type:
-                startActivity(new Intent(this,ATypeActivity.class));
+                startActivity(new Intent(this, ATypeActivity.class));
                 break;
             case R.id.qr_code:
-                startActivity(new Intent(this,ImageQRActivity.class));
+                startActivity(new Intent(this, ImageQRActivity.class));
                 break;
         }
     }

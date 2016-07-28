@@ -264,6 +264,10 @@ public interface Interfaces {
 	 * 流量卡充值
 	 */
 	String FLOW_CARD="http://inter.boboit.cn/inter/pay/pay_card_flow.jsp";
+	/**
+	 * 流量包订单
+	 */
+	String FLOW_ORDER="http://inter.boboit.cn/inter/pay/pay_flow_online_order.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;
