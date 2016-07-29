@@ -10,7 +10,7 @@ public class Team implements Serializable{
     private String nickname;
     private String inTime;
     private String title;
-
+    private String phoneNumber;
     public String getInTime() {
         return inTime;
     }
@@ -41,5 +41,13 @@ public class Team implements Serializable{
 
     public void setUrl_head(String url_head) {
         this.url_head = url_head;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

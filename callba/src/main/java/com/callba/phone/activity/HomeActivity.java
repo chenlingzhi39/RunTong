@@ -71,8 +71,6 @@ import butterknife.OnClick;
 public class HomeActivity extends BaseActivity {
     @InjectView(R.id.recharge)
     TextView recharge;
-    @InjectView(R.id.search)
-    TextView search;
     @InjectView(R.id.mall)
     TextView mall;
     @InjectView(R.id.flow)
@@ -323,11 +321,11 @@ public class HomeActivity extends BaseActivity {
                 }
             }
 
-
+     progressDialog.dismiss();
         }
     }
 
-    @OnClick({R.id.recharge, R.id.search, R.id.sale, R.id.mall, R.id.flow, R.id.family, R.id.game, R.id.sign_in})
+    @OnClick({R.id.recharge, R.id.discount, R.id.sale, R.id.mall, R.id.flow, R.id.family, R.id.game, R.id.sign_in})
     public void onClick(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -335,11 +333,11 @@ public class HomeActivity extends BaseActivity {
                 intent = new Intent(HomeActivity.this, RechargeActivity2.class);
                 startActivity(intent);
                 break;
-            case R.id.search:
+            case R.id.discount:
                 Log.i("home", "search_yue");
                 //queryUserBalance();
-                intent=new Intent(HomeActivity.this,AccountActivity.class);
-                startActivity(intent);
+              /*  intent=new Intent(HomeActivity.this,AccountActivity.class);
+                startActivity(intent);*/
                 break;
             case R.id.sale:
                 toast("暂未开放");
@@ -395,11 +393,12 @@ public class HomeActivity extends BaseActivity {
         public void recharge() {
             Intent intent = new Intent(HomeActivity.this, RechargeActivity2.class);
             startActivity(intent);
+            mDialog.dismiss();
         }
 
         @OnClick(R.id.exchange)
         public void exchange() {
-
+            mDialog.dismiss();
         }
 
         public View getView() {
@@ -430,6 +429,7 @@ public class HomeActivity extends BaseActivity {
      * 查询用户余额
      */
     private void queryUserBalance() {
+        progressDialog=ProgressDialog.show(this,"","正在查询余额");
         Task task = new Task(Task.TASK_GET_USER_BALANCE);
         Map<String, Object> taskParams = new HashMap<String, Object>();
         taskParams.put("loginName", UserManager

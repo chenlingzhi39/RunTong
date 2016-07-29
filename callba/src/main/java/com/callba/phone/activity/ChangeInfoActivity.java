@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.Selection;
 import android.util.Log;
 import android.view.MenuItem;
@@ -271,6 +272,7 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         public DialogHelper(int id) {
             mView = getLayoutInflater().inflate(id, null);
             change = (EditText) mView.findViewById(R.id.et_change);
+            change.setInputType(InputType.TYPE_CLASS_TEXT);
             change.requestFocus();
             Timer timer = new Timer(); //设置定时器
             timer.schedule(new TimerTask() {

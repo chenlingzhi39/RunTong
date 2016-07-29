@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.BaseFragment;
@@ -15,7 +15,6 @@ import com.callba.phone.adapter.CalllogAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.CalldaCalllogBean;
-import com.callba.phone.bean.ContactData;
 import com.callba.phone.logic.contact.ContactEntity;
 import com.callba.phone.service.CalllogService;
 import com.callba.phone.util.Logger;
@@ -41,34 +40,39 @@ public class CalllogFragment extends BaseFragment {
     ArrayList<CalldaCalllogBean> beans;
     CalllogService calllogService;
     CalllogAdapter calllogAdapter;
+    @InjectView(R.id.text)
+    TextView text;
 
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
-        calllogService=new CalllogService(getActivity(), new CalllogService.CalldaCalllogListener() {
+        calllogService = new CalllogService(getActivity(), new CalllogService.CalldaCalllogListener() {
             @Override
             public void onQueryCompleted(final List<CalldaCalllogBean> calldaCalllogBeans) {
-                if(calldaCalllogBeans.size()>0)
-                {  List<String> numbers=((ContactMutliNumBean)getArguments().get("contact")).getContactPhones();
-                    ArrayList<CalldaCalllogBean> beans=new ArrayList<>();
-                    for(CalldaCalllogBean bean:calldaCalllogBeans){
-                         if(numbers.contains(bean.getCallLogNumber()))
-                             beans.add(bean);
+                if (calldaCalllogBeans.size() > 0) {
+                    List<String> numbers = ((ContactMutliNumBean) getArguments().get("contact")).getContactPhones();
+                    ArrayList<CalldaCalllogBean> beans = new ArrayList<>();
+                    for (CalldaCalllogBean bean : calldaCalllogBeans) {
+                        if (numbers.contains(bean.getCallLogNumber()))
+                            beans.add(bean);
                     }
-                calllogAdapter=new CalllogAdapter(getActivity());
-                calllogAdapter.addAll(sortByDate(beans));
-                calllogList.setAdapter(calllogAdapter);
-                calllogList.addItemDecoration(new DividerItemDecoration(
-                        getActivity(), DividerItemDecoration.VERTICAL_LIST));
-                calllogAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(int position) {
-                        Intent intent=new Intent(getActivity(), SelectDialPopupWindow.class);
-                        intent.putExtra("name",calllogAdapter.getData().get(position).getDisplayName());
-                        intent.putExtra("number",calllogAdapter.getData().get(position).getCallLogNumber());
-                        startActivity(intent);
-                    }
-                });
+                    calllogAdapter = new CalllogAdapter(getActivity());
+                    calllogAdapter.addAll(sortByDate(beans));
+                    calllogList.setAdapter(calllogAdapter);
+                    calllogList.addItemDecoration(new DividerItemDecoration(
+                            getActivity(), DividerItemDecoration.VERTICAL_LIST));
+                    calllogAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(int position) {
+                            Intent intent = new Intent(getActivity(), SelectDialPopupWindow.class);
+                            intent.putExtra("name", calllogAdapter.getData().get(position).getDisplayName());
+                            intent.putExtra("number", calllogAdapter.getData().get(position).getCallLogNumber());
+                            startActivity(intent);
+                        }
+                    });
+                    if(beans.size()==0)text.setVisibility(View.VISIBLE);
+                } else {
+
                 }
             }
 
@@ -77,7 +81,7 @@ public class CalllogFragment extends BaseFragment {
 
             }
         });
-     calllogService.startQueryCallLog();
+        calllogService.startQueryCallLog();
     }
 
     @Override
@@ -90,23 +94,32 @@ public class CalllogFragment extends BaseFragment {
         super.onDestroyView();
         ButterKnife.reset(this);
     }
-    public ArrayList<CalldaCalllogBean> sortByDate(ArrayList<CalldaCalllogBean> beans){
-        ArrayList<CalldaCalllogBean> calllogBeens=new ArrayList<>();
-        SimpleDateFormat dateFormat=new SimpleDateFormat("yyyyMMdd");
-        String date="";
-        for(CalldaCalllogBean bean:beans){
-            if(date.equals("")||!dateFormat.format(new Date(bean.getCallLogTime())).equals(date)){
-                CalldaCalllogBean calllogBean=new CalldaCalllogBean();
+
+    public ArrayList<CalldaCalllogBean> sortByDate(ArrayList<CalldaCalllogBean> beans) {
+        ArrayList<CalldaCalllogBean> calllogBeens = new ArrayList<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        String date = "";
+        for (CalldaCalllogBean bean : beans) {
+            if (date.equals("") || !dateFormat.format(new Date(bean.getCallLogTime())).equals(date)) {
+                CalldaCalllogBean calllogBean = new CalldaCalllogBean();
                 calllogBean.setIndex(ContactEntity.CONTACT_TYPE_INDEX);
                 calllogBean.setCallLogTime(bean.getCallLogTime());
                 calllogBeens.add(calllogBean);
                 calllogBeens.add(bean);
-                date=dateFormat.format(new Date(bean.getCallLogTime()));
-            }else
-               calllogBeens.add(bean);
+                date = dateFormat.format(new Date(bean.getCallLogTime()));
+            } else
+                calllogBeens.add(bean);
 
 
         }
         return calllogBeens;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        ButterKnife.inject(this, rootView);
+        return rootView;
     }
 }

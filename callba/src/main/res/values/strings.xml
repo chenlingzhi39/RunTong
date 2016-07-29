@@ -19,6 +19,7 @@
     <string name="recharge2">立即充值</string>
     <string name="input_card">请输入充值卡密码</string>
     <string name="input_number">请输入手机号码</string>
+    <string name="input_money">请输入兑换金额</string>
     <string name="bind_number">账户绑定号码</string>
     <string name="on_recharge">正在充值</string>
     <string name="recharge_failure">充值失败</string>
@@ -26,6 +27,7 @@
     <string name="recharge1">充值</string>
     <string name="exchange">兑换</string>
     <string name="search_yue">查询余额</string>
+    <string name="discount">优惠卡券</string>
     <string name="user">帐号</string>
     <string name="balance">话费余额</string>
     <string name="gold">金币</string>

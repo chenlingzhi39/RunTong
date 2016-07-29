@@ -9,5 +9,6 @@
     android:layout_height="wrap_content"
     android:id="@+id/et_change"
     android:singleLine="true"
-    android:maxLength="20"/>
+    android:maxLength="20"
+    android:inputType="number"/>
 </LinearLayout>

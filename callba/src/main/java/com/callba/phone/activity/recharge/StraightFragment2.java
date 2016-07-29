@@ -225,6 +225,7 @@ public class StraightFragment2 extends BaseFragment {
                 showDialog();
                 break;
             case R.id.recharge:
+                Logger.i("flow_url",Interfaces.FLOW_ORDER+"?loginName="+getUsername()+"&phoneNumber="+number.getText().toString()+"&loginPwd="+getPassword()+"&flowValue="+flowValue+"&softType=android&payMethod=0");
                 OkHttpUtils.post().url(Interfaces.FLOW_ORDER)
                         .addParams("loginName",getUsername())
                         .addParams("phoneNumber",number.getText().toString())
@@ -360,8 +361,8 @@ public class StraightFragment2 extends BaseFragment {
                             tv_address.setHint(address);
                             final List<Flow> flows = new ArrayList<>();
                             if (address.contains("移动")) {
-                                flows.add(new Flow("500M", "22.50", "28.50", "30.0", "30.0"));
-                                flows.add(new Flow("1000M", "37.50", "48.0", "50.0", "50.0"));
+                                flows.add(new Flow("500M", "22.50", "28.0", "30.0", "30.0"));
+                                flows.add(new Flow("1000M", "37.50", "47.0", "50.0", "50.0"));
                                 flows.add(new Flow("2000M", "55.00", "66.0", "70.0", "70.0"));
 
                             }

@@ -4,9 +4,20 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 <android.support.v7.widget.RecyclerView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/calllog_list"
     app:layoutManager="LinearLayoutManager"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text"
+        android:text="没有通话记录"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+    </FrameLayout>
 </LinearLayout>

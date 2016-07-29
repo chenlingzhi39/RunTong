@@ -89,10 +89,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/search"
-            android:drawableTop="@drawable/search_yue"
+            android:id="@+id/discount"
+            android:drawableTop="@drawable/discount"
             android:layout_weight="1"
-            android:text="@string/search_yue"
+            android:text="@string/discount"
             android:drawablePadding="10dp"
             android:padding="10dp"
             android:gravity="center"
