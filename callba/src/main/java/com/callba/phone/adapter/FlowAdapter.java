@@ -17,6 +17,6 @@ public class FlowAdapter extends RadioAdapter<Flow>{
     @Override
     public void onBindViewHolder(RadioAdapter.ViewHolder viewHolder, int i) {
         super.onBindViewHolder(viewHolder, i);
-        viewHolder.mRadio.setText(mItems.get(i).getName());
+        viewHolder.mRadio.setText(mItems.get(i).getFlowValue());
     }
 }

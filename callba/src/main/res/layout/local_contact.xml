@@ -34,7 +34,6 @@
             android:drawSelectorOnTop="false"
             android:fadingEdge="none"
             android:fastScrollEnabled="false"
-            android:listSelector="@android:color/transparent"
             android:scrollbars="none"
             android:cacheColorHint="@android:color/transparent"/>
 

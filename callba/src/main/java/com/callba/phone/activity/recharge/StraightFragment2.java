@@ -21,7 +21,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -35,11 +36,12 @@ import com.callba.phone.adapter.RadioAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Flow;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.service.AddressService;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.PayResult;
 import com.callba.phone.util.SignUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -51,7 +53,6 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Timer;
@@ -77,7 +78,6 @@ public class StraightFragment2 extends BaseFragment {
     TextView tv_address;
     @InjectView(R.id.flow_list)
     RecyclerView flowList;
-    FlowAdapter flowAdapter;
     @InjectView(R.id.flow_name)
     TextView flowName;
     @InjectView(R.id.now_price_local)
@@ -90,9 +90,18 @@ public class StraightFragment2 extends BaseFragment {
     TextView pastPriceNation;
     @InjectView(R.id.content)
     LinearLayout content;
+    @InjectView(R.id.use_coupon)
+    CheckBox useCoupon;
+    @InjectView(R.id.coupon)
+    LinearLayout coupon;
     private String subject, body, price;
     private String outTradeNo;
     private String flowValue;
+    ArrayList<Flow> flows, seperateFlows;
+    private Gson gson;
+    FlowAdapter flowAdapter;
+    private String iid;
+    private boolean is_coupon;
     // 商户PID
     public static final String PARTNER = "2088221931971814";
     // 商户收款账号
@@ -162,20 +171,19 @@ public class StraightFragment2 extends BaseFragment {
         userDao = new UserDao(getActivity(), new UserDao.PostListener() {
             @Override
             public void start() {
-                progressDialog= ProgressDialog.show(getActivity(), null,
+                progressDialog = ProgressDialog.show(getActivity(), null,
                         "正在验证支付结果");
             }
 
             @Override
             public void success(String msg) {
                 progressDialog.dismiss();
-                String[] result=msg.split("\\|");
-                if(result[0].equals("0"))
-                {toast(result[1]);
+                String[] result = msg.split("\\|");
+                if (result[0].equals("0")) {
+                    toast(result[1]);
                /* getActivity().sendBroadcast(new Intent("com.callba.pay"));
                 getActivity().finish();*/
-                }
-                else if(result.length>1)toast(result[1]);
+                } else if (result.length > 1) toast(result[1]);
             }
 
             @Override
@@ -188,7 +196,7 @@ public class StraightFragment2 extends BaseFragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                userDao.pay(getUsername(), getPassword(),outTradeNo,"success");
+                                userDao.pay(getUsername(), getPassword(), outTradeNo, "success");
                             }
                         });
                 AlertDialog alertDialog = builder.create();
@@ -198,7 +206,16 @@ public class StraightFragment2 extends BaseFragment {
                 //toast("充值失败，请联系客服");
             }
         });
-        body="包月流量";
+        body = "包月流量";
+        gson = new Gson();
+        seperateFlows = new ArrayList<>();
+      useCoupon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+          @Override
+          public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+           is_coupon=isChecked;
+          }
+      });
+        Logger.i("iid",getArguments().getString("iid"));
     }
 
     @Override
@@ -212,7 +229,7 @@ public class StraightFragment2 extends BaseFragment {
         ButterKnife.reset(this);
     }
 
-    @OnClick({R.id.contacts, R.id.relative,R.id.recharge})
+    @OnClick({R.id.contacts, R.id.relative, R.id.recharge})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.contacts:
@@ -225,34 +242,70 @@ public class StraightFragment2 extends BaseFragment {
                 showDialog();
                 break;
             case R.id.recharge:
-                Logger.i("flow_url",Interfaces.FLOW_ORDER+"?loginName="+getUsername()+"&phoneNumber="+number.getText().toString()+"&loginPwd="+getPassword()+"&flowValue="+flowValue+"&softType=android&payMethod=0");
+                if(!is_coupon)
+                { Logger.i("flow_url", Interfaces.FLOW_ORDER + "?loginName=" + getUsername() + "&phoneNumber=" + number.getText().toString() + "&loginPwd=" + getPassword() + "&flowValue=" + flowValue + "&softType=android&payMethod=0");
                 OkHttpUtils.post().url(Interfaces.FLOW_ORDER)
-                        .addParams("loginName",getUsername())
-                        .addParams("phoneNumber",number.getText().toString())
-                        .addParams("loginPwd",getPassword())
-                        .addParams("flowValue",flowValue)
-                        .addParams("softType","android")
-                        .addParams("payMethod","0").build()
+                        .addParams("loginName", getUsername())
+                        .addParams("phoneNumber", number.getText().toString())
+                        .addParams("loginPwd", getPassword())
+                        .addParams("flowValue", flowValue)
+                        .addParams("softType", "android")
+                        .addParams("payMethod", "0")
+                        .addParams("iid",iid).build()
                         .execute(new StringCallback() {
                             @Override
                             public void onError(Call call, Exception e, int id) {
                                 e.printStackTrace();
-                                  toast(getString(R.string.network_error));
+                                toast(getString(R.string.network_error));
                             }
 
                             @Override
                             public void onResponse(String response, int id) {
-                              String[] results=response.split("\\|");
-                                if(results[0].equals("0")){
-                                    outTradeNo=results[1];
+                                Logger.i("trade_result",response);
+                                String[] results = response.split("\\|");
+                                if (results[0].equals("0")) {
+                                    Logger.i("trade", results[1]);
+                                    outTradeNo = results[1];
                                     pay();
-                                }else{
+                                } else {
                                     toast(results[1]);
                                 }
                             }
-                        });
+                        });}else{
+                    OkHttpUtils.post().url(Interfaces.FLOW_ORDER)
+                            .addParams("loginName", getUsername())
+                            .addParams("phoneNumber", number.getText().toString())
+                            .addParams("loginPwd", getPassword())
+                            .addParams("flowValue", flowValue)
+                            .addParams("softType", "android")
+                            .addParams("cid",getArguments().getString("cid"))
+                            .addParams("payMethod", "0")
+                            .addParams("iid",iid)
+                            .build()
+                            .execute(new StringCallback() {
+                                @Override
+                                public void onError(Call call, Exception e, int id) {
+                                    e.printStackTrace();
+                                    toast(getString(R.string.network_error));
+                                }
+
+                                @Override
+                                public void onResponse(String response, int id) {
+                                    Logger.i("trade_result",response);
+                                    String[] results = response.split("\\|");
+                                    if (results[0].equals("0")) {
+                                        Logger.i("trade", results[1]);
+                                        outTradeNo = results[1];
+                                        pay();
+                                    } else {
+                                        toast(results[1]);
+                                    }
+                                }
+                            });
+                }
                 break;
         }
+
     }
 
     @Override
@@ -330,9 +383,9 @@ public class StraightFragment2 extends BaseFragment {
     public void query(final String number) {
 
         OkHttpUtils.get().url("http://apis.juhe.cn/mobile/get")
-                .addParams("phone",number)
-                .addParams("key","1dfd68c50bbf3f58755f1d537fe817a4")
-        .build().execute(new StringCallback() {
+                .addParams("phone", number)
+                .addParams("key", "1dfd68c50bbf3f58755f1d537fe817a4")
+                .build().execute(new StringCallback() {
             @Override
             public void onBefore(Request request, int id) {
                 progressDialog = ProgressDialog.show(getActivity(), "", "正在查询归属地");
@@ -353,14 +406,81 @@ public class StraightFragment2 extends BaseFragment {
 
             @Override
             public void onResponse(String response, int id) {
+                progressDialog.dismiss();
                 try {
-                    JSONObject jsonObject=new JSONObject(response);
-                    if(jsonObject.getString("resultcode").equals("200")){
-                        JSONObject result=new JSONObject(jsonObject.getString("result"));
-                        String address=result.getString("company");
-                            tv_address.setHint(address);
-                            final List<Flow> flows = new ArrayList<>();
-                            if (address.contains("移动")) {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.getString("resultcode").equals("200")) {
+                        final JSONObject result = new JSONObject(jsonObject.getString("result"));
+                        final String address = result.getString("company");
+                        tv_address.setHint(address);
+                        OkHttpUtils.post().url(Interfaces.FLOW_ITEM).addParams("loginPwd", getPassword()).addParams("loginName", getUsername())
+                                .build().execute(new StringCallback() {
+                            @Override
+                            public void onBefore(Request request, int id) {
+                                progressDialog = ProgressDialog.show(getActivity(), "", "正在获取流量包信息");
+                            }
+
+                            @Override
+                            public void onAfter(int id) {
+                                progressDialog.dismiss();
+                            }
+
+                            @Override
+                            public void onError(Call call, Exception e, int id) {
+                                toast(getContext().getString(R.string.network_error));
+                                content.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onResponse(String response, int id) {
+                                Logger.i("flow_result", response);
+                                String[] results = response.split("\\|");
+                                if (results[0].equals("0")) {
+                                    flows = gson.fromJson(results[1], new TypeToken<ArrayList<Flow>>() {
+                                    }.getType());
+                                    seperateFlows.clear();
+                                    for (Flow flow : flows) {
+                                        if (address.contains(flow.getOperators())) {
+                                            seperateFlows.add(flow);
+                                        }
+                                    }
+                                    iid=flows.get(0).getIid();
+                                    flowName.setText(flows.get(0).getTitle());
+                                    flowValue = seperateFlows.get(0).getFlowValue();
+                                    price = seperateFlows.get(0).getPrice();
+                                    body = seperateFlows.get(0).getTitle();
+                                    nowPriceNation.setText( seperateFlows.get(0).getPrice() + "元");
+                                    pastPriceNation.setHint( seperateFlows.get(0).getOldPrice() + "元");
+                                    flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
+                                    flowList.setAdapter(flowAdapter);
+                                    if(iid.equals(seperateFlows.get(0).getIid()))
+                                    {coupon.setVisibility(View.VISIBLE);
+                                    is_coupon=true;}
+                                    else is_coupon=false;
+                                    flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
+                                        @Override
+                                        public void onClick(int position) {
+                                            iid=flows.get(position).getIid();
+                                            flowName.setText( seperateFlows.get(position).getTitle());
+                                            flowValue = seperateFlows.get(position).getFlowValue();
+                                            price = seperateFlows.get(position).getPrice();
+                                            body = seperateFlows.get(position).getTitle();
+                                            nowPriceNation.setText( seperateFlows.get(position).getPrice() + "元");
+                                            pastPriceNation.setHint( seperateFlows.get(position).getOldPrice() + "元");
+                                            if(iid.equals(seperateFlows.get(position).getIid()))
+                                            {coupon.setVisibility(View.VISIBLE);
+                                                is_coupon=true;}
+                                            else is_coupon=false;
+                                        }
+                                    });
+                                    content.setVisibility(View.VISIBLE);
+                                } else {
+                                    toast(results[1]);
+                                    content.setVisibility(View.GONE);
+                                }
+                            }
+                        });
+                          /*  if (address.contains("移动")) {
                                 flows.add(new Flow("500M", "22.50", "28.0", "30.0", "30.0"));
                                 flows.add(new Flow("1000M", "37.50", "47.0", "50.0", "50.0"));
                                 flows.add(new Flow("2000M", "55.00", "66.0", "70.0", "70.0"));
@@ -399,10 +519,10 @@ public class StraightFragment2 extends BaseFragment {
                                 }
                             });
                             flowList.setAdapter(flowAdapter);
-                            content.setVisibility(View.VISIBLE);
+                            content.setVisibility(View.VISIBLE);*/
 
                     }
-                }catch (JSONException e){
+                } catch (JSONException e) {
                     e.printStackTrace();
                     Toast.makeText(getActivity(), "查询归属地失败", 1).show();
                     tv_address.setHint("");

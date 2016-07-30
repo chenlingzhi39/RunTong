@@ -25,22 +25,15 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseFragment;
-import com.callba.phone.adapter.FlowAdapter;
-import com.callba.phone.adapter.RadioAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.Flow;
-import com.callba.phone.cfg.Constant;
-import com.callba.phone.service.AddressService;
 import com.callba.phone.util.Interfaces;
-import com.callba.phone.util.NumberAddressService;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Timer;
 import java.util.TimerTask;
 

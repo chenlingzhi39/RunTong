@@ -338,6 +338,7 @@ public class HomeActivity extends BaseActivity {
                 //queryUserBalance();
               /*  intent=new Intent(HomeActivity.this,AccountActivity.class);
                 startActivity(intent);*/
+                startActivity(new Intent(HomeActivity.this,CouponActivity.class));
                 break;
             case R.id.sale:
                 toast("暂未开放");

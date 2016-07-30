@@ -39,6 +39,7 @@ public class FlowActivity extends BaseActivity {
         ButterKnife.inject(this);
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
         layoutTab.setupWithViewPager(viewpager);
+        viewpager.setCurrentItem(getIntent().getIntExtra("index",0));
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -82,7 +83,12 @@ public class FlowActivity extends BaseActivity {
                     return NumberFragment2.newInstance();
 
                 case 1:
-                    return StraightFragment2.newInstance();
+                    StraightFragment2 straightFragment2=new StraightFragment2();
+                    Bundle bundle=new Bundle();
+                    bundle.putString("iid",getIntent().getStringExtra("iid"));
+                    bundle.putString("cid",getIntent().getStringExtra("cid"));
+                    straightFragment2.setArguments(bundle);
+                    return straightFragment2;
 
                 default:
                     return null;

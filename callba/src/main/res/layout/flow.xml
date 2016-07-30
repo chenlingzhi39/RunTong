@@ -269,5 +269,34 @@
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="@drawable/shape_line" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/coupon"
+            android:visibility="gone">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="是否使用流量券?"
+                android:layout_weight="1"
+                android:paddingLeft="10dp"
+                />
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/use_coupon"
+                android:checked="true"/>
+        </LinearLayout>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/shape_line" />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

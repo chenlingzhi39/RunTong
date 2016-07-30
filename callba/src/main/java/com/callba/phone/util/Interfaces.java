@@ -268,6 +268,18 @@ public interface Interfaces {
 	 * 流量包订单
 	 */
 	String FLOW_ORDER="http://inter.boboit.cn/inter/pay/pay_flow_online_order.jsp";
+	/**
+	 * 金币兑换
+	 */
+	String EXCHANGE_BALANCE="http://inter.boboit.cn/inter/exchangebalance/exchangebalance.jsp";
+	/**
+	 * 优惠券
+	 */
+	String COUPON="http://inter.boboit.cn/inter/mycoupon/mycoupon.jsp";
+	/**
+	 *流量包
+	 */
+	String FLOW_ITEM="http://inter.boboit.cn/inter//items/items.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

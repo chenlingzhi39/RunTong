@@ -17,6 +17,7 @@ import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.activity.SelectDialPopupWindow;
 import com.callba.phone.adapter.ContactNumberAdapter;
+import com.callba.phone.adapter.DetailAdapter;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.BaseUser;
@@ -51,6 +52,7 @@ public class ContactDetailFragment extends BaseFragment {
     RecyclerView lvPhoneNums;
     private ContactMutliNumBean bean;
     private ContactNumberAdapter contactNumberAdapter;
+    //private DetailAdapter detailAdapter;
     CallUtils callUtils;
     Gson gson;
     View headerView;
@@ -60,6 +62,8 @@ public class ContactDetailFragment extends BaseFragment {
         bean = (ContactMutliNumBean) getArguments().get("contact");
         setDatatoAdapter();
         gson = new Gson();
+       /* detailAdapter=new DetailAdapter(progressDialog,bean,getActivity(),getPassword(),getUsername());
+        lvPhoneNums.setAdapter(detailAdapter);*/
     }
 
     @Override
@@ -194,9 +198,9 @@ public class ContactDetailFragment extends BaseFragment {
             }
         });
         contactNumberAdapter.addAll(phoneNums);
+        lvPhoneNums.setAdapter(contactNumberAdapter);
         lvPhoneNums.addItemDecoration(new DividerItemDecoration(
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        lvPhoneNums.setAdapter(contactNumberAdapter);
         callUtils = new CallUtils();
 
         contactNumberAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {

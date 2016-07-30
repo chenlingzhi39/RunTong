@@ -17,7 +17,10 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.NumberAddressService;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -25,6 +28,7 @@ import java.util.TimerTask;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import okhttp3.Call;
 
 /**
  * Created by PC-20160514 on 2016/6/27.
@@ -39,7 +43,7 @@ public class GoldActivity extends BaseActivity {
     TextView gold;
     @InjectView(R.id.exchange)
     Button exchange;
-
+    int ex_gold;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +103,26 @@ public class GoldActivity extends BaseActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        ex_gold=Integer.parseInt(helper.getNumber())*32;
+                        OkHttpUtils.post().url(Interfaces.EXCHANGE_BALANCE).addParams("loginName",getUsername())
+                                .addParams("loginPwd",getPassword())
+                                .addParams("gold",Integer.parseInt(helper.getNumber())*32+"")
+                                .build().execute(new StringCallback() {
+                            @Override
+                            public void onError(Call call, Exception e, int id) {
+                                toast(R.string.network_error);
+                            }
+
+                            @Override
+                            public void onResponse(String response, int id) {
+                            String[] result=response.split("\\|");
+                                if(result[0].equals("0")){
+                                    toast(result[1]);
+                                    UserManager.putGold(GoldActivity.this,UserManager.getGold(GoldActivity.this)-ex_gold);
+                                    gold.setText(UserManager.getGold(GoldActivity.this) + "");
+                                }else toast(result[1]);
+                            }
+                        });
                        dialog.dismiss();
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {

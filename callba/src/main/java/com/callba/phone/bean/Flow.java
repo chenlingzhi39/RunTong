@@ -4,57 +4,84 @@ package com.callba.phone.bean;
  * Created by PC-20160514 on 2016/7/26.
  */
 public class Flow {
-    String name;
-    String past_price_local;
-    String now_price_local;
-    String past_price_nation;
-    String now_price_nation;
-
-    public Flow(String name, String now_price_local, String now_price_nation, String past_price_local, String past_price_nation) {
-        this.name = name;
-        this.now_price_local = now_price_local;
-        this.now_price_nation = now_price_nation;
-        this.past_price_local = past_price_local;
-        this.past_price_nation = past_price_nation;
+    String flowValue;
+    String operators;
+    String itemType;
+    String iid;
+    String price;
+    String title;
+    String imgUrl;
+    String inTime;
+    String oldPrice;
+    public String getFlowValue() {
+        return flowValue;
     }
 
-    public String getName() {
-        return name;
+    public void setFlowValue(String flowValue) {
+        this.flowValue = flowValue;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getIid() {
+        return iid;
     }
 
-    public String getNow_price_local() {
-        return now_price_local;
+    public void setIid(String iid) {
+        this.iid = iid;
     }
 
-    public void setNow_price_local(String now_price_local) {
-        this.now_price_local = now_price_local;
+    public String getImgUrl() {
+        return imgUrl;
     }
 
-    public String getPast_price_local() {
-        return past_price_local;
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
-    public void setPast_price_local(String past_price_local) {
-        this.past_price_local = past_price_local;
+    public String getInTime() {
+        return inTime;
     }
 
-    public String getNow_price_nation() {
-        return now_price_nation;
+    public void setInTime(String inTime) {
+        this.inTime = inTime;
     }
 
-    public void setNow_price_nation(String now_price_nation) {
-        this.now_price_nation = now_price_nation;
+    public String getItemType() {
+        return itemType;
     }
 
-    public String getPast_price_nation() {
-        return past_price_nation;
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
     }
 
-    public void setPast_price_nation(String past_price_nation) {
-        this.past_price_nation = past_price_nation;
+    public String getOperators() {
+        return operators;
+    }
+
+    public void setOperators(String operators) {
+        this.operators = operators;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getOldPrice() {
+        return oldPrice;
+    }
+
+    public void setOldPrice(String oldPrice) {
+        this.oldPrice = oldPrice;
     }
 }
