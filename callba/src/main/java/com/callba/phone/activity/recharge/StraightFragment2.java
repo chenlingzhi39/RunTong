@@ -102,6 +102,7 @@ public class StraightFragment2 extends BaseFragment {
     FlowAdapter flowAdapter;
     private String iid;
     private boolean is_coupon;
+    private boolean has_iid;
     // 商户PID
     public static final String PARTNER = "2088221931971814";
     // 商户收款账号
@@ -209,13 +210,13 @@ public class StraightFragment2 extends BaseFragment {
         body = "包月流量";
         gson = new Gson();
         seperateFlows = new ArrayList<>();
-      useCoupon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-          @Override
-          public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-           is_coupon=isChecked;
-          }
-      });
-        Logger.i("iid",getArguments().getString("iid"));
+        useCoupon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                is_coupon = isChecked;
+            }
+        });
+        has_iid = getArguments().getString("iid") != null;
     }
 
     @Override
@@ -242,45 +243,48 @@ public class StraightFragment2 extends BaseFragment {
                 showDialog();
                 break;
             case R.id.recharge:
-                if(!is_coupon)
-                { Logger.i("flow_url", Interfaces.FLOW_ORDER + "?loginName=" + getUsername() + "&phoneNumber=" + number.getText().toString() + "&loginPwd=" + getPassword() + "&flowValue=" + flowValue + "&softType=android&payMethod=0");
-                OkHttpUtils.post().url(Interfaces.FLOW_ORDER)
-                        .addParams("loginName", getUsername())
-                        .addParams("phoneNumber", number.getText().toString())
-                        .addParams("loginPwd", getPassword())
-                        .addParams("flowValue", flowValue)
-                        .addParams("softType", "android")
-                        .addParams("payMethod", "0")
-                        .addParams("iid",iid).build()
-                        .execute(new StringCallback() {
-                            @Override
-                            public void onError(Call call, Exception e, int id) {
-                                e.printStackTrace();
-                                toast(getString(R.string.network_error));
-                            }
-
-                            @Override
-                            public void onResponse(String response, int id) {
-                                Logger.i("trade_result",response);
-                                String[] results = response.split("\\|");
-                                if (results[0].equals("0")) {
-                                    Logger.i("trade", results[1]);
-                                    outTradeNo = results[1];
-                                    pay();
-                                } else {
-                                    toast(results[1]);
-                                }
-                            }
-                        });}else{
+                if (!is_coupon) {
+                    Logger.i("flow_url", Interfaces.FLOW_ORDER + "?loginName=" + getUsername() + "&phoneNumber=" + number.getText().toString() + "&loginPwd=" + getPassword() + "&flowValue=" + flowValue + "&softType=android&payMethod=0");
                     OkHttpUtils.post().url(Interfaces.FLOW_ORDER)
                             .addParams("loginName", getUsername())
                             .addParams("phoneNumber", number.getText().toString())
                             .addParams("loginPwd", getPassword())
                             .addParams("flowValue", flowValue)
                             .addParams("softType", "android")
-                            .addParams("cid",getArguments().getString("cid"))
                             .addParams("payMethod", "0")
-                            .addParams("iid",iid)
+                            .addParams("iid", iid).build()
+                            .execute(new StringCallback() {
+                                @Override
+                                public void onError(Call call, Exception e, int id) {
+                                    e.printStackTrace();
+                                    toast(getString(R.string.network_error));
+                                }
+
+                                @Override
+                                public void onResponse(String response, int id) {
+                                    Logger.i("trade_result", response);
+                                    String[] results = response.split("\\|");
+                                    if (results[0].equals("0")) {
+                                        Logger.i("trade", results[1]);
+                                        String[] results1 = results[1].split(",");
+                                        outTradeNo = results1[0];
+                                        price = results1[1];
+                                        pay();
+                                    } else {
+                                        toast(results[1]);
+                                    }
+                                }
+                            });
+                } else {
+                    OkHttpUtils.post().url(Interfaces.FLOW_ORDER)
+                            .addParams("loginName", getUsername())
+                            .addParams("phoneNumber", number.getText().toString())
+                            .addParams("loginPwd", getPassword())
+                            .addParams("flowValue", flowValue)
+                            .addParams("softType", "android")
+                            .addParams("cid", getArguments().getString("cid"))
+                            .addParams("payMethod", "0")
+                            .addParams("iid", iid)
                             .build()
                             .execute(new StringCallback() {
                                 @Override
@@ -291,11 +295,13 @@ public class StraightFragment2 extends BaseFragment {
 
                                 @Override
                                 public void onResponse(String response, int id) {
-                                    Logger.i("trade_result",response);
+                                    Logger.i("trade_result", response);
                                     String[] results = response.split("\\|");
                                     if (results[0].equals("0")) {
                                         Logger.i("trade", results[1]);
-                                        outTradeNo = results[1];
+                                        String[] results1 = results[1].split(",");
+                                        outTradeNo = results1[0];
+                                        price = results1[1];
                                         pay();
                                     } else {
                                         toast(results[1]);
@@ -444,33 +450,41 @@ public class StraightFragment2 extends BaseFragment {
                                             seperateFlows.add(flow);
                                         }
                                     }
-                                    iid=flows.get(0).getIid();
-                                    flowName.setText(flows.get(0).getTitle());
+                                    iid = seperateFlows.get(0).getIid();
+                                    flowName.setText(seperateFlows.get(0).getTitle());
                                     flowValue = seperateFlows.get(0).getFlowValue();
                                     price = seperateFlows.get(0).getPrice();
-                                    body = seperateFlows.get(0).getTitle();
-                                    nowPriceNation.setText( seperateFlows.get(0).getPrice() + "元");
-                                    pastPriceNation.setHint( seperateFlows.get(0).getOldPrice() + "元");
+                                    subject = seperateFlows.get(0).getTitle();
+                                    nowPriceNation.setText(seperateFlows.get(0).getPrice() + "元");
+                                    pastPriceNation.setHint(seperateFlows.get(0).getOldPrice() + "元");
                                     flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
                                     flowList.setAdapter(flowAdapter);
-                                    if(iid.equals(seperateFlows.get(0).getIid()))
-                                    {coupon.setVisibility(View.VISIBLE);
-                                    is_coupon=true;}
-                                    else is_coupon=false;
+                                    if (has_iid)
+                                        if (iid.equals(getArguments().getString("iid"))) {
+                                            coupon.setVisibility(View.VISIBLE);
+                                            is_coupon = true;
+                                        } else {
+                                            coupon.setVisibility(View.GONE);
+                                            is_coupon = false;
+                                        }
                                     flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
                                         @Override
                                         public void onClick(int position) {
-                                            iid=flows.get(position).getIid();
-                                            flowName.setText( seperateFlows.get(position).getTitle());
+                                            iid = seperateFlows.get(position).getIid();
+                                            flowName.setText(seperateFlows.get(position).getTitle());
                                             flowValue = seperateFlows.get(position).getFlowValue();
                                             price = seperateFlows.get(position).getPrice();
-                                            body = seperateFlows.get(position).getTitle();
-                                            nowPriceNation.setText( seperateFlows.get(position).getPrice() + "元");
-                                            pastPriceNation.setHint( seperateFlows.get(position).getOldPrice() + "元");
-                                            if(iid.equals(seperateFlows.get(position).getIid()))
-                                            {coupon.setVisibility(View.VISIBLE);
-                                                is_coupon=true;}
-                                            else is_coupon=false;
+                                            subject = seperateFlows.get(position).getTitle();
+                                            nowPriceNation.setText(seperateFlows.get(position).getPrice() + "元");
+                                            pastPriceNation.setHint(seperateFlows.get(position).getOldPrice() + "元");
+                                            if (has_iid)
+                                                if (iid.equals(getArguments().getString("iid"))) {
+                                                    coupon.setVisibility(View.VISIBLE);
+                                                    is_coupon = true;
+                                                } else {
+                                                    coupon.setVisibility(View.GONE);
+                                                    is_coupon = false;
+                                                }
                                         }
                                     });
                                     content.setVisibility(View.VISIBLE);
