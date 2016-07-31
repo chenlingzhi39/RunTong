@@ -65,4 +65,7 @@ public abstract class RadioAdapter<T> extends RecyclerView.Adapter<RadioAdapter.
         }
     }
 
+    public void setmSelectedItem(int mSelectedItem) {
+        this.mSelectedItem = mSelectedItem;
+    }
 }

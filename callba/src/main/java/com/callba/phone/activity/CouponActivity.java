@@ -1,5 +1,6 @@
 package com.callba.phone.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -52,38 +53,47 @@ public class CouponActivity extends BaseActivity {
         ButterKnife.inject(this);
         couponAdapter = new CouponAdapter(this);
         gson=new Gson();
-        OkHttpUtils.post().url(Interfaces.COUPON).addParams("loginName", getUsername()).addParams("loginPwd", getPassword())
-                .build().execute(new StringCallback() {
-            @Override
-            public void onAfter(int id) {
-                progressBar.setVisibility(View.GONE);
-            }
+    }
+   public void getCoupon(){
+       OkHttpUtils.post().url(Interfaces.COUPON).addParams("loginName", getUsername()).addParams("loginPwd", getPassword())
+               .build().execute(new StringCallback() {
+           @Override
+           public void onAfter(int id) {
+               progressBar.setVisibility(View.GONE);
+           }
 
-            @Override
-            public void onBefore(Request request, int id) {
-                retry.setVisibility(View.GONE);
-                progressBar.setVisibility(View.VISIBLE);
-            }
+           @Override
+           public void onBefore(Request request, int id) {
+               retry.setVisibility(View.GONE);
+               progressBar.setVisibility(View.VISIBLE);
+           }
 
-            @Override
-            public void onError(Call call, Exception e, int id) {
-                retry.setVisibility(View.VISIBLE);
-            }
+           @Override
+           public void onError(Call call, Exception e, int id) {
+               retry.setVisibility(View.VISIBLE);
+           }
 
-            @Override
-            public void onResponse(String response, int id) {
-                Logger.i("coupon_result", response);
-                String[] result = response.split("\\|");
-                if (result[0].equals("0")) {
-                    coupons = gson.fromJson(result[1], new TypeToken<ArrayList<Coupon>>() {
-                    }.getType());
-                    couponAdapter.addAll(coupons);
-                    couponList.setAdapter(couponAdapter);
-                } else {
-                    hint.setText(result[1]);
-                    hint.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+           @Override
+           public void onResponse(String response, int id) {
+               Logger.i("coupon_result", response);
+               String[] result = response.split("\\|");
+               if (result[0].equals("0")) {
+                   coupons = gson.fromJson(result[1], new TypeToken<ArrayList<Coupon>>() {
+                   }.getType());
+                   couponAdapter.clear();
+                   couponAdapter.addAll(coupons);
+                   couponList.setAdapter(couponAdapter);
+               } else {
+                   hint.setText(result[1]);
+                   hint.setVisibility(View.VISIBLE);
+                   couponAdapter.clear();
+               }
+           }
+       });
+   }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getCoupon();
     }
 }

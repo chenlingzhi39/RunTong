@@ -280,6 +280,10 @@ public interface Interfaces {
 	 *流量包
 	 */
 	String FLOW_ITEM="http://inter.boboit.cn/inter//items/items.jsp";
+	/**
+	 * 赠送优惠券
+	 */
+	String GIVE_COUPON="http://inter.boboit.cn/inter/givecoupontofriend/givecoupontofriend.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

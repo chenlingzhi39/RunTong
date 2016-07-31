@@ -27,8 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:focusable="false"
-            android:button="@drawable/em_checkbox_bg_selector" />
+            android:focusable="false" />
 
         <ImageView
             android:id="@+id/avatar"

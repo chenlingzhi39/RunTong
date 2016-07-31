@@ -14,6 +14,7 @@ import com.callba.R;
 import com.callba.phone.BaseActivity;
 import com.callba.phone.activity.TestFragment;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.bean.Coupon;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -32,11 +33,13 @@ public class FlowActivity extends BaseActivity {
     TabLayout layoutTab;
     @InjectView(R.id.viewpager)
     ViewPager viewpager;
-
+    private Coupon coupon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
+        if(savedInstanceState==null)
+        coupon=(Coupon) getIntent().getSerializableExtra("coupon");
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
         layoutTab.setupWithViewPager(viewpager);
         viewpager.setCurrentItem(getIntent().getIntExtra("index",0));
@@ -85,8 +88,7 @@ public class FlowActivity extends BaseActivity {
                 case 1:
                     StraightFragment2 straightFragment2=new StraightFragment2();
                     Bundle bundle=new Bundle();
-                    bundle.putString("iid",getIntent().getStringExtra("iid"));
-                    bundle.putString("cid",getIntent().getStringExtra("cid"));
+                    bundle.putSerializable("coupon",coupon);
                     straightFragment2.setArguments(bundle);
                     return straightFragment2;
 

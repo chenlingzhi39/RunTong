@@ -286,6 +286,7 @@
                 android:text="是否使用流量券?"
                 android:layout_weight="1"
                 android:paddingLeft="10dp"
+                android:id="@+id/coupon_title"
                 />
             <CheckBox
                 android:layout_width="wrap_content"

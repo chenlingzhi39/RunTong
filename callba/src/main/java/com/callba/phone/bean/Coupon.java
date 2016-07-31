@@ -1,15 +1,18 @@
 package com.callba.phone.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by PC-20160514 on 2016/7/30.
  */
-public class Coupon {
+public class Coupon implements Serializable{
     String title;
     String imgUrl;
     String inTime;
     String state;
     String content;
     String iid;
+    String iid2;
     String price;
     String type;
     String cid;
@@ -83,5 +86,13 @@ public class Coupon {
 
     public void setCid(String cid) {
         this.cid = cid;
+    }
+
+    public String getIid2() {
+        return iid2;
+    }
+
+    public void setIid2(String iid2) {
+        this.iid2 = iid2;
     }
 }

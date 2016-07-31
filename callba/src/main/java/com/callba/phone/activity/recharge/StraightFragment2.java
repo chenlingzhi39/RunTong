@@ -34,6 +34,7 @@ import com.callba.phone.BaseFragment;
 import com.callba.phone.adapter.FlowAdapter;
 import com.callba.phone.adapter.RadioAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.bean.Coupon;
 import com.callba.phone.bean.Flow;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.util.Interfaces;
@@ -93,7 +94,9 @@ public class StraightFragment2 extends BaseFragment {
     @InjectView(R.id.use_coupon)
     CheckBox useCoupon;
     @InjectView(R.id.coupon)
-    LinearLayout coupon;
+    LinearLayout ll_coupon;
+    @InjectView(R.id.coupon_title)
+    TextView couponTitle;
     private String subject, body, price;
     private String outTradeNo;
     private String flowValue;
@@ -127,6 +130,7 @@ public class StraightFragment2 extends BaseFragment {
     public static final String RSA_PUBLIC = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnxj/9qwVfgoUh/y2W89L6BkRAFljhNhgPdyPuBV64bfQNN1PjbCzkIM6qRdKBoLPXmKKMiFYnkd6rAoprih3/PrQEB/VsW8OoM8fxn67UDYuyBTqA23MML9q1+ilIZwBC2AQ2UBVOrFXfFl75p6/B5KsiNG9zpgmLCUYuLkxpLQIDAQAB";
     private static final int SDK_PAY_FLAG = 1;
     private UserDao userDao;
+    private Coupon coupon;
 
     public static StraightFragment2 newInstance() {
         StraightFragment2 straightFragment = new StraightFragment2();
@@ -151,8 +155,14 @@ public class StraightFragment2 extends BaseFragment {
         flowAdapter = new FlowAdapter(getActivity(), flows);*/
         flowList.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         // flowList.setAdapter(flowAdapter);
-        number.setText(getUsername());
-        query(getUsername());
+
+    /*    if (getArguments().getString("number") != null) {
+            query(getArguments().getString("number"));
+            number.setText(getArguments().getString("number"));
+        } else {*/
+            query(getUsername());
+            number.setText(getUsername());
+       // }
         /*flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
             @Override
             public void onClick(int position) {
@@ -216,7 +226,10 @@ public class StraightFragment2 extends BaseFragment {
                 is_coupon = isChecked;
             }
         });
-        has_iid = getArguments().getString("iid") != null;
+        has_iid = getArguments().getSerializable("coupon") != null;
+        if (has_iid) {coupon = (Coupon) getArguments().getSerializable("coupon");
+        couponTitle.setText(coupon.getTitle());
+        }
     }
 
     @Override
@@ -268,7 +281,7 @@ public class StraightFragment2 extends BaseFragment {
                                         Logger.i("trade", results[1]);
                                         String[] results1 = results[1].split(",");
                                         outTradeNo = results1[0];
-                                        price = results1[1];
+                                        price =results1[1];
                                         pay();
                                     } else {
                                         toast(results[1]);
@@ -282,9 +295,10 @@ public class StraightFragment2 extends BaseFragment {
                             .addParams("loginPwd", getPassword())
                             .addParams("flowValue", flowValue)
                             .addParams("softType", "android")
-                            .addParams("cid", getArguments().getString("cid"))
+                            .addParams("cid", coupon.getCid())
                             .addParams("payMethod", "0")
-                            .addParams("iid", iid)
+                            .addParams("iid", coupon.getIid())
+                            .addParams("iid2",coupon.getIid2())
                             .build()
                             .execute(new StringCallback() {
                                 @Override
@@ -301,7 +315,7 @@ public class StraightFragment2 extends BaseFragment {
                                         Logger.i("trade", results[1]);
                                         String[] results1 = results[1].split(",");
                                         outTradeNo = results1[0];
-                                        price = results1[1];
+                                        price =results1[1];
                                         pay();
                                     } else {
                                         toast(results[1]);
@@ -450,6 +464,25 @@ public class StraightFragment2 extends BaseFragment {
                                             seperateFlows.add(flow);
                                         }
                                     }
+                                    if(coupon!=null&&address.contains(seperateFlows.get(0).getOperators()))
+                                    {
+                                        for(int i=0;i<seperateFlows.size();i++){
+                                            if(seperateFlows.get(i).getIid().equals(coupon.getIid2()))
+                                            {flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
+                                                flowAdapter.setmSelectedItem(i);
+                                            flowList.setAdapter(flowAdapter);
+                                            iid = seperateFlows.get(i).getIid();
+                                            flowName.setText(seperateFlows.get(i).getTitle());
+                                            flowValue = seperateFlows.get(i).getFlowValue();
+                                            price = seperateFlows.get(i).getPrice();
+                                            subject = seperateFlows.get(i).getTitle();
+                                            nowPriceNation.setText(seperateFlows.get(i).getPrice() + "元");
+                                            pastPriceNation.setHint(seperateFlows.get(i).getOldPrice() + "元");
+                                            ll_coupon.setVisibility(View.VISIBLE);
+                                            is_coupon = true;
+                                            break;}
+                                        }
+                                    }else{
                                     iid = seperateFlows.get(0).getIid();
                                     flowName.setText(seperateFlows.get(0).getTitle());
                                     flowValue = seperateFlows.get(0).getFlowValue();
@@ -460,13 +493,13 @@ public class StraightFragment2 extends BaseFragment {
                                     flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
                                     flowList.setAdapter(flowAdapter);
                                     if (has_iid)
-                                        if (iid.equals(getArguments().getString("iid"))) {
-                                            coupon.setVisibility(View.VISIBLE);
+                                        if (iid.equals(coupon.getIid2())) {
+                                            ll_coupon.setVisibility(View.VISIBLE);
                                             is_coupon = true;
                                         } else {
-                                            coupon.setVisibility(View.GONE);
+                                            ll_coupon.setVisibility(View.GONE);
                                             is_coupon = false;
-                                        }
+                                        }}
                                     flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
                                         @Override
                                         public void onClick(int position) {
@@ -478,11 +511,11 @@ public class StraightFragment2 extends BaseFragment {
                                             nowPriceNation.setText(seperateFlows.get(position).getPrice() + "元");
                                             pastPriceNation.setHint(seperateFlows.get(position).getOldPrice() + "元");
                                             if (has_iid)
-                                                if (iid.equals(getArguments().getString("iid"))) {
-                                                    coupon.setVisibility(View.VISIBLE);
+                                                if (iid.equals(coupon.getIid2())) {
+                                                    ll_coupon.setVisibility(View.VISIBLE);
                                                     is_coupon = true;
                                                 } else {
-                                                    coupon.setVisibility(View.GONE);
+                                                    ll_coupon.setVisibility(View.GONE);
                                                     is_coupon = false;
                                                 }
                                         }
@@ -670,6 +703,10 @@ public class StraightFragment2 extends BaseFragment {
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
                         userDao.pay(getUsername(), getPassword(), outTradeNo, "success");
+                        if (has_iid) has_iid = false;
+                        is_coupon=false;
+                        ll_coupon.setVisibility(View.GONE);
+                        coupon=null;
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
                         // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
