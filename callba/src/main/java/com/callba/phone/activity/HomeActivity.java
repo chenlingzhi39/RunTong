@@ -130,7 +130,7 @@ public class HomeActivity extends BaseActivity {
                         list = gson.fromJson(result[1], new TypeToken<ArrayList<SystemNumber>>() {
                         }.getType());
                     } catch (Exception e) {
-
+                        e.printStackTrace();
                     }
                     final ArrayList<String> numbers = new ArrayList<>();
                     final ContactData contactData = new ContactData();

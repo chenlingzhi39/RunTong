@@ -48,7 +48,7 @@ public class CouponViewHolder extends BaseViewHolder<Coupon> {
                 Intent intent = new Intent(getContext(), FlowActivity.class);
                 intent.putExtra("index", 1);
                 intent.putExtra("coupon",data);
-                ((Activity)getContext()).startActivity(intent);
+                ((Activity)getContext()).startActivityForResult(intent,0);
             }
         });
         giveFlow.setOnClickListener(new View.OnClickListener() {
@@ -56,7 +56,7 @@ public class CouponViewHolder extends BaseViewHolder<Coupon> {
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), SelectFriendActivity.class);
                 intent.putExtra("coupon",data);
-                ((Activity)getContext()).startActivity(intent);
+                ((Activity)getContext()).startActivityForResult(intent,0);
             }
         });
     }

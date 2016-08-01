@@ -139,6 +139,7 @@ public class SelectFriendActivity extends BaseActivity {
                                     String[] result=response.split("\\|");
                                         if(result[0].equals("0")){
                                             toast(result[1]);
+                                            setResult(RESULT_OK);
                                             finish();
                                         }else toast(result[1]);
                                     }

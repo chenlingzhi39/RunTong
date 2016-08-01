@@ -1,6 +1,7 @@
 package com.callba.phone.activity.recharge;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -106,6 +107,7 @@ public class StraightFragment2 extends BaseFragment {
     private String iid;
     private boolean is_coupon;
     private boolean has_iid;
+    private boolean has_coupon;
     // 商户PID
     public static final String PARTNER = "2088221931971814";
     // 商户收款账号
@@ -160,9 +162,9 @@ public class StraightFragment2 extends BaseFragment {
             query(getArguments().getString("number"));
             number.setText(getArguments().getString("number"));
         } else {*/
-            query(getUsername());
-            number.setText(getUsername());
-       // }
+        query(getUsername());
+        number.setText(getUsername());
+        // }
         /*flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
             @Override
             public void onClick(int position) {
@@ -227,8 +229,9 @@ public class StraightFragment2 extends BaseFragment {
             }
         });
         has_iid = getArguments().getSerializable("coupon") != null;
-        if (has_iid) {coupon = (Coupon) getArguments().getSerializable("coupon");
-        couponTitle.setText(coupon.getTitle());
+        if (has_iid) {
+            coupon = (Coupon) getArguments().getSerializable("coupon");
+            couponTitle.setText(coupon.getTitle());
         }
     }
 
@@ -268,6 +271,16 @@ public class StraightFragment2 extends BaseFragment {
                             .addParams("iid", iid).build()
                             .execute(new StringCallback() {
                                 @Override
+                                public void onAfter(int id) {
+                                    progressDialog.dismiss();
+                                }
+
+                                @Override
+                                public void onBefore(Request request, int id) {
+                                    progressDialog = ProgressDialog.show(getActivity(), "", "正在获取价格");
+                                }
+
+                                @Override
                                 public void onError(Call call, Exception e, int id) {
                                     e.printStackTrace();
                                     toast(getString(R.string.network_error));
@@ -281,7 +294,7 @@ public class StraightFragment2 extends BaseFragment {
                                         Logger.i("trade", results[1]);
                                         String[] results1 = results[1].split(",");
                                         outTradeNo = results1[0];
-                                        price =results1[1];
+                                        price = results1[1];
                                         pay();
                                     } else {
                                         toast(results[1]);
@@ -298,9 +311,19 @@ public class StraightFragment2 extends BaseFragment {
                             .addParams("cid", coupon.getCid())
                             .addParams("payMethod", "0")
                             .addParams("iid", coupon.getIid())
-                            .addParams("iid2",coupon.getIid2())
+                            .addParams("iid2", coupon.getIid2())
                             .build()
                             .execute(new StringCallback() {
+                                @Override
+                                public void onAfter(int id) {
+                                    progressDialog.dismiss();
+                                }
+
+                                @Override
+                                public void onBefore(Request request, int id) {
+                                    progressDialog = ProgressDialog.show(getActivity(), "", "正在获取价格");
+                                }
+
                                 @Override
                                 public void onError(Call call, Exception e, int id) {
                                     e.printStackTrace();
@@ -315,7 +338,7 @@ public class StraightFragment2 extends BaseFragment {
                                         Logger.i("trade", results[1]);
                                         String[] results1 = results[1].split(",");
                                         outTradeNo = results1[0];
-                                        price =results1[1];
+                                        price = results1[1];
                                         pay();
                                     } else {
                                         toast(results[1]);
@@ -464,42 +487,47 @@ public class StraightFragment2 extends BaseFragment {
                                             seperateFlows.add(flow);
                                         }
                                     }
-                                    if(coupon!=null&&address.contains(seperateFlows.get(0).getOperators()))
-                                    {
-                                        for(int i=0;i<seperateFlows.size();i++){
-                                            if(seperateFlows.get(i).getIid().equals(coupon.getIid2()))
-                                            {flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
+                                    has_coupon = false;
+                                    if (coupon != null) {
+                                        for (int i = 0; i < seperateFlows.size(); i++) {
+                                            if (seperateFlows.get(i).getIid().equals(coupon.getIid2())) {
+                                                flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
                                                 flowAdapter.setmSelectedItem(i);
-                                            flowList.setAdapter(flowAdapter);
-                                            iid = seperateFlows.get(i).getIid();
-                                            flowName.setText(seperateFlows.get(i).getTitle());
-                                            flowValue = seperateFlows.get(i).getFlowValue();
-                                            price = seperateFlows.get(i).getPrice();
-                                            subject = seperateFlows.get(i).getTitle();
-                                            nowPriceNation.setText(seperateFlows.get(i).getPrice() + "元");
-                                            pastPriceNation.setHint(seperateFlows.get(i).getOldPrice() + "元");
-                                            ll_coupon.setVisibility(View.VISIBLE);
-                                            is_coupon = true;
-                                            break;}
+                                                flowList.setAdapter(flowAdapter);
+                                                iid = seperateFlows.get(i).getIid();
+                                                flowName.setText(seperateFlows.get(i).getTitle());
+                                                flowValue = seperateFlows.get(i).getFlowValue();
+                                                price = seperateFlows.get(i).getPrice();
+                                                subject = seperateFlows.get(i).getTitle();
+                                                nowPriceNation.setText(seperateFlows.get(i).getPrice() + "元");
+                                                pastPriceNation.setHint(seperateFlows.get(i).getOldPrice() + "元");
+                                                ll_coupon.setVisibility(View.VISIBLE);
+                                                is_coupon = true;
+                                                has_coupon = true;
+                                                break;
+                                            }
                                         }
-                                    }else{
-                                    iid = seperateFlows.get(0).getIid();
-                                    flowName.setText(seperateFlows.get(0).getTitle());
-                                    flowValue = seperateFlows.get(0).getFlowValue();
-                                    price = seperateFlows.get(0).getPrice();
-                                    subject = seperateFlows.get(0).getTitle();
-                                    nowPriceNation.setText(seperateFlows.get(0).getPrice() + "元");
-                                    pastPriceNation.setHint(seperateFlows.get(0).getOldPrice() + "元");
-                                    flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
-                                    flowList.setAdapter(flowAdapter);
-                                    if (has_iid)
-                                        if (iid.equals(coupon.getIid2())) {
-                                            ll_coupon.setVisibility(View.VISIBLE);
-                                            is_coupon = true;
-                                        } else {
-                                            ll_coupon.setVisibility(View.GONE);
-                                            is_coupon = false;
-                                        }}
+                                    }
+                                    if (!has_coupon) {
+                                        iid = seperateFlows.get(0).getIid();
+                                        flowName.setText(seperateFlows.get(0).getTitle());
+                                        flowValue = seperateFlows.get(0).getFlowValue();
+                                        price = seperateFlows.get(0).getPrice();
+                                        subject = seperateFlows.get(0).getTitle();
+                                        nowPriceNation.setText(seperateFlows.get(0).getPrice() + "元");
+                                        pastPriceNation.setHint(seperateFlows.get(0).getOldPrice() + "元");
+                                        flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
+                                        flowAdapter.setmSelectedItem(0);
+                                        flowList.setAdapter(flowAdapter);
+                                        if (has_iid)
+                                            if (iid.equals(coupon.getIid2())) {
+                                                ll_coupon.setVisibility(View.VISIBLE);
+                                                is_coupon = true;
+                                            } else {
+                                                ll_coupon.setVisibility(View.GONE);
+                                                is_coupon = false;
+                                            }
+                                    }
                                     flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
                                         @Override
                                         public void onClick(int position) {
@@ -704,9 +732,10 @@ public class StraightFragment2 extends BaseFragment {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
                         userDao.pay(getUsername(), getPassword(), outTradeNo, "success");
                         if (has_iid) has_iid = false;
-                        is_coupon=false;
+                        is_coupon = false;
                         ll_coupon.setVisibility(View.GONE);
-                        coupon=null;
+                        coupon = null;
+                        getActivity().setResult(Activity.RESULT_OK);
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
                         // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
