@@ -41,10 +41,12 @@ public class MoodViewHolder extends BaseViewHolder<Mood> {
     @Override
     public void setData(Mood data) {
         images.setLayoutManager(new GridLayoutManager(getContext(),3));
-        imageAdapter=new ImageAdapter(getContext());
+        if(data.getImgUrls()!=null)
+        {imageAdapter=new ImageAdapter(getContext());
         imageAdapter.addAll(data.getImgUrls().split(","));
         images.setAdapter(imageAdapter);
-        content.setText(data.getContent());
+        content.setText(data.getContent());}
+        if(data.getInTime()!=null)
         time.setHint(StringUtils.friendly_time(data.getInTime()));
     }
 }

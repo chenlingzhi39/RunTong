@@ -140,7 +140,7 @@ public class UserActivity extends BaseActivity {
                                     GlobalConfig.getInstance().getAdvertisements2().clear();
                                 if (GlobalConfig.getInstance().getAdvertisements3() != null)
                                     GlobalConfig.getInstance().getAdvertisements3().clear();
-                                if(GlobalConfig.getInstance().getDialAd()!=null)
+                                if (GlobalConfig.getInstance().getDialAd()!=null)
                                     GlobalConfig.getInstance().setDialAd(null);
                                 LoginController.getInstance().setUserLoginState(false);
                                 Intent intent0 = new Intent("com.callba.location");

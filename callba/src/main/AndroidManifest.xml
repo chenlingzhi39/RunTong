@@ -313,7 +313,7 @@
             android:name=".phone.activity.CommunityActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme" />
+            android:theme="@style/DetailTheme.AppTheme" />
         <activity
             android:name=".phone.activity.ChangePasswordActivity"
             android:launchMode="singleTop"

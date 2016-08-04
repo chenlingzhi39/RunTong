@@ -30,6 +30,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.util.Logger;
 
 /***
  * 更新版本

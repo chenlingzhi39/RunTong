@@ -48,7 +48,6 @@ public class UserProfileManager {
     private boolean isSyncingContactInfosWithServer = false;
 
     private EaseUser currentUser;
-    private HttpUtils httpUtils;
     private Gson gson;
     public UserProfileManager() {
     }
@@ -59,8 +58,6 @@ public class UserProfileManager {
         }
         syncContactInfosListeners = new ArrayList<DataSyncListener>();
         sdkInited = true;
-        httpUtils = new HttpUtils(6 * 1000);
-        httpUtils.configRequestRetryCount(3);
         gson=new Gson();
         appContext=context;
         return true;

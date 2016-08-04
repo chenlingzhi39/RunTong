@@ -204,8 +204,6 @@ public class BaseActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             TextView title = (TextView) findViewById(R.id.title);
             title.setText(getResources().getString(mToolbarTitle));
-
-
         }
     }
 

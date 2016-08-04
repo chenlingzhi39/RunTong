@@ -30,6 +30,7 @@ import com.callba.phone.DemoHelper;
 import com.callba.phone.DemoHelper.DataSyncListener;
 import com.callba.phone.activity.BlacklistActivity;
 import com.callba.phone.activity.ChatActivity;
+import com.callba.phone.activity.CommunityActivity;
 import com.callba.phone.activity.FriendActivity;
 import com.callba.phone.activity.GroupsActivity;
 import com.callba.phone.activity.NewFriendsMsgActivity;
@@ -414,8 +415,8 @@ public class WebContactFragment extends BaseFragment {
                     startActivity(new Intent(getActivity(), GroupsActivity.class));
                     break;
                 case R.id.community_item:
-                    toast("暂未开放");
-                    //startActivity(new Intent(getActivity(), CommunityActivity.class));
+                    //toast("暂未开放");
+                    startActivity(new Intent(getActivity(), CommunityActivity.class));
                     break;
                /* case R.id.chat_room_item:
                     //进入聊天室列表页面

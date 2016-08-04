@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 
 import com.callba.R;
 import com.callba.phone.adapter.RecyclerArrayAdapter;
+import com.callba.phone.widget.FastScroller;
 
 
 public class EasyRecyclerView extends FrameLayout {
@@ -32,7 +33,7 @@ public class EasyRecyclerView extends FrameLayout {
     protected int mPaddingLeft;
     protected int mPaddingRight;
     protected int mScrollbarStyle;
-
+    protected FastScroller fastScroller;
 
     protected RecyclerView.OnScrollListener mInternalOnScrollListener;
     protected RecyclerView.OnScrollListener mExternalOnScrollListener;
@@ -174,8 +175,8 @@ public class EasyRecyclerView extends FrameLayout {
      */
     protected void initRecyclerView(View view) {
         mRecycler = (RecyclerView) view.findViewById(android.R.id.list);
-
-
+        fastScroller = (FastScroller) view.findViewById(R.id.fast_scroller);
+        fastScroller.attachToRecyclerView(mRecycler);
      /*   if (mRecycler != null) {
             mRecycler.setHasFixedSize(true);
             mRecycler.setClipToPadding(mClipToPadding);
