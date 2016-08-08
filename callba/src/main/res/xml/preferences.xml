@@ -27,7 +27,7 @@
     <com.jenzz.materialpreference.PreferenceCategory android:title="@string/update">
         <com.jenzz.materialpreference.SwitchPreference
             android:key="update_key"
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:title="登录自动提醒"
             />
     </com.jenzz.materialpreference.PreferenceCategory>

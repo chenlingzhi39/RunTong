@@ -76,16 +76,6 @@ public class BaseActivity extends AppCompatActivity {
      * 初始化界面
      */
 
-
-    /**
-     * 后台数据处理完毕，回调刷新界面
-     *
-     * @param params
-     */
-    public void refresh(Object... params) {
-    }
-
-    private boolean myDialogFlag = false;
     public Toolbar toolbar;
 
     /*@Override
@@ -146,7 +136,7 @@ public class BaseActivity extends AppCompatActivity {
                     ActivityUtil.FlymeSetStatusBarLightMode(getWindow(), true);
             }
         }
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP || Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1) {
+        if ((Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP || Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1)&&!Build.MANUFACTURER.equals("Xiaomi")&&!Build.MANUFACTURER.equals("Meizu")) {
             if (this.getClass() == MainCallActivity.class ||
                     this.getClass() == ContactActivity2.class ||
                     this.getClass() == HomeActivity.class ||
@@ -156,7 +146,7 @@ public class BaseActivity extends AppCompatActivity {
                 systemBarTintManager.setStatusBarTintResource(R.color.gray_status);
             }
         }
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (this.getClass() != UserActivity.class) {
                 if (Build.MANUFACTURER.equals("Xiaomi"))
                     ActivityUtil.MIUISetStatusBarLightMode(getWindow(), true);

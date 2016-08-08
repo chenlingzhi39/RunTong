@@ -1,5 +1,7 @@
 package com.callba.phone.activity.calling;
 
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,8 +56,12 @@ import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.TimeFormatUtil;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Call;
+import okhttp3.Request;
 
 @ActivityFragmentInject(
         contentViewId = R.layout.callback_display)
@@ -73,6 +79,7 @@ public class CallbackDisplayActivity extends BaseActivity {
     private DialAd dialAd;
     private ImageView background;
     private CircleImageView avatar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //loadADImage();
@@ -82,7 +89,7 @@ public class CallbackDisplayActivity extends BaseActivity {
         tv_status = (TextView) findViewById(R.id.tv_status);
         cancel = (Button) findViewById(R.id.cancel);
         background = (ImageView) findViewById(R.id.iv_call_bg);
-        avatar=(CircleImageView) findViewById(R.id.avatar);
+        avatar = (CircleImageView) findViewById(R.id.avatar);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,10 +100,11 @@ public class CallbackDisplayActivity extends BaseActivity {
         Bundle bundle = intent.getExtras();
         name = bundle.getString("name");
         number = bundle.getString("number");
-        if(!bundle.getString("id").equals(""))
-        {Bitmap bitmap=ContactsManager.getAvatar(this,bundle.getString("id"),true);
-            if(bitmap!=null)
-        avatar.setImageBitmap(bitmap);}
+        if (!bundle.getString("id").equals("")) {
+            Bitmap bitmap = ContactsManager.getAvatar(this, bundle.getString("id"), true);
+            if (bitmap != null)
+                avatar.setImageBitmap(bitmap);
+        }
         tv_name.setText(name);
         tv_num.setText(number);
         // tv_status.setText(number);
@@ -113,7 +121,7 @@ public class CallbackDisplayActivity extends BaseActivity {
             window.setStatusBarColor(Color.TRANSPARENT);
         }
         gson = new Gson();
-        userDao = new UserDao(this,new UserDao.PostListener() {
+        userDao = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void start() {
 
@@ -121,15 +129,16 @@ public class CallbackDisplayActivity extends BaseActivity {
 
             @Override
             public void success(String msg) {
-                try{
-                List<DialAd> dialAds;
-                dialAds = gson.fromJson(msg, new TypeToken<ArrayList<DialAd>>() {
-                }.getType());
-                if (dialAds.size() > 0) {
-                    dialAd = dialAds.get(0);
-                    GlobalConfig.getInstance().setDialAd(dialAd);
-                    Glide.with(CallbackDisplayActivity.this).load(dialAd.getImage()).into(background);
-                }}catch (Exception e){
+                try {
+                    List<DialAd> dialAds;
+                    dialAds = gson.fromJson(msg, new TypeToken<ArrayList<DialAd>>() {
+                    }.getType());
+                    if (dialAds.size() > 0) {
+                        dialAd = dialAds.get(0);
+                        GlobalConfig.getInstance().setDialAd(dialAd);
+                        Glide.with(CallbackDisplayActivity.this).load(dialAd.getImage()).into(background);
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -142,7 +151,7 @@ public class CallbackDisplayActivity extends BaseActivity {
         if (GlobalConfig.getInstance().getDialAd() != null)
             Glide.with(CallbackDisplayActivity.this).load(GlobalConfig.getInstance().getDialAd().getImage()).into(background);
         else
-            userDao.getAd(4, getUsername(),getPassword());
+            userDao.getAd(4, getUsername(), getPassword());
     }
 
     /**
@@ -202,10 +211,16 @@ public class CallbackDisplayActivity extends BaseActivity {
                     countCallbackFailedData(getString(R.string.callback_timeout));
 
                     delayFinish();
-                } else {
-                    tv_status.setText(R.string.unknownerror);
+                } else if (msg.what == Task.TASK_UNKNOWN_HOST) {
+                    tv_status.setText(R.string.conn_failed);
                     //统计回拨失败数据
-                    countCallbackFailedData(getString(R.string.unknownerror));
+                    countCallbackFailedData(getString(R.string.conn_failed));
+
+                    delayFinish();
+                } else {
+                    tv_status.setText(R.string.network_error);
+                    //统计回拨失败数据
+                    countCallbackFailedData(getString(R.string.network_error));
 
                     delayFinish();
                 }
@@ -225,11 +240,38 @@ public class CallbackDisplayActivity extends BaseActivity {
                 }, 2000);
             }
         };
+        final Message msg = mHandler.obtainMessage();
+        OkHttpUtils.post().url(Interfaces.DIAL_CALLBACK)
+                .addParams("loginName", getUsername())
+                .addParams("loginPwd", getPassword())
+                .addParams("softType", "android")
+                .addParams("caller", getUsername())
+                .addParams("callee", number)
+                .build().execute(new StringCallback() {
+            @Override
+            public void onAfter(int id) {
+                mHandler.sendMessage(msg);
+            }
 
-        new Thread() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                if (e instanceof ConnectTimeoutException) {
+                    msg.what = Task.TASK_TIMEOUT;
+                } else if (e instanceof UnknownHostException) {
+                    msg.what = Task.TASK_UNKNOWN_HOST;
+                } else {
+                    msg.what = Task.TASK_FAILED;
+                }
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                msg.what = Task.TASK_SUCCESS;
+                msg.obj = response.replace("\n", "").replace("\r", "");
+            }
+        });
+     /*   new Thread() {
             public void run() {
-                ActivityUtil activityUtil = new ActivityUtil();
-                String lan = activityUtil.language(CallbackDisplayActivity.this);
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("loginName", getUsername());
                 params.put("loginPwd", getPassword());
@@ -254,6 +296,9 @@ public class CallbackDisplayActivity extends BaseActivity {
                 } catch (ConnectTimeoutException cte) {
                     cte.printStackTrace();
                     msg.what = Task.TASK_TIMEOUT;
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                    msg.what = Task.TASK_UNKNOWN_HOST;
                 } catch (Exception e) {
                     e.printStackTrace();
                     msg.what = Task.TASK_FAILED;
@@ -261,13 +306,8 @@ public class CallbackDisplayActivity extends BaseActivity {
                     mHandler.sendMessage(msg);
                 }
             }
-        }.start();
+        }.start();*/
 
-    }
-
-
-    @Override
-    public void refresh(Object... params) {
     }
 
     @Override
@@ -308,7 +348,7 @@ public class CallbackDisplayActivity extends BaseActivity {
                 @Override
                 public boolean onError(MediaPlayer arg0, int arg1, int arg2) {
                     try {
-						/* 发生错误时也解除资源与MediaPlayer的赋值 */
+                        /* 发生错误时也解除资源与MediaPlayer的赋值 */
                         mp.stop();
                         mp.release();
                         mp = null;

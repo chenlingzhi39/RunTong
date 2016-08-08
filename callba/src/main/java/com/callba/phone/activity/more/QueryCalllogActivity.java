@@ -30,10 +30,16 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.service.MainService;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import okhttp3.Call;
+import okhttp3.Request;
 
 @ActivityFragmentInject(
 		contentViewId = R.layout.more_query_calllog,
@@ -97,48 +103,9 @@ public class QueryCalllogActivity extends BaseActivity implements
 		bt_date.setText(time);
 		data.clear();
 		queryCalllog(time);
-			refreshLayout.setRefreshing(true);
+
 	}
 
-	@Override
-	public void refresh(Object... params) {
-		Message msg = (Message) params[0];
-       refreshLayout.setRefreshing(false);
-		//ll_loading.setVisibility(View.GONE);
-        progressBar.setVisibility(View.GONE);
-		refreshLayout.setVisibility(View.VISIBLE);
-		if (msg.what == Task.TASK_QUERY_CALLLOG) {
-			if (progressDialog!=null&&progressDialog.isShowing()) {
-				progressDialog.dismiss();
-			}
-			if (msg.arg1 == Task.TASK_SUCCESS) {
-				String content = (String) msg.obj;
-				Logger.i("查询话单返回", content);
-				try {
-					String[] result = content.split("\\|");
-					
-					if ("0".equals(result[0])) {
-						// 成功fanhui数据
-						Logger.i("查询话单通话记录", content);
-						parseData(result);
-					} else if ("1".equals(result[0])) {
-						toast(result[1]);
-						/*CalldaToast calldaToast = new CalldaToast();
-						calldaToast.showToast(getApplicationContext(), result[1]);*/
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					toast(R.string.getserverdata_exception);
-					/*CalldaToast calldaToast = new CalldaToast();
-					calldaToast.showToast(getApplicationContext(), R.string.getserverdata_exception);*/
-				}
-			} else {
-				toast( R.string.getserverdata_failed);
-			/*	CalldaToast calldaToast = new CalldaToast();
-				calldaToast.showToast(getApplicationContext(), R.string.getserverdata_failed);*/
-			}
-		}
-	}
 
 	/**
 	 * 解析返回数据
@@ -218,44 +185,6 @@ public class QueryCalllogActivity extends BaseActivity implements
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		/*case R.id.bn_calllog_back:
-			finish();
-			break;
-
-		case R.id.bn_calllog_zhibo:
-			if (!checkQueryDate())
-				break;
-			progressDialog = new MyProgressDialog(this,
-					getString(R.string.qclog_cxthjl));
-			progressDialog.show();
-			// 清空之前的查询数据
-			data.clear();
-			queryCalllog("sip", "1");
-			currentCallogType = "sip";
-
-			InputMethodManager imm = (InputMethodManager) this
-					.getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(bn_queryZhibo.getWindowToken(), 0);
-			break;
-
-		case R.id.bn_calllog_huibo:
-			if (!checkQueryDate())
-				break;
-			progressDialog = new MyProgressDialog(this,
-					getString(R.string.qclog_cxthjl));
-			progressDialog.show();
-			// 清空之前的查询数据
-			data.clear();
-			queryCalllog("callback", "1");
-			currentCallogType = "callback";
-
-			InputMethodManager imm1 = (InputMethodManager) this
-					.getSystemService(Context.INPUT_METHOD_SERVICE);
-			imm1.hideSoftInputFromWindow(bn_queryHuibo.getWindowToken(), 0);
-			break;
-
-		default:
-			break;*/
 			case R.id.date:
 				mDialogYearMonthDay.show(getSupportFragmentManager(), "year_month_day");
 				break;
@@ -265,32 +194,52 @@ public class QueryCalllogActivity extends BaseActivity implements
 
 	/**
 	 * 查询通话记录
-	 * 
-	 * @param callType
-	 *            直拨、回拨、所有
-	 * @param currentPage
-	 *            当前页码
 	 */
 	private void queryCalllog(String date) {
 		if(first){
         progressBar.setVisibility(View.VISIBLE);
-		first=false;}
-		Task task = new Task(Task.TASK_QUERY_CALLLOG);
-		Locale locale = getResources().getConfiguration().locale;
-		String language = locale.getCountry();
-		Map<String, Object> taskParams = new HashMap<String, Object>();
-		taskParams.put("loginName", getUsername());
-		taskParams.put("loginPwd", getPassword());
-		/*taskParams.put("softType", "android");
-		taskParams.put("year", year);
-		taskParams.put("month", month);
-		taskParams.put("type", callType);
-		taskParams.put("currentPage", currentPage);
-		taskParams.put("pageNum", String.valueOf(prePageNum));
-		taskParams.put("lan", language);*/
-		taskParams.put("date",date);
-		task.setTaskParams(taskParams);
-		MainService.newTask(task);
+		first=false;}else refreshLayout.setRefreshing(true);
+		OkHttpUtils.post().url(Interfaces.QUERY_CALLLOG)
+				.addParams("loginName", getUsername())
+				.addParams("loginPwd", getPassword())
+				.addParams("date",date)
+				.build().execute(new StringCallback() {
+			@Override
+			public void onAfter(int id) {
+				progressBar.setVisibility(View.GONE);
+				refreshLayout.setVisibility(View.VISIBLE);
+				refreshLayout.setRefreshing(false);
+			}
+
+			@Override
+			public void onBefore(Request request, int id) {
+
+			}
+
+			@Override
+			public void onError(Call call, Exception e, int id) {
+				toast(R.string.getserverdata_failed);
+			}
+
+			@Override
+			public void onResponse(String response, int id) {
+				try {
+					Logger.i("callog_result",response);
+					String[] result = response.split("\\|");
+
+					if ("0".equals(result[0])) {
+						// 成功fanhui数据
+						Logger.i("查询话单通话记录", response);
+						parseData(result);
+					} else if ("1".equals(result[0])) {
+						toast(result[1]);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					toast(R.string.getserverdata_exception);
+				}
+			}
+		});
 	}
 
 

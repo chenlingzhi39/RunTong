@@ -24,6 +24,7 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Task;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
@@ -60,10 +61,11 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 						activity.bn_submit.setClickable(false);
 						break;
 					case Interfaces.GET_KEY_FAILURE:
+						activity.toast((String)msg.obj);
 						activity.bn_submit.setClickable(true);
 						break;
 					case Interfaces.GET_KEY_SUCCESS:
-						activity.toast((String)msg.obj);
+						//activity.toast((String)msg.obj);
 						break;
 					case Interfaces.GET_CODE_START:
 						activity.toast("发送短信请求");
@@ -108,9 +110,9 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 		 language = locale.getCountry();
 		bn_submit = (Button) this.findViewById(R.id.bn_retrieve_pass);
 		bn_submit.setOnClickListener(this);
-		
 		et_phoneNum = (EditText) this.findViewById(R.id.et_retrpass_phone);
 		et_phoneNum.requestFocus();
+		et_phoneNum.setText(getUsername());
 		Timer timer = new Timer(); //设置定时器
 		timer.schedule(new TimerTask() {
 			@Override
@@ -119,82 +121,6 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 				imm.toggleSoftInputFromWindow(et_phoneNum.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
 			}
 		}, 300); //设置300毫秒的时长
-	}
-
-	@Override
-	public void refresh(Object... params) {
-		Message msg = (Message) params[0];
-		
-		if(msg.what == Task.TASK_GET_SMS_KEY) {
-			//获取短信key
-			if(msg.arg1 == Task.TASK_SUCCESS) {
-				try {
-					Bundle bundle = (Bundle) msg.obj;
-					String result = bundle.getString("result");
-					String[] content = result.split("\\|");
-					if("0".equals(content[0])) {
-						String smsCodeKey = content[1];	//get_sms_key 返回的加密密钥
-						String verificaSign = content[2];	//获取验证码 附加参数 key
-						
-						//发送获取短信验证码请求
-						retrievePwd(smsCodeKey, verificaSign);
-					}else {
-						if (progressDialog!=null&&progressDialog.isShowing()) {
-							progressDialog.dismiss();
-						}
-						toast(content[1]);
-						/*CalldaToast calldaToast = new CalldaToast();
-						calldaToast.showToast(getApplicationContext(), content[1]);*/
-					}
-				} catch (Exception e) {
-					if (progressDialog!=null&&progressDialog.isShowing()) {
-						progressDialog.dismiss();
-					}
-					toast(getString(R.string.getserverdata_exception));
-					/*CalldaToast calldaToast = new CalldaToast();
-					calldaToast.showToast(getApplicationContext(), R.string.getserverdata_exception);*/
-					e.printStackTrace();
-				}
-			}else {
-				if (progressDialog!=null&&progressDialog.isShowing()) {
-					progressDialog.dismiss();
-				}
-				toast(getString(R.string.rpwd_hqdxmsb));
-				/*CalldaToast calldaToast = new CalldaToast();
-				calldaToast.showToast(getApplicationContext(), R.string.rpwd_hqdxmsb);*/
-			}
-		}else if(msg.what == Task.TASK_RETRIEVE_PWD){
-			//找回密码
-			if (progressDialog!=null&&progressDialog.isShowing()) {
-				progressDialog.dismiss();
-			}
-			
-			if(msg.arg1 == Task.TASK_SUCCESS) {
-				try {
-					String result = (String) msg.obj;
-					String[] content = result.split("\\|");
-					if("0".equals(content[0])) {
-						/*CalldaToast calldaToast = new CalldaToast();
-						calldaToast.showToast(getApplicationContext(), content[1]);*/
-						toast(content[1]);
-						finish();
-					}else {
-						/*CalldaToast calldaToast = new CalldaToast();
-						calldaToast.showToast(getApplicationContext(), content[1]);*/
-						toast(content[1]);
-					}
-				} catch (Exception e) {
-					/*CalldaToast calldaToast = new CalldaToast();
-					calldaToast.showToast(getApplicationContext(), R.string.getserverdata_exception);*/
-					toast(getString(R.string.getserverdata_exception));
-					e.printStackTrace();
-				}
-			}else {
-				/*CalldaToast calldaToast = new CalldaToast();
-				calldaToast.showToast(getApplicationContext(), R.string.rpwd_zhmmsb);*/
-				toast(getString(R.string.rpwd_zhmmsb));
-			}
-		}
 	}
 
 	@Override
@@ -237,57 +163,4 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 		}
 	}
 
-	/**
-	 * 获取短信key
-	 */
-	private void getSMSCode() {
-		String phoneNumber = et_phoneNum.getText().toString().trim();
-		
-		if("".equals(phoneNumber) || phoneNumber.length() < 1) {
-			toast(getString(R.string.input_phonenum));
-			/*CalldaToast calldaToast = new CalldaToast();
-			calldaToast.showToast(getApplicationContext(), R.string.input_phonenum);*/
-			return;
-		}
-		if(phoneNumber.length() < 11) {
-			toast(getString(R.string.wrong_phonenum));
-			/*CalldaToast calldaToast = new CalldaToast();
-			calldaToast.showToast(getApplicationContext(), R.string.wrong_phonenum);*/
-			return;
-		}
-		
-		progressDialog = new MyProgressDialog(this, getString(R.string.rpwd_zzzhmm));
-		progressDialog.show();
-		
-		Task task = new Task(Task.TASK_GET_SMS_KEY);
-		Map<String, Object> taskParams = new HashMap<String, Object>();
-		taskParams.put("phoneNum", phoneNumber);
-		taskParams.put("fromPage", "RetrievePasswordActivity");
-		taskParams.put("lan",language);
-		task.setTaskParams(taskParams);
-		MainService.newTask(task);
-	}
-	/**
-	 * 找回密码
-	 * @param smsCodeKey
-	 * @param sign
-	 */
-	private void retrievePwd(String smsCodeKey, String sign) {
-		String phoneNumber = et_phoneNum.getText().toString().trim();
-		String encodePhoneNum = "";
-		try {
-			encodePhoneNum = DesUtil.encrypt(phoneNumber, smsCodeKey);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		Task task = new Task(Task.TASK_RETRIEVE_PWD);
-		Map<String, Object> taskParams = new HashMap<String, Object>();
-		taskParams.put("phoneNuber", encodePhoneNum);
-		taskParams.put("sign", sign);
-		taskParams.put("lan",language);
-
-		task.setTaskParams(taskParams);
-		MainService.newTask(task);
-	}
 }

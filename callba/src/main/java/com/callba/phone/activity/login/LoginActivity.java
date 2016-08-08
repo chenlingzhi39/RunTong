@@ -3,6 +3,7 @@ package com.callba.phone.activity.login;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -24,18 +25,30 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Task;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.logic.login.UserLoginErrorMsg;
 import com.callba.phone.logic.login.UserLoginListener;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.DesUtil;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CleanableEditText;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
+import org.apache.http.conn.ConnectTimeoutException;
+
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Request;
 
 @ActivityFragmentInject(
         contentViewId = R.layout.login,
@@ -124,7 +137,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         //校验用户名是否为空
         if (TextUtils.isEmpty(username)) {
             /*CalldaToast calldaToast = new CalldaToast();
-			calldaToast.showToast(getApplicationContext(), R.string.input_username);*/
+            calldaToast.showToast(getApplicationContext(), R.string.input_username);*/
             toast(getString(R.string.input_username));
             return;
         }
@@ -151,55 +164,53 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
             return;
         }
 
-        progressDialog = ProgressDialog.show(this, null,
-                getString(R.string.logining));
 
-
-        Task task = new Task(Task.TASK_LOGIN);
-        Map<String, Object> taskParams = new HashMap<String, Object>();
-        taskParams.put("loginSign", sign);
-        taskParams.put("loginType", "1");
-        task.setTaskParams(taskParams);
-        //登录
-        LoginController.getInstance().userLogin(this, task, new UserLoginListener() {
+        OkHttpUtils.post().url(Interfaces.Login)
+                .addParams("loginSign", sign)
+                .addParams("loginType", "1")
+                .addParams("softType", "android")
+                .addParams("callType", "all")
+        .build().execute(new StringCallback() {
             @Override
-            public void serverLoginFailed(String info) {
+            public void onAfter(int id) {
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-				
-				/*CalldaToast calldaToast = new CalldaToast();
-				calldaToast.showToast(getApplicationContext(), info);*/
-                toast(info);
             }
 
             @Override
-            public void loginSuccess(String[] resultInfo) {
+            public void onBefore(Request request, int id) {
+                progressDialog = ProgressDialog.show(LoginActivity.this, null,
+                        getString(R.string.logining));
+            }
 
-                //处理登录成功返回信息
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                if(e instanceof ConnectTimeoutException){
+                    toast(R.string.conn_timeout);
+                }
+                else if(e instanceof SocketTimeoutException){
+                    toast(R.string.socket_timeout);
+                }else if(e instanceof UnknownHostException){
+                    toast(R.string.conn_failed);
+                }else{
+                    e.printStackTrace();
+                    toast(R.string.network_error);}
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Logger.i("login_result",response);
+                String[] resultInfo=response.split("\\|");
+                if(resultInfo[0].equals("0"))
+                {//处理登录成功返回信息
+                    LoginController.getInstance().setUserLoginState(true);
                 LoginController.parseLoginSuccessResult(LoginActivity.this, username, password, resultInfo);
-
                 //转到主页面
-                gotoMainActivity();
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-            }
-
-            @Override
-            public void localLoginFailed(UserLoginErrorMsg errorMsg) {
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-
-                //解析登录失败信息
-                LoginController.parseLocalLoginFaildInfo(getApplicationContext(), errorMsg);
+                gotoMainActivity();}
+                else toast(resultInfo[1]);
             }
         });
-    }
-
-    @Override
-    public void refresh(Object... params) {
     }
 
     /**
@@ -212,7 +223,6 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
     @Override
     protected void onDestroy() {
-
         super.onDestroy();
     }
 
@@ -243,5 +253,19 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        ArrayList list = new ArrayList();
+        list.add(GlobalConfig.getInstance().getContactBeans());
+        outState.putParcelableArrayList("contact", list);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        GlobalConfig.getInstance().setContactBeans((ArrayList<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0));
     }
 }

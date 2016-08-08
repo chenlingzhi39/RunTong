@@ -141,7 +141,8 @@ public class UserDao {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else getMessage(Interfaces.GET_KEY_FAILURE);
+                } else {getMessage(Interfaces.GET_KEY_FAILURE);
+                message.obj = result[1];}
                 handler.sendMessage(message);
             }
 
@@ -171,6 +172,7 @@ public class UserDao {
                 Log.i("send_success", responseInfo.result);
                 result = responseInfo.result.split("\\|");
                 if(result[0].equals("0")) {
+                    getMessage(Interfaces.GET_KEY_SUCCESS);
                     String phoneNumber2;
                     try {
                         phoneNumber2 = DesUtil.encrypt(phoneNumber, result[1]);
@@ -179,7 +181,9 @@ public class UserDao {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
+                }else{getMessage(Interfaces.GET_KEY_FAILURE);
+                    message.obj = result[1];}
+                handler.sendMessage(message);
             }
 
             @Override
@@ -340,27 +344,6 @@ public class UserDao {
             @Override
             public void onFailure(HttpException error, String msg) {
                 Log.i("save", "failure");
-            }
-        });
-    }
-
-    public void getRechargeMeal(String loginName, String password) {
-        RequestParams params = new RequestParams();
-        Log.i("password", password);
-        params.addBodyParameter("loginName", loginName);
-        params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("softType", "android");
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_RECHARGE_MEAL, params, new RequestCallBack<String>() {
-            @Override
-            public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i("get_recharge_meal", responseInfo.result);
-                result = responseInfo.result.split("\\|");
-                postListener.success(result[1]);
-            }
-
-            @Override
-            public void onFailure(HttpException error, String msg) {
-                postListener.failure(context.getString(R.string.network_error));
             }
         });
     }

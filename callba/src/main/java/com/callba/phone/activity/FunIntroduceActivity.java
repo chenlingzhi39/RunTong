@@ -112,16 +112,7 @@ public class FunIntroduceActivity extends BaseActivity implements OnPageChangeLi
 			views.add(v2);
 			views.add(v3);
 			views.add(v4);
-			
-//			v3.setOnTouchListener(new OnTouchListener() {
-//				@Override
-//				public boolean onTouch(View v, MotionEvent event) {
-//					Intent intent = new Intent(FunIntroduceActivity.this, LoginActivity.class);
-//					startActivity(intent);
-//					finish();
-//					return true;
-//				}
-//			});
+
 		}
 		
 		@Override

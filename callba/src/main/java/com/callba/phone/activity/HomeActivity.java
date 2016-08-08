@@ -40,13 +40,20 @@ import com.callba.phone.service.MainService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.DesUtil;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
+import org.apache.http.conn.ConnectTimeoutException;
+
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,6 +65,8 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.Request;
 
 
 /**
@@ -297,33 +306,6 @@ public class HomeActivity extends BaseActivity {
         ActivityUtil.finishMainTabPages();
     }
 
-    @Override
-    public void refresh(Object... params) {
-        Message msg = (Message) params[0];
-
-        if (msg.what == Task.TASK_GET_USER_BALANCE) {
-
-            if (msg.arg1 == Task.TASK_SUCCESS) {
-                String content = (String) msg.obj;
-                Logger.i("查询余额返回", content);
-
-                try {
-                    String[] result = content.split("\\|");
-                    if ("0".equals(result[0])) {
-                        // 成功fanhui数据
-                        String accountBalance = result[1];
-                        Log.i("yue", accountBalance);
-                        yue = result[1];
-                        showYueDialog();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-     progressDialog.dismiss();
-        }
-    }
 
     @OnClick({R.id.recharge, R.id.discount, R.id.sale, R.id.mall, R.id.flow, R.id.family, R.id.game, R.id.sign_in})
     public void onClick(View view) {
@@ -427,24 +409,6 @@ public class HomeActivity extends BaseActivity {
     }
 
     /**
-     * 查询用户余额
-     */
-    private void queryUserBalance() {
-        progressDialog=ProgressDialog.show(this,"","正在查询余额");
-        Task task = new Task(Task.TASK_GET_USER_BALANCE);
-        Map<String, Object> taskParams = new HashMap<String, Object>();
-        taskParams.put("loginName", UserManager
-                .getUsername(this));
-        taskParams.put("loginPwd",UserManager
-                .getPassword(this));
-        taskParams.put("softType", "android");
-        taskParams.put("frompage", "MainCallActivity");
-        task.setTaskParams(taskParams);
-
-        MainService.newTask(task);
-    }
-
-    /**
      * 自动登录
      */
     private void autoLogin() {
@@ -478,73 +442,59 @@ public class HomeActivity extends BaseActivity {
             switchManualLogin();
             return;
         }
+        OkHttpUtils.post().url(Interfaces.Login)
+                .addParams("loginSign", sign)
+                .addParams("loginType", "1")
+                .addParams("softType", "android")
+                .addParams("callType", "all")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onAfter(int id) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+            }
 
-        progressDialog = ProgressDialog.show(this, null, getResources().getString(R.string.logining));
+            @Override
+            public void onBefore(Request request, int id) {
+                progressDialog = ProgressDialog.show(HomeActivity.this, null,
+                        getString(R.string.logining));
+            }
 
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                if(e instanceof ConnectTimeoutException){
+                    toast(R.string.conn_timeout);
+                }else if(e instanceof SocketTimeoutException){
+                    toast(R.string.socket_timeout);
+                }else if(e instanceof UnknownHostException){
+                    toast(R.string.conn_failed);
+                }else{toast(R.string.network_error);}
+                switchManualLogin();
+            }
 
-        Task task = new Task(Task.TASK_LOGIN);
-        Map<String, Object> taskParams = new HashMap<String, Object>();
-        taskParams.put("loginSign", sign);
-        taskParams.put("loginType", "1");
-        task.setTaskParams(taskParams);
-
-        // 登录
-        LoginController.getInstance().userLogin(this, task,
-                new UserLoginListener() {
-                    @Override
-                    public void serverLoginFailed(String info) {
-                        if (progressDialog != null
-                                && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                        toast(info);
-                        // 手动登录
-                        switchManualLogin();
-                    }
-
-                    @Override
-                    public void loginSuccess(String[] resultInfo) {
-                        if (progressDialog != null
-                                && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-
-                        }
-
-                        // 处理登录成功返回信息
-                        LoginController.parseLoginSuccessResult(
-                                HomeActivity.this, username, password,
-                                resultInfo);
-
-                        if (!mPreferenceUtil.getString(getUsername()).equals(date)&& (boolean)SPUtils.get(HomeActivity.this,"settings","sign_key",false)) {
-                            String year = Calendar.getInstance().get(Calendar.YEAR) + "";
-                            String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
-                            if (month.length() == 1)
-                                month = "0" + month;
-                            userDao.getMarks(getUsername(), getPassword(), year + month);
-                        }
-                        userDao1.getSystemPhoneNumber(getUsername(),getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
-                        userDao2.getAd(1, getUsername(), getPassword());
-                        if(GlobalConfig.getInstance().getAppVersionBean()!=null&&(boolean)SPUtils.get(HomeActivity.this,"settings","update_key",true)){
-                            check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(),false);
-                        }
-                        // 查询余额
-                        //queryUserBalance();
-                    }
-
-                    @Override
-                    public void localLoginFailed(UserLoginErrorMsg errorMsg) {
-                        if (progressDialog != null
-                                && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                        // 解析登录失败信息
-                        LoginController.parseLocalLoginFaildInfo(
-                                getApplicationContext(), errorMsg);
-                        // 手动登录
-                        switchManualLogin();
-                    }
-                });
-
+            @Override
+            public void onResponse(String response, int id) {
+                Logger.i("login_result",response);
+                String[] resultInfo=response.split("\\|");
+                if(resultInfo[0].equals("0"))
+                { //处理登录成功返回信息
+                LoginController.parseLoginSuccessResult(HomeActivity.this, username, password, resultInfo);
+                LoginController.getInstance().setUserLoginState(true);
+                if (!mPreferenceUtil.getString(getUsername()).equals(date)&& (boolean)SPUtils.get(HomeActivity.this,"settings","sign_key",false)) {
+                    String year = Calendar.getInstance().get(Calendar.YEAR) + "";
+                    String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
+                    if (month.length() == 1)
+                        month = "0" + month;
+                    userDao.getMarks(getUsername(), getPassword(), year + month);
+                }
+                userDao1.getSystemPhoneNumber(getUsername(),getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+                userDao2.getAd(1, getUsername(), getPassword());
+                if(GlobalConfig.getInstance().getAppVersionBean()!=null&&(boolean)SPUtils.get(HomeActivity.this,"settings","update_key",true)){
+                    check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(),false);
+                }}else toast(resultInfo[1]);
+            }
+        });
     }
 
     /**

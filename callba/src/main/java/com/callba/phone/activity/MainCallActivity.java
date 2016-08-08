@@ -420,12 +420,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     }
 
     @Override
-    public void refresh(Object... params) {
-
-
-    }
-
-    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.num0:

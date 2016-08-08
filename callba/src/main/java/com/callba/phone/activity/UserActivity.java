@@ -34,8 +34,16 @@ import com.callba.phone.manager.UserManager;
 import com.callba.phone.service.MainService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
+import com.callba.phone.util.Interfaces;
+import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
+import org.apache.http.conn.ConnectTimeoutException;
+
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +51,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Call;
+import okhttp3.Request;
 
 /**
  * Created by Administrator on 2016/5/15.
@@ -77,14 +87,12 @@ public class UserActivity extends BaseActivity {
     RelativeLayout logout;
     @InjectView(R.id.version_code)
     TextView versionCode;
-    private SharedPreferenceUtil mSharedPreferenceUtil;
     private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         number.setText(getUsername());
-        mSharedPreferenceUtil = SharedPreferenceUtil.getInstance(this);
         versionCode.setHint(BuildConfig.VERSION_NAME);
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("正在检查更新");
@@ -196,34 +204,40 @@ public class UserActivity extends BaseActivity {
      * @author zhw
      */
     private void sendGetVersionTask() {
-        PackageManager pm = this.getPackageManager();
-        String localVersion = "";
-        try {
-            PackageInfo packageInfo = pm.getPackageInfo(getPackageName(), 0);
-            localVersion = packageInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        ActivityUtil activityUtil = new ActivityUtil();
-        Task task = new Task(Task.TASK_GET_VERSION);
-        Map<String, Object> taskParams = new HashMap<String, Object>();
-        taskParams.put("versionName", localVersion);
-        taskParams.put("fromPage", "UserActivity");
-        taskParams.put("lan", activityUtil.language(this));
-        task.setTaskParams(taskParams);
-        MainService.newTask(task);
-    }
+        OkHttpUtils.post().url(Interfaces.Version)
+                .addParams("softType","android")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onBefore(Request request, int id) {
+               progressDialog.show();
+            }
 
-    @Override
-    public void refresh(Object... params) {
-        Log.i("user", "refresh");
-        Message versionMessage = (Message) params[0];
-        // 解析版本返回数据
-        AppVersionChecker.AppVersionBean appVersionBean = AppVersionChecker.parseVersionInfo(
-                this, versionMessage);
-        progressDialog.dismiss();
-        // 检查是否成功获取加密Key
-        checkLoginKey(appVersionBean);
+            @Override
+            public void onAfter(int id) {
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                if(e instanceof ConnectTimeoutException){
+                    toast(R.string.conn_timeout);
+                }else if(e instanceof SocketTimeoutException){
+                    toast(R.string.socket_timeout);
+                }else if(e instanceof UnknownHostException){
+                    toast(R.string.conn_failed);
+                }else{toast(R.string.network_error);}
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                String[] result=response.split("\\|");
+                if(result[0].equals("0"))
+                {AppVersionChecker.AppVersionBean appVersionBean=AppVersionChecker.parseVersionInfo(UserActivity.this,response);
+                GlobalConfig.getInstance().setAppVersionBean(appVersionBean);
+                checkLoginKey(appVersionBean);}
+                else toast(result[1]);
+            }
+        });
     }
 
     /**
@@ -239,13 +253,11 @@ public class UserActivity extends BaseActivity {
         if (!TextUtils.isEmpty(appVersionBean.getSecretKey())) {
             // 成功获取key
             check2Upgrade(appVersionBean, true);
+            UserManager.putSecretKey(UserActivity.this,appVersionBean.getSecretKey());
         } else {
             // 统计获取版本失败次数
             //MobclickAgent.onEvent(this, "version_timeout");
-            String secretKey = mSharedPreferenceUtil
-                    .getString(Constant.SECRET_KEY);
-            UserManager.putSecretKey(this,secretKey);
-
+            String secretKey = UserManager.getSecretKey(this);
             if (TextUtils.isEmpty(secretKey)) {
                 // Toast.makeText(this, R.string.getversionfailed,
                 // Toast.LENGTH_SHORT).show();

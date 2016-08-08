@@ -175,8 +175,5 @@ public class ContactChooseActivity extends BaseActivity implements OnClickListen
 	}
 
 
-	@Override
-	public void refresh(Object... params) {
-	}
 }
 

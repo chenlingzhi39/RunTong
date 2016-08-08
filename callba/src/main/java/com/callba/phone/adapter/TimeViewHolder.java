@@ -46,8 +46,9 @@ public class TimeViewHolder extends BaseViewHolder<CalldaCalllogBean> {
         else if(days == 2){
             return  "前天";
         }
-        long ly=time.getTime()/(86400000*365);
-        long cy=cal.getTimeInMillis()/(86400000*365);
+        long cy=cal.get(Calendar.YEAR);
+        cal.setTime(time);
+        long ly=cal.get(Calendar.YEAR);
         int years=(int)(cy - ly);
       if(years==0)
           return dateFormat1.format(time);

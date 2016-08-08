@@ -537,12 +537,6 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
 
 
 
-    @Override
-    public void refresh(Object... params) {
-
-    }
-
-
   /*  @OnClick(R.id.btn_send)
     public void onClick() {
         Log.i("submit", userName);

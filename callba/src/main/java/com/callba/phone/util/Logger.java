@@ -24,7 +24,7 @@ public class Logger {
 	private static final String LOG_FILENAME = "callba";
 
 //	private static final boolean DEBUG = true;
-	 private static final boolean DEBUG = true;
+	 private static final boolean DEBUG = false;
 
 	// private static final boolean LOG2FILE = true;
 	private static final boolean LOG2FILE = false;

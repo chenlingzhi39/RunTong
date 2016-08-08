@@ -415,8 +415,8 @@ public class WebContactFragment extends BaseFragment {
                     startActivity(new Intent(getActivity(), GroupsActivity.class));
                     break;
                 case R.id.community_item:
-                    //toast("暂未开放");
-                    startActivity(new Intent(getActivity(), CommunityActivity.class));
+                    toast("暂未开放");
+                    //startActivity(new Intent(getActivity(), CommunityActivity.class));
                     break;
                /* case R.id.chat_room_item:
                     //进入聊天室列表页面

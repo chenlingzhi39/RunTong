@@ -43,10 +43,15 @@ import com.callba.phone.service.MainService;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.AppVersionChecker.AppVersionBean;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.ZipUtil;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import okhttp3.Call;
 
 
 @ActivityFragmentInject(
@@ -199,43 +204,22 @@ public class WelcomeActivity extends BaseActivity {
 	 * @author zhw
 	 */
 	private void sendGetVersionTask() {
-		PackageManager pm = this.getPackageManager();
-		String localVersion = "";
-		try {
-			PackageInfo packageInfo = pm.getPackageInfo(getPackageName(), 0);
-			localVersion = packageInfo.versionName;
-		} catch (NameNotFoundException e) {
-			e.printStackTrace();
-		}
-		ActivityUtil activityUtil = new ActivityUtil();
-		Task task = new Task(Task.TASK_GET_VERSION);
-		Map<String, Object> taskParams = new HashMap<String, Object>();
-		taskParams.put("versionName", localVersion);
-		taskParams.put("fromPage", "WelcomeActivity");
-		taskParams.put("lan", activityUtil.language(this));
-		task.setTaskParams(taskParams);
+		OkHttpUtils.post().url(Interfaces.Version)
+				.addParams("softType","android")
+				.build().execute(new StringCallback() {
+			@Override
+			public void onError(Call call, Exception e, int id) {
+				AppVersionBean appVersionBean=new AppVersionBean();
+				checkLoginKey(appVersionBean);
+			}
 
-		MainService.newTask(task);
-
-		currentGetVersionTime++;
-	}
-
-	@Override
-	public void refresh(Object... params) {
-		Message verionMessage = (Message) params[0];
-		// 解析版本返回数据
-		AppVersionBean appVersionBean = AppVersionChecker.parseVersionInfo(
-				this, verionMessage);
-
-		String secretKey = appVersionBean.getSecretKey();
-		if (!TextUtils.isEmpty(secretKey)) {
-			UserManager.putSecretKey(WelcomeActivity.this,secretKey);
-			mSharedPreferenceUtil.putString(Constant.SECRET_KEY, secretKey,
-					true);
-		}
-        GlobalConfig.getInstance().setAppVersionBean(appVersionBean);
-		// 检查是否成功获取加密Key
-		checkLoginKey(appVersionBean);
+			@Override
+			public void onResponse(String response, int id) {
+				AppVersionBean appVersionBean=AppVersionChecker.parseVersionInfo(WelcomeActivity.this,response);
+				GlobalConfig.getInstance().setAppVersionBean(appVersionBean);
+				checkLoginKey(appVersionBean);
+			}
+		});
 	}
 
 	/**
@@ -249,21 +233,19 @@ public class WelcomeActivity extends BaseActivity {
 		Logger.i(TAG, "currentGetVersionTime : " + currentGetVersionTime);
 
 		if (!TextUtils.isEmpty(appVersionBean.getSecretKey())) {
-
+			UserManager.putSecretKey(WelcomeActivity.this,appVersionBean.getSecretKey());
 			// 成功获取key
 			//check2Upgrade(appVersionBean);
 			gotoActivity();
-		} else if (currentGetVersionTime <= Constant.GETVERSION_RETRY_TIMES) {
+		} /*else if (currentGetVersionTime <= Constant.GETVERSION_RETRY_TIMES) {
 
 			// 再次发送获取任务
 			sendGetVersionTask();
 
-		} else {
+		}*/ else {
 			// 统计获取版本失败次数
 			//MobclickAgent.onEvent(this, "version_timeout");
-			String secretKey = mSharedPreferenceUtil
-					.getString(Constant.SECRET_KEY);
-
+			String secretKey = UserManager.getSecretKey(this);
 			if (TextUtils.isEmpty(secretKey)) {
 				// Toast.makeText(this, R.string.getversionfailed,
 				// Toast.LENGTH_SHORT).show();
@@ -290,25 +272,7 @@ public class WelcomeActivity extends BaseActivity {
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						PackageManager pm =WelcomeActivity.this.getPackageManager();
-						String localVersion = "";
-						try {
-							PackageInfo packageInfo = pm.getPackageInfo(getPackageName(), 0);
-							localVersion = packageInfo.versionName;
-						} catch (NameNotFoundException e) {
-							e.printStackTrace();
-						}
-						ActivityUtil activityUtil = new ActivityUtil();
-						Task task = new Task(Task.TASK_GET_VERSION);
-						Map<String, Object> taskParams = new HashMap<String, Object>();
-						taskParams.put("versionName", localVersion);
-						taskParams.put("fromPage", "WelcomeActivity");
-						taskParams.put("lan", activityUtil.language(WelcomeActivity.this));
-						task.setTaskParams(taskParams);
-						MainService.newTask(task);
-						/*Intent intent = new Intent();
-						intent.setAction(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
-						startActivity(intent);*/
+						sendGetVersionTask();
 						dialog.dismiss();
 					}
 				});
@@ -385,6 +349,7 @@ public class WelcomeActivity extends BaseActivity {
 										int which) {
 									try {
 										startActivityForResult(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS), 0);
+										dialog.dismiss();
 									} catch (Exception e) {
 										// TODO: handle exception
 									}

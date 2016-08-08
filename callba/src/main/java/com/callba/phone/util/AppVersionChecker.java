@@ -28,7 +28,7 @@ public class AppVersionChecker {
 	 * @param serverVersion
 	 * @return
 	 */
-	private static boolean detectNewVersion(AppVersionBean appVersionBean) {
+	public static boolean detectNewVersion(AppVersionBean appVersionBean) {
 		String localVersion = appVersionBean.getLocalVersionCode();
 		String serverVersion = appVersionBean.getServerVersionCode();
 		
@@ -125,7 +125,55 @@ public class AppVersionChecker {
 		
 		return appVersionBean;
 	}
+	public static AppVersionBean parseVersionInfo(Context context, String result) {
+		AppVersionBean appVersionBean = new AppVersionBean();
+			Logger.i("result",result);
+			if (TextUtils.isEmpty(result)) {
+				appVersionBean.setHasNewVersion(false);
+			}
 
+			try {
+				result = result.replaceAll("\r", "").replaceAll("\t", "").replaceAll("\n", "");
+				String[] str = result.split("\\|");
+				if ("0".equals(str[0])) {
+
+					if (str.length < 5) {
+						appVersionBean.setHasNewVersion(false);
+					} else {
+						String upgradeCode = str[4];
+						if("0".equals(upgradeCode)) {
+							//强制升级
+							appVersionBean.setForceUpgrade(true);
+						} else {
+							//提示升级
+							appVersionBean.setForceUpgrade(false);
+						}
+
+						appVersionBean.setServerVersionCode(str[1]);
+						appVersionBean.setDownloadUrl(str[2]);
+						appVersionBean.setSecretKey(str[3]);
+
+						PackageManager pm = context.getPackageManager();
+						String localVersion = "";
+						try {
+							PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), 0);
+							localVersion = packageInfo.versionName;
+						} catch (NameNotFoundException e) {
+							e.printStackTrace();
+						}
+						appVersionBean.setLocalVersionCode(localVersion);
+
+						//解析新版本
+						appVersionBean.setHasNewVersion(detectNewVersion(appVersionBean));
+					}
+				} else {
+					appVersionBean.setHasNewVersion(false);
+				}
+			} catch (Exception e) {
+				appVersionBean.setHasNewVersion(false);
+			}
+		return appVersionBean;
+	}
 	/**
 	 * 封装解析的版本信息
 	 * @author zhw

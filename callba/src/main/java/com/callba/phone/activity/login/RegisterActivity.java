@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.BaseActivity;
@@ -37,8 +38,14 @@ import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.SmsTools;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.apache.http.conn.ConnectTimeoutException;
 
 import java.lang.ref.WeakReference;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -47,6 +54,8 @@ import java.util.regex.Pattern;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.Request;
 
 
 @ActivityFragmentInject(
@@ -279,10 +288,11 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 						RegisterActivity.this);
 				if(!address.equals(""))
 				{*/
-                    Log.i("key", key);
                     try {
                         sendRegisterRequest(username, password, DesUtil.encrypt(code, key));
                     } catch (Exception e) {
+                        toast("请重新获取验证码");
+                        e.printStackTrace();
                     }
 				/*}else {toast("请输入正确的手机号!");
 				break;
@@ -310,34 +320,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
         }
     }
 
-    /**
-     * 获取短信key
-     */
-   /* private void getVerifiCode() {
-        username = et_account.getText().toString().trim();
-        if ("".equals(username) || username.length() < 1) {
-            CalldaToast calldaToast = new CalldaToast();
-            calldaToast.showToast(getApplicationContext(), R.string.input_phonenum);
-            return;
-        }
-        if (username.length() < 11) {
-            CalldaToast calldaToast = new CalldaToast();
-            calldaToast.showToast(getApplicationContext(), R.string.wrong_phonenum);
-            return;
-        }
 
-        progressDialog = new MyProgressDialog(this, getString(R.string.getting_code));
-        progressDialog.show();
-
-        Task task = new Task(Task.TASK_GET_SMS_KEY);
-        Map<String, Object> taskParams = new HashMap<String, Object>();
-        taskParams.put("phoneNum", username);
-        taskParams.put("fromPage", "RegisterActivity");
-        taskParams.put("lan", language);
-        task.setTaskParams(taskParams);
-        MainService.newTask(task);
-    }
-*/
     /**
      * 注册之前校验
      *
@@ -383,104 +366,45 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
      * @param password
      * @param verifiCode
      */
-    private void sendRegisterRequest(String username, String password,
+    private void sendRegisterRequest(final String username,final String password,
                                      String code) {
-
-        Task task = new Task(Task.TASK_REGISTER);
-        Map<String, Object> taskParams = new HashMap<String, Object>();
-        taskParams.put("phoneNumber", username);
-        taskParams.put("password", password);
-        taskParams.put("code", code);
-        taskParams.put("softType", "android");
-        taskParams.put("countryCode", "86");
-        task.setTaskParams(taskParams);
-        Logger.i("发送注册", taskParams.toString());
-        MainService.newTask(task);
-    }
-
-    @Override
-    public void refresh(Object... params) {
-        Message msg = (Message) params[0];
-        if (msg.what == Task.TASK_GET_SMS_KEY) {
-            //获取短信key
-            if (msg.arg1 == Task.TASK_SUCCESS) {
-                try {
-                    Bundle bundle = (Bundle) msg.obj;
-                    String result = bundle.getString("result");
-                    Logger.v("获取短信key", result);
-                    String[] content = result.split("\\|");
-                    if ("0".equals(content[0])) {
-                        String smsCodeKey = content[1];    //get_sms_key 返回的加密密钥
-                        String verificaSign = content[2];    //获取验证码 附加参数 key
-
-                        //发送获取短信验证码请求
-                        sendGetVifricaRequst(smsCodeKey, verificaSign);
-                    } else {
-                        if (progressDialog != null && progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-
-                       /* CalldaToast calldaToast = new CalldaToast();
-                        calldaToast.showToast(getApplicationContext(), content[1]);*/
-                    }
-                } catch (Exception e) {
-                    if (progressDialog != null && progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
-
-                 /*   CalldaToast calldaToast = new CalldaToast();
-                    calldaToast.showToast(getApplicationContext(), R.string.sin_hqsjsb);*/
-
-                    e.printStackTrace();
-                }
-            } else {
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-/*
-                CalldaToast calldaToast = new CalldaToast();
-                calldaToast.showToast(getApplicationContext(), R.string.sin_hqsjsb);*/
+        OkHttpUtils.post().url(Interfaces.Register)
+                .addParams("phoneNumber", username)
+                .addParams("password", password)
+                .addParams("code", code)
+                .addParams("softType", "android")
+                .addParams("countryCode", "86")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onAfter(int id) {
+               progressDialog.dismiss();
             }
-        } else if (msg.what == Task.TASK_GET_VERFICA_CODE) {
-            //获取验证码
-            if (msg.arg1 == Task.TASK_SUCCESS) {
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-                String result = (String) msg.obj;
-                Logger.v("获取验证码", result);
-                String[] content = result.split("\\|");
 
-                if ("0".equals(content[0])) {
-                   /* CalldaToast calldaToast = new CalldaToast();
-                    calldaToast.showToast(getApplicationContext(), R.string.receive_yzm);*/
-                } else {
-                  /*  CalldaToast calldaToast = new CalldaToast();
-                    calldaToast.showToast(getApplicationContext(), content[1]);*/
-                }
-            } else {
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
+            @Override
+            public void onBefore(Request request, int id) {
+                progressDialog=ProgressDialog.show(RegisterActivity.this,"","正在注册");
+            }
 
-               /* CalldaToast calldaToast = new CalldaToast();
-                calldaToast.showToast(getApplicationContext(), R.string.getyzm_failed);*/
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                if(e instanceof ConnectTimeoutException){
+                    toast(R.string.conn_timeout);
+                }else if(e instanceof SocketTimeoutException){
+                    toast(R.string.socket_timeout);
+                }else if(e instanceof UnknownHostException){
+                    toast(R.string.conn_failed);
+                }else{toast(R.string.network_error);}
             }
-        } else if (msg.what == Task.TASK_REGISTER) {
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-            //注册
-            if (msg.arg1 == Task.TASK_SUCCESS) {
-                String result = (String) msg.obj;
-                Logger.i("手动注册发送短信", result);
-                String[] content = result.split("\\|");
+
+            @Override
+            public void onResponse(String response, int id) {
+                String[] content = response.split("\\|");
                 if ("0".equals(content[0])) {
                     toast(content[1]);
                     preferenceUtil.putString(Constant.LOGIN_USERNAME, username);
                     preferenceUtil.putString(Constant.LOGIN_PASSWORD, password);
                     preferenceUtil.commit();
-                    Intent intent = new Intent(this, MainTabActivity.class);
+                    Intent intent = new Intent(RegisterActivity.this, MainTabActivity.class);
                     LoginController.getInstance().setUserLoginState(false);
                     GlobalConfig.getInstance().setAutoLogin(true);
                     intent.putExtra("isLogin", false);
@@ -496,40 +420,11 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 
                     startActivity(intent);
                 } else {
-					/*CalldaToast calldaToast = new CalldaToast();
-					calldaToast.showToast(getApplicationContext(), content[1]);*/
                     toast(content[1]);
                 }
-            } else {
-				/*CalldaToast calldaToast = new CalldaToast();
-				calldaToast.showToast(getApplicationContext(), R.string.register_failed);*/
-                toast(getString(R.string.register_failed));
             }
-        }
-    }
+        });
 
-    /**
-     * 发送 获取短信验证码 任务
-     */
-    private void sendGetVifricaRequst(String smsCodeKey, String verificaSign) {
-        try {
-            //发送短信之前,获取密钥
-            String encryptedPhoneNum = DesUtil.encrypt(username, smsCodeKey);
-
-            Task task = new Task(Task.TASK_GET_VERFICA_CODE);
-            Map<String, Object> taskParams = new HashMap<String, Object>();
-            taskParams.put("encryptedPhoneNum", encryptedPhoneNum);
-            taskParams.put("verificaSign", verificaSign);
-            taskParams.put("lan", language);
-            task.setTaskParams(taskParams);
-            Logger.i("获取密钥", taskParams.toString());
-            MainService.newTask(task);
-        } catch (Exception e) {
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-            e.printStackTrace();
-        }
     }
 
     @Override

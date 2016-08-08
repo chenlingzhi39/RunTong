@@ -105,12 +105,12 @@ public class MainTabActivity extends TabActivity {
 
             window.setStatusBarColor(Color.TRANSPARENT);
         }
-
-        if (Build.MANUFACTURER.equals("Xiaomi"))
-            ActivityUtil.MIUISetStatusBarLightMode(getWindow(), true);
-        if (Build.MANUFACTURER.equals("Meizu"))
-            ActivityUtil.FlymeSetStatusBarLightMode(getWindow(), true);
-
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (Build.MANUFACTURER.equals("Xiaomi"))
+                ActivityUtil.MIUISetStatusBarLightMode(getWindow(), true);
+            if (Build.MANUFACTURER.equals("Meizu"))
+                ActivityUtil.FlymeSetStatusBarLightMode(getWindow(), true);
+        }
 
         MyApplication.activities.add(this);
 

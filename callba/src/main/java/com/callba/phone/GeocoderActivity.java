@@ -58,11 +58,6 @@ public class GeocoderActivity extends BaseActivity implements
     private AMapLocationClientOption locationOption = null;
 
     @Override
-    public void refresh(Object... params) {
-
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mapView = (MapView) findViewById(R.id.map);
