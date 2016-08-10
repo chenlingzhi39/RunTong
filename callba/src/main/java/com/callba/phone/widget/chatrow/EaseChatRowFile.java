@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.ui.EaseShowNormalFileActivity;
+import com.callba.phone.ui.ease.EaseShowNormalFileActivity;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;

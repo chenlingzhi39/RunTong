@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.callba.R;
-import com.callba.phone.adapter.RecyclerArrayAdapter;
+import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.widget.FastScroller;
 
 

@@ -7,7 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.GeocoderActivity;
+import com.callba.phone.ui.GeocoderActivity;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMLocationMessageBody;
 import com.hyphenate.chat.EMMessage;

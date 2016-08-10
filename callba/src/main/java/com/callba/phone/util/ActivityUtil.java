@@ -10,11 +10,11 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.callba.phone.MyApplication;
-import com.callba.phone.activity.GuideActivity;
-import com.callba.phone.activity.MainTabActivity;
-import com.callba.phone.activity.calling.CallbackDisplayActivity;
-import com.callba.phone.activity.login.LoginActivity;
-import com.callba.phone.activity.login.RegisterActivity;
+import com.callba.phone.ui.GuideActivity;
+import com.callba.phone.ui.MainTabActivity;
+import com.callba.phone.ui.CallbackDisplayActivity;
+import com.callba.phone.ui.LoginActivity;
+import com.callba.phone.ui.RegisterActivity;
 
 /**
  * Activity操作工具类

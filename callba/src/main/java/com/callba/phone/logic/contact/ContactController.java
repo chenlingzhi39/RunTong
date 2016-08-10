@@ -9,10 +9,11 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.callba.phone.MyApplication;
-import com.callba.phone.activity.contact.ContactMutliNumBean;
+import com.callba.phone.bean.ContactMutliNumBean;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.ContactsManager;
+import com.callba.phone.util.FileUtils;
 import com.callba.phone.util.Logger;
 import com.google.gson.Gson;
 

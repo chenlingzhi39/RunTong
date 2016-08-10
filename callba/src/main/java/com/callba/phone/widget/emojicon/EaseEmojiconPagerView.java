@@ -11,8 +11,8 @@ import android.widget.GridView;
 
 
 import com.callba.R;
-import com.callba.phone.adapter.EmojiconGridAdapter;
-import com.callba.phone.adapter.EmojiconPagerAdapter;
+import com.callba.phone.ui.adapter.EmojiconGridAdapter;
+import com.callba.phone.ui.adapter.EmojiconPagerAdapter;
 import com.callba.phone.bean.EaseEmojicon;
 import com.callba.phone.bean.EaseEmojiconGroupEntity;
 import com.callba.phone.bean.EaseEmojicon.Type;

@@ -10,7 +10,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.callba.R;
-import com.callba.phone.adapter.EaseMessageAdapter;
+import com.callba.phone.ui.adapter.EaseMessageAdapter;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.widget.chatrow.EaseCustomChatRowProvider;
 import com.hyphenate.chat.EMClient;

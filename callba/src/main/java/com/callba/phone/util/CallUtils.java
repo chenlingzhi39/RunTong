@@ -15,7 +15,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.callba.R;
-import com.callba.phone.activity.calling.CallbackDisplayActivity;
+import com.callba.phone.ui.CallbackDisplayActivity;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.contact.ContactPersonEntity;

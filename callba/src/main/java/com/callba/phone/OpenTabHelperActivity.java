@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.callba.phone.activity.MainTabActivity;
+import com.callba.phone.ui.MainTabActivity;
 
 /** 
  * 用于解决部分手机点击通知栏时无法打开MainTab页面的问题

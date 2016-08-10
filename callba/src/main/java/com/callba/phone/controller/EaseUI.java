@@ -3,17 +3,12 @@ package com.callba.phone.controller;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
-import com.callba.phone.activity.MainTabActivity;
 import com.callba.phone.bean.EaseEmojicon;
 import com.callba.phone.bean.EaseNotifier;
 import com.callba.phone.bean.EaseUser;
-import com.callba.phone.cfg.Constant;
-import com.hyphenate.EMConnectionListener;
-import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;

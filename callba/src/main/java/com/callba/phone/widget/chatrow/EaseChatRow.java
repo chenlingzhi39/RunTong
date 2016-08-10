@@ -12,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
-import com.callba.phone.adapter.EaseMessageAdapter;
+import com.callba.phone.ui.adapter.EaseMessageAdapter;
 import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.widget.EaseChatMessageList;
 import com.callba.phone.widget.EaseChatMessageList.MessageListItemClickListener;
@@ -24,7 +24,6 @@ import com.hyphenate.chat.EMMessage.Direct;
 import com.hyphenate.util.DateUtils;
 
 import java.util.Date;
-import java.util.Locale;
 
 public abstract class EaseChatRow extends LinearLayout {
     protected static final String TAG = EaseChatRow.class.getSimpleName();

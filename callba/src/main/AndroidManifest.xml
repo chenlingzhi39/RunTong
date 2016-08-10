@@ -65,173 +65,173 @@
         <service android:name=".phone.service.UpdateService" />
 
         <activity
-            android:name=".phone.activity.SelectDialPopupWindow"
+            android:name=".phone.ui.SelectDialPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />
         <activity
-            android:name=".phone.activity.SelectPicPopupWindow"
+            android:name=".phone.ui.SelectPicPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />
-        <activity android:name=".phone.activity.SelectFriendActivity"
+        <activity android:name=".phone.ui.SelectFriendActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             />
-        <activity android:name=".phone.activity.CouponActivity"
+        <activity android:name=".phone.ui.CouponActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"/>
-        <activity android:name=".phone.activity.TXActivity"
+        <activity android:name=".phone.ui.TXActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             />
-        <activity android:name=".phone.activity.ImageQRActivity"
+        <activity android:name=".phone.ui.ImageQRActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"/>
-        <activity android:name=".phone.activity.ProfitActivity"
+        <activity android:name=".phone.ui.ProfitActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             />
-        <activity android:name=".phone.activity.TXRecordActivity"
+        <activity android:name=".phone.ui.TXRecordActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"/>
-        <activity android:name=".phone.activity.ATypeActivity"
+        <activity android:name=".phone.ui.ATypeActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             />
-        <activity android:name=".phone.activity.TeamActivity"
+        <activity android:name=".phone.ui.TeamActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"/>
         <activity
-            android:name=".phone.activity.FamilyActivity"
+            android:name=".phone.ui.FamilyActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.OrderActivity"
+            android:name=".phone.ui.OrderActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.contact.CalllogDetailActivity"
+            android:name=".phone.ui.CalllogDetailActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.contact.ContactDetailActivity2"
+            android:name=".phone.ui.ContactDetailActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/DetailTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.EditActivity"
+            android:name=".phone.ui.EditActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.ui.ExitGroupDialog"
+            android:name=".phone.ui.ease.ExitGroupDialog"
             android:screenOrientation="portrait"
             android:theme="@style/MyDialogStyleBottom"
             android:windowSoftInputMode="adjustPan"></activity>
         <activity
-            android:name=".phone.activity.GroupBlacklistActivity"
+            android:name=".phone.ui.GroupBlacklistActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.GroupDetailsActivity"
+            android:name=".phone.ui.GroupDetailsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".phone.activity.GroupSimpleDetailActivity"
+            android:name=".phone.ui.GroupSimpleDetailActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".phone.activity.PublicGroupsSeachActivity"
+            android:name=".phone.ui.PublicGroupsSeachActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".phone.activity.PublicGroupsActivity"
+            android:name=".phone.ui.PublicGroupsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".phone.activity.GroupPickContactsActivity"
+            android:name=".phone.ui.GroupPickContactsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.NewGroupActivity"
+            android:name=".phone.ui.NewGroupActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.GroupsActivity"
+            android:name=".phone.ui.GroupsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".phone.activity.SettingsActivity"
+            android:name=".phone.ui.SettingsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.GoldActivity"
+            android:name=".phone.ui.GoldActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.BalanceActivity"
+            android:name=".phone.ui.BalanceActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.GeocoderActivity"
+            android:name=".phone.ui.GeocoderActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.BlacklistActivity"
+            android:name=".phone.ui.BlacklistActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".phone.activity.SignInActivity"
+            android:name=".phone.ui.SignInActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.NewFriendsMsgActivity"
+            android:name=".phone.ui.NewFriendsMsgActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".phone.activity.AddContactActivity"
+            android:name=".phone.ui.AddContactActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".phone.activity.ChatActivity"
+            android:name=".phone.ui.ChatActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.callba.phone.activity.WelcomeActivity"
+            android:name=".phone.ui.WelcomeActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme">
@@ -243,13 +243,13 @@
         </activity>
         <!-- 显示下载大图页面 -->
         <activity
-            android:name=".phone.activity.contact.ContactActivity2"
+            android:name=".phone.ui.ContactActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".phone.activity.ClauseActivity"
+            android:name=".phone.ui.ClauseActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
@@ -258,12 +258,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide" />
         <activity
-            android:name=".phone.activity.HelpActivity"
+            android:name=".phone.ui.HelpActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.AboutActivity"
+            android:name=".phone.ui.AboutActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
@@ -281,7 +281,7 @@
             android:screenOrientation="behind"
             android:theme="@android:style/Theme.Light.NoTitleBar" />
         <activity
-            android:name=".phone.activity.CropActivity"
+            android:name=".phone.ui.CropActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name="me.iwf.photopicker.PhotoPickerActivity"
@@ -291,37 +291,37 @@
             android:name="me.iwf.photopicker.PhotoPagerActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".phone.activity.PhotoActivity"
+            android:name=".phone.ui.PhotoActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".phone.activity.AccountActivity"
+            android:name=".phone.ui.AccountActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.PostMessageActivity"
+            android:name=".phone.ui.PostMessageActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".phone.activity.PostActivity"
+            android:name=".phone.ui.PostActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.CommunityActivity"
+            android:name=".phone.ui.CommunityActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/DetailTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.ChangePasswordActivity"
+            android:name=".phone.ui.ChangePasswordActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.callba.phone.activity.FriendActivity"
+            android:name=".phone.ui.FriendActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
@@ -331,67 +331,67 @@
              android:theme="@style/BaseAppTheme.AppTheme"
              />-->
         <activity
-            android:name=".phone.activity.ChangeInfoActivity"
+            android:name=".phone.ui.ChangeInfoActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name="com.callba.phone.activity.recharge.FlowActivity"
+            android:name=".phone.ui.FlowActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name="com.callba.phone.activity.recharge.RechargeActivity2"
+            android:name=".phone.ui.RechargeActivity2"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.activity.HomeActivity"
+            android:name=".phone.ui.HomeActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name="com.callba.phone.activity.MessageActivity"
+            android:name=".phone.ui.MessageActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.callba.phone.activity.UserActivity"
+            android:name=".phone.ui.UserActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name="com.callba.phone.activity.FunIntroduceActivity"
+            android:name=".phone.ui.FunIntroduceActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name="com.callba.phone.activity.GuideActivity"
+            android:name=".phone.ui.GuideActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name="com.callba.phone.activity.login.LoginActivity"
+            android:name=".phone.ui.LoginActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name="com.callba.phone.activity.login.RegisterActivity"
+            android:name=".phone.ui.RegisterActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
-            android:name="com.callba.phone.activity.MainTabActivity"
+            android:name=".phone.ui.MainTabActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.callba.phone.activity.MainCallActivity"
+            android:name=".phone.ui.MainCallActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
@@ -405,13 +405,13 @@
 
 
         <activity
-            android:name="com.callba.phone.activity.more.QueryCalllogActivity"
+            android:name=".phone.ui.QueryCalllogActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
 
         <activity
-            android:name="com.callba.phone.activity.more.RetrievePasswordActivity"
+            android:name=".phone.ui.RetrievePasswordActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
@@ -450,12 +450,12 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
-            android:name="com.callba.phone.activity.calling.CallbackDisplayActivity"
+            android:name=".phone.ui.CallbackDisplayActivity"
             android:launchMode="singleTop"
             android:theme="@style/BaseAppTheme.AppTheme" />
 
         <activity
-            android:name="com.callba.phone.activity.CallChooserActivity"
+            android:name=".phone.ui.CallChooserActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
@@ -497,7 +497,7 @@
                </intent-filter>-->
         </activity>
 
-        <!-- <receiver android:name="com.callba.phone.activity.CallChooserBroadCast">
+        <!-- <receiver android:name="com.callba.phone.ui.CallChooserBroadCast">
              <intent-filter android:priority="2147483647">
                  <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
              </intent-filter>

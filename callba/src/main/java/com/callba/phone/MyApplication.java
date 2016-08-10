@@ -21,7 +21,7 @@ import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.callba.BuildConfig;
-import com.callba.phone.activity.WelcomeActivity;
+import com.callba.phone.ui.WelcomeActivity;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.StorageUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -46,6 +46,7 @@ public class MyApplication extends Application {
     //实现ConnectionListener接口
     private DaoSession mDaoSession;
     private SQLiteDatabase db;
+    private  ApplicationComponent applicationComponent;
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -62,16 +63,16 @@ public class MyApplication extends Application {
         options.setAcceptInvitationAlways(false);
         options.setAutoLogin(false);
         EaseUI.getInstance().init(this,options);*/
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+      /*  OkHttpClient okHttpClient = new OkHttpClient.Builder()
 //                .addInterceptor(new LoggerInterceptor("TAG"))
                 .connectTimeout(20000L, TimeUnit.MILLISECONDS)
                 .readTimeout(20000L, TimeUnit.MILLISECONDS)
                 //其他配置
                 .build();
-
-        OkHttpUtils.initClient(okHttpClient);
-        DemoHelper.getInstance().init(myApplication);
-        GlideBuilder builder = new GlideBuilder(myApplication);
+        OkHttpUtils.initClient(okHttpClient);*/
+        applicationComponent=ApplicationComponent.AppInitialize.init(this);
+        DemoHelper.getInstance().init(this);
+        GlideBuilder builder = new GlideBuilder(this);
         builder.setMemoryCache(new LruResourceCache(5 * 1024 * 1024));
         Glide.get(this).setMemoryCategory(MemoryCategory.NORMAL);
         builder.setDiskCache(
@@ -108,7 +109,7 @@ public class MyApplication extends Application {
      *
      * @author zhw
      */
-    private void restartAppcation() {
+    private void restartApplication() {
         Intent intent = new Intent();
         intent.setClass(this, WelcomeActivity.class);
 
@@ -143,9 +144,6 @@ public class MyApplication extends Application {
 //		mPushAgent.setNotificationClickHandler(notificationClickHandler);
 //	}
 
-    public void addActivity(Activity activity) {
-        activities.add(activity);
-    }
 
     public void onTerminate() {
         super.onTerminate();
@@ -164,4 +162,7 @@ public class MyApplication extends Application {
         MobclickAgent.setSessionContinueMillis(5 * 60 * 1000);*/
     }
 
+    public static ApplicationComponent getApplicationComponent() {
+        return ((MyApplication)myApplication.getApplicationContext()).applicationComponent;
+    }
 }

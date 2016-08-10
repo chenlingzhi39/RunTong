@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 
 
 import com.callba.R;
-import com.callba.phone.adapter.EaseContactAdapter;
+import com.callba.phone.ui.adapter.EaseContactAdapter;
 import com.callba.phone.bean.EaseUser;
 
 import java.util.ArrayList;

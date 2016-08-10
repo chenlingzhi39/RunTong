@@ -29,7 +29,7 @@ import android.widget.ProgressBar;
 import com.callba.R;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.model.EaseImageCache;
-import com.callba.phone.ui.EaseBaseActivity;
+import com.callba.phone.ui.ease.EaseBaseActivity;
 import com.callba.phone.util.BitmapUtil;
 import com.callba.phone.util.EaseLoadLocalBigImgTask;
 import com.callba.phone.util.Logger;
