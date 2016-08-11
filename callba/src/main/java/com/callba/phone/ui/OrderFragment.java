@@ -49,11 +49,6 @@ public class OrderFragment extends BaseFragment {
     }
 
     @Override
-    protected void lazyLoad() {
-
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);

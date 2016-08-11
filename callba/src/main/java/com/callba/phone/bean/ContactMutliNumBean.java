@@ -36,22 +36,7 @@ public class ContactMutliNumBean extends ContactPersonEntity{
 		phoneNumbes.add(contactPersonEntity.getPhoneNumber());
 		this.setContactPhones(phoneNumbes);
 	}
-	public ContactMutliNumBean(ContactPersonEntity contactPersonEntity, Bitmap bitmap){
-		this.setAvatar(bitmap);
-		this.set_id(contactPersonEntity.get_id());
-		this.setType(contactPersonEntity.getType());
-		this.setTypeName(contactPersonEntity.getTypeName());
-		this.setLocation(contactPersonEntity.getLocation());
-		this.setDisplayName(contactPersonEntity.getDisplayName());
-		this.setPhoneNumber(contactPersonEntity.getPhoneNumber());
-		this.setShowDisplayName(contactPersonEntity.getShowDisplayName());
-		this.setShowPhoneNumber(contactPersonEntity.getShowPhoneNumber());
-		this.setSearchSortKeyBean(contactPersonEntity.getSearchSortKeyBean());
-		this.setShowSortPinYin(contactPersonEntity.getShowSortPinYin());
-		List<String> phoneNumbes = new ArrayList<String>();
-		phoneNumbes.add(contactPersonEntity.getPhoneNumber());
-		this.setContactPhones(phoneNumbes);
-	}
+
 	public List<String> getContactPhones() {
 		return contactPhones;
 	}

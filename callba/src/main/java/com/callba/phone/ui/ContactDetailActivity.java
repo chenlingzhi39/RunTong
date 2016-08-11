@@ -42,6 +42,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.callba.R;
 import com.callba.phone.MyApplication;
 import com.callba.phone.bean.ContactMutliNumBean;
@@ -55,10 +57,18 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.Scheduler;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by PC-20160514 on 2016/5/31.
@@ -83,6 +93,7 @@ public class ContactDetailActivity extends AppCompatActivity {
     @InjectView(R.id.shadow_reverse)
     View shadowReverse;
     private ContactMutliNumBean bean;
+    public Subscription subscription;
     private static final int REQUESTCODE_PICK = 1;
     private static final int REQUESTCODE_CAMERA = 3;
     private static final int RESULT_CAMERA_CROP_PATH_RESULT = 4;
@@ -198,9 +209,20 @@ public class ContactDetailActivity extends AppCompatActivity {
 
             }
         });
-        resource = ContactsManager.getAvatar(this, bean.get_id(), true);
-        if (resource != null)
-            setImage();
+       subscription= Observable.create(new Observable.OnSubscribe<Bitmap>() {
+           @Override
+           public void call(Subscriber<? super Bitmap> subscriber) {
+
+               resource=ContactsManager.getAvatar(ContactDetailActivity.this, bean.get_id(),true);
+               subscriber.onNext(resource);
+           }
+       }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Bitmap>() {
+           @Override
+           public void call(Bitmap bitmap) {
+               if (resource != null)
+                   setImage();
+           }
+       });
         //image.setImageBitmap(resource);
         String path = getSDCardPath();
         File file = new File(path + "/temp.jpg");
@@ -603,6 +625,7 @@ public class ContactDetailActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         MyApplication.activities.remove(this);
+        if(resource!=null)resource.recycle();
         super.onDestroy();
     }
 }

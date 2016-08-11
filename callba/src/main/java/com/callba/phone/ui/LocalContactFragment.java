@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 
 import com.callba.R;
 import com.callba.phone.bean.ContactMutliNumBean;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.logic.contact.ContactController;
@@ -69,11 +70,10 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         IntentFilter intentFilter = new IntentFilter("com.callba.contact");
         broadcastReceiver = new ContactBroadcastReceiver();
         getActivity().registerReceiver(broadcastReceiver, intentFilter);
-    }
-
-    @Override
-    protected void lazyLoad() {
-        initContactListView();
+        progressBar.setVisibility(View.VISIBLE);
+        if(GlobalConfig.getInstance().getContactEntities()!=null)
+            initContactListView();
+        Logger.i("local","init");
     }
 
 
@@ -95,34 +95,23 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
     private void  initContactListView() {
         if(progressBar!=null)
         progressBar.setVisibility(View.VISIBLE);
-        final ContactController contactController = new ContactController();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final List<ContactEntity> allContactEntities = contactController.getFilterListContactEntitiesNoDuplicate();
-                FileUtils.writeObjectToFile(allContactEntities);
-                SimpleHandler.getInstance().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mContactListData == null) {
-                            mContactListData = new ArrayList<ContactEntity>();
-                        }
-                        mContactListData.clear();
-                        mContactListData.addAll(allContactEntities);
+        ContactController contactController = new ContactController();
+        List<ContactEntity> allContactEntities = GlobalConfig.getInstance().getContactEntities();
+        if (mContactListData == null) {
+            mContactListData = new ArrayList<ContactEntity>();
+        }
+        mContactListData.clear();
+        mContactListData.addAll(allContactEntities);
 
-                        mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
-                        mListView.setAdapter(mContactListAdapter);
+        mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
+        mListView.setAdapter(mContactListAdapter);
 
-                        mQuickSearchBar.setListView(mListView);
-                        mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
+        mQuickSearchBar.setListView(mListView);
+        mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
 
-                        et_search.addTextChangedListener(new ContactSerarchWatcher(
-                                mContactListAdapter, mContactListData, mQuickSearchBar));
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
-            }
-        }).start();
+        et_search.addTextChangedListener(new ContactSerarchWatcher(
+                mContactListAdapter, mContactListData, mQuickSearchBar));
+        progressBar.setVisibility(View.GONE);
 
     }
 
@@ -132,7 +121,6 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         ContactPersonEntity contactPersonEntity = (ContactPersonEntity) contactEntity;
         ContactMutliNumBean contactMutliNumBean = (ContactMutliNumBean) contactPersonEntity;
         Intent intent = new Intent(getActivity(), ContactDetailActivity.class);
-        contactMutliNumBean.setAvatar(null);
         intent.putExtra("contact", contactMutliNumBean);
       /*  if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {try {
             ActivityOptions options=  ActivityOptions

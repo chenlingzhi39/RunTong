@@ -235,10 +235,6 @@ public class StraightFragment2 extends BaseFragment {
         }
     }
 
-    @Override
-    protected void lazyLoad() {
-
-    }
 
     @Override
     public void onDestroyView() {

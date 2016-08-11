@@ -61,10 +61,6 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
         return numberFragment;
     }
 
-    @Override
-    protected void lazyLoad() {
-
-    }
 
     @Override
     protected void initView(View fragmentRootView) {

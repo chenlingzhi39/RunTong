@@ -83,10 +83,6 @@ public class CalllogFragment extends BaseFragment {
         calllogService.startQueryCallLog();
     }
 
-    @Override
-    protected void lazyLoad() {
-
-    }
 
     @Override
     public void onDestroyView() {

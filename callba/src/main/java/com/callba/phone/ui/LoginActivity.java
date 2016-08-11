@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.callba.R;
+import com.callba.phone.logic.contact.ContactEntity;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.GlobalConfig;
@@ -253,11 +254,15 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         ArrayList list = new ArrayList();
         list.add(GlobalConfig.getInstance().getContactBeans());
         outState.putParcelableArrayList("contact", list);
+        ArrayList list1 = new ArrayList();
+        list1.add(GlobalConfig.getInstance().getContactEntities());
+        outState.putParcelableArrayList("contacts", list1);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         GlobalConfig.getInstance().setContactBeans((ArrayList<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0));
+        GlobalConfig.getInstance().setContactEntities((ArrayList<ContactEntity>) savedInstanceState.getParcelableArrayList("contacts").get(0));
     }
 }

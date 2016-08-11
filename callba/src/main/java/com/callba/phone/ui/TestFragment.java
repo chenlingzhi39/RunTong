@@ -22,8 +22,4 @@ public class TestFragment extends BaseFragment{
         return testFragment;
     }
 
-    @Override
-    protected void lazyLoad() {
-
-    }
 }

@@ -243,10 +243,6 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
 
     }
 
-    @Override
-    protected void lazyLoad() {
-
-    }
 
     @Override
     public void start() {

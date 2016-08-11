@@ -175,10 +175,6 @@ public class TeamFragment extends BaseFragment {
                 });
         builder.create().show();
     }
-    @Override
-    protected void lazyLoad() {
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

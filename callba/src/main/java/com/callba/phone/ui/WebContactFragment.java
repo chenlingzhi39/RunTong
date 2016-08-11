@@ -122,6 +122,7 @@ public class WebContactFragment extends BaseFragment {
         contentContainer.addView(loadingView);
         contactsMap = DemoHelper.getInstance().getContactList();
         contactList = new ArrayList<EaseUser>();
+        contactListLayout.init(contactList);
         query.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 contactListLayout.filter(s);
@@ -247,13 +248,6 @@ public class WebContactFragment extends BaseFragment {
 
     }
 
-    @Override
-    protected void lazyLoad() {
-        //registerBroadcastReceiver();
-        //getContactList();
-        contactListLayout.init(contactList);
-        refresh();
-    }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {

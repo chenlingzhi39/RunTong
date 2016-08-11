@@ -1,6 +1,5 @@
 package com.callba.phone.logic.contact;
 
-import android.graphics.Bitmap;
 
 import java.io.Serializable;
 
@@ -27,18 +26,8 @@ public class ContactPersonEntity extends ContactEntity implements Serializable {
 	private String showSortPinYin; // 格式化显示的拼音
 	private String showPhoneNumber; // 格式化显示的号码
 	private String showDisplayName; // 格式化显示的姓名
-    private Bitmap avatar;
 	public ContactPersonEntity() {
 		setType(CONTACT_TYPE_CONTACT);
-	}
-
-
-	public Bitmap getAvatar() {
-		return avatar;
-	}
-
-	public void setAvatar(Bitmap avatar) {
-		this.avatar = avatar;
 	}
 
 	public String get_id() {

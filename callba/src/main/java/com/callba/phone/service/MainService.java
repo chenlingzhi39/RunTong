@@ -21,6 +21,8 @@ import com.amap.api.location.AMapLocationListener;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.logic.contact.ContactController;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.logic.contact.QueryContactCallback;
 import com.callba.phone.logic.contact.QueryContacts;
@@ -48,6 +50,7 @@ public class MainService extends Service {
     private AMapLocationClientOption locationOption = null;
     UserDao userDao;
     LocationReceiver receiver;
+    ContactController contactController;
     //监听联系人数据的监听对象
     private ContentObserver mObserver = new ContentObserver(
             new Handler()) {
@@ -59,6 +62,7 @@ public class MainService extends Service {
                 new QueryContacts(new QueryContactCallback() {
                     @Override
                     public void queryCompleted(List<ContactPersonEntity> contacts) {
+                        GlobalConfig.getInstance().setContactEntities(contactController.getFilterListContactEntitiesNoDuplicate());
                        sendBroadcast(new Intent("com.callba.contact"));
                     }
                 }).loadContact(getApplicationContext());
@@ -79,7 +83,14 @@ public class MainService extends Service {
         registerReceiver(receiver, filter);
         getContentResolver().registerContentObserver(
                 ContactsContract.Contacts.CONTENT_URI, true, mObserver);
-
+        new QueryContacts(new QueryContactCallback() {
+            @Override
+            public void queryCompleted(List<ContactPersonEntity> contacts) {
+             contactController=new ContactController();
+                GlobalConfig.getInstance().setContactEntities(contactController.getFilterListContactEntitiesNoDuplicate());
+                sendBroadcast(new Intent("com.callba.contact"));
+            }
+        }).loadContact(this);
     }
 
     @Override

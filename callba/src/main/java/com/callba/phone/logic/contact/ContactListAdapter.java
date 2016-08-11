@@ -3,6 +3,7 @@ package com.callba.phone.logic.contact;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.callba.R;
+import com.callba.phone.manager.ContactsManager;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -107,8 +109,15 @@ public class ContactListAdapter extends BaseAdapter {
 		} else {
 			ContactPersonEntity contactPersonEntity = (ContactPersonEntity) bean;
 			viewHolder_Item.tvDisplayName.setText(contactPersonEntity.getDisplayName());
-			if(contactPersonEntity.getAvatar()!=null)
-				viewHolder_Item.avatar.setImageBitmap(contactPersonEntity.getAvatar());
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+
+				}
+			}).start();
+			Bitmap bitmap=ContactsManager.getAvatar(mContext,contactPersonEntity.get_id(),false);
+			if(bitmap!=null)
+				viewHolder_Item.avatar.setImageBitmap(bitmap);
 			else viewHolder_Item.avatar.setImageResource(R.drawable.head_portrait);
 		}
 		

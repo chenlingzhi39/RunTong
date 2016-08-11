@@ -64,10 +64,6 @@ public class ContactDetailFragment extends BaseFragment {
         lvPhoneNums.setAdapter(detailAdapter);*/
     }
 
-    @Override
-    protected void lazyLoad() {
-
-    }
 
     private void setDatatoAdapter() {
         List<String> phoneNums = bean.getContactPhones();
