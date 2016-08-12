@@ -176,7 +176,7 @@ public class CallbackDisplayActivity extends BaseActivity {
                         }
                         tv_status.setText(content[1]);
                     } catch (Exception e) {
-                        tv_status.setText(R.string.server_error);
+                        tv_status.setText(R.string.getserverdata_exception);
                         //统计回拨失败数据
                         countCallbackFailedData(getString(R.string.server_error));
 
@@ -238,9 +238,7 @@ public class CallbackDisplayActivity extends BaseActivity {
 
             @Override
             public void onError(Call call, Exception e, int id) {
-                if (e instanceof ConnectTimeoutException) {
-                    msg.what = Task.TASK_TIMEOUT;
-                } else if (e instanceof UnknownHostException) {
+               if (e instanceof UnknownHostException) {
                     msg.what = Task.TASK_UNKNOWN_HOST;
                 } else {
                     msg.what = Task.TASK_FAILED;

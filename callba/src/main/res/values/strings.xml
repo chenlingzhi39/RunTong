@@ -131,7 +131,7 @@
 	<string name="login_exception">登录异常！</string>
 	
 	<string name="getdata_fail">获取数据失败</string>
-	<string name="network_error">网络异常</string>
+	<string name="network_error">网络不给力，请检查网络设置</string>
     <string name="conn_timeout">请求超时！</string>
     <string name="socket_timeout">响应超时！</string>
 	<string name="conn_failed">无法连接到网络</string>
@@ -335,7 +335,7 @@
     
     <!-- addSubAccount -->
     <string name="getserverdata_failed">获取服务器数据失败！</string>
-    <string name="getserverdata_exception">服务器返回数据异常！</string>
+    <string name="getserverdata_exception">网络不给力，请检查网络设置</string>
     <string name="input_telphonenum">请先输入固定电话号码！</string>
     <string name="sending_yyyz">正在发送语音验证</string>
     <string name="adding_subaccount">正在添加子账户</string>

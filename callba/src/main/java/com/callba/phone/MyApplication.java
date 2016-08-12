@@ -63,7 +63,7 @@ public class MyApplication extends Application {
         options.setAcceptInvitationAlways(false);
         options.setAutoLogin(false);
         EaseUI.getInstance().init(this,options);*/
-      /*  OkHttpClient okHttpClient = new OkHttpClient.Builder()
+     /*   OkHttpClient okHttpClient = new OkHttpClient.Builder()
 //                .addInterceptor(new LoggerInterceptor("TAG"))
                 .connectTimeout(20000L, TimeUnit.MILLISECONDS)
                 .readTimeout(20000L, TimeUnit.MILLISECONDS)

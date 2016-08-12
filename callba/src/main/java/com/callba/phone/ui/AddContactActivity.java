@@ -163,7 +163,7 @@ public class AddContactActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        Logger.i("add_result",response);
+                        try { Logger.i("add_result",response);
                         String[] result=response.split("\\|");
                         if(result[0].equals("0")){
                         try {
@@ -184,7 +184,7 @@ public class AddContactActivity extends BaseActivity {
 
                                 @Override
                                 public void onResponse(String response, int id) {
-                                    Logger.i("get_result",response);
+                                    try{ Logger.i("get_result",response);
                                     String[] result = response.split("\\|");
                                     if (result[0].equals("0")) {
                                         ArrayList<BaseUser> list;
@@ -202,6 +202,9 @@ public class AddContactActivity extends BaseActivity {
                                         DemoHelper.getInstance().updateContactList(mList);
                                         LocalBroadcastManager.getInstance(AddContactActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
 
+                                    }
+                                    }catch (Exception e){
+                                        toast(R.string.getserverdata_exception);
                                     }
                                 }
                             });
@@ -224,7 +227,9 @@ public class AddContactActivity extends BaseActivity {
                     }else { toast(result[1]);
                             progressDialog.dismiss();
                         }
-
+                        }catch (Exception e){
+                            toast(R.string.getserverdata_exception);
+                        }
                     }
                 });
     }

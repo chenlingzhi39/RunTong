@@ -84,7 +84,7 @@ public void getProfits(){
                 @Override
                 public void onResponse(String response, int id) {
                     retry.setVisibility(View.GONE);
-                    Logger.i("order_result", response);
+                    try{  Logger.i("order_result", response);
                     String[] result = response.split("\\|");
                     if (result[0].equals("0")) {
                         profits = gson.fromJson(result[1], new TypeToken<ArrayList<Profit>>() {
@@ -96,6 +96,9 @@ public void getProfits(){
                     } else {
                         hint.setText(result[1]);
                         hint.setVisibility(View.VISIBLE);
+                    }
+                    }catch(Exception e){
+                        toast(R.string.getserverdata_exception);
                     }
                 }
             });

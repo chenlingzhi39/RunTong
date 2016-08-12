@@ -31,13 +31,13 @@ import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
 import com.callba.R;
-import com.callba.phone.ui.base.BaseFragment;
-import com.callba.phone.ui.adapter.FlowAdapter;
-import com.callba.phone.ui.adapter.RadioAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Coupon;
 import com.callba.phone.bean.Flow;
 import com.callba.phone.bean.UserDao;
+import com.callba.phone.ui.adapter.FlowAdapter;
+import com.callba.phone.ui.adapter.RadioAdapter;
+import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.PayResult;
@@ -191,12 +191,30 @@ public class StraightFragment2 extends BaseFragment {
             @Override
             public void success(String msg) {
                 progressDialog.dismiss();
-                String[] result = msg.split("\\|");
-                if (result[0].equals("0")) {
-                    toast(result[1]);
+                try {
+                    String[] result = msg.split("\\|");
+                    if (result[0].equals("0")) {
+                        toast(result[1]);
                /* getActivity().sendBroadcast(new Intent("com.callba.pay"));
                 getActivity().finish();*/
-                } else if (result.length > 1) toast(result[1]);
+                    } else if (result.length > 1) toast(result[1]);
+                } catch (Exception e) {
+                    progressDialog.dismiss();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("充值失败，请重试");
+                    builder.setPositiveButton("重试",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    userDao.pay(getUsername(), getPassword(), outTradeNo, "success");
+                                }
+                            });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    alertDialog.setCancelable(false);
+                    alertDialog.show();
+                }
             }
 
             @Override
@@ -284,16 +302,20 @@ public class StraightFragment2 extends BaseFragment {
 
                                 @Override
                                 public void onResponse(String response, int id) {
-                                    Logger.i("trade_result", response);
-                                    String[] results = response.split("\\|");
-                                    if (results[0].equals("0")) {
-                                        Logger.i("trade", results[1]);
-                                        String[] results1 = results[1].split(",");
-                                        outTradeNo = results1[0];
-                                        price = results1[1];
-                                        pay();
-                                    } else {
-                                        toast(results[1]);
+                                    try {
+                                        Logger.i("trade_result", response);
+                                        String[] results = response.split("\\|");
+                                        if (results[0].equals("0")) {
+                                            Logger.i("trade", results[1]);
+                                            String[] results1 = results[1].split(",");
+                                            outTradeNo = results1[0];
+                                            price = results1[1];
+                                            pay();
+                                        } else {
+                                            toast(results[1]);
+                                        }
+                                    } catch (Exception e) {
+                                        toast(R.string.getserverdata_exception);
                                     }
                                 }
                             });
@@ -328,16 +350,20 @@ public class StraightFragment2 extends BaseFragment {
 
                                 @Override
                                 public void onResponse(String response, int id) {
-                                    Logger.i("trade_result", response);
-                                    String[] results = response.split("\\|");
-                                    if (results[0].equals("0")) {
-                                        Logger.i("trade", results[1]);
-                                        String[] results1 = results[1].split(",");
-                                        outTradeNo = results1[0];
-                                        price = results1[1];
-                                        pay();
-                                    } else {
-                                        toast(results[1]);
+                                    try {
+                                        Logger.i("trade_result", response);
+                                        String[] results = response.split("\\|");
+                                        if (results[0].equals("0")) {
+                                            Logger.i("trade", results[1]);
+                                            String[] results1 = results[1].split(",");
+                                            outTradeNo = results1[0];
+                                            price = results1[1];
+                                            pay();
+                                        } else {
+                                            toast(results[1]);
+                                        }
+                                    } catch (Exception e) {
+                                        toast(R.string.getserverdata_exception);
                                     }
                                 }
                             });
@@ -472,68 +498,50 @@ public class StraightFragment2 extends BaseFragment {
 
                             @Override
                             public void onResponse(String response, int id) {
-                                Logger.i("flow_result", response);
-                                String[] results = response.split("\\|");
-                                if (results[0].equals("0")) {
-                                    flows = gson.fromJson(results[1], new TypeToken<ArrayList<Flow>>() {
-                                    }.getType());
-                                    seperateFlows.clear();
-                                    for (Flow flow : flows) {
-                                        if (address.contains(flow.getOperators())) {
-                                            seperateFlows.add(flow);
-                                        }
-                                    }
-                                    has_coupon = false;
-                                    if (coupon != null) {
-                                        for (int i = 0; i < seperateFlows.size(); i++) {
-                                            if (seperateFlows.get(i).getIid().equals(coupon.getIid2())) {
-                                                flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
-                                                flowAdapter.setmSelectedItem(i);
-                                                flowList.setAdapter(flowAdapter);
-                                                iid = seperateFlows.get(i).getIid();
-                                                flowName.setText(seperateFlows.get(i).getTitle());
-                                                flowValue = seperateFlows.get(i).getFlowValue();
-                                                price = seperateFlows.get(i).getPrice();
-                                                subject = seperateFlows.get(i).getTitle();
-                                                nowPriceNation.setText(seperateFlows.get(i).getPrice() + "元");
-                                                pastPriceNation.setHint(seperateFlows.get(i).getOldPrice() + "元");
-                                                ll_coupon.setVisibility(View.VISIBLE);
-                                                is_coupon = true;
-                                                has_coupon = true;
-                                                break;
+                                try {
+                                    Logger.i("flow_result", response);
+                                    String[] results = response.split("\\|");
+                                    if (results[0].equals("0")) {
+                                        flows = gson.fromJson(results[1], new TypeToken<ArrayList<Flow>>() {
+                                        }.getType());
+                                        seperateFlows.clear();
+                                        for (Flow flow : flows) {
+                                            if (address.contains(flow.getOperators())) {
+                                                seperateFlows.add(flow);
                                             }
                                         }
-                                    }
-                                    if (!has_coupon) {
-                                        iid = seperateFlows.get(0).getIid();
-                                        flowName.setText(seperateFlows.get(0).getTitle());
-                                        flowValue = seperateFlows.get(0).getFlowValue();
-                                        price = seperateFlows.get(0).getPrice();
-                                        subject = seperateFlows.get(0).getTitle();
-                                        nowPriceNation.setText(seperateFlows.get(0).getPrice() + "元");
-                                        pastPriceNation.setHint(seperateFlows.get(0).getOldPrice() + "元");
-                                        flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
-                                        flowAdapter.setmSelectedItem(0);
-                                        flowList.setAdapter(flowAdapter);
-                                        if (has_iid)
-                                            if (iid.equals(coupon.getIid2())) {
-                                                ll_coupon.setVisibility(View.VISIBLE);
-                                                is_coupon = true;
-                                            } else {
-                                                ll_coupon.setVisibility(View.GONE);
-                                                is_coupon = false;
+                                        has_coupon = false;
+                                        if (coupon != null) {
+                                            for (int i = 0; i < seperateFlows.size(); i++) {
+                                                if (seperateFlows.get(i).getIid().equals(coupon.getIid2())) {
+                                                    flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
+                                                    flowAdapter.setmSelectedItem(i);
+                                                    flowList.setAdapter(flowAdapter);
+                                                    iid = seperateFlows.get(i).getIid();
+                                                    flowName.setText(seperateFlows.get(i).getTitle());
+                                                    flowValue = seperateFlows.get(i).getFlowValue();
+                                                    price = seperateFlows.get(i).getPrice();
+                                                    subject = seperateFlows.get(i).getTitle();
+                                                    nowPriceNation.setText(seperateFlows.get(i).getPrice() + "元");
+                                                    pastPriceNation.setHint(seperateFlows.get(i).getOldPrice() + "元");
+                                                    ll_coupon.setVisibility(View.VISIBLE);
+                                                    is_coupon = true;
+                                                    has_coupon = true;
+                                                    break;
+                                                }
                                             }
-                                    }
-                                    flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
-                                        @Override
-                                        public void onClick(int position) {
-                                            iid = seperateFlows.get(position).getIid();
-                                            flowName.setText(seperateFlows.get(position).getTitle());
-                                            flowValue = seperateFlows.get(position).getFlowValue();
-                                            price = seperateFlows.get(position).getPrice();
-                                            subject = seperateFlows.get(position).getTitle();
-                                            nowPriceNation.setText(seperateFlows.get(position).getPrice() + "元");
-                                            pastPriceNation.setHint(seperateFlows.get(position).getOldPrice() + "元");
+                                        }
+                                        if (!has_coupon) {
+                                            iid = seperateFlows.get(0).getIid();
+                                            flowName.setText(seperateFlows.get(0).getTitle());
+                                            flowValue = seperateFlows.get(0).getFlowValue();
+                                            price = seperateFlows.get(0).getPrice();
+                                            subject = seperateFlows.get(0).getTitle();
+                                            nowPriceNation.setText(seperateFlows.get(0).getPrice() + "元");
+                                            pastPriceNation.setHint(seperateFlows.get(0).getOldPrice() + "元");
+                                            flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
+                                            flowAdapter.setmSelectedItem(0);
+                                            flowList.setAdapter(flowAdapter);
                                             if (has_iid)
                                                 if (iid.equals(coupon.getIid2())) {
                                                     ll_coupon.setVisibility(View.VISIBLE);
@@ -543,11 +551,33 @@ public class StraightFragment2 extends BaseFragment {
                                                     is_coupon = false;
                                                 }
                                         }
-                                    });
-                                    content.setVisibility(View.VISIBLE);
-                                } else {
-                                    toast(results[1]);
-                                    content.setVisibility(View.GONE);
+                                        flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
+                                            @Override
+                                            public void onClick(int position) {
+                                                iid = seperateFlows.get(position).getIid();
+                                                flowName.setText(seperateFlows.get(position).getTitle());
+                                                flowValue = seperateFlows.get(position).getFlowValue();
+                                                price = seperateFlows.get(position).getPrice();
+                                                subject = seperateFlows.get(position).getTitle();
+                                                nowPriceNation.setText(seperateFlows.get(position).getPrice() + "元");
+                                                pastPriceNation.setHint(seperateFlows.get(position).getOldPrice() + "元");
+                                                if (has_iid)
+                                                    if (iid.equals(coupon.getIid2())) {
+                                                        ll_coupon.setVisibility(View.VISIBLE);
+                                                        is_coupon = true;
+                                                    } else {
+                                                        ll_coupon.setVisibility(View.GONE);
+                                                        is_coupon = false;
+                                                    }
+                                            }
+                                        });
+                                        content.setVisibility(View.VISIBLE);
+                                    } else {
+                                        toast(results[1]);
+                                        content.setVisibility(View.GONE);
+                                    }
+                                } catch (Exception e) {
+                                    toast(R.string.getserverdata_exception);
                                 }
                             }
                         });

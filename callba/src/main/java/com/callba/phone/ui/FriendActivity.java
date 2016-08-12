@@ -90,7 +90,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     @InjectView(R.id.progressBar)
     ProgressBar progressBar;
     private BannerLayout banner;
-    private UserDao userDao, userDao1,userDao2;
+    private UserDao userDao, userDao1, userDao2;
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
     private NearByUserAdapter nearByUserAdapter;
@@ -101,10 +101,11 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     private ArrayList<String> webImages = new ArrayList<>();
     private ImageView imageView;
     private View footer;
-    private int page=1;
-    private boolean is_refresh=false;
+    private int page = 1;
+    private boolean is_refresh = false;
     @Inject
     public ApiService apiService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +114,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         gson = new Gson();
         location.setTextColor(getResources().getColor(R.color.black_2f));
         location.setText(UserManager.getAddress(this));
-            userDao = new UserDao(this, this);
+        userDao = new UserDao(this, this);
         userList.setLoadingMoreEnabled(false);
         final View view = getLayoutInflater().inflate(R.layout.banner, null);
         final View view1 = getLayoutInflater().inflate(R.layout.ad, null);
@@ -124,10 +125,11 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(GlobalConfig.getInstance().getAdvertisements2() != null&& GlobalConfig.getInstance().getAdvertisements2().size()>0)
-                { Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                intent1.setData(Uri.parse(GlobalConfig.getInstance().getAdvertisements2().get(0).getAdurl()));
-                startActivity(intent1);}
+                if (GlobalConfig.getInstance().getAdvertisements2() != null && GlobalConfig.getInstance().getAdvertisements2().size() > 0) {
+                    Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                    intent1.setData(Uri.parse(GlobalConfig.getInstance().getAdvertisements2().get(0).getAdurl()));
+                    startActivity(intent1);
+                }
             }
         });
         banner.setViewRes(localImages);
@@ -181,19 +183,19 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
 
             }
         });*/
-        userDao2=new UserDao();
+        userDao2 = new UserDao();
         nearByUserAdapter = new NearByUserAdapter(this);
         nearByUserAdapter.setError(R.layout.view_more_error).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                is_refresh=false;
+                is_refresh = false;
                 nearByUserAdapter.resumeMore();
             }
         });
         nearByUserAdapter.setMore(R.layout.view_more, new RecyclerArrayAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                is_refresh=false;
+                is_refresh = false;
                 getNearBy(true);
                 //userDao.getNearBy(getUsername(), getPassword(), UserManager.getLatitude(FriendActivity.this), UserManager.getLongitude(FriendActivity.this), 1000,page+1);
             }
@@ -206,10 +208,10 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             @Override
             public void onRefresh() {
                 //refresh data here
-                is_refresh=true;
+                is_refresh = true;
                 getNearBy(false);
                 //userDao.getNearBy(getUsername(), getPassword(), UserManager.getLatitude(FriendActivity.this), UserManager.getLongitude(FriendActivity.this), 1000,page);
-             }
+            }
 
             @Override
             public void onLoadMore() {
@@ -259,9 +261,9 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                     Logger.i("address", aMapLocation.getAddress());
                     Logger.i("latitude", aMapLocation.getLatitude() + "");
                     Logger.i("longitude", aMapLocation.getLongitude() + "");
-                    UserManager.putAddress(FriendActivity.this,aMapLocation.getAddress());
-                    UserManager.putLatitude(FriendActivity.this,aMapLocation.getLatitude()+"");
-                    UserManager.putLongitude(FriendActivity.this,aMapLocation.getLongitude()+"");
+                    UserManager.putAddress(FriendActivity.this, aMapLocation.getAddress());
+                    UserManager.putLatitude(FriendActivity.this, aMapLocation.getLatitude() + "");
+                    UserManager.putLongitude(FriendActivity.this, aMapLocation.getLongitude() + "");
                     userDao2.saveLocation(getUsername(), getPassword(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
                     location.setText(aMapLocation.getAddress());
                 } else {
@@ -276,8 +278,8 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
 
             }
         });
-        if (GlobalConfig.getInstance().getAdvertisements2() != null)
-        {Logger.i("ad_image", GlobalConfig.getInstance().getAdvertisements2().get(0).getImage());
+        if (GlobalConfig.getInstance().getAdvertisements2() != null) {
+            Logger.i("ad_image", GlobalConfig.getInstance().getAdvertisements2().get(0).getImage());
             SimpleHandler.getInstance().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -288,24 +290,25 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             userDao1.getAd(2, getUsername(), getPassword());
 
     }
+
     private void showDialog(final NearByUser entity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(entity.getNickname());
-        builder.setItems(new String[] { getString(R.string.add_friend) },
+        builder.setItems(new String[]{getString(R.string.add_friend)},
                 new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         switch (which) {
                             case 0:
-                                if(EMClient.getInstance().getCurrentUser().equals(entity.getPhoneNumber()+"-callba")){
+                                if (EMClient.getInstance().getCurrentUser().equals(entity.getPhoneNumber() + "-callba")) {
                                     new EaseAlertDialog(FriendActivity.this, R.string.not_add_myself).show();
                                     return;
                                 }
 
-                                if(DemoHelper.getInstance().getContactList().containsKey(entity.getPhoneNumber()+"-callba")){
+                                if (DemoHelper.getInstance().getContactList().containsKey(entity.getPhoneNumber() + "-callba")) {
                                     //提示已在好友列表中(在黑名单列表里)，无需添加
-                                    if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(entity.getPhoneNumber()+"-callba")){
+                                    if (EMClient.getInstance().contactManager().getBlackListUsernames().contains(entity.getPhoneNumber() + "-callba")) {
                                         new EaseAlertDialog(FriendActivity.this, R.string.user_already_in_contactlist).show();
                                         return;
                                     }
@@ -313,7 +316,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                                     return;
                                 }
 
-                                final ProgressDialog  progressDialog = new ProgressDialog(FriendActivity.this);
+                                final ProgressDialog progressDialog = new ProgressDialog(FriendActivity.this);
                                 String stri = getResources().getString(R.string.Is_sending_a_request);
                                 progressDialog.setMessage(stri);
                                 progressDialog.setCanceledOnTouchOutside(false);
@@ -322,8 +325,8 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                                         .post()
                                         .url(Interfaces.ADD_FRIEND)
                                         .addParams("loginName", getUsername())
-                                        .addParams("loginPwd",  getPassword())
-                                        .addParams("phoneNumber",entity.getPhoneNumber())
+                                        .addParams("loginPwd", getPassword())
+                                        .addParams("phoneNumber", entity.getPhoneNumber())
                                         .build()
                                         .execute(new StringCallback() {
                                             @Override
@@ -333,49 +336,53 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                                                     public void run() {
                                                         progressDialog.dismiss();
                                                         String s2 = getResources().getString(R.string.Request_add_buddy_failure);
-                                                        Toast.makeText(getApplicationContext(), s2 , 1).show();
+                                                        Toast.makeText(getApplicationContext(), s2, 1).show();
                                                     }
                                                 });
                                             }
 
                                             @Override
                                             public void onResponse(String response, int id) {
-                                                Logger.i("add_result",response);
-                                                String[] result=response.split("\\|");
-                                                if(result[0].equals("0"))
-                                                {
-                                                    try {
-                                                        //demo写死了个reason，实际应该让用户手动填入
-                                                        String s = getResources().getString(R.string.Add_a_friend);
-                                                        //EMClient.getInstance().contactManager().addContact(entity.getPhoneNumber()+"-callba", s);
-                                                        sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-                                                        List<EaseUser> mList = new ArrayList<EaseUser>();
-                                                        EaseUser user = new EaseUser(entity.getPhoneNumber()+"-callba");
-                                                        user.setAvatar(entity.getUrl_head());
-                                                        user.setNick(entity.getNickname());
-                                                        user.setSign(entity.getSign());
-                                                        EaseCommonUtils.setUserInitialLetter(user);
-                                                        mList.add(user);
-                                                        DemoHelper.getInstance().updateContactList(mList);
-                                                        //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-                                                        runOnUiThread(new Runnable() {
-                                                            public void run() {
-                                                                progressDialog.dismiss();
-                                                                String s1 = "添加成功";
-                                                                Toast.makeText(getApplicationContext(), s1, 1).show();
-                                                            }
-                                                        });
-                                                    } catch (final Exception e) {
-                                                        runOnUiThread(new Runnable() {
-                                                            public void run() {
-                                                                progressDialog.dismiss();
-                                                                String s2 = getResources().getString(R.string.Request_add_buddy_failure);
-                                                                Toast.makeText(getApplicationContext(), s2 + e.getMessage(), 1).show();
-                                                            }
-                                                        });
+                                                try {
+                                                    Logger.i("add_result", response);
+                                                    String[] result = response.split("\\|");
+                                                    if (result[0].equals("0")) {
+                                                        try {
+                                                            //demo写死了个reason，实际应该让用户手动填入
+                                                            String s = getResources().getString(R.string.Add_a_friend);
+                                                            //EMClient.getInstance().contactManager().addContact(entity.getPhoneNumber()+"-callba", s);
+                                                            sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+                                                            List<EaseUser> mList = new ArrayList<EaseUser>();
+                                                            EaseUser user = new EaseUser(entity.getPhoneNumber() + "-callba");
+                                                            user.setAvatar(entity.getUrl_head());
+                                                            user.setNick(entity.getNickname());
+                                                            user.setSign(entity.getSign());
+                                                            EaseCommonUtils.setUserInitialLetter(user);
+                                                            mList.add(user);
+                                                            DemoHelper.getInstance().updateContactList(mList);
+                                                            //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+                                                            runOnUiThread(new Runnable() {
+                                                                public void run() {
+                                                                    progressDialog.dismiss();
+                                                                    String s1 = "添加成功";
+                                                                    Toast.makeText(getApplicationContext(), s1, 1).show();
+                                                                }
+                                                            });
+                                                        } catch (final Exception e) {
+                                                            runOnUiThread(new Runnable() {
+                                                                public void run() {
+                                                                    progressDialog.dismiss();
+                                                                    String s2 = getResources().getString(R.string.Request_add_buddy_failure);
+                                                                    Toast.makeText(getApplicationContext(), s2 + e.getMessage(), 1).show();
+                                                                }
+                                                            });
+                                                        }
+                                                    } else {
+                                                        toast(result[1]);
+                                                        progressDialog.dismiss();
                                                     }
-                                                }else { toast(result[1]);
-                                                    progressDialog.dismiss();
+                                                } catch (Exception e) {
+                                                    toast(R.string.getserverdata_exception);
                                                 }
                                             }
                                         });
@@ -388,12 +395,13 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                 });
         builder.create().show();
     }
+
     @Override
     public void failure(String msg) {
         userList.refreshComplete();
         toast(msg);
-        if(!is_refresh)
-        nearByUserAdapter.pauseMore();
+        if (!is_refresh)
+            nearByUserAdapter.pauseMore();
     }
 
     @Override
@@ -403,40 +411,48 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
 
     @Override
     public void success(String msg) {
-        userList.refreshComplete();
-        result = msg.split("\\|");
-        Logger.i("friend_result", msg);
-        if (result[0].equals("0")) {
-            list = new ArrayList<>();
-            try {
-                list = gson.fromJson(result[1], new TypeToken<ArrayList<NearByUser>>() {
-                }.getType());
-            } catch (Exception e) {
+        try {
+            userList.refreshComplete();
+            result = msg.split("\\|");
+            Logger.i("friend_result", msg);
+            if (result[0].equals("0")) {
+                list = new ArrayList<>();
+                try {
+                    list = gson.fromJson(result[1], new TypeToken<ArrayList<NearByUser>>() {
+                    }.getType());
+                } catch (Exception e) {
 
-            }
-            Logger.i("size", list.size() + "");
-            if (list.size() == 0) {
-            } else {
-                if(is_refresh){
-                nearByUserAdapter.clear();
-                nearByUserAdapter.addAll(list);
-                    page=1;
-                nearByUserAdapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemClick(int position) {
-                        Logger.i("userlist","longclick");
-                        showDialog(nearByUserAdapter.getData().get(position-2));
-                        return true;
-                    }
-                });}else{
-                    nearByUserAdapter.addAll(list);
-                    page+=1;
                 }
+                Logger.i("size", list.size() + "");
+                if (list.size() == 0) {
+                } else {
+                    if (is_refresh) {
+                        nearByUserAdapter.clear();
+                        nearByUserAdapter.addAll(list);
+                        page = 1;
+                        nearByUserAdapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
+                            @Override
+                            public boolean onItemClick(int position) {
+                                Logger.i("userlist", "longclick");
+                                showDialog(nearByUserAdapter.getData().get(position - 2));
+                                return true;
+                            }
+                        });
+                    } else {
+                        nearByUserAdapter.addAll(list);
+                        page += 1;
+                    }
+                }
+            } else {
+                toast(result[1]);
+                if (!is_refresh)
+                    nearByUserAdapter.stopMore();
             }
-        } else {
-            toast(result[1]);
-            if(!is_refresh)
-                nearByUserAdapter.stopMore();
+        } catch (Exception e) {
+            toast(R.string.getserverdata_exception);
+            userList.refreshComplete();
+            if (!is_refresh)
+                nearByUserAdapter.pauseMore();
         }
 
     }
@@ -448,118 +464,136 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         progressBar.setVisibility(View.VISIBLE);
         locationClient.startLocation();
     }
-    public void getNearBy(final boolean is_next){
- /*  OkHttpUtils.post().url(Interfaces.GET_NEARBY)
-           .addParams("loginName", getUsername())
-           .addParams("loginPwd", getPassword())
-           .addParams("latitude", UserManager.getLatitude(this))
-           .addParams("longitude",UserManager.getLongitude(this))
-           .addParams("radius","1000")
-           .addParams("page",is_next?page+1+"":page+"")
-           .build().execute(new StringCallback() {
-       @Override
-       public void onError(Call call, Exception e, int id) {
-           userList.refreshComplete();
-           toast(R.string.network_error);
-           if(!is_refresh)
-               nearByUserAdapter.pauseMore();
-       }
 
-       @Override
-       public void onResponse(String response, int id) {
-           userList.refreshComplete();
-           result = response.split("\\|");
-           Logger.i("friend_result", response);
-           if (result[0].equals("0")) {
-               list = new ArrayList<>();
-               try {
-                   list = gson.fromJson(result[1], new TypeToken<ArrayList<NearByUser>>() {
-                   }.getType());
-               } catch (Exception e) {
+    public void getNearBy(final boolean is_next) {
+      /*  OkHttpUtils.post().url(Interfaces.GET_NEARBY)
+                .addParams("loginName", getUsername())
+                .addParams("loginPwd", getPassword())
+                .addParams("latitude", UserManager.getLatitude(this))
+                .addParams("longitude", UserManager.getLongitude(this))
+                .addParams("radius", "1000")
+                .addParams("page", is_next ? page + 1 + "" : page + "")
+                .build().execute(new StringCallback() {
+                                     @Override
+                                     public void onError(Call call, Exception e, int id) {
+                                         userList.refreshComplete();
+                                         toast(R.string.network_error);
+                                         if (!is_refresh)
+                                             nearByUserAdapter.pauseMore();
+                                     }
 
-               }
-               Logger.i("size", list.size() + "");
-               if (list.size() == 0) {
-               } else {
-                   if(is_refresh){
-                       nearByUserAdapter.clear();
-                       nearByUserAdapter.addAll(list);
-                       page=1;
-                       nearByUserAdapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
-                           @Override
-                           public boolean onItemClick(int position) {
-                               showDialog(nearByUserAdapter.getData().get(position-2));
-                               return true;
-                           }
-                       });}else{
-                       nearByUserAdapter.addAll(list);
-                       page+=1;
-                   }
-               }
-           } else {
-               toast(result[1]);
-               if(!is_refresh)
-                   nearByUserAdapter.stopMore();
-           }
+                                     @Override
+                                     public void onResponse(String response, int id) {
+                                         try {
+                                             userList.refreshComplete();
+                                             result = response.split("\\|");
+                                             Logger.i("friend_result", response);
+                                             if (result[0].equals("0")) {
+                                                 list = new ArrayList<>();
+                                                 try {
+                                                     list = gson.fromJson(result[1], new TypeToken<ArrayList<NearByUser>>() {
+                                                     }.getType());
+                                                 } catch (Exception e) {
 
-       }
+                                                 }
+                                                 Logger.i("size", list.size() + "");
+                                                 if (list.size() == 0) {
+                                                 } else {
+                                                     if (is_refresh) {
+                                                         nearByUserAdapter.clear();
+                                                         nearByUserAdapter.addAll(list);
+                                                         page = 1;
+                                                         nearByUserAdapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
+                                                             @Override
+                                                             public boolean onItemClick(int position) {
+                                                                 showDialog(nearByUserAdapter.getData().get(position - 2));
+                                                                 return true;
+                                                             }
+                                                         });
+                                                     } else {
+                                                         nearByUserAdapter.addAll(list);
+                                                         page += 1;
+                                                     }
+                                                 }
+                                             } else {
+                                                 toast(result[1]);
+                                                 if (!is_refresh)
+                                                     nearByUserAdapter.stopMore();
+                                             }
+                                         } catch (Exception e) {
+                                             toast(R.string.getserverdata_exception);
+                                             userList.refreshComplete();
+                                             if (!is_refresh)
+                                                 nearByUserAdapter.pauseMore();
+                                         }
 
-   });*/
-       subscription=apiService.getNearBy(getUsername(), getPassword(), UserManager.getLatitude(FriendActivity.this), UserManager.getLongitude(FriendActivity.this),"1000",is_next?page+1+"":page+"")
-               .subscribeOn(Schedulers.io())
-               .observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io())
-               .subscribe(new Subscriber<String>() {
-                   @Override
-                   public void onCompleted() {
-                       userList.refreshComplete();
-                   }
+                                     }
 
-                   @Override
-                   public void onError(Throwable e) {
-                   e.printStackTrace();
-                       userList.refreshComplete();
-                       toast(R.string.network_error);
-                       if(!is_refresh)
-                           nearByUserAdapter.pauseMore();
-                   }
+                                 }
+        );*/
+        subscription = apiService.getNearBy(getUsername(), getPassword(), UserManager.getLatitude(FriendActivity.this), UserManager.getLongitude(FriendActivity.this), "1000", is_next ? page + 1 + "" : page + "")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        userList.refreshComplete();
+                    }
 
-                   @Override
-                   public void onNext(String s) {
-                       result = s.split("\\|");
-                       Logger.i("friend_result", s);
-                       if (result[0].equals("0")) {
-                           list = new ArrayList<>();
-                           try {
-                               list = gson.fromJson(result[1], new TypeToken<ArrayList<NearByUser>>() {
-                               }.getType());
-                           } catch (Exception e) {
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        userList.refreshComplete();
+                        toast(R.string.network_error);
+                        if (!is_refresh)
+                            nearByUserAdapter.pauseMore();
+                    }
 
-                           }
-                           Logger.i("size", list.size() + "");
-                           if (list.size() == 0) {
-                           } else {
-                               if(is_refresh){
-                                   nearByUserAdapter.clear();
-                                   nearByUserAdapter.addAll(list);
-                                   page=1;
-                                   nearByUserAdapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
-                                       @Override
-                                       public boolean onItemClick(int position) {
-                                           showDialog(nearByUserAdapter.getData().get(position-2));
-                                           return true;
-                                       }
-                                   });}else{
-                                   nearByUserAdapter.addAll(list);
-                                   page+=1;
-                               }
-                           }
-                       } else {
-                           toast(result[1]);
-                           if(!is_refresh)
-                               nearByUserAdapter.stopMore();
-                       }
-                   }
-               });
+                    @Override
+                    public void onNext(String s) {
+                        try {
+                            result = s.split("\\|");
+                            Logger.i("friend_result", s);
+                            if (result[0].equals("0")) {
+                                list = new ArrayList<>();
+                                try {
+                                    list = gson.fromJson(result[1], new TypeToken<ArrayList<NearByUser>>() {
+                                    }.getType());
+                                } catch (Exception e) {
+
+                                }
+                                Logger.i("size", list.size() + "");
+                                if (list.size() == 0) {
+                                } else {
+                                    if (is_refresh) {
+                                        nearByUserAdapter.clear();
+                                        nearByUserAdapter.addAll(list);
+                                        page = 1;
+                                        nearByUserAdapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
+                                            @Override
+                                            public boolean onItemClick(int position) {
+                                                showDialog(nearByUserAdapter.getData().get(position - 2));
+                                                return true;
+                                            }
+                                        });
+                                    } else {
+                                        nearByUserAdapter.addAll(list);
+                                        page += 1;
+                                    }
+                                }
+                            } else {
+                                toast(result[1]);
+                                if (!is_refresh)
+                                    nearByUserAdapter.stopMore();
+                            }
+                        } catch (Exception e) {
+                            toast(R.string.getserverdata_exception);
+                            userList.refreshComplete();
+                            if (!is_refresh)
+                                nearByUserAdapter.pauseMore();
+                        }
+                    }
+                });
     }
 
 }

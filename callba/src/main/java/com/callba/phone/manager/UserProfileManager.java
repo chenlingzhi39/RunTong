@@ -1,7 +1,9 @@
 package com.callba.phone.manager;
 
 import android.content.Context;
+import android.widget.Toast;
 
+import com.callba.R;
 import com.callba.phone.DemoHelper.*;
 import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
@@ -49,6 +51,7 @@ public class UserProfileManager {
 
     private EaseUser currentUser;
     private Gson gson;
+
     public UserProfileManager() {
     }
 
@@ -58,8 +61,8 @@ public class UserProfileManager {
         }
         syncContactInfosListeners = new ArrayList<DataSyncListener>();
         sdkInited = true;
-        gson=new Gson();
-        appContext=context;
+        gson = new Gson();
+        appContext = context;
         return true;
     }
 
@@ -81,7 +84,7 @@ public class UserProfileManager {
         }
     }
 
-        public void asyncFetchContactInfosFromServer(List<String> usernames, final EMValueCallBack<List<EaseUser>> callback) {
+    public void asyncFetchContactInfosFromServer(List<String> usernames, final EMValueCallBack<List<EaseUser>> callback) {
        /* if (isSyncingContactInfosWithServer) {
             return;
         }*/
@@ -103,7 +106,7 @@ public class UserProfileManager {
         OkHttpUtils
                 .post()
                 .url(Interfaces.GET_FRIENDS)
-                .addParams("loginName",(String) SPUtils.get(appContext, Constant.PACKAGE_NAME, Constant.LOGIN_USERNAME, ""))
+                .addParams("loginName", (String) SPUtils.get(appContext, Constant.PACKAGE_NAME, Constant.LOGIN_USERNAME, ""))
                 .addParams("loginPwd", (String) SPUtils.get(appContext, Constant.PACKAGE_NAME, Constant.LOGIN_ENCODED_PASSWORD, ""))
                 .build().execute(new StringCallback() {
             @Override
@@ -113,23 +116,26 @@ public class UserProfileManager {
 
             @Override
             public void onResponse(String response, int id) {
-                Logger.i("get_result",response);
-                String[] result = response.split("\\|");
-                if (result[0].equals("0")) {
-                    ArrayList<BaseUser> list;
-                    list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
-                    }.getType());
-                    List<EaseUser> mList = new ArrayList<EaseUser>();
-                    for (BaseUser baseUser : list) {
-                        EaseUser user = new EaseUser(baseUser.getPhoneNumber()+"-callba");
-                        user.setAvatar(baseUser.getUrl_head());
-                        user.setNick(baseUser.getNickname());
-                        user.setSign(baseUser.getSign());
-                        EaseCommonUtils.setUserInitialLetter(user);
-                        mList.add(user);
+                try {
+                    Logger.i("get_result", response);
+                    String[] result = response.split("\\|");
+                    if (result[0].equals("0")) {
+                        ArrayList<BaseUser> list;
+                        list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
+                        }.getType());
+                        List<EaseUser> mList = new ArrayList<EaseUser>();
+                        for (BaseUser baseUser : list) {
+                            EaseUser user = new EaseUser(baseUser.getPhoneNumber() + "-callba");
+                            user.setAvatar(baseUser.getUrl_head());
+                            user.setNick(baseUser.getNickname());
+                            user.setSign(baseUser.getSign());
+                            EaseCommonUtils.setUserInitialLetter(user);
+                            mList.add(user);
+                        }
+                        callback.onSuccess(mList);
                     }
-                    callback.onSuccess(mList);
-
+                } catch (Exception e) {
+                    Toast.makeText(appContext, appContext.getString(R.string.getserverdata_exception), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -170,7 +176,7 @@ public class UserProfileManager {
                 .post()
                 .url(Interfaces.GET_FRIENDS)
                 .addParams("loginName", UserManager.getUsername(appContext))
-                .addParams("loginPwd",  UserManager.getPassword(appContext))
+                .addParams("loginPwd", UserManager.getPassword(appContext))
                 .build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
@@ -179,27 +185,31 @@ public class UserProfileManager {
 
             @Override
             public void onResponse(String response, int id) {
-                Logger.i("get_result",response);
-                String[] result = response.split("\\|");
-                if (result[0].equals("0")) {
-                    ArrayList<BaseUser> list;
-                    list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
-                    }.getType());
-                    List<EaseUser> mList = new ArrayList<EaseUser>();
-                    for (BaseUser baseUser : list) {
-                        EaseUser user = new EaseUser(baseUser.getPhoneNumber()+"-callba");
-                        user.setAvatar(baseUser.getUrl_head());
-                        user.setNick(baseUser.getNickname());
-                        user.setSign(baseUser.getSign());
-                        EaseCommonUtils.setUserInitialLetter(user);
-                        mList.add(user);
-                    }
+                try {
+                    Logger.i("get_result", response);
+                    String[] result = response.split("\\|");
+                    if (result[0].equals("0")) {
+                        ArrayList<BaseUser> list;
+                        list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
+                        }.getType());
+                        List<EaseUser> mList = new ArrayList<EaseUser>();
+                        for (BaseUser baseUser : list) {
+                            EaseUser user = new EaseUser(baseUser.getPhoneNumber() + "-callba");
+                            user.setAvatar(baseUser.getUrl_head());
+                            user.setNick(baseUser.getNickname());
+                            user.setSign(baseUser.getSign());
+                            EaseCommonUtils.setUserInitialLetter(user);
+                            mList.add(user);
+                        }
 
+                    }
+                } catch (Exception e) {
                 }
             }
         });
 
     }
+
     public void setCurrentUserNick(String nickname) {
         getCurrentUserInfo().setNick(nickname);
         PreferenceManager.getInstance().setCurrentUserNick(nickname);

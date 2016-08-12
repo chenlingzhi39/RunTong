@@ -84,7 +84,7 @@ public class TeamActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        Logger.i("order_result", response);
+                        try{ Logger.i("order_result", response);
                         String[] result = response.split("\\|");
                         if (result[0].equals("0")) {
                             teams = gson.fromJson(result[1], new TypeToken<ArrayList<ArrayList<Team>>>() {
@@ -93,7 +93,11 @@ public class TeamActivity extends BaseActivity {
                             layoutTab.setupWithViewPager(viewpager);
                             retry.setVisibility(View.GONE);
                         } else retry.setVisibility(View.VISIBLE);
+                        }catch(Exception e){
+                            toast(R.string.getserverdata_exception);
+                        }
                     }
+
                 });
     }
 

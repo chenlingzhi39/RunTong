@@ -195,7 +195,13 @@ public class MessageActivity extends BaseActivity {
                 return false;
             }
         });
-        conversationListview.setAdapter(adapter);
+        SimpleHandler.getInstance().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                conversationListview.setAdapter(adapter);
+            }
+        },0);
+
         IntentFilter filter = new IntentFilter(
                 "com.callba.chat");
         chatReceiver = new ChatReceiver();
@@ -443,10 +449,12 @@ public class MessageActivity extends BaseActivity {
                             switch (which) {
                                 case 0:
                                     EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(), false);
+                                    sendBroadcast(new Intent("message_num"));
                                     adapter.remove(entity);
                                     break;
                                 case 1:
                                     EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(), true);
+                                    sendBroadcast(new Intent("message_num"));
                                     adapter.remove(entity);
                                     break;
                                 default:

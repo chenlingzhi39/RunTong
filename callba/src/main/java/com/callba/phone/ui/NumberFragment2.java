@@ -61,6 +61,7 @@ public class NumberFragment2 extends BaseFragment {
     @InjectView(R.id.recharge)
     Button recharge;
     private ProgressDialog progressDialog;
+
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
@@ -91,51 +92,52 @@ public class NumberFragment2 extends BaseFragment {
             }
         }, 300); //设置300毫秒的时长*/
     }
+
     public static NumberFragment2 newInstance() {
         NumberFragment2 numberFragment = new NumberFragment2();
         return numberFragment;
     }
 
-  public void query(final String number){
-      OkHttpUtils.get().url("http://apis.juhe.cn/mobile/get")
-              .addParams("phone",number)
-              .addParams("key","1dfd68c50bbf3f58755f1d537fe817a4")
-              .build().execute(new StringCallback() {
-          @Override
-          public void onBefore(Request request, int id) {
-              progressDialog = ProgressDialog.show(getActivity(), "", "正在查询归属地");
-          }
+    public void query(final String number) {
+        OkHttpUtils.get().url("http://apis.juhe.cn/mobile/get")
+                .addParams("phone", number)
+                .addParams("key", "1dfd68c50bbf3f58755f1d537fe817a4")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onBefore(Request request, int id) {
+                progressDialog = ProgressDialog.show(getActivity(), "", "正在查询归属地");
+            }
 
-          @Override
-          public void onAfter(int id) {
-              progressDialog.dismiss();
-          }
+            @Override
+            public void onAfter(int id) {
+                progressDialog.dismiss();
+            }
 
-          @Override
-          public void onError(Call call, Exception e, int id) {
-              Toast.makeText(getActivity(), "查询归属地失败", 1).show();
-              tv_address.setHint("");
-          }
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Toast.makeText(getActivity(), "查询归属地失败", 1).show();
+                tv_address.setHint("");
+            }
 
-          @Override
-          public void onResponse(String response, int id) {
-              try {
-                  JSONObject jsonObject=new JSONObject(response);
-                  if(jsonObject.getString("resultcode").equals("200")){
-                      JSONObject result=new JSONObject(jsonObject.getString("result"));
-                      String address=result.getString("company");
-                      tv_address.setHint(address);
+            @Override
+            public void onResponse(String response, int id) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.getString("resultcode").equals("200")) {
+                        JSONObject result = new JSONObject(jsonObject.getString("result"));
+                        String address = result.getString("company");
+                        tv_address.setHint(address);
 
-                  }
-              }catch (JSONException e){
-                  e.printStackTrace();
-                  Toast.makeText(getActivity(), "查询归属地失败", 1).show();
-                  tv_address.setHint("");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), "查询归属地失败", 1).show();
+                    tv_address.setHint("");
 
-              }
+                }
 
-          }
-      });
+            }
+        });
     /*  progressDialog=ProgressDialog.show(getActivity(),"","正在查询归属地");
       new Thread(new Runnable() {
           @Override
@@ -169,7 +171,8 @@ public class NumberFragment2 extends BaseFragment {
           }
       }).start();
 */
-  }
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -189,7 +192,7 @@ public class NumberFragment2 extends BaseFragment {
         switch (view.getId()) {
             case R.id.contacts:
                 Uri uri = Uri.parse("content://contacts/people");
-                Intent i = new Intent(Intent.ACTION_PICK,uri);
+                Intent i = new Intent(Intent.ACTION_PICK, uri);
                 i.setType("vnd.android.cursor.dir/phone");
                 startActivityForResult(i, 0);
                 break;
@@ -198,11 +201,11 @@ public class NumberFragment2 extends BaseFragment {
                 break;
             case R.id.recharge:
                 OkHttpUtils.post()
-                    .url(Interfaces.FLOW_CARD)
-                    .addParams("loginName", getUsername())
-                    .addParams("loginPwd",  getPassword())
-                    .addParams("cardNumber",card.getText().toString())
-                    .build().execute(new StringCallback() {
+                        .url(Interfaces.FLOW_CARD)
+                        .addParams("loginName", getUsername())
+                        .addParams("loginPwd", getPassword())
+                        .addParams("cardNumber", card.getText().toString())
+                        .build().execute(new StringCallback() {
                     @Override
                     public void onAfter(int id) {
                         progressDialog.dismiss();
@@ -215,17 +218,23 @@ public class NumberFragment2 extends BaseFragment {
 
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                   Toast.makeText(getActivity(),R.string.network_error,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), R.string.network_error, Toast.LENGTH_SHORT).show();
                     }
+
                     @Override
                     public void onResponse(String response, int id) {
-                      String[] results=response.split("\\|");
-                        toast(results[1]);
+                        try {
+                            String[] results = response.split("\\|");
+                            toast(results[1]);
+                        } catch (Exception e) {
+                            toast(R.string.getserverdata_exception);
+                        }
                     }
                 });
                 break;
         }
     }
+
     public class DialogHelper implements DialogInterface.OnDismissListener {
         private Dialog mDialog;
         private View mView;
@@ -262,6 +271,7 @@ public class NumberFragment2 extends BaseFragment {
             return mView;
         }
     }
+
     public void showDialog() {
         final DialogHelper helper = new DialogHelper();
         Dialog dialog = new AlertDialog.Builder(getActivity())
@@ -287,6 +297,7 @@ public class NumberFragment2 extends BaseFragment {
         helper.setDialog(dialog);
         dialog.show();
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -305,7 +316,7 @@ public class NumberFragment2 extends BaseFragment {
 
                 if (phone_number.length() > 10) {
                     number.setText(phone_number);
-                   query(phone_number);
+                    query(phone_number);
 
                 } else
                     toast("请选择手机号!");

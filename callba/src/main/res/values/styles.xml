@@ -16,6 +16,11 @@
         <!-- <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>-->
         <!--<item name="android:textAppearance">@style/TextAppearance.FontPath</item>-->
     </style>
+    <style name="BaseAppTheme.LauncherAppTheme">
+        <!--<item name="android:windowAnimationStyle">@style/noAnimation</item>-->
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@drawable/android</item>
+    </style>
     <style name="TransparentDialog" parent="@android:style/Theme.Dialog">
         <item
             name="android:background">@android:color/transparent</item>

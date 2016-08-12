@@ -113,16 +113,15 @@ public class WebContactFragment extends BaseFragment {
         applicationItem.setOnClickListener(clickListener);
         blackListItem = (ContactItemView) headerView.findViewById(R.id.black_item);
         blackListItem.setOnClickListener(clickListener);
-        nearByItem=(ContactItemView) headerView.findViewById(R.id.nearby_item);
+        nearByItem = (ContactItemView) headerView.findViewById(R.id.nearby_item);
         nearByItem.setOnClickListener(clickListener);
-        communityItem=(ContactItemView) headerView.findViewById(R.id.community_item);
+        communityItem = (ContactItemView) headerView.findViewById(R.id.community_item);
         communityItem.setOnClickListener(clickListener);
         headerView.findViewById(R.id.group_item).setOnClickListener(clickListener);
         loadingView = LayoutInflater.from(getActivity()).inflate(R.layout.em_layout_loading_data, null);
         contentContainer.addView(loadingView);
         contactsMap = DemoHelper.getInstance().getContactList();
         contactList = new ArrayList<EaseUser>();
-        contactListLayout.init(contactList);
         query.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 contactListLayout.filter(s);
@@ -199,7 +198,7 @@ public class WebContactFragment extends BaseFragment {
                 return false;
             }
         });
-        gson=new Gson();
+        gson = new Gson();
         contactListLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -207,7 +206,7 @@ public class WebContactFragment extends BaseFragment {
                         .post()
                         .url(Interfaces.GET_FRIENDS)
                         .addParams("loginName", getUsername())
-                        .addParams("loginPwd",  getPassword())
+                        .addParams("loginPwd", getPassword())
                         .build().execute(new StringCallback() {
                     @Override
                     public void onAfter(int id) {
@@ -221,25 +220,28 @@ public class WebContactFragment extends BaseFragment {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        Logger.i("get_result",response);
-                        String[] result = response.split("\\|");
-                        if (result[0].equals("0")) {
-                            ArrayList<BaseUser> list;
-                            list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
-                            }.getType());
-                            List<EaseUser> mList = new ArrayList<EaseUser>();
-                            for (BaseUser baseUser : list) {
-                                EaseUser user = new EaseUser(baseUser.getPhoneNumber()+"-callba");
-                                user.setAvatar(baseUser.getUrl_head());
-                                user.setNick(baseUser.getNickname());
-                                user.setSign(baseUser.getSign());
-                                EaseCommonUtils.setUserInitialLetter(user);
-                                DemoHelper.getInstance().updateContactList(mList);
-                                mList.add(user);
+                        try { Logger.i("get_result", response);
+                            String[] result = response.split("\\|");
+                            if (result[0].equals("0")) {
+                                ArrayList<BaseUser> list;
+                                list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
+                                }.getType());
+                                List<EaseUser> mList = new ArrayList<EaseUser>();
+                                for (BaseUser baseUser : list) {
+                                    EaseUser user = new EaseUser(baseUser.getPhoneNumber() + "-callba");
+                                    user.setAvatar(baseUser.getUrl_head());
+                                    user.setNick(baseUser.getNickname());
+                                    user.setSign(baseUser.getSign());
+                                    EaseCommonUtils.setUserInitialLetter(user);
+                                    DemoHelper.getInstance().updateContactList(mList);
+                                    mList.add(user);
+                                }
+                                refresh();
+                            } else {
+                                toast(result[1]);
                             }
-                            refresh();
-                        }else{
-                            toast(result[1]);
+                        }catch(Exception e){
+                            toast(R.string.getserverdata_exception);
                         }
                     }
                 });
@@ -248,6 +250,10 @@ public class WebContactFragment extends BaseFragment {
 
     }
 
+    @Override
+    protected void lazyLoad() {
+        contactListLayout.init(contactList);
+    }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -261,33 +267,37 @@ public class WebContactFragment extends BaseFragment {
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.delete_contact) {
 
-                OkHttpUtils
-                        .post()
-                        .url(Interfaces.DELETE_FRIENDS)
-                        .addParams("loginName", getUsername())
-                        .addParams("loginPwd", getPassword())
-                        .addParams("phoneNumber",toBeProcessUser.getUsername().substring(0,11))
-                        .build().execute(new StringCallback() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-                        toast("删除失败");
-                    }
+            OkHttpUtils
+                    .post()
+                    .url(Interfaces.DELETE_FRIENDS)
+                    .addParams("loginName", getUsername())
+                    .addParams("loginPwd", getPassword())
+                    .addParams("phoneNumber", toBeProcessUser.getUsername().substring(0, 11))
+                    .build().execute(new StringCallback() {
+                @Override
+                public void onError(Call call, Exception e, int id) {
+                    toast("删除失败");
+                }
 
-                    @Override
-                    public void onResponse(String response, int id) {
-                    String[] result=response.split("\\|");
-                        Logger.i("delete_result",response);
-                       if(result[0].equals("0")){
-                           // 删除此联系人
-                           deleteContact(toBeProcessUser);
-                           // 删除相关的邀请消息
-                           InviteMessgeDao dao = new InviteMessgeDao(getActivity());
-                           dao.deleteMessage(toBeProcessUser.getUsername());
-                       }else{
-                           toast("删除失败");
-                       }
+                @Override
+                public void onResponse(String response, int id) {
+                    try {
+                        String[] result = response.split("\\|");
+                        Logger.i("delete_result", response);
+                        if (result[0].equals("0")) {
+                            // 删除此联系人
+                            deleteContact(toBeProcessUser);
+                            // 删除相关的邀请消息
+                            InviteMessgeDao dao = new InviteMessgeDao(getActivity());
+                            dao.deleteMessage(toBeProcessUser.getUsername());
+                        } else {
+                            toast("删除失败");
+                        }
+                    }catch(Exception e){
+                        toast(R.string.getserverdata_exception);
                     }
-                });
+                }
+            });
 
 
             return true;
@@ -319,7 +329,7 @@ public class WebContactFragment extends BaseFragment {
                 SimpleHandler.getInstance().post(new Runnable() {
                     @Override
                     public void run() {
-                        if(contactListLayout!=null)
+                        if (contactListLayout != null)
                             contactListLayout.refresh();
                     }
                 });
@@ -341,47 +351,46 @@ public class WebContactFragment extends BaseFragment {
             final Iterator<Map.Entry<String, EaseUser>> iterator = contactsMap.entrySet().iterator();
             final List<String> blackList = EMClient.getInstance().contactManager().getBlackListUsernames();
 
-                    while (iterator.hasNext()) {
-                        Map.Entry<String, EaseUser> entry = iterator.next();
-                        //兼容以前的通讯录里的已有的数据显示，加上此判断，如果是新集成的可以去掉此判断
-                        if (!entry.getKey().equals("item_new_friends")
-                                && !entry.getKey().equals("item_groups")
-                                && !entry.getKey().equals("item_chatroom")
-                                && !entry.getKey().equals("item_robots")) {
-                            if (!blackList.contains(entry.getKey())) {
-                                //不显示黑名单中的用户
-                                EaseUser user = entry.getValue();
-                                EaseCommonUtils.setUserInitialLetter(user);
-                                contactList.add(user);
-                            }
-                        }
+            while (iterator.hasNext()) {
+                Map.Entry<String, EaseUser> entry = iterator.next();
+                //兼容以前的通讯录里的已有的数据显示，加上此判断，如果是新集成的可以去掉此判断
+                if (!entry.getKey().equals("item_new_friends")
+                        && !entry.getKey().equals("item_groups")
+                        && !entry.getKey().equals("item_chatroom")
+                        && !entry.getKey().equals("item_robots")) {
+                    if (!blackList.contains(entry.getKey())) {
+                        //不显示黑名单中的用户
+                        EaseUser user = entry.getValue();
+                        EaseCommonUtils.setUserInitialLetter(user);
+                        contactList.add(user);
                     }
                 }
+            }
+        }
 
 
+        // 排序
+        Collections.sort(contactList, new Comparator<EaseUser>() {
 
-
-                // 排序
-                Collections.sort(contactList, new Comparator<EaseUser>() {
-
-                    @Override
-                    public int compare(EaseUser lhs, EaseUser rhs) {
-                        if (lhs.getInitialLetter().equals(rhs.getInitialLetter())) {
-                            return lhs.getNick().compareTo(rhs.getNick());
-                        } else {
-                            if ("#".equals(lhs.getInitialLetter())) {
-                                return 1;
-                            } else if ("#".equals(rhs.getInitialLetter())) {
-                                return -1;
-                            }
-                            return lhs.getInitialLetter().compareTo(rhs.getInitialLetter());
-                        }
-
+            @Override
+            public int compare(EaseUser lhs, EaseUser rhs) {
+                if (lhs.getInitialLetter().equals(rhs.getInitialLetter())) {
+                    return lhs.getNick().compareTo(rhs.getNick());
+                } else {
+                    if ("#".equals(lhs.getInitialLetter())) {
+                        return 1;
+                    } else if ("#".equals(rhs.getInitialLetter())) {
+                        return -1;
                     }
-                });
+                    return lhs.getInitialLetter().compareTo(rhs.getInitialLetter());
+                }
+
+            }
+        });
 
 
     }
+
     protected class HeaderItemClickListener implements View.OnClickListener {
 
         @Override
@@ -609,6 +618,7 @@ public class WebContactFragment extends BaseFragment {
             refresh();
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -617,11 +627,11 @@ public class WebContactFragment extends BaseFragment {
             contactSyncListener = null;
         }
 
-        if(blackListSyncListener != null){
+        if (blackListSyncListener != null) {
             DemoHelper.getInstance().removeSyncBlackListListener(blackListSyncListener);
         }
 
-        if(contactInfoSyncListener != null){
+        if (contactInfoSyncListener != null) {
             DemoHelper.getInstance().getUserProfileManager().removeSyncContactInfoListener(contactInfoSyncListener);
         }
     }

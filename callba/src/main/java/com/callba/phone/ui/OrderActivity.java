@@ -89,6 +89,7 @@ public class OrderActivity extends BaseActivity {
                     public void onResponse(String response, int id) {
                         retry.setVisibility(View.GONE);
                         Logger.i("order_result", response);
+                        try {
                         String[] result = response.split("\\|");
                         if (result[0].equals("0")) {
                             orders = gson.fromJson(result[1], new TypeToken<ArrayList<Order>>() {
@@ -98,6 +99,9 @@ public class OrderActivity extends BaseActivity {
                         } else {
                             hint.setText(result[1]);
                             hint.setVisibility(View.VISIBLE);
+                        }
+                        }catch(Exception e){
+                            toast(R.string.getserverdata_exception);
                         }
                     }
                 });

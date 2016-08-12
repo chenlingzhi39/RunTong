@@ -28,6 +28,7 @@ import com.callba.R;
 import com.callba.phone.MyApplication;
 import com.callba.phone.SystemBarTintManager;
 import com.callba.phone.bean.ApiService;
+import com.callba.phone.ui.ContactDetailActivity;
 import com.callba.phone.ui.HomeActivity;
 import com.callba.phone.ui.MainCallActivity;
 import com.callba.phone.ui.MainTabActivity;
@@ -130,7 +131,7 @@ public class BaseActivity extends AppCompatActivity {
 			}
 		}*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (this.getClass() != UserActivity.class) {
+            if (this.getClass() != UserActivity.class||this.getClass()!= ContactDetailActivity.class) {
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
                 Log.i(this.getClass().getName(), "light");
                 if (Build.MANUFACTURER.equals("Xiaomi"))

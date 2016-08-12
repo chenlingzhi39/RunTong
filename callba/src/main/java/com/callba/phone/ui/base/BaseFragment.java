@@ -42,9 +42,12 @@ public abstract class BaseFragment extends Fragment {
     public void toast(String msg){
         Toast.makeText(getActivity(),msg,Toast.LENGTH_SHORT).show();
     }
+    public void toast(int id){
+        Toast.makeText(getActivity(),getActivity().getString(id),Toast.LENGTH_SHORT).show();
+    }
     /** Fragment当前状态是否可见 */
     protected boolean isVisible;
-/*
+
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -60,9 +63,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
 
-    *//**
-     * 可见
-     *//*
+
     protected void onVisible() {
         if(is_first){
         lazyLoad();
@@ -71,20 +72,14 @@ public abstract class BaseFragment extends Fragment {
     }
 
 
-    *//**
-     * 不可见
-     *//*
+
     protected void onInvisible() {
 
 
     }
 
 
-    *//**
-     * 延迟加载
-     * 子类必须重写此方法
-     *//*
-    protected abstract void lazyLoad();*/
+    protected void lazyLoad(){};
     public String getUsername() {
         return UserManager.getUsername(getActivity());
     }

@@ -51,29 +51,32 @@ public class SelectFriendActivity extends BaseActivity {
     TextView floatingHeader;
     private Coupon coupon;
     private ProgressDialog progressDialog;
-    /** 是否为单选 */
-    private boolean isSignleChecked=true;
+    /**
+     * 是否为单选
+     */
+    private boolean isSignleChecked = true;
     private PickContactAdapter contactAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        coupon=(Coupon)getIntent().getSerializableExtra("coupon");
+        coupon = (Coupon) getIntent().getSerializableExtra("coupon");
         final List<EaseUser> alluserList = new ArrayList<>();
         for (EaseUser user : DemoHelper.getInstance().getContactList().values()) {
-                alluserList.add(user);
+            alluserList.add(user);
         }
         // 对list进行排序
         Collections.sort(alluserList, new Comparator<EaseUser>() {
 
             @Override
             public int compare(EaseUser lhs, EaseUser rhs) {
-                if(lhs.getInitialLetter().equals(rhs.getInitialLetter())){
+                if (lhs.getInitialLetter().equals(rhs.getInitialLetter())) {
                     return lhs.getNick().compareTo(rhs.getNick());
-                }else{
-                    if("#".equals(lhs.getInitialLetter())){
+                } else {
+                    if ("#".equals(lhs.getInitialLetter())) {
                         return 1;
-                    }else if("#".equals(rhs.getInitialLetter())){
+                    } else if ("#".equals(rhs.getInitialLetter())) {
                         return -1;
                     }
                     return lhs.getInitialLetter().compareTo(rhs.getInitialLetter());
@@ -86,7 +89,7 @@ public class SelectFriendActivity extends BaseActivity {
         ((EaseSidebar) findViewById(R.id.sidebar)).setListView(list);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view,final int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
            /*   Intent intent=new Intent(SelectFriendActivity.this, FlowActivity.class);
                 intent.putExtra("index",getIntent().getIntExtra("index",0));
                 intent.putExtra("coupon",getIntent().getSerializableExtra("coupon"));
@@ -94,17 +97,17 @@ public class SelectFriendActivity extends BaseActivity {
                 startActivity(intent);
                 finish();*/
                 AlertDialog.Builder builder = new AlertDialog.Builder(SelectFriendActivity.this);
-                builder.setMessage("确认赠送给"+alluserList.get(position).getNick()+"?");
+                builder.setMessage("确认赠送给" + alluserList.get(position).getNick() + "?");
                 builder.setPositiveButton(R.string.ok,
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
                                 OkHttpUtils.post().url(Interfaces.GIVE_COUPON)
-                                        .addParams("loginName",getUsername())
-                                        .addParams("loginPwd",getPassword())
-                                        .addParams("cid",coupon.getCid())
-                                        .addParams("phoneNumber",alluserList.get(position).getUsername().substring(0,11))
+                                        .addParams("loginName", getUsername())
+                                        .addParams("loginPwd", getPassword())
+                                        .addParams("cid", coupon.getCid())
+                                        .addParams("phoneNumber", alluserList.get(position).getUsername().substring(0, 11))
                                         .build().execute(new StringCallback() {
                                     @Override
                                     public void onAfter(int id) {
@@ -113,7 +116,7 @@ public class SelectFriendActivity extends BaseActivity {
 
                                     @Override
                                     public void onBefore(Request request, int id) {
-                                     progressDialog=ProgressDialog.show(SelectFriendActivity.this,"","请稍后");
+                                        progressDialog = ProgressDialog.show(SelectFriendActivity.this, "", "请稍后");
                                     }
 
                                     @Override
@@ -123,13 +126,16 @@ public class SelectFriendActivity extends BaseActivity {
 
                                     @Override
                                     public void onResponse(String response, int id) {
-                                        Logger.i("give_result",response);
-                                    String[] result=response.split("\\|");
-                                        if(result[0].equals("0")){
-                                            toast(result[1]);
-                                            setResult(RESULT_OK);
-                                            finish();
-                                        }else toast(result[1]);
+                                        try {Logger.i("give_result", response);
+                                            String[] result = response.split("\\|");
+                                            if (result[0].equals("0")) {
+                                                toast(result[1]);
+                                                setResult(RESULT_OK);
+                                                finish();
+                                            } else toast(result[1]);
+                                        } catch (Exception e) {
+                                            toast(R.string.getserverdata_exception);
+                                        }
                                     }
                                 });
                                 dialog.dismiss();
@@ -152,6 +158,7 @@ public class SelectFriendActivity extends BaseActivity {
             }
         });
     }
+
     /**
      * adapter
      */

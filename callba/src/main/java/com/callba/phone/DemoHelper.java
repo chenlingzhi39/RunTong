@@ -583,6 +583,7 @@ public class DemoHelper {
         public void onUserRemoved(String groupId,final String groupName) {
             //TODO 提示用户被T了，demo省略此步骤
             EMClient.getInstance().chatManager().deleteConversation(groupName,true);
+            appContext.sendBroadcast(new Intent("message_num"));
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
             SimpleHandler.getInstance().post(new Runnable() {
                 @Override
@@ -598,6 +599,7 @@ public class DemoHelper {
             // 群被解散
             //TODO 提示用户群被解散,demo省略
             EMClient.getInstance().chatManager().deleteConversation(groupName,true);
+            appContext.sendBroadcast(new Intent("message_num"));
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
             SimpleHandler.getInstance().post(new Runnable() {
                 @Override
@@ -690,6 +692,7 @@ public class DemoHelper {
             // 提醒新消息
             //getNotifier().viberateAndPlayTone(msg);
             getNotifier().onNewMsg(msg);
+            appContext.sendBroadcast(new Intent("message_num"));
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
         }
 
@@ -719,6 +722,7 @@ public class DemoHelper {
             EMLog.d(TAG, "onAutoAcceptInvitationFromGroup groupId:" + groupId);
             //发送local广播
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
+            appContext.sendBroadcast(new Intent("message_num"));
         }
     }
     /***
@@ -752,7 +756,7 @@ public class DemoHelper {
 
                 @Override
                 public void onResponse(String response, int id) {
-                    Logger.i("get_result",response);
+                    try{ Logger.i("get_result",response);
                     String[] result = response.split("\\|");
                     if (result[0].equals("0")) {
                         ArrayList<BaseUser> list;
@@ -770,6 +774,9 @@ public class DemoHelper {
                         updateContactList(mList);
                         broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
 
+                    }
+                    }catch(Exception e){
+                       Toast.makeText(appContext,R.string.getserverdata_exception,Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -803,6 +810,7 @@ public class DemoHelper {
             userDao.deleteContact(username);
             inviteMessgeDao.deleteMessage(username);
             EMClient.getInstance().chatManager().deleteConversation(username,false);
+            appContext.sendBroadcast(new Intent("message_num"));
             Intent intent=new Intent(Constant.ACTION_CONTACT_CHANAGED);
             intent.putExtra("username",username);
             //发送好友变动广播

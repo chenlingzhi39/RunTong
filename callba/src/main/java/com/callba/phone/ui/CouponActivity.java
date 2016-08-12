@@ -87,6 +87,7 @@ public class CouponActivity extends BaseActivity implements SwipeRefreshLayout.O
             @Override
             public void onResponse(String response, int id) {
                 Logger.i("coupon_result", response);
+                try {
                 String[] result = response.split("\\|");
                 if (result[0].equals("0")) {
                     coupons = gson.fromJson(result[1], new TypeToken<ArrayList<Coupon>>() {
@@ -98,7 +99,9 @@ public class CouponActivity extends BaseActivity implements SwipeRefreshLayout.O
                     hint.setText(result[1]);
                     hint.setVisibility(View.VISIBLE);
                     couponAdapter.clear();
-                }
+                }}catch(Exception e){
+                toast(R.string.getserverdata_exception);
+            }
             }
         });
     }

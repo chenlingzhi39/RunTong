@@ -111,7 +111,7 @@ public class ContactDetailFragment extends BaseFragment {
 
                                     @Override
                                     public void onResponse(String response, int id) {
-                                        Logger.i("add_result", response);
+                                        try { Logger.i("add_result", response);
                                         String[] result = response.split("\\|");
                                         if (result[0].equals("0")) {
                                             try {
@@ -132,6 +132,7 @@ public class ContactDetailFragment extends BaseFragment {
 
                                                     @Override
                                                     public void onResponse(String response, int id) {
+                                                        try{
                                                         Logger.i("get_result", response);
                                                         String[] result = response.split("\\|");
                                                         if (result[0].equals("0")) {
@@ -152,6 +153,8 @@ public class ContactDetailFragment extends BaseFragment {
 
                                                         } else {
                                                             Toast.makeText(getActivity(), result[1], Toast.LENGTH_SHORT).show();
+                                                        }}catch (Exception e){
+                                                            toast(R.string.getserverdata_exception);
                                                         }
                                                     }
                                                 });
@@ -175,7 +178,9 @@ public class ContactDetailFragment extends BaseFragment {
                                             toast(result[1]);
                                             progressDialog.dismiss();
                                         }
-
+                                        }catch(Exception e){
+                                            toast(R.string.getserverdata_exception);
+                                        }
                                     }
                                 });
                     }

@@ -48,6 +48,7 @@ public class AccountActivity extends BaseActivity {
     RelativeLayout mealSearch;
     @InjectView(R.id.commission)
     Button commission;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,21 +65,25 @@ public class AccountActivity extends BaseActivity {
 
             @Override
             public void success(String msg) {
-                if (msg != null) {
-                    String[] result = msg.split("&");
-                    ArrayList<Meal> meals = new ArrayList<>();
-                    Logger.i("mealaccount", result.length + "");
-                    for (String str : result) {
-                        String[] element = str.split(",");
-                        Meal meal = new Meal();
-                        meal.setName(element[2]);
-                        meal.setTime(element[3]);
-                        meal.setMax(element[4]);
-                        meal.setRest(element[5]);
-                        meals.add(meal);
-                    }
-                    showDialog(meals);
-                } else toast("无套餐");
+                try {
+                    if (msg != null) {
+                        String[] result = msg.split("&");
+                        ArrayList<Meal> meals = new ArrayList<>();
+                        Logger.i("mealaccount", result.length + "");
+                        for (String str : result) {
+                            String[] element = str.split(",");
+                            Meal meal = new Meal();
+                            meal.setName(element[2]);
+                            meal.setTime(element[3]);
+                            meal.setMax(element[4]);
+                            meal.setRest(element[5]);
+                            meals.add(meal);
+                        }
+                        showDialog(meals);
+                    } else toast("无套餐");
+                } catch (Exception e) {
+                    toast(R.string.getserverdata_exception);
+                }
             }
 
             @Override
@@ -86,10 +91,10 @@ public class AccountActivity extends BaseActivity {
                 toast(msg);
             }
         });
-      commission.setText(UserManager.getCommission(this));
+        commission.setText(UserManager.getCommission(this));
     }
 
-    @OnClick({R.id.calllog_search, R.id.meal_search,R.id.balance,R.id.gold})
+    @OnClick({R.id.calllog_search, R.id.meal_search, R.id.balance, R.id.gold})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.calllog_search:
@@ -97,13 +102,13 @@ public class AccountActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case R.id.meal_search:
-                userDao.getSuits(getUsername(),getPassword());
+                userDao.getSuits(getUsername(), getPassword());
                 break;
             case R.id.balance:
-                startActivity(new Intent(AccountActivity.this,BalanceActivity.class));
+                startActivity(new Intent(AccountActivity.this, BalanceActivity.class));
                 break;
             case R.id.gold:
-                startActivity(new Intent(AccountActivity.this,GoldActivity.class));
+                startActivity(new Intent(AccountActivity.this, GoldActivity.class));
                 break;
         }
 

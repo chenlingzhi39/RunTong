@@ -41,6 +41,7 @@ public class GoldActivity extends BaseActivity {
     @InjectView(R.id.exchange)
     Button exchange;
     int ex_gold;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +51,7 @@ public class GoldActivity extends BaseActivity {
 
     @OnClick(R.id.exchange)
     public void onClick() {
-       // toast("暂未开放");
+        // toast("暂未开放");
         showDialog();
     }
 
@@ -60,7 +61,7 @@ public class GoldActivity extends BaseActivity {
         private EditText change;
 
         public DialogHelper() {
-            mView =getLayoutInflater().inflate(R.layout.dialog_change_number, null);
+            mView = getLayoutInflater().inflate(R.layout.dialog_change_number, null);
             change = (EditText) mView.findViewById(R.id.et_change);
             change.setHint("当前兑换比率为32比1");
             change.requestFocus();
@@ -100,10 +101,10 @@ public class GoldActivity extends BaseActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ex_gold=Integer.parseInt(helper.getNumber())*32;
-                        OkHttpUtils.post().url(Interfaces.EXCHANGE_BALANCE).addParams("loginName",getUsername())
-                                .addParams("loginPwd",getPassword())
-                                .addParams("gold",Integer.parseInt(helper.getNumber())*32+"")
+                        ex_gold = Integer.parseInt(helper.getNumber()) * 32;
+                        OkHttpUtils.post().url(Interfaces.EXCHANGE_BALANCE).addParams("loginName", getUsername())
+                                .addParams("loginPwd", getPassword())
+                                .addParams("gold", Integer.parseInt(helper.getNumber()) * 32 + "")
                                 .build().execute(new StringCallback() {
                             @Override
                             public void onError(Call call, Exception e, int id) {
@@ -112,15 +113,19 @@ public class GoldActivity extends BaseActivity {
 
                             @Override
                             public void onResponse(String response, int id) {
-                            String[] result=response.split("\\|");
-                                if(result[0].equals("0")){
-                                    toast(result[1]);
-                                    UserManager.putGold(GoldActivity.this,UserManager.getGold(GoldActivity.this)-ex_gold);
-                                    gold.setText(UserManager.getGold(GoldActivity.this) + "");
-                                }else toast(result[1]);
+                                try {
+                                    String[] result = response.split("\\|");
+                                    if (result[0].equals("0")) {
+                                        toast(result[1]);
+                                        UserManager.putGold(GoldActivity.this, UserManager.getGold(GoldActivity.this) - ex_gold);
+                                        gold.setText(UserManager.getGold(GoldActivity.this) + "");
+                                    } else toast(result[1]);
+                                } catch (Exception e) {
+                                    toast(R.string.getserverdata_exception);
+                                }
                             }
                         });
-                       dialog.dismiss();
+                        dialog.dismiss();
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override

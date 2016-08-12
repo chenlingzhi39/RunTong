@@ -137,7 +137,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
         //校验密码是否为空
         if (TextUtils.isEmpty(password)) {
-		/*	CalldaToast calldaToast = new CalldaToast();
+        /*	CalldaToast calldaToast = new CalldaToast();
 			calldaToast.showToast(getApplicationContext(), R.string.input_password);*/
             toast(getString(R.string.input_password));
             return;
@@ -163,7 +163,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
                 .addParams("loginType", "1")
                 .addParams("softType", "android")
                 .addParams("callType", "all")
-        .build().execute(new StringCallback() {
+                .build().execute(new StringCallback() {
             @Override
             public void onAfter(int id) {
                 if (progressDialog != null && progressDialog.isShowing()) {
@@ -179,29 +179,28 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
             @Override
             public void onError(Call call, Exception e, int id) {
-                if(e instanceof ConnectTimeoutException){
-                    toast(R.string.conn_timeout);
-                }
-                else if(e instanceof SocketTimeoutException){
-                    toast(R.string.socket_timeout);
-                }else if(e instanceof UnknownHostException){
+                if (e instanceof UnknownHostException) {
                     toast(R.string.conn_failed);
-                }else{
+                } else {
                     e.printStackTrace();
-                    toast(R.string.network_error);}
+                    toast(R.string.network_error);
+                }
             }
 
             @Override
             public void onResponse(String response, int id) {
-                Logger.i("login_result",response);
-                String[] resultInfo=response.split("\\|");
-                if(resultInfo[0].equals("0"))
-                {//处理登录成功返回信息
-                    LoginController.getInstance().setUserLoginState(true);
-                LoginController.parseLoginSuccessResult(LoginActivity.this, username, password, resultInfo);
-                //转到主页面
-                gotoMainActivity();}
-                else toast(resultInfo[1]);
+                try {
+                    Logger.i("login_result", response);
+                    String[] resultInfo = response.split("\\|");
+                    if (resultInfo[0].equals("0")) {//处理登录成功返回信息
+                        LoginController.getInstance().setUserLoginState(true);
+                        LoginController.parseLoginSuccessResult(LoginActivity.this, username, password, resultInfo);
+                        //转到主页面
+                        gotoMainActivity();
+                    } else toast(resultInfo[1]);
+                } catch (Exception e) {
+                    toast(R.string.getserverdata_exception);
+                }
             }
         });
     }
@@ -254,15 +253,11 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         ArrayList list = new ArrayList();
         list.add(GlobalConfig.getInstance().getContactBeans());
         outState.putParcelableArrayList("contact", list);
-        ArrayList list1 = new ArrayList();
-        list1.add(GlobalConfig.getInstance().getContactEntities());
-        outState.putParcelableArrayList("contacts", list1);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         GlobalConfig.getInstance().setContactBeans((ArrayList<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0));
-        GlobalConfig.getInstance().setContactEntities((ArrayList<ContactEntity>) savedInstanceState.getParcelableArrayList("contacts").get(0));
     }
 }

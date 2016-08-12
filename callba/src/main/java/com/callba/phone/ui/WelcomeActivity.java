@@ -2,22 +2,15 @@ package com.callba.phone.ui;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.LinearLayout;
 
 import com.callba.R;
@@ -26,9 +19,6 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalSetting;
-import com.callba.phone.logic.contact.ContactPersonEntity;
-import com.callba.phone.logic.contact.QueryContactCallback;
-import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.service.MainService;
@@ -114,17 +104,14 @@ public class WelcomeActivity extends BaseActivity {
 
     public void init() {
         startService(new Intent(WelcomeActivity.this, MainService.class));
-        SimpleHandler.getInstance().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+
                 initEnvironment();
                 // 设置用户的登录状态
                 LoginController.getInstance().setUserLoginState(false);
 
                 // 启动服务
                 asyncInitLoginEnvironment();
-            }
-        },100);
+
 
 
 		/*rootView=(LinearLayout) findViewById(R.id.root);
@@ -155,7 +142,7 @@ public class WelcomeActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+     /*   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
             );
@@ -165,7 +152,7 @@ public class WelcomeActivity extends BaseActivity {
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        }
+        }*/
     }
 
 
@@ -196,6 +183,7 @@ public class WelcomeActivity extends BaseActivity {
                 .build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
+                e.printStackTrace();
                 AppVersionBean appVersionBean = new AppVersionBean();
                 checkLoginKey(appVersionBean);
             }
@@ -334,7 +322,7 @@ public class WelcomeActivity extends BaseActivity {
                                 public void onClick(DialogInterface dialog,
                                                     int which) {
                                     try {
-                                        startActivityForResult(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS), 0);
+                                        startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
                                         dialog.dismiss();
                                     } catch (Exception e) {
                                         // TODO: handle exception
@@ -366,13 +354,19 @@ public class WelcomeActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_CANCELED && requestCode == 0) {
-            isNetworkAvail = NetworkDetector.detect(WelcomeActivity.this);
-            alertNetWork(isNetworkAvail);
-            if (isNetworkAvail) {
-                currentGetVersionTime = 0;
-                // 获取版本信息
-                sendGetVersionTask();
-            }
+            SimpleHandler.getInstance().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isNetworkAvail = NetworkDetector.detect(WelcomeActivity.this);
+                    alertNetWork(isNetworkAvail);
+                    if (isNetworkAvail) {
+                        currentGetVersionTime = 0;
+                        // 获取版本信息
+                        sendGetVersionTask();
+                    }
+                }
+            },2000);
+
         }
 
     }

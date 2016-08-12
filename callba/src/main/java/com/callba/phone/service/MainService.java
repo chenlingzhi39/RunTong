@@ -50,7 +50,6 @@ public class MainService extends Service {
     private AMapLocationClientOption locationOption = null;
     UserDao userDao;
     LocationReceiver receiver;
-    ContactController contactController;
     //监听联系人数据的监听对象
     private ContentObserver mObserver = new ContentObserver(
             new Handler()) {
@@ -58,11 +57,12 @@ public class MainService extends Service {
         @Override
         public void onChange(boolean selfChange) {
             // 当联系人表发生变化时进行相应的操作
+            Logger.i("system_contact",system_contact+"");
+            Logger.i("contact","change");
             if (!system_contact) {
                 new QueryContacts(new QueryContactCallback() {
                     @Override
                     public void queryCompleted(List<ContactPersonEntity> contacts) {
-                        GlobalConfig.getInstance().setContactEntities(contactController.getFilterListContactEntitiesNoDuplicate());
                        sendBroadcast(new Intent("com.callba.contact"));
                     }
                 }).loadContact(getApplicationContext());
@@ -86,8 +86,6 @@ public class MainService extends Service {
         new QueryContacts(new QueryContactCallback() {
             @Override
             public void queryCompleted(List<ContactPersonEntity> contacts) {
-             contactController=new ContactController();
-                GlobalConfig.getInstance().setContactEntities(contactController.getFilterListContactEntitiesNoDuplicate());
                 sendBroadcast(new Intent("com.callba.contact"));
             }
         }).loadContact(this);

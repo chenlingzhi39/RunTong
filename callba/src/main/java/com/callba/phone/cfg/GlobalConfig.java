@@ -47,15 +47,7 @@ public class GlobalConfig implements Serializable{
 	private DialAd dialAd;
 	private long interval=600000;
     private AppVersionChecker.AppVersionBean appVersionBean;
-    private List<ContactEntity> contactEntities;
 
-	public List<ContactEntity> getContactEntities() {
-		return contactEntities;
-	}
-
-	public void setContactEntities(List<ContactEntity> contactEntities) {
-		this.contactEntities = contactEntities;
-	}
 
 	public AppVersionChecker.AppVersionBean getAppVersionBean() {
 		return appVersionBean;
@@ -275,9 +267,6 @@ public class GlobalConfig implements Serializable{
 		ArrayList list = new ArrayList();
 		list.add(contactBeans);
 		outState.putParcelableArrayList("contact", list);
-		ArrayList list4 = new ArrayList();
-		list4.add(contactEntities);
-		outState.putParcelableArrayList("contacts", list);
 	}
 
 	/**
@@ -300,7 +289,6 @@ public class GlobalConfig implements Serializable{
 		advertisements1=(ArrayList<Advertisement>)savedInstanceState.getParcelableArrayList("advertisements1").get(0);
 		advertisements2=(ArrayList<Advertisement>)savedInstanceState.getParcelableArrayList("advertisements2").get(0);
 		advertisements3=(ArrayList<Advertisement>)savedInstanceState.getParcelableArrayList("advertisements3").get(0);
-		contactEntities=(ArrayList<ContactEntity>)savedInstanceState.getParcelableArrayList("contacts").get(0);
 	}
 }
  

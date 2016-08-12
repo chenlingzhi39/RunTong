@@ -38,6 +38,7 @@ public class UserDao {
     private String[] result;
     private PostListener postListener;
     private UploadListener uploadListener;
+
     public interface PostListener {
         void start();
 
@@ -45,7 +46,8 @@ public class UserDao {
 
         void failure(String msg);
     }
-    public interface UploadListener{
+
+    public interface UploadListener {
         void start();
 
         void success(String msg);
@@ -54,10 +56,12 @@ public class UserDao {
 
         void loading(long total, long current, boolean isUploading);
     }
+
     public UserDao() {
         httpUtils = new HttpUtils(6 * 1000);
         httpUtils.configRequestRetryCount(3);
     }
+
     public UserDao(Context context, Handler handler) {
         this.context = context;
         this.handler = handler;
@@ -84,38 +88,10 @@ public class UserDao {
         message = handler.obtainMessage();
         message.what = code;
     }
-    public void login(String loginSign,String loginType){
-       final RequestParams params=new RequestParams();
-        params.addBodyParameter("loginSign", loginSign);
-        params.addBodyParameter("loginType", loginType);
-        params.addBodyParameter("softType","android");
-        params.addBodyParameter("callType", "all");
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.Login, params, new RequestCallBack<String>() {
-            @Override
-            public void onFailure(HttpException error, String msg) {
 
-            }
-
-            @Override
-            public void onSuccess(ResponseInfo<String> responseInfo) {
-                try {
-                    String[] result = (responseInfo.result).split("\\|");
-                    Logger.i("new_result",responseInfo.result);
-                    if("0".equals(result[0])) {
-
-                    } else {
-
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-
-                }
-            }
-        });
-    }
     public void getRegisterKey(final String phoneNumber) {
         final RequestParams params = new RequestParams();
-        Log.i("phoneNumber",phoneNumber);
+        Log.i("phoneNumber", phoneNumber);
         params.addBodyParameter("phoneNumber", phoneNumber);
         params.addBodyParameter("softType", "android");
         httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.Send_SMS, params, new RequestCallBack<String>() {
@@ -128,28 +104,36 @@ public class UserDao {
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i("send_success", responseInfo.result);
-                result = responseInfo.result.split("\\|");
-                if (result[0].equals("0")) {
-                    getMessage(Interfaces.GET_KEY_SUCCESS);
-                    message.obj = result[1];
-                    String phoneNumber2;
-                    try {
-                        phoneNumber2 = DesUtil.encrypt(phoneNumber, result[1]);
-                        Log.i("phoneNumber", phoneNumber2);
-                        getCode(phoneNumber2, result[2]);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                try {
+                    Log.i("send_success", responseInfo.result);
+                    result = responseInfo.result.split("\\|");
+                    if (result[0].equals("0")) {
+                        getMessage(Interfaces.GET_KEY_SUCCESS);
+                        message.obj = result[1];
+                        String phoneNumber2;
+                        try {
+                            phoneNumber2 = DesUtil.encrypt(phoneNumber, result[1]);
+                            Log.i("phoneNumber", phoneNumber2);
+                            getCode(phoneNumber2, result[2]);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        getMessage(Interfaces.GET_KEY_FAILURE);
+                        message.obj = result[1];
                     }
-                } else {getMessage(Interfaces.GET_KEY_FAILURE);
-                message.obj = result[1];}
-                handler.sendMessage(message);
+                    handler.sendMessage(message);
+                } catch (Exception e) {
+                    getMessage(Interfaces.GET_KEY_FAILURE);
+                    message.obj = context.getString(R.string.network_error);
+                    handler.sendMessage(message);
+                }
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
                 getMessage(Interfaces.GET_KEY_FAILURE);
-                message.obj=context.getString(R.string.network_error);
+                message.obj = context.getString(R.string.network_error);
                 handler.sendMessage(message);
             }
         });
@@ -170,26 +154,34 @@ public class UserDao {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i("send_success", responseInfo.result);
-                result = responseInfo.result.split("\\|");
-                if(result[0].equals("0")) {
-                    getMessage(Interfaces.GET_KEY_SUCCESS);
-                    String phoneNumber2;
-                    try {
-                        phoneNumber2 = DesUtil.encrypt(phoneNumber, result[1]);
-                        Log.i("phoneNumber", phoneNumber2);
-                        getPassword(phoneNumber2, result[2]);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                try {
+                    result = responseInfo.result.split("\\|");
+                    if (result[0].equals("0")) {
+                        getMessage(Interfaces.GET_KEY_SUCCESS);
+                        String phoneNumber2;
+                        try {
+                            phoneNumber2 = DesUtil.encrypt(phoneNumber, result[1]);
+                            Log.i("phoneNumber", phoneNumber2);
+                            getPassword(phoneNumber2, result[2]);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        getMessage(Interfaces.GET_KEY_FAILURE);
+                        message.obj = result[1];
                     }
-                }else{getMessage(Interfaces.GET_KEY_FAILURE);
-                    message.obj = result[1];}
-                handler.sendMessage(message);
+                    handler.sendMessage(message);
+                } catch (Exception e) {
+                    getMessage(Interfaces.GET_KEY_FAILURE);
+                    message.obj = context.getString(R.string.network_error);
+                    handler.sendMessage(message);
+                }
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
                 getMessage(Interfaces.GET_KEY_FAILURE);
-                message.obj=context.getString(R.string.network_error);
+                message.obj = context.getString(R.string.network_error);
                 handler.sendMessage(message);
             }
         });
@@ -211,20 +203,26 @@ public class UserDao {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i("get_success", responseInfo.result);
-
-                result = responseInfo.result.split("\\|");
-                if (result[0].equals("0"))
-                    getMessage(Interfaces.GET_CODE_SUCCESS);
-                else getMessage(Interfaces.GET_CODE_FAILURE);
-                message.obj = result[1];
-                handler.sendMessage(message);
-
+                try {
+                    result = responseInfo.result.split("\\|");
+                    if (result[0].equals("0"))
+                        getMessage(Interfaces.GET_CODE_SUCCESS);
+                    else getMessage(Interfaces.GET_CODE_FAILURE);
+                    message.obj = result[1];
+                    handler.sendMessage(message);
+                } catch (Exception e) {
+                    getMessage(Interfaces.GET_CODE_FAILURE);
+                    message.obj = context.getString(R.string.network_error);
+                    ;
+                    handler.sendMessage(message);
+                }
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
                 getMessage(Interfaces.GET_CODE_FAILURE);
-                message.obj = context.getString(R.string.network_error);;
+                message.obj = context.getString(R.string.network_error);
+                ;
                 handler.sendMessage(message);
             }
         });
@@ -246,12 +244,18 @@ public class UserDao {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i("get_success", responseInfo.result);
-                result = responseInfo.result.split("\\|");
-                if (result[0].equals("0"))
-                    getMessage(Interfaces.GET_CODE_SUCCESS);
-                else getMessage(Interfaces.GET_CODE_FAILURE);
-                message.obj = result[1];
-                handler.sendMessage(message);
+                try {
+                    result = responseInfo.result.split("\\|");
+                    if (result[0].equals("0"))
+                        getMessage(Interfaces.GET_CODE_SUCCESS);
+                    else getMessage(Interfaces.GET_CODE_FAILURE);
+                    message.obj = result[1];
+                    handler.sendMessage(message);
+                } catch (Exception e) {
+                    getMessage(Interfaces.GET_CODE_FAILURE);
+                    message.obj = context.getString(R.string.network_error);
+                    handler.sendMessage(message);
+                }
 
             }
 
@@ -284,11 +288,15 @@ public class UserDao {
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i("recharge_success", responseInfo.result);
-                result = responseInfo.result.split("\\|");
-                if (result[0].equals("0"))
-                    postListener.success(result[1]);
-                else postListener.failure(result[1]);
+                try {
+                    Log.i("recharge_success", responseInfo.result);
+                    result = responseInfo.result.split("\\|");
+                    if (result[0].equals("0"))
+                        postListener.success(result[1]);
+                    else postListener.failure(result[1]);
+                } catch (Exception e) {
+                    postListener.failure(context.getString(R.string.network_error));
+                }
             }
 
             @Override
@@ -299,15 +307,15 @@ public class UserDao {
         });
     }
 
-    public void getNearBy(String loginName, String password, String latitude, String longitude, int radius,int page) {
+    public void getNearBy(String loginName, String password, String latitude, String longitude, int radius, int page) {
         final RequestParams params = new RequestParams();
-        Logger.i("nearby_url",Interfaces.GET_NEARBY+"?"+"loginName="+loginName+"&loginPwd="+password+"&latitude="+latitude+"&longitude="+longitude+"&radius="+radius+"&page="+page);
+        Logger.i("nearby_url", Interfaces.GET_NEARBY + "?" + "loginName=" + loginName + "&loginPwd=" + password + "&latitude=" + latitude + "&longitude=" + longitude + "&radius=" + radius + "&page=" + page);
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
         params.addBodyParameter("latitude", latitude + "");
         params.addBodyParameter("longitude", longitude + "");
         params.addBodyParameter("radius", radius + "");
-        params.addBodyParameter("page",page+"");
+        params.addBodyParameter("page", page + "");
         httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_NEARBY, params, new RequestCallBack<String>() {
             @Override
             public void onFailure(HttpException error, String msg) {
@@ -318,7 +326,7 @@ public class UserDao {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i("getNearby_success", responseInfo.result);
-                    postListener.success(responseInfo.result);
+                postListener.success(responseInfo.result);
             }
 
             @Override
@@ -347,42 +355,48 @@ public class UserDao {
             }
         });
     }
-    public void changePassword(String loginName,String password,String oldPassword,String newPassword){
+
+    public void changePassword(String loginName, String password, String oldPassword, String newPassword) {
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("oldPwd",oldPassword);
-        params.addBodyParameter("newPwd",newPassword);
+        params.addBodyParameter("oldPwd", oldPassword);
+        params.addBodyParameter("newPwd", newPassword);
         params.addBodyParameter("softType", "android");
         httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.Change_Pass, params, new RequestCallBack<String>() {
             @Override
             public void onStart() {
-                Log.i("url",Interfaces.Change_Pass);
+                Log.i("url", Interfaces.Change_Pass);
                 postListener.start();
             }
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i("change_success",responseInfo.result);
-                result=responseInfo.result.split("\\|");
-                if(result[0].equals("0"))
-                postListener.success(result[1]);
-                else postListener.failure(result[1]);
+                try {
+                    Log.i("change_success", responseInfo.result);
+                    result = responseInfo.result.split("\\|");
+                    if (result[0].equals("0"))
+                        postListener.success(result[1]);
+                    else postListener.failure(result[1]);
+                } catch (Exception e) {
+                    postListener.failure(context.getString(R.string.network_error));
+                }
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
-              postListener.failure(context.getString(R.string.network_error));
+                postListener.failure(context.getString(R.string.network_error));
             }
         });
     }
-    public void changeHead(String loginName,String password,File file){
+
+    public void changeHead(String loginName, String password, File file) {
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("file",file);
-        Log.i("file",file.getPath());
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.CHANGE_HEAD, params, new RequestCallBack<String>(){
+        params.addBodyParameter("file", file);
+        Log.i("file", file.getPath());
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.CHANGE_HEAD, params, new RequestCallBack<String>() {
             @Override
             public void onStart() {
                 uploadListener.start();
@@ -390,56 +404,34 @@ public class UserDao {
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                result=responseInfo.result.split("\\|");
-                if(result[0].equals("0"))
-                    uploadListener.success(result[1]);
-                else uploadListener.failure(result[1]);
+                try {
+                    result = responseInfo.result.split("\\|");
+                    if (result[0].equals("0"))
+                        uploadListener.success(result[1]);
+                    else uploadListener.failure(result[1]);
+                } catch (Exception e) {
+                    uploadListener.failure(context.getString(R.string.network_error));
+                }
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
-            uploadListener.failure(context.getString(R.string.network_error));
+                uploadListener.failure(context.getString(R.string.network_error));
             }
 
             @Override
             public void onLoading(long total, long current, boolean isUploading) {
-             uploadListener.loading(total, current, isUploading);
+                uploadListener.loading(total, current, isUploading);
             }
         });
     }
-    public void getSign(String loginName,String password){
+
+    public void getSign(String loginName, String password) {
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("softType","android");
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.Sign, params, new RequestCallBack<String>(){
-            @Override
-            public void onStart() {
-              postListener.start();
-            }
-
-            @Override
-            public void onSuccess(ResponseInfo<String> responseInfo) {
-                result=responseInfo.result.split("\\|");
-                Log.i("get_sign",responseInfo.result);
-                if(result[0].equals("0"))
-                postListener.success(result[1]);
-                else postListener.failure(result[1]);
-            }
-
-            @Override
-            public void onFailure(HttpException error, String msg) {
-                postListener.failure(context.getString(R.string.network_error));
-            }
-
-        });
-    }
-    public void getSuits(String loginName,String password){
-        RequestParams params = new RequestParams();
-        params.addBodyParameter("loginName", loginName);
-        params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("softType","android");
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.QUERY_MEAL, params, new RequestCallBack<String>(){
+        params.addBodyParameter("softType", "android");
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.Sign, params, new RequestCallBack<String>() {
             @Override
             public void onStart() {
                 postListener.start();
@@ -447,13 +439,15 @@ public class UserDao {
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                result=responseInfo.result.split("\\|");
-                Log.i("get_suits",responseInfo.result);
-                if(result[0].equals("0"))
-                { if(result.length>1)
-                    postListener.success(result[1]);
-                else postListener.success(null);}
-                else postListener.failure(result[1]);
+                try {
+                    result = responseInfo.result.split("\\|");
+                    Log.i("get_sign", responseInfo.result);
+                    if (result[0].equals("0"))
+                        postListener.success(result[1]);
+                    else postListener.failure(result[1]);
+                } catch (Exception e) {
+                    postListener.failure(context.getString(R.string.network_error));
+                }
             }
 
             @Override
@@ -463,12 +457,13 @@ public class UserDao {
 
         });
     }
-    public void getBalance(String loginName,String password){
+
+    public void getSuits(String loginName, String password) {
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("softType","android");
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.Query_Balance, params, new RequestCallBack<String>(){
+        params.addBodyParameter("softType", "android");
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.QUERY_MEAL, params, new RequestCallBack<String>() {
             @Override
             public void onStart() {
                 postListener.start();
@@ -476,11 +471,17 @@ public class UserDao {
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                result=responseInfo.result.split("\\|");
-                Log.i("get_balance",responseInfo.result);
-                if(result[0].equals("0"))
-                    postListener.success(result[1]);
-                else postListener.failure(result[1]);
+                try {
+                    result = responseInfo.result.split("\\|");
+                    Log.i("get_suits", responseInfo.result);
+                    if (result[0].equals("0")) {
+                        if (result.length > 1)
+                            postListener.success(result[1]);
+                        else postListener.success(null);
+                    } else postListener.failure(result[1]);
+                } catch (Exception e) {
+                    postListener.failure(context.getString(R.string.getserverdata_exception));
+                }
             }
 
             @Override
@@ -490,12 +491,45 @@ public class UserDao {
 
         });
     }
-    public void getMarks(String loginName,String password,String date){
+
+    public void getBalance(String loginName, String password) {
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("date",date);
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_MARKS, params, new RequestCallBack<String>(){
+        params.addBodyParameter("softType", "android");
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.Query_Balance, params, new RequestCallBack<String>() {
+            @Override
+            public void onStart() {
+                postListener.start();
+            }
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                try {
+                    result = responseInfo.result.split("\\|");
+                    Log.i("get_balance", responseInfo.result);
+                    if (result[0].equals("0"))
+                        postListener.success(result[1]);
+                    else postListener.failure(result[1]);
+                } catch (Exception e) {
+                    postListener.failure(context.getString(R.string.network_error));
+                }
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                postListener.failure(context.getString(R.string.network_error));
+            }
+
+        });
+    }
+
+    public void getMarks(String loginName, String password, String date) {
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("date", date);
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_MARKS, params, new RequestCallBack<String>() {
             @Override
             public void onFailure(HttpException error, String msg) {
                 postListener.failure(context.getString(R.string.network_error));
@@ -512,13 +546,14 @@ public class UserDao {
             }
         });
     }
-    public void getMoods(String loginName,String password,String page,String pageSize){
+
+    public void getMoods(String loginName, String password, String page, String pageSize) {
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("page",page);
-        params.addBodyParameter("pagezize",pageSize);
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_MOODS, params, new RequestCallBack<String>(){
+        params.addBodyParameter("page", page);
+        params.addBodyParameter("pagezize", pageSize);
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_MOODS, params, new RequestCallBack<String>() {
             @Override
             public void onStart() {
                 postListener.start();
@@ -531,20 +566,21 @@ public class UserDao {
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i("moods",responseInfo.result);
-              postListener.success(responseInfo.result);
+                Log.i("moods", responseInfo.result);
+                postListener.success(responseInfo.result);
             }
         });
     }
-    public void sendMood(String loginName,String password,String content,ArrayList<String> files){
+
+    public void sendMood(String loginName, String password, String content, ArrayList<String> files) {
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("content",content);
-        params.addBodyParameter("htmlUrl","");
-        for(String path:files)
-            params.addBodyParameter("file",new File(path));
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.SEND_MOODS, params, new RequestCallBack<String>(){
+        params.addBodyParameter("content", content);
+        params.addBodyParameter("htmlUrl", "");
+        for (String path : files)
+            params.addBodyParameter("file", new File(path));
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.SEND_MOODS, params, new RequestCallBack<String>() {
             @Override
             public void onStart() {
                 uploadListener.start();
@@ -558,60 +594,70 @@ public class UserDao {
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                result=responseInfo.result.split("\\|");
-                if(result[0].equals("0"))
-                    uploadListener.success(result[1]);
-                else
-                    uploadListener.failure(result[1]);
+                try {
+                    result = responseInfo.result.split("\\|");
+                    if (result[0].equals("0"))
+                        uploadListener.success(result[1]);
+                    else
+                        uploadListener.failure(result[1]);
+                } catch (Exception e) {
+                    uploadListener.failure(context.getString(R.string.network_error));
+                }
             }
 
             @Override
             public void onLoading(long total, long current, boolean isUploading) {
-                 uploadListener.loading(total,current,isUploading);
+                uploadListener.loading(total, current, isUploading);
             }
         });
     }
-    public void changeInfo(String loginName,String password,String nickName,String sign){
+
+    public void changeInfo(String loginName, String password, String nickName, String sign) {
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
-        if(nickName!=null)
-        params.addBodyParameter("nickname",nickName);
-        if(sign!=null)
-        params.addBodyParameter("sign",sign);
-        if(nickName!=null||sign!=null)
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.CHANGE_INFO, params, new RequestCallBack<String>(){
-            @Override
-            public void onStart() {
-                postListener.start();
-            }
+        if (nickName != null)
+            params.addBodyParameter("nickname", nickName);
+        if (sign != null)
+            params.addBodyParameter("sign", sign);
+        if (nickName != null || sign != null)
+            httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.CHANGE_INFO, params, new RequestCallBack<String>() {
+                @Override
+                public void onStart() {
+                    postListener.start();
+                }
 
-            @Override
-            public void onSuccess(ResponseInfo<String> responseInfo) {
-                result=responseInfo.result.split("\\|");
-                if(result[0].equals("0"))
-                    postListener.success(result[1]);
-                else postListener.failure(result[1]);
-            }
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    try {
+                        result = responseInfo.result.split("\\|");
+                        if (result[0].equals("0"))
+                            postListener.success(result[1]);
+                        else postListener.failure(result[1]);
+                    } catch (Exception e) {
+                        postListener.failure(context.getString(R.string.network_error));
+                    }
+                }
 
+                @Override
+                public void onFailure(HttpException error, String msg) {
+                    postListener.failure(context.getString(R.string.network_error));
+                }
+
+
+            });
+    }
+
+    public void getSystemPhoneNumber(String loginName, String password, String count) {
+        RequestParams params = new RequestParams();
+        params.addBodyParameter("loginName", loginName);
+        params.addBodyParameter("loginPwd", password);
+        params.addBodyParameter("phoneNumberCount", count);
+        Logger.i("phoneNumberCount", count);
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_SYSTEM_PHONE_NUMBER, params, new RequestCallBack<String>() {
             @Override
             public void onFailure(HttpException error, String msg) {
                 postListener.failure(context.getString(R.string.network_error));
-            }
-
-
-        });
-    }
-    public void getSystemPhoneNumber(String loginName,String password,String count){
-        RequestParams params = new RequestParams();
-        params.addBodyParameter("loginName", loginName);
-        params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("phoneNumberCount",count);
-        Logger.i("phoneNumberCount",count);
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.GET_SYSTEM_PHONE_NUMBER, params, new RequestCallBack<String>(){
-            @Override
-            public void onFailure(HttpException error, String msg) {
-              postListener.failure(context.getString(R.string.network_error));
             }
 
             @Override
@@ -620,15 +666,16 @@ public class UserDao {
             }
         });
     }
-    public void setOrder(String loginName,String password,String payMoney,String payMethod,String suiteName){
+
+    public void setOrder(String loginName, String password, String payMoney, String payMethod, String suiteName) {
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("payMoney",payMoney);
-        params.addBodyParameter("payMethod",payMethod);
-        params.addBodyParameter("suiteName",suiteName);
-        params.addBodyParameter("softType","android");
-        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.SET_ORDER, params, new RequestCallBack<String>(){
+        params.addBodyParameter("payMoney", payMoney);
+        params.addBodyParameter("payMethod", payMethod);
+        params.addBodyParameter("suiteName", suiteName);
+        params.addBodyParameter("softType", "android");
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.SET_ORDER, params, new RequestCallBack<String>() {
             @Override
             public void onFailure(HttpException error, String msg) {
                 postListener.failure(context.getString(R.string.network_error));
@@ -636,23 +683,28 @@ public class UserDao {
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i("order_result",responseInfo.result);
-                result=responseInfo.result.split("\\|");
-                if(result[0].equals("0")){
-                    postListener.success(result[1]);
-                }else{
-                    postListener.failure(result[1]);
+                try {
+                    Log.i("order_result", responseInfo.result);
+                    result = responseInfo.result.split("\\|");
+                    if (result[0].equals("0")) {
+                        postListener.success(result[1]);
+                    } else {
+                        postListener.failure(result[1]);
+                    }
+                } catch (Exception e) {
+                    postListener.failure(context.getString(R.string.network_error));
                 }
             }
         });
     }
-    public void pay(String loginName,String password,String orderNumber,String payResult){
+
+    public void pay(String loginName, String password, String orderNumber, String payResult) {
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("orderNumber",orderNumber);
-        params.addBodyParameter("payResult",payResult);
-        httpUtils.send(HttpRequest.HttpMethod.POST,Interfaces.PAY_SUCCESS, params, new RequestCallBack<String>(){
+        params.addBodyParameter("orderNumber", orderNumber);
+        params.addBodyParameter("payResult", payResult);
+        httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.PAY_SUCCESS, params, new RequestCallBack<String>() {
             @Override
             public void onStart() {
                 postListener.start();
@@ -669,41 +721,47 @@ public class UserDao {
             }
         });
     }
-    public void getAd(int index,String loginName,String password){
+
+    public void getAd(int index, String loginName, String password) {
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
-        params.addBodyParameter("softType","android");
-        String url="";
-        switch (index){
+        params.addBodyParameter("softType", "android");
+        String url = "";
+        switch (index) {
             case 1:
-                url=Interfaces.GET_ADVERTICEMENT1;
+                url = Interfaces.GET_ADVERTICEMENT1;
                 break;
             case 2:
-                url=Interfaces.GET_ADVERTICEMENT2;
+                url = Interfaces.GET_ADVERTICEMENT2;
                 break;
             case 3:
-                url=Interfaces.GET_ADVERTICEMENT3;
+                url = Interfaces.GET_ADVERTICEMENT3;
                 break;
             case 4:
-                url=Interfaces.GET_ADVERTICEMENT4;
+                url = Interfaces.GET_ADVERTICEMENT4;
                 break;
         }
-        Logger.i("add_url",url);
-        httpUtils.send(HttpRequest.HttpMethod.POST,url, params, new RequestCallBack<String>(){
+        Logger.i("add_url", url);
+        httpUtils.send(HttpRequest.HttpMethod.POST, url, params, new RequestCallBack<String>() {
             @Override
             public void onFailure(HttpException error, String msg) {
-              postListener.failure(context.getString(R.string.network_error));
+                postListener.failure(context.getString(R.string.network_error));
             }
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Logger.i("ad_result",responseInfo.result);
-                String[] result=responseInfo.result.split("\\|");
-                if(result[0].equals("0")){
-                    postListener.success(result[1]);
-                }else{
-                    //postListener.failure(result[1]);
+                try {
+                    Logger.i("ad_result", responseInfo.result);
+
+                    String[] result = responseInfo.result.split("\\|");
+                    if (result[0].equals("0")) {
+                        postListener.success(result[1]);
+                    } else {
+                        //postListener.failure(result[1]);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });

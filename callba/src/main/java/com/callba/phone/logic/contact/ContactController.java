@@ -1,5 +1,6 @@
 package com.callba.phone.logic.contact;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.util.FileUtils;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.StorageUtils;
 import com.google.gson.Gson;
 
 /** 
@@ -165,6 +167,7 @@ public class ContactController {
 			
 			personEntities.add(new ContactMutliNumBean(contactPersonEntity));
 		}*/
+		FileUtils.writeObjectToFile(StorageUtils.getFilesDirectory(contaxt) + File.separator + "contacts.txt", gson.toJson(personEntities));
 		return sortContactByLetter(personEntities);
 	}
 	
@@ -214,10 +217,11 @@ public class ContactController {
 	 * 联系人按字母排序
 	 * @author zhw
 	 */
-	private List<ContactEntity> sortContactByLetter(List<? extends ContactPersonEntity> personEntities) {
+	public List<ContactEntity> sortContactByLetter(List<? extends ContactPersonEntity> personEntities) {
 		List<ContactEntity> entities = new ArrayList<ContactEntity>();
 		letterSearchMap = new HashMap<String, Integer>();
-		
+		if(personEntities==null)
+			return entities;
 		if(personEntities.isEmpty()) {
 			return entities;
 		}

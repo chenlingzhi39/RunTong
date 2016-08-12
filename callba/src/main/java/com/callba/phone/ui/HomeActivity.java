@@ -98,7 +98,7 @@ public class HomeActivity extends BaseActivity {
     private ProgressDialog progressDialog;
     private String username;
     private String password;
-    private UserDao userDao, userDao1, userDao2,userDao3;
+    private UserDao userDao, userDao1, userDao2, userDao3;
     private String date;
     private Gson gson;
     private String[] result;
@@ -122,41 +122,45 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void success(String msg) {
-                Log.i("system_result", msg);
-                result = msg.split("\\|");
-                if (result[0].equals("0")) {
-                    list = new ArrayList<>();
-                    try {
-                        list = gson.fromJson(result[1], new TypeToken<ArrayList<SystemNumber>>() {
-                        }.getType());
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                try {
+                    Log.i("system_result", msg);
+                    result = msg.split("\\|");
+                    if (result[0].equals("0")) {
+                        list = new ArrayList<>();
+                        try {
+                            list = gson.fromJson(result[1], new TypeToken<ArrayList<SystemNumber>>() {
+                            }.getType());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        final ArrayList<String> numbers = new ArrayList<>();
+                        final ContactData contactData = new ContactData();
+                        contactData.setContactName("Call吧电话");
+                        for (SystemNumber user : list) {
+                            numbers.add(user.getPhoneNumber());
+                            Logger.i("phonenumber", user.getPhoneNumber());
+                        }
+                        MainService.system_contact = true;
+                        if (ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话").equals("0"))
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
+                                }
+                            }).start();
+                        else {
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ContactsAccessPublic.deleteContact(HomeActivity.this, new ContactsManager(getContentResolver()).getContactID("Call吧电话"));
+                                    ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
+                                }
+                            }).start();
+                        }
+                    } else {
+
                     }
-                    final ArrayList<String> numbers = new ArrayList<>();
-                    final ContactData contactData = new ContactData();
-                    contactData.setContactName("Call吧电话");
-                    for (SystemNumber user : list) {
-                        numbers.add(user.getPhoneNumber());
-                        Logger.i("phonenumber", user.getPhoneNumber());
-                    }
-                    MainService.system_contact=true;
-                    if (ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话").equals("0"))
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
-                            }
-                        }).start();
-                    else {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ContactsAccessPublic.deleteContact(HomeActivity.this, new ContactsManager(getContentResolver()).getContactID("Call吧电话"));
-                                ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
-                            }
-                        }).start();
-                    }
-                } else {
+                } catch (Exception e) {
 
                 }
 
@@ -207,21 +211,27 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void success(String msg) {
-                String[] result = msg.split("\\|");
-                if (result[0].equals("0")) {
-                    String[] dates = result[1].split(",");
-                    if (date.equals(dates[dates.length - 1])) {
-                        mPreferenceUtil.putString(getUsername(), date, true);
+                try {
+                    String[] result = msg.split("\\|");
+                    if (result[0].equals("0")) {
+                        String[] dates = result[1].split(",");
+                        if (date.equals(dates[dates.length - 1])) {
+                            mPreferenceUtil.putString(getUsername(), date, true);
 
+                        } else {
+                            mPreferenceUtil.putString(getUsername(), dates[dates.length - 1], true);
+                            Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
+                            startActivity(intent);
+                        }
                     } else {
-                        mPreferenceUtil.putString(getUsername(), dates[dates.length - 1], true);
-                        Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
-                        startActivity(intent);
-                    }} else {
-                    //toast(result[1]);
-                    if(result[1].equals("没有签到记录"))
-                    {Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
-                    startActivity(intent);}
+                        //toast(result[1]);
+                        if (result[1].equals("没有签到记录")) {
+                            Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+                } catch (Exception e) {
+                    toast(R.string.getserverdata_exception);
                 }
             }
 
@@ -242,7 +252,7 @@ public class HomeActivity extends BaseActivity {
             Logger.i("MainCallActivity", "MainCallActivity  oncreate autoLogin");
             // 登录
             autoLogin();
-         return;
+            return;
         }/* else {
 
             // 检查内存数据是否正常
@@ -267,24 +277,24 @@ public class HomeActivity extends BaseActivity {
         }*/
         userDao1.getSystemPhoneNumber(getUsername(), getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
         userDao2.getAd(1, getUsername(), getPassword());
-        if (!mPreferenceUtil.getString(getUsername()).equals(date)&& (boolean)SPUtils.get(HomeActivity.this,"settings","sign_key",false)) {
+        if (!mPreferenceUtil.getString(getUsername()).equals(date) && (boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", false)) {
             String year = Calendar.getInstance().get(Calendar.YEAR) + "";
             String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
             if (month.length() == 1)
                 month = "0" + month;
             userDao.getMarks(getUsername(), getPassword(), year + month);
         }
-        if(GlobalConfig.getInstance().getAppVersionBean()!=null&&(boolean)SPUtils.get(this,"settings","update_key",true)){
-            check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(),false);
+        if (GlobalConfig.getInstance().getAppVersionBean() != null && (boolean) SPUtils.get(this, "settings", "update_key", true)) {
+            check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (GlobalConfig.getInstance().getAdvertisements1()!=null)
-         if( GlobalConfig.getInstance().getAdvertisements1().size()==0)
-            userDao2.getAd(1, getUsername(), getPassword());
+        if (GlobalConfig.getInstance().getAdvertisements1() != null)
+            if (GlobalConfig.getInstance().getAdvertisements1().size() == 0)
+                userDao2.getAd(1, getUsername(), getPassword());
     }
 
     // 跳转到起始页
@@ -311,7 +321,7 @@ public class HomeActivity extends BaseActivity {
                 //queryUserBalance();
               /*  intent=new Intent(HomeActivity.this,AccountActivity.class);
                 startActivity(intent);*/
-                startActivity(new Intent(HomeActivity.this,CouponActivity.class));
+                startActivity(new Intent(HomeActivity.this, CouponActivity.class));
                 break;
             case R.id.sale:
                 toast("暂未开放");
@@ -320,11 +330,11 @@ public class HomeActivity extends BaseActivity {
                 toast("暂未开放");
                 break;
             case R.id.flow:
-                startActivity(new Intent(HomeActivity.this,FlowActivity.class));
+                startActivity(new Intent(HomeActivity.this, FlowActivity.class));
                 //toast("暂未开放");
                 break;
             case R.id.family:
-                startActivity(new Intent(HomeActivity.this,FamilyActivity.class));
+                startActivity(new Intent(HomeActivity.this, FamilyActivity.class));
                 //toast("暂未开放");
                 /*intent = new Intent(HomeActivity.this, CommunityActivity.class);
                 startActivity(intent);*/
@@ -454,36 +464,42 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onError(Call call, Exception e, int id) {
-                if(e instanceof ConnectTimeoutException){
-                    toast(R.string.conn_timeout);
-                }else if(e instanceof SocketTimeoutException){
-                    toast(R.string.socket_timeout);
-                }else if(e instanceof UnknownHostException){
+                if (e instanceof UnknownHostException) {
                     toast(R.string.conn_failed);
-                }else{toast(R.string.network_error);}
+                } else {
+                    toast(R.string.network_error);
+                }
                 switchManualLogin();
             }
 
             @Override
             public void onResponse(String response, int id) {
-                Logger.i("login_result",response);
-                String[] resultInfo=response.split("\\|");
-                if(resultInfo[0].equals("0"))
-                { //处理登录成功返回信息
-                LoginController.parseLoginSuccessResult(HomeActivity.this, username, password, resultInfo);
-                LoginController.getInstance().setUserLoginState(true);
-                if (!mPreferenceUtil.getString(getUsername()).equals(date)&& (boolean)SPUtils.get(HomeActivity.this,"settings","sign_key",false)) {
-                    String year = Calendar.getInstance().get(Calendar.YEAR) + "";
-                    String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
-                    if (month.length() == 1)
-                        month = "0" + month;
-                    userDao.getMarks(getUsername(), getPassword(), year + month);
+                try {
+                    Logger.i("login_result", response);
+                    String[] resultInfo = response.split("\\|");
+                    if (resultInfo[0].equals("0")) { //处理登录成功返回信息
+                        LoginController.parseLoginSuccessResult(HomeActivity.this, username, password, resultInfo);
+                        LoginController.getInstance().setUserLoginState(true);
+                        if (!mPreferenceUtil.getString(getUsername()).equals(date) && (boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", false)) {
+                            String year = Calendar.getInstance().get(Calendar.YEAR) + "";
+                            String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
+                            if (month.length() == 1)
+                                month = "0" + month;
+                            userDao.getMarks(getUsername(), getPassword(), year + month);
+                        }
+                        userDao1.getSystemPhoneNumber(getUsername(), getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+                        userDao2.getAd(1, getUsername(), getPassword());
+                        if (GlobalConfig.getInstance().getAppVersionBean() != null && (boolean) SPUtils.get(HomeActivity.this, "settings", "update_key", true)) {
+                            check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
+                        }
+                    } else {
+                        toast(resultInfo[1]);
+                        switchManualLogin();
+                    }
+                } catch (Exception e) {
+                    toast(R.string.getserverdata_exception);
+                    switchManualLogin();
                 }
-                userDao1.getSystemPhoneNumber(getUsername(),getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
-                userDao2.getAd(1, getUsername(), getPassword());
-                if(GlobalConfig.getInstance().getAppVersionBean()!=null&&(boolean)SPUtils.get(HomeActivity.this,"settings","update_key",true)){
-                    check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(),false);
-                }}else toast(resultInfo[1]);
             }
         });
     }

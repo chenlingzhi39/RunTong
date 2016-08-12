@@ -85,11 +85,14 @@ public class TXActivity extends BaseActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-                       String[] results=response.split("\\|");
+                       try{String[] results=response.split("\\|");
                         if(results[0].equals("0")){
                             toast(results[1]);
                             UserManager.putCommission(TXActivity.this,Double.parseDouble(UserManager.getCommission(TXActivity.this))-Double.parseDouble(commission.getText().toString())+"");
                         }else toast(results[1]);
+                       }catch(Exception e){
+                           toast(R.string.getserverdata_exception);
+                       }
                     }
                 });
     }

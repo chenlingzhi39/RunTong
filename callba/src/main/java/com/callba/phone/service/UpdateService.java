@@ -339,7 +339,7 @@ public class UpdateService extends Service {
 				.getExternalStorageState())) {
 			updateDir = new File(Environment.getExternalStorageDirectory()
 					+ "/" + "Download");
-			updateFile = new File(updateDir.getPath() + "/" + name + ".apk");
+			updateFile = new File(updateDir.getPath() + File.separator + name + ".apk");
 
 			if (!updateDir.exists()) {
 				updateDir.mkdirs();

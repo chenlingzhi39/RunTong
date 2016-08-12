@@ -1,5 +1,7 @@
 package com.callba.phone.util;
 
+import android.content.Context;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,11 +13,14 @@ import java.io.ObjectOutputStream;
  * Created by PC-20160514 on 2016/8/10.
  */
 public class FileUtils {
-    public static void writeObjectToFile(Object obj)
+    public static void writeObjectToFile(String path,Object obj)
     {
-        File file =new File("contact.dat");
+        try { File file =new File(path);
+        if(file.exists())
+            file.delete();
+        file.createNewFile();
         FileOutputStream out;
-        try {
+
             out = new FileOutputStream(file);
             ObjectOutputStream objOut=new ObjectOutputStream(out);
             objOut.writeObject(obj);
@@ -27,11 +32,12 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
-    public static Object readObjectFromFile()
+    public static Object readObjectFromFile(String path)
     {
         Object temp=null;
-        File file =new File("test.dat");
+        File file =new File(path);
         FileInputStream in;
+        if(file.exists())
         try {
             in = new FileInputStream(file);
             ObjectInputStream objIn=new ObjectInputStream(in);

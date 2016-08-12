@@ -70,43 +70,47 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     private String code;
     private String language = "";
     private SharedPreferenceUtil preferenceUtil;
-    String[] results;
     UserDao userDao;
     String key;
     private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
     ContentObserver c;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
         init();
-        c=new ContentObserver(han) {
+        c = new ContentObserver(han) {
             @Override
             public void onChange(boolean selfChange) {
                 // TODO Auto-generated method stub
                 super.onChange(selfChange);
-                Logger.i("sms_change",true+"");
+                Logger.i("sms_change", true + "");
                 han.sendEmptyMessage(0);
             }
         };
         getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, c);
     }
+
     Handler han = new Handler() {
         @SuppressWarnings("deprecation")
         public void handleMessage(android.os.Message msg) {
             String codestr = null;
             try {
                 codestr = SmsTools.getsmsyzm(RegisterActivity.this);
-               et_yzm.setText(codestr);
+                et_yzm.setText(codestr);
             } catch (Exception e) {
                 Log.e("yung", "验证码提取失败:" + codestr);
             }
-        };
+        }
+
+        ;
     };
+
     @OnClick(R.id.private_clause)
     public void onClick() {
-        Intent intent=new Intent(RegisterActivity.this, ClauseActivity.class);
+        Intent intent = new Intent(RegisterActivity.this, ClauseActivity.class);
         startActivity(intent);
     }
 
@@ -236,7 +240,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                 }
                 if (searchNumber.length() > 10) {
                 /*	String address = NumberAddressService.getAddress(
-							searchNumber, Constant.DB_PATH,
+                            searchNumber, Constant.DB_PATH,
 							RegisterActivity.this);
 				if(!address.equals(""))
 				{ */
@@ -359,7 +363,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
      * @param password
      * @param verifiCode
      */
-    private void sendRegisterRequest(final String username,final String password,
+    private void sendRegisterRequest(final String username, final String password,
                                      String code) {
         OkHttpUtils.post().url(Interfaces.Register)
                 .addParams("phoneNumber", username)
@@ -370,37 +374,36 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                 .build().execute(new StringCallback() {
             @Override
             public void onAfter(int id) {
-               progressDialog.dismiss();
+                progressDialog.dismiss();
             }
 
             @Override
             public void onBefore(Request request, int id) {
-                progressDialog=ProgressDialog.show(RegisterActivity.this,"","正在注册");
+                progressDialog = ProgressDialog.show(RegisterActivity.this, "", "正在注册");
             }
 
             @Override
             public void onError(Call call, Exception e, int id) {
-                if(e instanceof ConnectTimeoutException){
-                    toast(R.string.conn_timeout);
-                }else if(e instanceof SocketTimeoutException){
-                    toast(R.string.socket_timeout);
-                }else if(e instanceof UnknownHostException){
+                if (e instanceof UnknownHostException) {
                     toast(R.string.conn_failed);
-                }else{toast(R.string.network_error);}
+                } else {
+                    toast(R.string.network_error);
+                }
             }
 
             @Override
             public void onResponse(String response, int id) {
-                String[] content = response.split("\\|");
-                if ("0".equals(content[0])) {
-                    toast(content[1]);
-                    preferenceUtil.putString(Constant.LOGIN_USERNAME, username);
-                    preferenceUtil.putString(Constant.LOGIN_PASSWORD, password);
-                    preferenceUtil.commit();
-                    Intent intent = new Intent(RegisterActivity.this, MainTabActivity.class);
-                    LoginController.getInstance().setUserLoginState(false);
-                    GlobalConfig.getInstance().setAutoLogin(true);
-                    intent.putExtra("isLogin", false);
+                try {
+                    String[] content = response.split("\\|");
+                    if ("0".equals(content[0])) {
+                        toast(content[1]);
+                        preferenceUtil.putString(Constant.LOGIN_USERNAME, username);
+                        preferenceUtil.putString(Constant.LOGIN_PASSWORD, password);
+                        preferenceUtil.commit();
+                        Intent intent = new Intent(RegisterActivity.this, MainTabActivity.class);
+                        LoginController.getInstance().setUserLoginState(false);
+                        GlobalConfig.getInstance().setAutoLogin(true);
+                        intent.putExtra("isLogin", false);
 				/*	new Thread(new Runnable() {
 						@Override
 						public void run() {
@@ -411,9 +414,12 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 						}
 					}).start();*/
 
-                    startActivity(intent);
-                } else {
-                    toast(content[1]);
+                        startActivity(intent);
+                    } else {
+                        toast(content[1]);
+                    }
+                } catch (Exception e) {
+                    toast(R.string.getserverdata_exception);
                 }
             }
         });
@@ -437,10 +443,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-
-
 
 
 }

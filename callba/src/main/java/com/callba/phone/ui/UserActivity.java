@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.callba.BuildConfig;
 import com.callba.R;
+import com.callba.phone.service.UpdateService;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.MyApplication;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -26,6 +27,7 @@ import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.Interfaces;
+import com.callba.phone.util.SimpleHandler;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -89,11 +91,16 @@ public class UserActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
-        if (!UserManager.getUserAvatar(this).equals(""))
-            Glide.with(this).load(UserManager.getUserAvatar(this)).into(userHead);
-        if (!UserManager.getSignature(this).equals("")) {
-            word.setText(UserManager.getSignature(this));
-        }
+        SimpleHandler.getInstance().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!UserManager.getUserAvatar(UserActivity.this).equals(""))
+                    Glide.with(UserActivity.this).load(UserManager.getUserAvatar(UserActivity.this)).into(userHead);
+                if (!UserManager.getSignature(UserActivity.this).equals("")) {
+                    word.setText(UserManager.getSignature(UserActivity.this));
+                }
+            }
+        },0);
         super.onResume();
     }
 
@@ -175,8 +182,9 @@ public class UserActivity extends BaseActivity {
                 break;
             case R.id.update:
                 Log.i("click", "update");
-                progressDialog.show();
-                sendGetVersionTask();
+                if (!UpdateService.is_downloading)
+                {progressDialog.show();
+                sendGetVersionTask();}else{toast("正在下载更新");}
                 break;
             case R.id.user_head:
                 intent = new Intent(UserActivity.this, ChangeInfoActivity.class);
@@ -191,7 +199,7 @@ public class UserActivity extends BaseActivity {
      * @author zhw
      */
     private void sendGetVersionTask() {
-        OkHttpUtils.post().url(Interfaces.Version)
+            OkHttpUtils.post().url(Interfaces.Version)
                 .addParams("softType","android")
                 .build().execute(new StringCallback() {
             @Override
@@ -206,23 +214,23 @@ public class UserActivity extends BaseActivity {
 
             @Override
             public void onError(Call call, Exception e, int id) {
-                if(e instanceof ConnectTimeoutException){
-                    toast(R.string.conn_timeout);
-                }else if(e instanceof SocketTimeoutException){
-                    toast(R.string.socket_timeout);
-                }else if(e instanceof UnknownHostException){
+                if(e instanceof UnknownHostException){
                     toast(R.string.conn_failed);
                 }else{toast(R.string.network_error);}
             }
 
             @Override
             public void onResponse(String response, int id) {
+                try{
                 String[] result=response.split("\\|");
                 if(result[0].equals("0"))
                 {AppVersionChecker.AppVersionBean appVersionBean=AppVersionChecker.parseVersionInfo(UserActivity.this,response);
                 GlobalConfig.getInstance().setAppVersionBean(appVersionBean);
                 checkLoginKey(appVersionBean);}
                 else toast(result[1]);
+                }catch(Exception e){
+                    toast(R.string.getserverdata_exception);
+                }
             }
         });
     }

@@ -43,19 +43,20 @@ import okhttp3.Call;
  * Created by PC-20160514 on 2016/7/30.
  */
 public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-private Context context;
-private ContactMutliNumBean bean;
-private ProgressDialog progressDialog;
-private String userrName,password;
-private Gson gson;
+    private Context context;
+    private ContactMutliNumBean bean;
+    private ProgressDialog progressDialog;
+    private String userrName, password;
+    private Gson gson;
     private ContactNumberAdapter contactNumberAdapter;
+
     public DetailAdapter(ProgressDialog progressDialog, ContactMutliNumBean bean, Context context, String password, String userrName) {
         this.progressDialog = progressDialog;
         this.bean = bean;
         this.context = context;
         this.password = password;
         this.userrName = userrName;
-        gson=new Gson();
+        gson = new Gson();
     }
 
     @Override
@@ -78,8 +79,8 @@ private Gson gson;
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(position==0){
-            ((ViewHolder0)holder).addFriend.setOnClickListener(new View.OnClickListener() {
+        if (position == 0) {
+            ((ViewHolder0) holder).addFriend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     progressDialog = new ProgressDialog(context);
@@ -90,15 +91,15 @@ private Gson gson;
                     OkHttpUtils
                             .post()
                             .url(Interfaces.ADD_FRIEND)
-                            .addParams("loginName",userrName)
-                            .addParams("loginPwd",password)
+                            .addParams("loginName", userrName)
+                            .addParams("loginPwd", password)
                             .addParams("phoneNumber", bean.getContactPhones().get(0))
                             .build()
                             .execute(new StringCallback() {
                                 @Override
                                 public void onError(Call call, Exception e, int id) {
                                     e.printStackTrace();
-                                    ((Activity)context).runOnUiThread(new Runnable() {
+                                    ((Activity) context).runOnUiThread(new Runnable() {
                                         public void run() {
                                             progressDialog.dismiss();
                                             String s2 = context.getResources().getString(R.string.Request_add_buddy_failure);
@@ -109,76 +110,81 @@ private Gson gson;
 
                                 @Override
                                 public void onResponse(String response, int id) {
-                                    Logger.i("add_result", response);
-                                    String[] result = response.split("\\|");
-                                    if (result[0].equals("0")) {
-                                        try {
-                                            //demo写死了个reason，实际应该让用户手动填入
-                                            String s = context.getResources().getString(R.string.Add_a_friend);
-                                            //EMClient.getInstance().contactManager().addContact(toAddUsername+"-callba", s);
-                                            ((Activity)context).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-                                            OkHttpUtils
-                                                    .post()
-                                                    .url(Interfaces.GET_FRIENDS)
-                                                    .addParams("loginName", userrName)
-                                                    .addParams("loginPwd", password)
-                                                    .build().execute(new StringCallback() {
-                                                @Override
-                                                public void onError(Call call, Exception e, int id) {
-                                                    e.printStackTrace();
-                                                }
-
-                                                @Override
-                                                public void onResponse(String response, int id) {
-                                                    Logger.i("get_result", response);
-                                                    String[] result = response.split("\\|");
-                                                    if (result[0].equals("0")) {
-                                                        ArrayList<BaseUser> list;
-                                                        list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
-                                                        }.getType());
-                                                        List<EaseUser> mList = new ArrayList<EaseUser>();
-                                                        for (BaseUser baseUser : list) {
-                                                            EaseUser user = new EaseUser(baseUser.getPhoneNumber() + "-callba");
-                                                            user.setAvatar(baseUser.getUrl_head());
-                                                            user.setNick(baseUser.getNickname());
-                                                            user.setSign(baseUser.getSign());
-                                                            EaseCommonUtils.setUserInitialLetter(user);
-                                                            mList.add(user);
-                                                        }
-                                                        DemoHelper.getInstance().updateContactList(mList);
-                                                        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-
-                                                    } else {
-                                                        Toast.makeText(context, result[1], Toast.LENGTH_SHORT).show();
+                                    try { Logger.i("add_result", response);
+                                        String[] result = response.split("\\|");
+                                        if (result[0].equals("0")) {
+                                            try {
+                                                //demo写死了个reason，实际应该让用户手动填入
+                                                String s = context.getResources().getString(R.string.Add_a_friend);
+                                                //EMClient.getInstance().contactManager().addContact(toAddUsername+"-callba", s);
+                                                ((Activity) context).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+                                                OkHttpUtils
+                                                        .post()
+                                                        .url(Interfaces.GET_FRIENDS)
+                                                        .addParams("loginName", userrName)
+                                                        .addParams("loginPwd", password)
+                                                        .build().execute(new StringCallback() {
+                                                    @Override
+                                                    public void onError(Call call, Exception e, int id) {
+                                                        e.printStackTrace();
                                                     }
-                                                }
-                                            });
-                                            ((Activity)context).runOnUiThread(new Runnable() {
-                                                public void run() {
-                                                    progressDialog.dismiss();
-                                                    String s1 = "添加成功";
-                                                    Toast.makeText(context, s1, 1).show();
-                                                }
-                                            });
-                                        } catch (final Exception e) {
-                                            ((Activity)context).runOnUiThread(new Runnable() {
-                                                public void run() {
-                                                    progressDialog.dismiss();
-                                                    String s2 = context.getResources().getString(R.string.Request_add_buddy_failure);
-                                                    Toast.makeText(context, s2 + e.getMessage(), 1).show();
-                                                }
-                                            });
-                                        }
-                                    } else {
-                                        Toast.makeText(context,result[1],Toast.LENGTH_SHORT).show();
-                                        progressDialog.dismiss();
-                                    }
 
+                                                    @Override
+                                                    public void onResponse(String response, int id) {
+                                                        try { Logger.i("get_result", response);
+                                                            String[] result = response.split("\\|");
+                                                            if (result[0].equals("0")) {
+                                                                ArrayList<BaseUser> list;
+                                                                list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
+                                                                }.getType());
+                                                                List<EaseUser> mList = new ArrayList<EaseUser>();
+                                                                for (BaseUser baseUser : list) {
+                                                                    EaseUser user = new EaseUser(baseUser.getPhoneNumber() + "-callba");
+                                                                    user.setAvatar(baseUser.getUrl_head());
+                                                                    user.setNick(baseUser.getNickname());
+                                                                    user.setSign(baseUser.getSign());
+                                                                    EaseCommonUtils.setUserInitialLetter(user);
+                                                                    mList.add(user);
+                                                                }
+                                                                DemoHelper.getInstance().updateContactList(mList);
+                                                                LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+
+                                                            } else {
+                                                                Toast.makeText(context, result[1], Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        } catch (Exception e) {
+                                                            Toast.makeText(context, context.getString(R.string.getserverdata_exception), Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                });
+                                                ((Activity) context).runOnUiThread(new Runnable() {
+                                                    public void run() {
+                                                        progressDialog.dismiss();
+                                                        String s1 = "添加成功";
+                                                        Toast.makeText(context, s1, 1).show();
+                                                    }
+                                                });
+                                            } catch (final Exception e) {
+                                                ((Activity) context).runOnUiThread(new Runnable() {
+                                                    public void run() {
+                                                        progressDialog.dismiss();
+                                                        String s2 = context.getResources().getString(R.string.Request_add_buddy_failure);
+                                                        Toast.makeText(context, s2 + e.getMessage(), 1).show();
+                                                    }
+                                                });
+                                            }
+                                        } else {
+                                            Toast.makeText(context, result[1], Toast.LENGTH_SHORT).show();
+                                            progressDialog.dismiss();
+                                        }
+                                    } catch (Exception e) {
+                                        Toast.makeText(context, context.getString(R.string.getserverdata_exception), Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             });
                 }
             });
-            ((ViewHolder0)holder).inviteFriend.setOnClickListener(new View.OnClickListener() {
+            ((ViewHolder0) holder).inviteFriend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Uri smsToUri = Uri.parse("smsto://" + bean.getContactPhones().get(0));
@@ -187,12 +193,12 @@ private Gson gson;
                     context.startActivity(mIntent);
                 }
             });
-        }else{
-            contactNumberAdapter=new ContactNumberAdapter(context);
-          contactNumberAdapter.addAll(bean.getContactPhones());
-            ((ViewHolder1)holder).numberList.setLayoutManager(new FullyLinearLayoutManager(context));
-            ((ViewHolder1)holder).numberList.setAdapter(contactNumberAdapter);
-            ((ViewHolder1)holder).numberList.addItemDecoration(new DividerItemDecoration(
+        } else {
+            contactNumberAdapter = new ContactNumberAdapter(context);
+            contactNumberAdapter.addAll(bean.getContactPhones());
+            ((ViewHolder1) holder).numberList.setLayoutManager(new FullyLinearLayoutManager(context));
+            ((ViewHolder1) holder).numberList.setAdapter(contactNumberAdapter);
+            ((ViewHolder1) holder).numberList.addItemDecoration(new DividerItemDecoration(
                     context, DividerItemDecoration.VERTICAL_LIST));
             contactNumberAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
                 @Override
@@ -213,6 +219,7 @@ private Gson gson;
         Button addFriend;
         @InjectView(R.id.invite_friend)
         LinearLayout inviteFriend;
+
         public ViewHolder0(View itemView) {
             super(itemView);
             ButterKnife.inject(this, itemView);
@@ -222,6 +229,7 @@ private Gson gson;
     class ViewHolder1 extends RecyclerView.ViewHolder {
         @InjectView(R.id.number_list)
         RecyclerView numberList;
+
         public ViewHolder1(View itemView) {
             super(itemView);
             ButterKnife.inject(this, itemView);

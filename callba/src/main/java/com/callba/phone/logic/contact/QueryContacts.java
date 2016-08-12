@@ -72,9 +72,8 @@ public class QueryContacts {
 		 */
 		@Override
 		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+			contactLists = new ArrayList<ContactPersonEntity>();
 			if (cursor != null && cursor.getCount() > 0) {
-
-				contactLists = new ArrayList<ContactPersonEntity>();
 				cursor.moveToFirst();
 				for (int i = 0; i < cursor.getCount(); i++) {
 					cursor.moveToPosition(i);
@@ -120,7 +119,7 @@ public class QueryContacts {
 					}
 					contactLists.add(cb);
 				}
-				GlobalConfig.getInstance().setContactBeans(contactLists);
+
 				Logger.i("contact_size",contactLists.size()+"");
 				//保存本地联系人个数
 				SharedPreferenceUtil mPreferenceUtil = SharedPreferenceUtil.getInstance(mContext);
@@ -129,9 +128,9 @@ public class QueryContacts {
 				if (cursor!=null) {
 					cursor.close();
 				}
-				if(callback != null) {
-					callback.queryCompleted(contactLists);
-				}
+			}if(callback != null) {
+				GlobalConfig.getInstance().setContactBeans(contactLists);
+				callback.queryCompleted(contactLists);
 			}
 		}
 	}

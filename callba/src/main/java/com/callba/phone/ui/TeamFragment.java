@@ -129,6 +129,7 @@ public class TeamFragment extends BaseFragment {
                                             @Override
                                             public void onResponse(String response, int id) {
                                                 Logger.i("add_result",response);
+                                                try{
                                                 String[] result=response.split("\\|");
                                                 if(result[0].equals("0"))
                                                 {
@@ -163,6 +164,9 @@ public class TeamFragment extends BaseFragment {
                                                     }
                                                 }else { toast(result[1]);
                                                     progressDialog.dismiss();
+                                                }
+                                                }catch(Exception e){
+                                                    toast(R.string.getserverdata_exception);
                                                 }
                                             }
                                         });

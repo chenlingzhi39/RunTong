@@ -84,18 +84,22 @@ public class TXRecordActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         retry.setVisibility(View.GONE);
-                        Logger.i("order_result", response);
-                        String[] result = response.split("\\|");
-                        if (result[0].equals("0")) {
-                            txRecords = gson.fromJson(result[1], new TypeToken<ArrayList<TxRecord>>() {
-                            }.getType());
-                            txRecordAdapter.addAll(txRecords);
-                            list.setAdapter(txRecordAdapter);
-                            list.addItemDecoration(new DividerItemDecoration(
-                                    TXRecordActivity.this, DividerItemDecoration.VERTICAL_LIST));
-                        } else {
-                            hint.setText(result[1]);
-                            hint.setVisibility(View.VISIBLE);
+                        try {
+                            Logger.i("order_result", response);
+                            String[] result = response.split("\\|");
+                            if (result[0].equals("0")) {
+                                txRecords = gson.fromJson(result[1], new TypeToken<ArrayList<TxRecord>>() {
+                                }.getType());
+                                txRecordAdapter.addAll(txRecords);
+                                list.setAdapter(txRecordAdapter);
+                                list.addItemDecoration(new DividerItemDecoration(
+                                        TXRecordActivity.this, DividerItemDecoration.VERTICAL_LIST));
+                            } else {
+                                hint.setText(result[1]);
+                                hint.setVisibility(View.VISIBLE);
+                            }
+                        } catch (Exception e) {
+                            toast(R.string.getserverdata_exception);
                         }
                     }
                 });

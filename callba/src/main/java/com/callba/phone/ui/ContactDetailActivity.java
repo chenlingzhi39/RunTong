@@ -41,13 +41,16 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.callba.R;
 import com.callba.phone.MyApplication;
+import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.ContactMutliNumBean;
 import com.callba.phone.manager.ContactsManager;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.ScrimUtil;
 import com.callba.phone.util.Utils;
@@ -73,7 +76,10 @@ import rx.schedulers.Schedulers;
 /**
  * Created by PC-20160514 on 2016/5/31.
  */
-public class ContactDetailActivity extends AppCompatActivity {
+@ActivityFragmentInject(
+        contentViewId = R.layout.contact_detail2
+)
+public class ContactDetailActivity extends BaseActivity {
     @InjectView(R.id.header)
     ImageView image;
     @InjectView(R.id.toolbar)
@@ -125,8 +131,6 @@ public class ContactDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MyApplication.activities.add(this);
-        setContentView(R.layout.contact_detail2);
         ButterKnife.inject(this);
         shadow.setBackground(
                 ScrimUtil.makeCubicGradientScrimDrawable(
@@ -570,6 +574,7 @@ public class ContactDetailActivity extends AppCompatActivity {
     }
 
     public void updateAvatar(Bitmap bit) {
+        try {
         Uri rawContactUri = null;
         Cursor rawContactCursor = managedQuery(
                 RawContacts.CONTENT_URI,
@@ -619,12 +624,14 @@ public class ContactDetailActivity extends AppCompatActivity {
                     values);
         }
         resource = bit;
-        setImage();
+        setImage();}catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(this,"该联系人已被删除！",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     protected void onDestroy() {
-        MyApplication.activities.remove(this);
         if(resource!=null)resource.recycle();
         super.onDestroy();
     }

@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 
 import com.callba.R;
 import com.callba.phone.bean.ContactMutliNumBean;
+import com.callba.phone.bean.DialAd;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -27,8 +28,12 @@ import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.FileUtils;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SimpleHandler;
+import com.callba.phone.util.StorageUtils;
 import com.callba.phone.view.QuickSearchBar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +61,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
     private List<ContactEntity> mContactListData; // 填充ListView的数据
     private ContactListAdapter mContactListAdapter;    //联系人适配器
     private ContactBroadcastReceiver broadcastReceiver;
-
+    private Gson gson;
     public static LocalContactFragment newInstance() {
         LocalContactFragment localContactFragment = new LocalContactFragment();
         return localContactFragment;
@@ -70,12 +75,44 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         IntentFilter intentFilter = new IntentFilter("com.callba.contact");
         broadcastReceiver = new ContactBroadcastReceiver();
         getActivity().registerReceiver(broadcastReceiver, intentFilter);
-        progressBar.setVisibility(View.VISIBLE);
-        if(GlobalConfig.getInstance().getContactEntities()!=null)
-            initContactListView();
         Logger.i("local","init");
     }
+    @Override
+    protected void lazyLoad() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final ContactController contactController = new ContactController();
+                gson=new Gson();
+                final List<ContactMutliNumBean> personEntities = gson.fromJson((String)FileUtils.readObjectFromFile(StorageUtils.getFilesDirectory(getActivity())+ File.separator+"contacts.txt"), new TypeToken<ArrayList<ContactMutliNumBean>>() {
+                }.getType());
+              final List<ContactEntity> allContactEntities = contactController.sortContactByLetter(personEntities);
+                SimpleHandler.getInstance().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //progressBar.setVisibility(View.VISIBLE);
+                        if (mContactListData == null) {
+                            mContactListData = new ArrayList<ContactEntity>();
+                        }
+                        mContactListData.addAll(allContactEntities);
 
+                        mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
+                        mListView.setAdapter(mContactListAdapter);
+
+                        mQuickSearchBar.setListView(mListView);
+                        mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
+
+                        et_search.addTextChangedListener(new ContactSerarchWatcher(
+                                mContactListAdapter, mContactListData, mQuickSearchBar));
+                        progressBar.setVisibility(View.GONE);
+                        if(GlobalConfig.getInstance().getContactBeans()!=null)
+                            initContactListView();
+                    }
+                });
+            }
+        }).start();
+
+    }
 
     @Override
     public void onDestroyView() {
@@ -87,32 +124,42 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         @Override
         public void onReceive(Context context, Intent intent) {
             Logger.i("contact", "change");
-            progressBar.setVisibility(View.VISIBLE);
+            //progressBar.setVisibility(View.VISIBLE);
             initContactListView();
         }
     }
 
     private void  initContactListView() {
-        if(progressBar!=null)
-        progressBar.setVisibility(View.VISIBLE);
-        ContactController contactController = new ContactController();
-        List<ContactEntity> allContactEntities = GlobalConfig.getInstance().getContactEntities();
-        if (mContactListData == null) {
-            mContactListData = new ArrayList<ContactEntity>();
-        }
-        mContactListData.clear();
-        mContactListData.addAll(allContactEntities);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final ContactController contactController = new ContactController();
+                    final List<ContactEntity> allContactEntities = contactController.getFilterListContactEntitiesNoDuplicate();
+                    gson = new Gson();
+                    SimpleHandler.getInstance().post(new Runnable() {
+                        @Override
+                        public void run() {
+                            //progressBar.setVisibility(View.VISIBLE);
 
-        mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
-        mListView.setAdapter(mContactListAdapter);
+                            if (mContactListData == null) {
+                                mContactListData = new ArrayList<ContactEntity>();
+                            }
+                            mContactListData.clear();
+                            mContactListData.addAll(allContactEntities);
 
-        mQuickSearchBar.setListView(mListView);
-        mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
+                            mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
+                            mListView.setAdapter(mContactListAdapter);
 
-        et_search.addTextChangedListener(new ContactSerarchWatcher(
-                mContactListAdapter, mContactListData, mQuickSearchBar));
-        progressBar.setVisibility(View.GONE);
+                            mQuickSearchBar.setListView(mListView);
+                            mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
 
+                            et_search.addTextChangedListener(new ContactSerarchWatcher(
+                                    mContactListAdapter, mContactListData, mQuickSearchBar));
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    });
+                }
+            }).start();
     }
 
     @Override

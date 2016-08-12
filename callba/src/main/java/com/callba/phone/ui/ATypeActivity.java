@@ -86,18 +86,23 @@ public class ATypeActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         retry.setVisibility(View.GONE);
-                        Logger.i("order_result", response);
-                        String[] result = response.split("\\|");
-                        if (result[0].equals("0")) {
-                            teams = gson.fromJson(result[1], new TypeToken<ArrayList<ArrayList<Team>>>() {
-                            }.getType());
-                            viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), ATypeActivity.this));
-                            layoutTab.setupWithViewPager(viewpager);
-                        } else {
-                            hint.setText(result[1]);
-                            hint.setVisibility(View.VISIBLE);
+                        try {
+                            Logger.i("order_result", response);
+                            String[] result = response.split("\\|");
+                            if (result[0].equals("0")) {
+                                teams = gson.fromJson(result[1], new TypeToken<ArrayList<ArrayList<Team>>>() {
+                                }.getType());
+                                viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), ATypeActivity.this));
+                                layoutTab.setupWithViewPager(viewpager);
+                            } else {
+                                hint.setText(result[1]);
+                                hint.setVisibility(View.VISIBLE);
+                            }
+                        } catch (Exception e) {
+                            toast(R.string.getserverdata_exception);
                         }
                     }
+
                 });
 
     }

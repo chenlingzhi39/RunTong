@@ -67,7 +67,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     RadioGroup group;
     @InjectView(R.id.relative)
     RelativeLayout relative;
-    private UserDao userDao,userDao1;
+    private UserDao userDao, userDao1;
     private String address;
     private int size;
     private String subject, body, price;
@@ -112,7 +112,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
-                        userDao1.pay(getUsername(), getPassword(),outTradeNo,"success");
+                        userDao1.pay(getUsername(), getPassword(), outTradeNo, "success");
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
                         // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
@@ -122,7 +122,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                         } else {
                             // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
                             Toast.makeText(getActivity(), "支付失败", Toast.LENGTH_SHORT).show();
-                            userDao1.pay(getUsername(), getPassword(),outTradeNo,"failure");
+                            userDao1.pay(getUsername(), getPassword(), outTradeNo, "failure");
                         }
                     }
                     break;
@@ -180,36 +180,39 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                 getActivity());
         tv_address.setHint(address);
         userDao = new UserDao(getActivity(), this);
-        userDao1=new UserDao(getActivity(), new UserDao.PostListener() {
+        userDao1 = new UserDao(getActivity(), new UserDao.PostListener() {
             @Override
             public void start() {
-            progressDialog= ProgressDialog.show(getActivity(), null,
-                    "正在验证支付结果");
+                progressDialog = ProgressDialog.show(getActivity(), null,
+                        "正在验证支付结果");
             }
 
             @Override
             public void success(String msg) {
                 progressDialog.dismiss();
-                String[] result=msg.split("\\|");
-                if(result[0].equals("0"))
-                {toast(result[1]);
+                try {
+                    String[] result = msg.split("\\|");
+                    if (result[0].equals("0")) {
+                        toast(result[1]);
                /* getActivity().sendBroadcast(new Intent("com.callba.pay"));
                 getActivity().finish();*/
+                    } else if (result.length > 1) toast(result[1]);
+                } catch (Exception e) {
+                    toast(R.string.getserverdata_exception);
                 }
-                else if(result.length>1)toast(result[1]);
             }
 
             @Override
             public void failure(String msg) {
                 progressDialog.dismiss();
-               AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setMessage("充值失败，请重试");
                 builder.setPositiveButton("重试",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                userDao1.pay(getUsername(), getPassword(),outTradeNo,"success");
+                                userDao1.pay(getUsername(), getPassword(), outTradeNo, "success");
                             }
                         });
                 AlertDialog alertDialog = builder.create();
@@ -251,13 +254,13 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
 
     @Override
     public void success(String msg) {
-        outTradeNo=msg;
+        outTradeNo = msg;
         pay();
     }
 
     @Override
     public void failure(String msg) {
-      toast(msg);
+        toast(msg);
 
     }
 
@@ -268,7 +271,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
 
     @OnClick(R.id.recharge)
     public void recharge() {
-        userDao.setOrder(getUsername(), getPassword(),price,"0","callback-unlimit-"+price);
+        userDao.setOrder(getUsername(), getPassword(), price, "0", "callback-unlimit-" + price);
 
     }
 
@@ -345,7 +348,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
      */
     public void pay() {
 
-        String orderInfo = getOrderInfo(subject,body,price);
+        String orderInfo = getOrderInfo(subject, body, price);
 
         /**
          * 特别注意，这里的签名逻辑需要放在服务端，切勿将私钥泄露在代码中！

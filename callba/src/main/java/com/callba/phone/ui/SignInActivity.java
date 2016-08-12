@@ -153,6 +153,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                     btn_signIn.setEnabled(true);
                     circle.setEnabled(true);
                 }
+                try {
                 String[] result = msg.split("\\|");
                 monthList.add(calendar.getCalendarMonth());
                 if (result[0].equals("0")) {
@@ -204,6 +205,9 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                     }
 
                 } else toast(result[1]);
+                }catch(Exception e){
+                    toast(R.string.getserverdata_exception);
+                }
                 circle.setConstant(constant);
             }
 

@@ -125,7 +125,7 @@ public class CommunityActivity extends AppCompatActivity implements UserDao.Post
                     toolbarBackground.setAlpha(0);
                     toolbar.setBackgroundColor(Color.argb(255 * y / image_height / 2, 0, 0, 0));
                 }
-                if (y > (image_height / 2- background_height) && y <= (image_height)) {
+                if (y > (image_height / 2 - background_height) && y <= (image_height)) {
                     toolbarBackground.setAlpha(255 * (y - (image_height / 2 - background_height)) / (image_height / 2));
                 }
                 if (y > (image_height - background_height)) {
@@ -204,41 +204,46 @@ public class CommunityActivity extends AppCompatActivity implements UserDao.Post
     @Override
     public void success(String msg) {
         moodList.setHeaderRefreshing(false);
-        result = msg.split("\\|");
-        if (result[0].equals("0")) {
-            moods = new ArrayList<>();
-            try {
+        try {
+            result = msg.split("\\|");
+            if (result[0].equals("0")) {
+                moods = new ArrayList<>();
+                try {
                 /*moods = gson.fromJson(result[1], new TypeToken<ArrayList<Mood>>() {
                 }.getType());*/
-                for (int i = 0; i < 10; i++)
-                    moods.add(new Mood());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            Logger.i("size", moods.size() + "");
-            if (moods.size() == 0)
-                moodAdapter.stopMore();
-            if (moods.size() > 0 && moodAdapter.getData().size() == 0) {
-                moodAdapter.addAll(moods);
-                moodAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(int position) {
+                    for (int i = 0; i < 10; i++)
+                        moods.add(new Mood());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Logger.i("size", moods.size() + "");
+                if (moods.size() == 0)
+                    moodAdapter.stopMore();
+                if (moods.size() > 0 && moodAdapter.getData().size() == 0) {
+                    moodAdapter.addAll(moods);
+                    moodAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(int position) {
 
-                    }
-                });
+                        }
+                    });
+                }
+                if (moods.size() > 0 && moodAdapter.getData().size() > 0) {
+                    moodAdapter.addAll(moods);
+                }
+            } else {
+                moodAdapter.stopMore();
             }
-            if (moods.size() > 0 && moodAdapter.getData().size() > 0) {
-                moodAdapter.addAll(moods);
-            }
-        } else {
-            moodAdapter.stopMore();
+        } catch (Exception e) {
+            moodAdapter.pauseMore();
+            moodList.setHeaderRefreshing(false);
         }
     }
 
     public void initRefreshLayout() {
         moodList.setRefreshListener(this);
-        moodList.setProgressViewOffset(false,background_height,background_height);
-        moodList.setProgressViewEndTarget(false,background_height);
+        moodList.setProgressViewOffset(false, background_height, background_height);
+        moodList.setProgressViewEndTarget(false, background_height);
         moodList.setHeaderRefreshingColorResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
