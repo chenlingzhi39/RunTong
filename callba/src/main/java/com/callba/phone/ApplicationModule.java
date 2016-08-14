@@ -71,11 +71,6 @@ public class ApplicationModule {
     }
     @Singleton
     @Provides
-    protected OkHttpUtils getOkHttp(OkHttpClient okHttpClient){
-        return OkHttpUtils.initClient(okHttpClient);
-    }
-    @Singleton
-    @Provides
     protected OkHttpClient getClient() {
         return new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
@@ -89,7 +84,7 @@ public class ApplicationModule {
                         int tryCount = 0;
                         while (!response.isSuccessful() && tryCount < 3) {
 
-                           Logger.d("intercept", "Request is not successful - " + tryCount);
+                            Logger.d("intercept", "Request is not successful - " + tryCount);
 
                             tryCount++;
 
@@ -106,4 +101,5 @@ public class ApplicationModule {
                 //其他配置
                 .build();
     }
+
 }

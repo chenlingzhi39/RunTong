@@ -23,7 +23,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 @Singleton
 @Component(modules = ApplicationModule.class)
 public interface ApplicationComponent {
-    void inject(FriendActivity friendActivity);
+    void inject(BaseActivity Activity);
      final class AppInitialize{
         public static  ApplicationComponent  init(Application application){
           return DaggerApplicationComponent.builder().applicationModule(new ApplicationModule(application)).build();

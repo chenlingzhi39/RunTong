@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.callba.BuildConfig;
 import com.callba.R;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -444,7 +446,7 @@ public class HomeActivity extends BaseActivity {
             return;
         }
         OkHttpUtils.post().url(Interfaces.Login)
-                .addParams("loginSign", sign)
+        .addParams("loginSign", sign)
                 .addParams("loginType", "1")
                 .addParams("softType", "android")
                 .addParams("callType", "all")

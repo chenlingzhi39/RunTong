@@ -1,6 +1,9 @@
 package com.callba.phone;
 
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -22,14 +25,20 @@ import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.callba.BuildConfig;
 import com.callba.phone.ui.WelcomeActivity;
+import com.callba.phone.util.HttpUtils;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.StorageUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import javax.inject.Inject;
+
 import de.greenrobot.dao.DaoMaster;
 import de.greenrobot.dao.DaoSession;
 import de.greenrobot.dao.query.QueryBuilder;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MyApplication extends Application {
     /**
@@ -63,14 +72,35 @@ public class MyApplication extends Application {
         options.setAcceptInvitationAlways(false);
         options.setAutoLogin(false);
         EaseUI.getInstance().init(this,options);*/
-     /*   OkHttpClient okHttpClient = new OkHttpClient.Builder()
-//                .addInterceptor(new LoggerInterceptor("TAG"))
-                .connectTimeout(20000L, TimeUnit.MILLISECONDS)
-                .readTimeout(20000L, TimeUnit.MILLISECONDS)
-                //其他配置
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request();
+
+                        // try the request
+                        Response response = chain.proceed(request);
+
+                        int tryCount = 0;
+                        while (!response.isSuccessful() && tryCount < 3) {
+
+                            Logger.d("intercept", "Request is not successful - " + tryCount);
+
+                            tryCount++;
+
+                            // retry the request
+                            response = chain.proceed(request);
+                        }
+
+                        // otherwise just pass the original response on
+                        return response;
+                    }
+                }).retryOnConnectionFailure(true)
+                .connectTimeout(20000, TimeUnit.MILLISECONDS)
+                .readTimeout(20000, TimeUnit.MILLISECONDS)
                 .build();
-        OkHttpUtils.initClient(okHttpClient);*/
-        applicationComponent=ApplicationComponent.AppInitialize.init(this);
+        OkHttpUtils.initClient(okHttpClient);
+        //applicationComponent=ApplicationComponent.AppInitialize.init(this);
         DemoHelper.getInstance().init(this);
         GlideBuilder builder = new GlideBuilder(this);
         builder.setMemoryCache(new LruResourceCache(5 * 1024 * 1024));

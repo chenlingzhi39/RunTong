@@ -103,14 +103,14 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     private View footer;
     private int page = 1;
     private boolean is_refresh = false;
-    @Inject
-    public ApiService apiService;
+  /*  @Inject
+    public ApiService apiService;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        MyApplication.getApplicationComponent().inject(this);
+        //MyApplication.getApplicationComponent().inject(this);
         gson = new Gson();
         location.setTextColor(getResources().getColor(R.color.black_2f));
         location.setText(UserManager.getAddress(this));
@@ -466,7 +466,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     }
 
     public void getNearBy(final boolean is_next) {
-      /*  OkHttpUtils.post().url(Interfaces.GET_NEARBY)
+        OkHttpUtils.post().url(Interfaces.GET_NEARBY)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
                 .addParams("latitude", UserManager.getLatitude(this))
@@ -530,8 +530,8 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                                      }
 
                                  }
-        );*/
-        subscription = apiService.getNearBy(getUsername(), getPassword(), UserManager.getLatitude(FriendActivity.this), UserManager.getLongitude(FriendActivity.this), "1000", is_next ? page + 1 + "" : page + "")
+                );
+     /*   subscription = apiService.getNearBy(getUsername(), getPassword(), UserManager.getLatitude(FriendActivity.this), UserManager.getLongitude(FriendActivity.this), "1000", is_next ? page + 1 + "" : page + "")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<String>() {
@@ -593,7 +593,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                                 nearByUserAdapter.pauseMore();
                         }
                     }
-                });
+                });*/
     }
 
 }

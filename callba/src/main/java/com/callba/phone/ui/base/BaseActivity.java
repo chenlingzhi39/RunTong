@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -85,11 +86,12 @@ public class BaseActivity extends AppCompatActivity {
     }*/
     public Subscription subscription;
 
-
+    public TelephonyManager telephonyManager;
     @SuppressLint("InlinedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        telephonyManager=(TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
         if (getClass().isAnnotationPresent(ActivityFragmentInject.class)) {
             ActivityFragmentInject annotation = getClass()
                     .getAnnotation(ActivityFragmentInject.class);
@@ -131,13 +133,8 @@ public class BaseActivity extends AppCompatActivity {
 			}
 		}*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (this.getClass() != UserActivity.class||this.getClass()!= ContactDetailActivity.class) {
+            if (this.getClass() != UserActivity.class&&this.getClass()!= ContactDetailActivity.class) {
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-                Log.i(this.getClass().getName(), "light");
-                if (Build.MANUFACTURER.equals("Xiaomi"))
-                    ActivityUtil.MIUISetStatusBarLightMode(getWindow(), true);
-                if (Build.MANUFACTURER.equals("Meizu"))
-                    ActivityUtil.FlymeSetStatusBarLightMode(getWindow(), true);
             }
         }
         if ((Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP || Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1)&&!Build.MANUFACTURER.equals("Xiaomi")&&!Build.MANUFACTURER.equals("Meizu")) {
@@ -151,7 +148,7 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (this.getClass() != UserActivity.class) {
+            if (this.getClass() != UserActivity.class&&this.getClass()!= ContactDetailActivity.class) {
                 if (Build.MANUFACTURER.equals("Xiaomi"))
                     ActivityUtil.MIUISetStatusBarLightMode(getWindow(), true);
                 if (Build.MANUFACTURER.equals("Meizu"))

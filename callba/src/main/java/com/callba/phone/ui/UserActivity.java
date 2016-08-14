@@ -91,16 +91,11 @@ public class UserActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
-        SimpleHandler.getInstance().postDelayed(new Runnable() {
-            @Override
-            public void run() {
                 if (!UserManager.getUserAvatar(UserActivity.this).equals(""))
                     Glide.with(UserActivity.this).load(UserManager.getUserAvatar(UserActivity.this)).into(userHead);
                 if (!UserManager.getSignature(UserActivity.this).equals("")) {
                     word.setText(UserManager.getSignature(UserActivity.this));
                 }
-            }
-        },0);
         super.onResume();
     }
 
