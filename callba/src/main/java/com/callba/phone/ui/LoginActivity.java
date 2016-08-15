@@ -250,14 +250,16 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
-        ArrayList list = new ArrayList();
+        if(GlobalConfig.getInstance().getContactBeans()!=null)
+        {ArrayList list = new ArrayList();
         list.add(GlobalConfig.getInstance().getContactBeans());
-        outState.putParcelableArrayList("contact", list);
+        outState.putParcelableArrayList("contact", list);}
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+        if(savedInstanceState!=null)
         GlobalConfig.getInstance().setContactBeans((ArrayList<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0));
     }
 }

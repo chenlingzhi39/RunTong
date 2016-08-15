@@ -3,9 +3,15 @@ package com.callba.phone.ui;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Contacts;
 import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -13,7 +19,10 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.util.DisplayMetrics;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -25,10 +34,10 @@ import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
 import com.callba.R;
-import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NumberAddressService;
 import com.callba.phone.util.PayResult;
@@ -40,6 +49,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -266,12 +277,12 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
 
     @OnClick(R.id.relative)
     public void change() {
-        //showDialog();
+        showDialog();
     }
 
     @OnClick(R.id.recharge)
     public void recharge() {
-        userDao.setOrder(getUsername(), getPassword(), price, "0", "callback-unlimit-" + price);
+        userDao.setOrder(getUsername(), getPassword(), price, "0", "callback-unlimit-" + price, number.getText().toString());
 
     }
 
@@ -282,6 +293,50 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         ButterKnife.reset(this);
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        ButterKnife.inject(this, rootView);
+        return rootView;
+    }
+
+    @OnClick(R.id.contacts)
+    public void onClick() {
+        Uri uri = Uri.parse("content://contacts/people");
+        Intent i = new Intent(Intent.ACTION_PICK, uri);
+        i.setType("vnd.android.cursor.dir/phone");
+        startActivityForResult(i, 0);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case 0:
+                if (data == null) {
+                    return;
+                }
+                Uri uri = data.getData();
+                Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
+                cursor.moveToFirst();
+
+                String phone_number = cursor.getString(cursor.getColumnIndexOrThrow(Contacts.Phones.NUMBER));
+
+                if (phone_number.length() > 10) {
+                    number.setText(phone_number);
+                    String address = NumberAddressService.getAddress(
+                           phone_number, Constant.DB_PATH,
+                            getActivity());
+                    tv_address.setHint(address);
+                } else
+                    toast("请选择手机号!");
+                break;
+
+            default:
+                break;
+        }
+    }
 
     public class DialogHelper implements DialogInterface.OnDismissListener {
         private Dialog mDialog;
@@ -291,6 +346,15 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         public DialogHelper() {
             mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_change_number, null);
             change = (EditText) mView.findViewById(R.id.et_change);
+            change.requestFocus();
+            Timer timer = new Timer(); //设置定时器
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() { //弹出软键盘的代码
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInputFromWindow(change.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }, 300); //设置300毫秒的时长
         }
 
         private String getNumber() {

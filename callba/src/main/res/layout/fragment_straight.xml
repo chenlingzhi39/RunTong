@@ -37,10 +37,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:src="@drawable/contacts"
             android:layout_centerVertical="true"
-            android:visibility="gone"
-            />
+            android:src="@drawable/contacts"
+            android:id="@+id/contacts"
+            android:clickable="true"/>
     </RelativeLayout>
     <View
         android:layout_width="fill_parent"

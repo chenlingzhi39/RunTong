@@ -444,7 +444,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 toast("暂未开放");
                 break;
             case R.id.to_recharge:
-                intent = new Intent(SignInActivity.this, RechargeActivity2.class);
+                intent = new Intent(SignInActivity.this, RechargeActivity.class);
                 startActivity(intent);
                 break;
             case R.id.to_share:

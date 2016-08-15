@@ -13,6 +13,8 @@ import com.callba.phone.cfg.*;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.SPUtils;
 
+import rx.Subscription;
+
 /**
  * Created by PC-20160514 on 2016/5/18.
  */
@@ -21,6 +23,7 @@ public abstract class BaseFragment extends Fragment {
     protected int mContentViewId;
     public ProgressDialog progressDialog;
     public boolean is_first=true;
+    public Subscription subscription;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
@@ -78,6 +81,12 @@ public abstract class BaseFragment extends Fragment {
 
     }
 
+    @Override
+    public void onDestroy() {
+        if(subscription!=null)
+            subscription.unsubscribe();
+        super.onDestroy();
+    }
 
     protected void lazyLoad(){};
     public String getUsername() {

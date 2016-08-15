@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -18,7 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.callba.BuildConfig;
 import com.callba.R;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -45,9 +43,6 @@ import com.google.gson.reflect.TypeToken;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import org.apache.http.conn.ConnectTimeoutException;
-
-import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -315,7 +310,7 @@ public class HomeActivity extends BaseActivity {
         Intent intent;
         switch (view.getId()) {
             case R.id.recharge:
-                intent = new Intent(HomeActivity.this, RechargeActivity2.class);
+                intent = new Intent(HomeActivity.this, RechargeActivity.class);
                 startActivity(intent);
                 break;
             case R.id.discount:
@@ -377,7 +372,7 @@ public class HomeActivity extends BaseActivity {
 
         @OnClick(R.id.recharge)
         public void recharge() {
-            Intent intent = new Intent(HomeActivity.this, RechargeActivity2.class);
+            Intent intent = new Intent(HomeActivity.this, RechargeActivity.class);
             startActivity(intent);
             mDialog.dismiss();
         }

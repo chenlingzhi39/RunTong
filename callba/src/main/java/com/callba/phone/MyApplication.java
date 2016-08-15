@@ -96,8 +96,8 @@ public class MyApplication extends Application {
                         return response;
                     }
                 }).retryOnConnectionFailure(true)
-                .connectTimeout(20000, TimeUnit.MILLISECONDS)
-                .readTimeout(20000, TimeUnit.MILLISECONDS)
+                .connectTimeout(6000, TimeUnit.MILLISECONDS)
+                .readTimeout(6000, TimeUnit.MILLISECONDS)
                 .build();
         OkHttpUtils.initClient(okHttpClient);
         //applicationComponent=ApplicationComponent.AppInitialize.init(this);

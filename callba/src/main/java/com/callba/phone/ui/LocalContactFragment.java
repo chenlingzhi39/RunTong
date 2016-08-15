@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -14,9 +17,12 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.callba.R;
+import com.callba.phone.bean.Contact;
 import com.callba.phone.bean.ContactMutliNumBean;
 import com.callba.phone.bean.DialAd;
+import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.logic.contact.ContactController;
@@ -27,6 +33,7 @@ import com.callba.phone.logic.contact.ContactSerarchWatcher;
 import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.FileUtils;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.util.StorageUtils;
 import com.callba.phone.view.QuickSearchBar;
@@ -36,9 +43,15 @@ import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by PC-20160514 on 2016/6/21.
@@ -62,6 +75,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
     private ContactListAdapter mContactListAdapter;    //联系人适配器
     private ContactBroadcastReceiver broadcastReceiver;
     private Gson gson;
+    private boolean first=true;
     public static LocalContactFragment newInstance() {
         LocalContactFragment localContactFragment = new LocalContactFragment();
         return localContactFragment;
@@ -75,18 +89,59 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         IntentFilter intentFilter = new IntentFilter("com.callba.contact");
         broadcastReceiver = new ContactBroadcastReceiver();
         getActivity().registerReceiver(broadcastReceiver, intentFilter);
-        Logger.i("local","init");
+        Logger.i("local", "init");
+        final ContactController contactController = new ContactController();
+        gson = new Gson();
+        subscription = rx.Observable.create(new rx.Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                String string = (String) SPUtils.get(getActivity(), Constant.PACKAGE_NAME, "contacts", "");
+                //String string = (String) FileUtils.readObjectFromFile(StorageUtils.getFilesDirectory(getActivity()) + File.separator + "contacts.txt");
+                subscriber.onNext(string);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(Schedulers.newThread()).map(new Func1<String, List<ContactEntity>>() {
+            @Override
+            public List<ContactEntity> call(String s) {
+
+                final List<ContactMutliNumBean> personEntities = gson.fromJson(s, new TypeToken<ArrayList<ContactMutliNumBean>>() {
+                }.getType());
+                final List<ContactEntity> allContactEntities = contactController.sortContactByLetter(personEntities);
+                return allContactEntities;
+            }
+        }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<ContactEntity>>() {
+            @Override
+            public void call(List<ContactEntity> s) {
+                if (mContactListData == null) {
+                    mContactListData = new ArrayList<ContactEntity>();
+                }
+                mContactListData.addAll(s);
+
+                mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
+                mListView.setAdapter(mContactListAdapter);
+
+                mQuickSearchBar.setListView(mListView);
+                mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
+
+                et_search.addTextChangedListener(new ContactSerarchWatcher(
+                        mContactListAdapter, mContactListData, mQuickSearchBar));
+                progressBar.setVisibility(View.GONE);
+                if (GlobalConfig.getInstance().getContactBeans() != null)
+                    initContactListView();
+            }
+        });
     }
+
     @Override
     protected void lazyLoad() {
-        new Thread(new Runnable() {
+
+      /*  new Thread(new Runnable() {
             @Override
             public void run() {
                 final ContactController contactController = new ContactController();
-                gson=new Gson();
-                final List<ContactMutliNumBean> personEntities = gson.fromJson((String)FileUtils.readObjectFromFile(StorageUtils.getFilesDirectory(getActivity())+ File.separator+"contacts.txt"), new TypeToken<ArrayList<ContactMutliNumBean>>() {
+                gson = new Gson();
+                final List<ContactMutliNumBean> personEntities = gson.fromJson((String) FileUtils.readObjectFromFile(StorageUtils.getFilesDirectory(getActivity()) + File.separator + "contacts.txt"), new TypeToken<ArrayList<ContactMutliNumBean>>() {
                 }.getType());
-              final List<ContactEntity> allContactEntities = contactController.sortContactByLetter(personEntities);
+                final List<ContactEntity> allContactEntities = contactController.sortContactByLetter(personEntities);
                 SimpleHandler.getInstance().post(new Runnable() {
                     @Override
                     public void run() {
@@ -105,12 +160,12 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
                         et_search.addTextChangedListener(new ContactSerarchWatcher(
                                 mContactListAdapter, mContactListData, mQuickSearchBar));
                         progressBar.setVisibility(View.GONE);
-                        if(GlobalConfig.getInstance().getContactBeans()!=null)
+                        if (GlobalConfig.getInstance().getContactBeans() != null)
                             initContactListView();
                     }
                 });
             }
-        }).start();
+        }).start();*/
 
     }
 
@@ -129,37 +184,69 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
         }
     }
 
-    private void  initContactListView() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    final ContactController contactController = new ContactController();
-                    final List<ContactEntity> allContactEntities = contactController.getFilterListContactEntitiesNoDuplicate();
-                    gson = new Gson();
-                    SimpleHandler.getInstance().post(new Runnable() {
-                        @Override
-                        public void run() {
-                            //progressBar.setVisibility(View.VISIBLE);
+    private void initContactListView() {
+        final ContactController contactController = new ContactController();
+        gson = new Gson();
+        subscription = rx.Observable.create(new rx.Observable.OnSubscribe<List<ContactMutliNumBean>>() {
+            @Override
+            public void call(Subscriber<? super List<ContactMutliNumBean>> subscriber) {
+                List<ContactMutliNumBean> allContactEntities = contactController.getFilterListContactEntitiesNoDuplicate();
+                if(first)
+                {SPUtils.put(getActivity(),Constant.PACKAGE_NAME,"contacts",gson.toJson(allContactEntities));
+                first=false;}
+                subscriber.onNext(allContactEntities);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(Schedulers.newThread()).map(new Func1<List<ContactMutliNumBean>, List<ContactEntity>>() {
+            @Override
+            public List<ContactEntity> call(List<ContactMutliNumBean> contactMutliNumBeen) {
+                return contactController.sortContactByLetter(contactMutliNumBeen);
+            }
+        }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<ContactEntity>>() {
+            @Override
+            public void call(List<ContactEntity> s) {
+                mContactListData.clear();
+                mContactListData.addAll(s);
 
-                            if (mContactListData == null) {
-                                mContactListData = new ArrayList<ContactEntity>();
-                            }
-                            mContactListData.clear();
-                            mContactListData.addAll(allContactEntities);
+                mContactListAdapter.notifyDataSetChanged();
 
-                            mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
-                            mListView.setAdapter(mContactListAdapter);
+                mQuickSearchBar.setListView(mListView);
+                mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
 
-                            mQuickSearchBar.setListView(mListView);
-                            mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
+                et_search.addTextChangedListener(new ContactSerarchWatcher(
+                        mContactListAdapter, mContactListData, mQuickSearchBar));
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+   /*     new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final ContactController contactController = new ContactController();
+                final List<ContactEntity> allContactEntities = contactController.getFilterListContactEntitiesNoDuplicate();
+                gson = new Gson();
+                SimpleHandler.getInstance().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //progressBar.setVisibility(View.VISIBLE);
 
-                            et_search.addTextChangedListener(new ContactSerarchWatcher(
-                                    mContactListAdapter, mContactListData, mQuickSearchBar));
-                            progressBar.setVisibility(View.GONE);
+                        if (mContactListData == null) {
+                            mContactListData = new ArrayList<ContactEntity>();
                         }
-                    });
-                }
-            }).start();
+                        mContactListData.clear();
+                        mContactListData.addAll(allContactEntities);
+
+                        mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
+                        mListView.setAdapter(mContactListAdapter);
+
+                        mQuickSearchBar.setListView(mListView);
+                        mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
+
+                        et_search.addTextChangedListener(new ContactSerarchWatcher(
+                                mContactListAdapter, mContactListData, mQuickSearchBar));
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+            }
+        }).start();*/
     }
 
     @Override
@@ -185,7 +272,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
                             view.getHeight() / 2, 0, 0);
             ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
         }*/
-       startActivity(intent);
+        startActivity(intent);
     }
 
     @Override

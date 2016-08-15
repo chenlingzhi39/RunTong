@@ -25,7 +25,7 @@ import butterknife.InjectView;
         toolbarTitle = R.string.recharge,
         navigationId=R.drawable.press_back
 )
-public class RechargeActivity2 extends BaseActivity{
+public class RechargeActivity extends BaseActivity{
     @InjectView(R.id.layout_tab)
     TabLayout layoutTab;
     @InjectView(R.id.viewpager)
@@ -39,11 +39,11 @@ public class RechargeActivity2 extends BaseActivity{
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                Log.i("position",position+"");
-                if(position==1){
+                Log.i("position", position + "");
+                if (position == 1) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    Log.i("active",imm.isActive()+"");
-                    if(imm.isActive())
+                    Log.i("active", imm.isActive() + "");
+                    if (imm.isActive())
                         imm.hideSoftInputFromWindow(viewpager.getWindowToken(), 0);
                 }
             }

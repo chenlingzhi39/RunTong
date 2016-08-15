@@ -486,10 +486,12 @@ public class UserDao {
 
             @Override
             public void onFailure(HttpException error, String msg) {
+                error.printStackTrace();
                 postListener.failure(context.getString(R.string.network_error));
             }
 
         });
+
     }
 
     public void getBalance(String loginName, String password) {
@@ -667,7 +669,7 @@ public class UserDao {
         });
     }
 
-    public void setOrder(String loginName, String password, String payMoney, String payMethod, String suiteName) {
+    public void setOrder(String loginName, String password, String payMoney, String payMethod, String suiteName,String phoneNumber) {
         RequestParams params = new RequestParams();
         params.addBodyParameter("loginName", loginName);
         params.addBodyParameter("loginPwd", password);
@@ -675,6 +677,7 @@ public class UserDao {
         params.addBodyParameter("payMethod", payMethod);
         params.addBodyParameter("suiteName", suiteName);
         params.addBodyParameter("softType", "android");
+        params.addBodyParameter("phoneNumber",phoneNumber);
         httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.SET_ORDER, params, new RequestCallBack<String>() {
             @Override
             public void onFailure(HttpException error, String msg) {

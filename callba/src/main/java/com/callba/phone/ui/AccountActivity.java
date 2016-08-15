@@ -1,6 +1,7 @@
 package com.callba.phone.ui;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.callba.phone.bean.Meal;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.Logger;
+import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.ArrayList;
 
@@ -48,7 +50,7 @@ public class AccountActivity extends BaseActivity {
     RelativeLayout mealSearch;
     @InjectView(R.id.commission)
     Button commission;
-
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +62,7 @@ public class AccountActivity extends BaseActivity {
         userDao = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void start() {
-
+             progressDialog=ProgressDialog.show(AccountActivity.this,"","正在查询套餐");
             }
 
             @Override
@@ -84,11 +86,13 @@ public class AccountActivity extends BaseActivity {
                 } catch (Exception e) {
                     toast(R.string.getserverdata_exception);
                 }
+            progressDialog.dismiss();
             }
 
             @Override
             public void failure(String msg) {
                 toast(msg);
+                progressDialog.dismiss();
             }
         });
         commission.setText(UserManager.getCommission(this));

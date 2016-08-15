@@ -36,6 +36,7 @@ import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.hyphenate.EMConnectionListener;
@@ -53,6 +54,12 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Administrator on 2016/5/15.
@@ -81,6 +88,7 @@ public class MessageActivity extends BaseActivity {
     protected InputMethodManager inputMethodManager;
     protected FrameLayout errorItemContainer;
     protected TextView errorText;
+
     @OnClick(R.id.search_clear)
     public void onClick() {
         query.getText().clear();
@@ -98,11 +106,11 @@ public class MessageActivity extends BaseActivity {
     }
 
     private EaseConversationListItemClickListener listItemClickListener;
-    protected Handler handler = new Handler(){
+    protected Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             switch (msg.what) {
                 case 0:
-                   onConnectionDisconnected();
+                    onConnectionDisconnected();
                     break;
                 case 1:
                     onConnectionConnected();
@@ -128,10 +136,11 @@ public class MessageActivity extends BaseActivity {
             handler.sendEmptyMessage(1);
         }
     };
+
     /**
      * 连接到服务器
      */
-    protected void onConnectionConnected(){
+    protected void onConnectionConnected() {
         errorItemContainer.setVisibility(View.GONE);
         refresh();
     }
@@ -139,7 +148,7 @@ public class MessageActivity extends BaseActivity {
     /**
      * 连接断开
      */
-    protected void onConnectionDisconnected(){
+    protected void onConnectionDisconnected() {
         //errorItemContainer.setVisibility(View.VISIBLE);
     }
 
@@ -147,7 +156,7 @@ public class MessageActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        View errorView = (LinearLayout) View.inflate(this,R.layout.em_chat_neterror_item, null);
+        View errorView = (LinearLayout) View.inflate(this, R.layout.em_chat_neterror_item, null);
         errorItemContainer = (FrameLayout) findViewById(R.id.fl_error_item);
         errorText = (TextView) errorView.findViewById(R.id.tv_connect_errormsg);
         errorItemContainer.addView(errorView);
@@ -160,7 +169,18 @@ public class MessageActivity extends BaseActivity {
                 this, DividerItemDecoration.VERTICAL_LIST));
         conversationListview.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ConversationAdapter(this);
-        adapter.addAll(loadConversationList());
+        subscription =rx.Observable.create(new rx.Observable.OnSubscribe<List<EMConversation>>() {
+            @Override
+            public void call(Subscriber<? super List<EMConversation>> subscriber) {
+                List<EMConversation> emConversations=loadConversationList();
+                subscriber.onNext(emConversations);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMConversation>>() {
+            @Override
+            public void call(List<EMConversation> emConversations) {
+                adapter.addAll(emConversations);
+            }
+        });
         adapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -200,7 +220,7 @@ public class MessageActivity extends BaseActivity {
             public void run() {
                 conversationListview.setAdapter(adapter);
             }
-        },0);
+        }, 0);
 
         IntentFilter filter = new IntentFilter(
                 "com.callba.chat");
@@ -240,26 +260,37 @@ public class MessageActivity extends BaseActivity {
                 return false;
             }
         });
-       refresh.setColorSchemeResources(R.color.orange);
+        refresh.setColorSchemeResources(R.color.orange);
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                adapter.clear();
-                adapter.addAll(loadConversationList());
-                refresh.setRefreshing(false);
+                subscription =rx.Observable.create(new rx.Observable.OnSubscribe<List<EMConversation>>() {
+                    @Override
+                    public void call(Subscriber<? super List<EMConversation>> subscriber) {
+                        List<EMConversation> emConversations=loadConversationList();
+                        subscriber.onNext(emConversations);
+                    }
+                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMConversation>>() {
+                    @Override
+                    public void call(List<EMConversation> emConversations) {
+                        adapter.clear();
+                        adapter.addAll(emConversations);
+                        refresh.setRefreshing(false);
+                    }
+                });
+
             }
         });
         EMClient.getInstance().addConnectionListener(connectionListener);
-        broadcastReceiver= new BroadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-              refresh();
+                refresh();
             }
         };
-        broadcastManager=LocalBroadcastManager.getInstance(this);
-        broadcastManager.registerReceiver(broadcastReceiver,new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
+        broadcastManager = LocalBroadcastManager.getInstance(this);
+        broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
     }
-
 
 
     /**
@@ -269,8 +300,9 @@ public class MessageActivity extends BaseActivity {
      * @return +
      */
     protected List<EMConversation> loadConversationList() {
-        // 获取所有会话，包括陌生人
-        Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
+
+                // 获取所有会话，包括陌生人
+                Map < String, EMConversation > conversations = EMClient.getInstance().chatManager().getAllConversations();
         // 过滤掉messages size为0的conversation
         /**
          * 如果在排序过程中有新消息收到，lastMsgTime会发生变化
@@ -331,26 +363,39 @@ public class MessageActivity extends BaseActivity {
 
         });
     }
-  public void refresh(){
-      new Thread(new Runnable() {
-          @Override
-          public void run() {
-              SimpleHandler.getInstance().post(new Runnable() {
-                  @Override
-                  public void run() {
-                      adapter.clear();
-                      adapter.addAll(loadConversationList());
-                  }
-              });
 
-          }
-      }).start();
+    public void refresh() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SimpleHandler.getInstance().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        subscription =rx.Observable.create(new rx.Observable.OnSubscribe<List<EMConversation>>() {
+                            @Override
+                            public void call(Subscriber<? super List<EMConversation>> subscriber) {
+                                List<EMConversation> emConversations=loadConversationList();
+                                subscriber.onNext(emConversations);
+                            }
+                        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMConversation>>() {
+                            @Override
+                            public void call(List<EMConversation> emConversations) {
+                                adapter.clear();
+                                adapter.addAll(emConversations);
+                            }
+                        });
+                    }
+                });
 
-  }
+            }
+        }).start();
+
+    }
+
     class ChatReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-           refresh();
+            refresh();
         }
     }
 
@@ -440,29 +485,29 @@ public class MessageActivity extends BaseActivity {
     }
 
     private void showDeleteDialog(final EMConversation entity) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setItems(new String[] { getString(R.string.delete_conversation), getString(R.string.delete_conversation_messages) },
-                    new DialogInterface.OnClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setItems(new String[]{getString(R.string.delete_conversation), getString(R.string.delete_conversation_messages)},
+                new DialogInterface.OnClickListener() {
 
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            switch (which) {
-                                case 0:
-                                    EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(), false);
-                                    sendBroadcast(new Intent("message_num"));
-                                    adapter.remove(entity);
-                                    break;
-                                case 1:
-                                    EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(), true);
-                                    sendBroadcast(new Intent("message_num"));
-                                    adapter.remove(entity);
-                                    break;
-                                default:
-                                    break;
-                            }
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        switch (which) {
+                            case 0:
+                                EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(), false);
+                                sendBroadcast(new Intent("message_num"));
+                                adapter.remove(entity);
+                                break;
+                            case 1:
+                                EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(), true);
+                                sendBroadcast(new Intent("message_num"));
+                                adapter.remove(entity);
+                                break;
+                            default:
+                                break;
                         }
-                    });
-            builder.create().show();
+                    }
+                });
+        builder.create().show();
     }
 
 

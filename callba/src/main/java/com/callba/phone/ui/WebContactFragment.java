@@ -215,7 +215,7 @@ public class WebContactFragment extends BaseFragment {
 
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        toast(getActivity().getString(R.string.network_error));
+                        toast(R.string.network_error);
                     }
 
                     @Override
@@ -266,7 +266,6 @@ public class WebContactFragment extends BaseFragment {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.delete_contact) {
-
             OkHttpUtils
                     .post()
                     .url(Interfaces.DELETE_FRIENDS)

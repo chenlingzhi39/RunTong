@@ -40,6 +40,7 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.service.MainService;
 import com.callba.phone.service.UpdateService;
+import com.callba.phone.ui.WelcomeActivity;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 
@@ -99,14 +100,15 @@ public class BaseActivity extends AppCompatActivity {
             navigationId = annotation.navigationId();
             mMenuId = annotation.menuId();
             mToolbarTitle = annotation.toolbarTitle();
-        } else {
+        } else if(getClass()!= WelcomeActivity.class){
             throw new RuntimeException(
                     "Class must add annotations of ActivityFragmentInitParams.class");
         }
-        setContentView(mContentViewId);
+        if(getClass()!= WelcomeActivity.class)
+        {setContentView(mContentViewId);
         initToolbar();
         if (mToolbarTitle != -1)
-            setToolbarTitle(mToolbarTitle);
+            setToolbarTitle(mToolbarTitle);}
 
         MyApplication.activities.add(this);
 

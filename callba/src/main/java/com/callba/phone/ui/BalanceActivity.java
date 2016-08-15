@@ -1,5 +1,6 @@
 package com.callba.phone.ui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -30,6 +31,7 @@ public class BalanceActivity extends BaseActivity {
     UserDao userDao;
     @InjectView(R.id.balance)
     TextView balance;
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,17 +40,19 @@ public class BalanceActivity extends BaseActivity {
         userDao = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void start() {
-
+            progressDialog=ProgressDialog.show(BalanceActivity.this,"","正在查询余额");
             }
 
             @Override
             public void success(String msg) {
              balance.setText(msg);
+                progressDialog.dismiss();
             }
 
             @Override
             public void failure(String msg) {
-
+                toast(msg);
+                progressDialog.dismiss();
             }
         });
         userDao.getBalance(getUsername(), getPassword());
@@ -56,6 +60,6 @@ public class BalanceActivity extends BaseActivity {
 
     @OnClick(R.id.recharge)
     public void onClick() {
-        startActivity(new Intent(BalanceActivity.this, RechargeActivity2.class));
+        startActivity(new Intent(BalanceActivity.this, RechargeActivity.class));
     }
 }

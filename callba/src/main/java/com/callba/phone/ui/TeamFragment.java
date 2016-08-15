@@ -128,8 +128,7 @@ public class TeamFragment extends BaseFragment {
 
                                             @Override
                                             public void onResponse(String response, int id) {
-                                                Logger.i("add_result",response);
-                                                try{
+                                                try{ Logger.i("add_result",response);
                                                 String[] result=response.split("\\|");
                                                 if(result[0].equals("0"))
                                                 {

@@ -116,7 +116,7 @@ public class SelectContactActivity extends BaseActivity implements View.OnClickL
      */
     private void initContactListView() {
         ContactController contactController = new ContactController();
-        List<ContactEntity> allContactEntities = contactController.getFilterListContactEntitiesNoDuplicate();
+        List<ContactEntity> allContactEntities = contactController.sortContactByLetter(contactController.getFilterListContactEntitiesNoDuplicate());
         if(mContactListData == null) {
             mContactListData = new ArrayList<ContactEntity>();
         }

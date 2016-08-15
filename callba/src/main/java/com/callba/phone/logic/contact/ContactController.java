@@ -12,10 +12,12 @@ import android.text.TextUtils;
 import com.callba.phone.MyApplication;
 import com.callba.phone.bean.ContactMutliNumBean;
 import com.callba.phone.bean.UserDao;
+import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.util.FileUtils;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.StorageUtils;
 import com.google.gson.Gson;
 
@@ -69,7 +71,7 @@ public class ContactController {
 	 * 获取用于ListView显示的数据(默认数据为当前联系人，根据姓名排列，多个号码只显示一条数据)
 	 * @return
 	 */
-	public synchronized List<ContactEntity> getFilterListContactEntitiesNoDuplicate() {
+	public synchronized List<ContactMutliNumBean> getFilterListContactEntitiesNoDuplicate() {
 		final List<ContactMutliNumBean> personEntities = new ArrayList<ContactMutliNumBean>();
 		String phoneNumbers="";
 				List<String> contactPhones=new ArrayList<>();
@@ -167,8 +169,8 @@ public class ContactController {
 			
 			personEntities.add(new ContactMutliNumBean(contactPersonEntity));
 		}*/
-		FileUtils.writeObjectToFile(StorageUtils.getFilesDirectory(contaxt) + File.separator + "contacts.txt", gson.toJson(personEntities));
-		return sortContactByLetter(personEntities);
+		//FileUtils.writeObjectToFile(StorageUtils.getFilesDirectory(contaxt) + File.separator + "contacts.txt", gson.toJson(personEntities));
+		return personEntities;
 	}
 	
 	/**

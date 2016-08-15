@@ -2,18 +2,27 @@ package com.callba.phone.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.widget.LinearLayout;
 
 import com.callba.R;
+import com.callba.phone.bean.Contact;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.GlobalConfig;
@@ -36,9 +45,7 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import okhttp3.Call;
 
 
-@ActivityFragmentInject(
-        contentViewId = R.layout.welcome_page
-)
+
 public class WelcomeActivity extends BaseActivity {
     public static final String TAG = "WelcomeActivity";
     private SharedPreferenceUtil mSharedPreferenceUtil;
@@ -103,6 +110,7 @@ public class WelcomeActivity extends BaseActivity {
 
 
     public void init() {
+        //insertDummyContactWrapper();
         startService(new Intent(WelcomeActivity.this, MainService.class));
 
                 initEnvironment();
@@ -349,7 +357,84 @@ public class WelcomeActivity extends BaseActivity {
 
         }
     }
+    private void insertDummyContactWrapper() {
+        List<String> permissionsNeeded = new ArrayList<String>();
 
+        final List<String> permissionsList = new ArrayList<String>();
+        if (!addPermission(permissionsList, Manifest.permission.ACCESS_FINE_LOCATION))
+            permissionsNeeded.add("GPS");
+        if (!addPermission(permissionsList, Manifest.permission.READ_CONTACTS))
+            permissionsNeeded.add("Read Contacts");
+        if (!addPermission(permissionsList, Manifest.permission.WRITE_CONTACTS))
+            permissionsNeeded.add("Write Contacts");
+
+        if (permissionsList.size() > 0) {
+            if (permissionsNeeded.size() > 0) {
+                // Need Rationale
+                String message = "You need to grant access to " + permissionsNeeded.get(0);
+                for (int i = 1; i < permissionsNeeded.size(); i++)
+                    message = message + ", " + permissionsNeeded.get(i);
+                showMessageOKCancel(message,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ActivityCompat.requestPermissions(WelcomeActivity.this,permissionsList.toArray(new String[permissionsList.size()]),
+                                        124);
+                            }
+                        });
+                return;
+            }
+            ActivityCompat.requestPermissions(WelcomeActivity.this,permissionsList.toArray(new String[permissionsList.size()]),
+                    124);
+            return;
+        }
+    }
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(WelcomeActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+    private boolean addPermission(List<String> permissionsList, String permission) {
+        if (ActivityCompat.checkSelfPermission(WelcomeActivity.this,permission) != PackageManager.PERMISSION_GRANTED) {
+            permissionsList.add(permission);
+            // Check for Rationale Option
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(WelcomeActivity.this,permission))
+                return false;
+        }
+        return true;
+    }
+ /*   @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 124:
+            {
+                Map<String, Integer> perms = new HashMap<String, Integer>();
+                // Initial
+                perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_CONTACTS, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_CONTACTS, PackageManager.PERMISSION_GRANTED);
+                // Fill with results
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+                // Check for ACCESS_FINE_LOCATION
+                if (perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
+                        && perms.get(Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                    // All Permissions Granted
+
+                } else {
+                    // Permission Denied
+                   toast( "Some Permission is Denied");
+                }
+            }
+            break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }*/
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
