@@ -16,7 +16,7 @@
         <!-- <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>-->
         <!--<item name="android:textAppearance">@style/TextAppearance.FontPath</item>-->
     </style>
-    <style name="BaseAppTheme.LauncherAppTheme">
+    <style name="LauncherAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!--<item name="android:windowAnimationStyle">@style/noAnimation</item>-->
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowBackground">@drawable/android</item>

@@ -160,6 +160,8 @@ public class LoginController {
 			UserManager.putGold(context,Integer.parseInt(resultInfo[9]));
 			UserManager.putUserAvatar(context,resultInfo[6]);
 			UserManager.putCommission(context,resultInfo[10]);
+			UserManager.putCreateTime(context,resultInfo[11]);
+			UserManager.putProportion(context,Integer.parseInt(resultInfo[12]));
 			UserManager.putUsername(context,username);
 			UserManager.putOriginalPassword(context,password);
 //			SharedPreferenceUtil mPreferenceUtil = SharedPreferenceUtil.getInstance(context);

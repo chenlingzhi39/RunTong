@@ -103,7 +103,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     private View footer;
     private int page = 1;
     private boolean is_refresh = false;
-  /*  @Inject
+    /*@Inject
     public ApiService apiService;*/
 
     @Override
@@ -535,6 +535,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<String>() {
+
                     @Override
                     public void onCompleted() {
                         userList.refreshComplete();

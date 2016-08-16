@@ -183,4 +183,6 @@ public class Constant {
 	public static final String ADDRESS="address";
 	public static final String SIGNATURE="signature";
 	public static final String BALANCE="balance";
+	public static final String CREATE_TIME="create_time";
+	public static final String PROPORTION="proportion";
 }

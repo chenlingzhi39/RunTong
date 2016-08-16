@@ -53,8 +53,14 @@ public class UserManager {
     public static int getGold(Context context){
         return (int)SPUtils.get(context,Constant.PACKAGE_NAME,Constant.GOLD,0);
     }
-    public static String getbalnace(Context context){
+    public static String getBalnace(Context context){
         return (String)SPUtils.get(context,Constant.PACKAGE_NAME,Constant.BALANCE,"");
+    }
+    public static String getCreateTime(Context context){
+        return (String)SPUtils.get(context,Constant.PACKAGE_NAME,Constant.CREATE_TIME,"");
+    }
+    public static int getProportion(Context context){
+        return (int)SPUtils.get(context,Constant.PACKAGE_NAME,Constant.PROPORTION,0);
     }
     public static void putLoginToken(Context context,String loginToken){
         SPUtils.put(context,Constant.PACKAGE_NAME,Constant.LOGIN_TOKEN,loginToken);
@@ -97,5 +103,11 @@ public class UserManager {
     }
     public static void putBalance(Context context,String balance){
         SPUtils.put(context,Constant.PACKAGE_NAME,Constant.BALANCE,balance);
+    }
+    public static void putCreateTime(Context context,String createTime){
+        SPUtils.put(context,Constant.PACKAGE_NAME,Constant.CREATE_TIME,createTime);
+    }
+    public static void putProportion(Context context,int proportion){
+        SPUtils.put(context,Constant.PACKAGE_NAME,Constant.PROPORTION,proportion);
     }
 }

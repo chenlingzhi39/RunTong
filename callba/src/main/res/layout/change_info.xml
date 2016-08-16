@@ -61,7 +61,8 @@
             android:text="@string/nick_name"
             android:textSize="20sp"
             android:layout_marginLeft="10dp"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:id="@+id/nick"/>
         <ImageView
             android:id="@+id/more2"
             android:layout_width="wrap_content"
@@ -74,10 +75,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/more2"
+            android:layout_toRightOf="@+id/nick"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:textSize="18sp"
-            android:singleLine="true"/>
+            android:singleLine="true"
+            android:layout_marginLeft="10dp"
+            android:gravity="right" />
     </RelativeLayout>
     <View
         android:layout_width="match_parent"
@@ -111,6 +115,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/more3"
+            android:layout_toRightOf="@+id/tv_sign"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:textSize="18sp"
@@ -118,6 +123,7 @@
             android:ellipsize="end"
             android:maxLength="10"
             android:layout_marginLeft="10dp"
+            android:gravity="right"
             />
     </RelativeLayout>
     <View

@@ -260,6 +260,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         if(savedInstanceState!=null)
+            if(savedInstanceState.getParcelableArrayList("contact")!=null)
         GlobalConfig.getInstance().setContactBeans((ArrayList<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0));
     }
 }

@@ -109,12 +109,6 @@ public class ContactListAdapter extends BaseAdapter {
 		} else {
 			ContactPersonEntity contactPersonEntity = (ContactPersonEntity) bean;
 			viewHolder_Item.tvDisplayName.setText(contactPersonEntity.getDisplayName());
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-
-				}
-			}).start();
 			Bitmap bitmap=ContactsManager.getAvatar(mContext,contactPersonEntity.get_id(),false);
 			if(bitmap!=null)
 				viewHolder_Item.avatar.setImageBitmap(bitmap);

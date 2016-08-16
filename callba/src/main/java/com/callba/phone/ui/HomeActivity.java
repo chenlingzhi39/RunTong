@@ -95,7 +95,7 @@ public class HomeActivity extends BaseActivity {
     private ProgressDialog progressDialog;
     private String username;
     private String password;
-    private UserDao userDao, userDao1, userDao2, userDao3;
+    private UserDao userDao2;
     private String date;
     private Gson gson;
     private String[] result;
@@ -111,63 +111,6 @@ public class HomeActivity extends BaseActivity {
         mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
         mPreferenceUtil.putBoolean(Constant.IS_FROMGUIDE, false, true);
         mPreferenceUtil.commit();
-        userDao1 = new UserDao(this, new UserDao.PostListener() {
-            @Override
-            public void start() {
-
-            }
-
-            @Override
-            public void success(String msg) {
-                try {
-                    Log.i("system_result", msg);
-                    result = msg.split("\\|");
-                    if (result[0].equals("0")) {
-                        list = new ArrayList<>();
-                        try {
-                            list = gson.fromJson(result[1], new TypeToken<ArrayList<SystemNumber>>() {
-                            }.getType());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        final ArrayList<String> numbers = new ArrayList<>();
-                        final ContactData contactData = new ContactData();
-                        contactData.setContactName("Call吧电话");
-                        for (SystemNumber user : list) {
-                            numbers.add(user.getPhoneNumber());
-                            Logger.i("phonenumber", user.getPhoneNumber());
-                        }
-                        MainService.system_contact = true;
-                        if (ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话").equals("0"))
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
-                                }
-                            }).start();
-                        else {
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ContactsAccessPublic.deleteContact(HomeActivity.this, new ContactsManager(getContentResolver()).getContactID("Call吧电话"));
-                                    ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
-                                }
-                            }).start();
-                        }
-                    } else {
-
-                    }
-                } catch (Exception e) {
-
-                }
-
-            }
-
-            @Override
-            public void failure(String msg) {
-                //toast(msg);
-            }
-        });
         userDao2 = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void failure(String msg) {
@@ -198,43 +141,6 @@ public class HomeActivity extends BaseActivity {
                         startActivity(intent1);
                     }
                 });
-            }
-        });
-        userDao = new UserDao(this, new UserDao.PostListener() {
-            @Override
-            public void start() {
-
-            }
-
-            @Override
-            public void success(String msg) {
-                try {
-                    String[] result = msg.split("\\|");
-                    if (result[0].equals("0")) {
-                        String[] dates = result[1].split(",");
-                        if (date.equals(dates[dates.length - 1])) {
-                            mPreferenceUtil.putString(getUsername(), date, true);
-
-                        } else {
-                            mPreferenceUtil.putString(getUsername(), dates[dates.length - 1], true);
-                            Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
-                            startActivity(intent);
-                        }
-                    } else {
-                        //toast(result[1]);
-                        if (result[1].equals("没有签到记录")) {
-                            Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
-                            startActivity(intent);
-                        }
-                    }
-                } catch (Exception e) {
-                    toast(R.string.getserverdata_exception);
-                }
-            }
-
-            @Override
-            public void failure(String msg) {
-                //toast(msg);
             }
         });
         localImages.add(R.drawable.ad4);
@@ -272,14 +178,16 @@ public class HomeActivity extends BaseActivity {
             userDao1.getSystemPhoneNumber(GlobalConfig.getInstance().getUsername(), GlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
             userDao2.getAd(1, GlobalConfig.getInstance().getUsername(), GlobalConfig.getInstance().getPassword());
         }*/
-        userDao1.getSystemPhoneNumber(getUsername(), getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+        //userDao1.getSystemPhoneNumber(getUsername(), getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+        getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
         userDao2.getAd(1, getUsername(), getPassword());
         if (!mPreferenceUtil.getString(getUsername()).equals(date) && (boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", false)) {
             String year = Calendar.getInstance().get(Calendar.YEAR) + "";
             String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
             if (month.length() == 1)
                 month = "0" + month;
-            userDao.getMarks(getUsername(), getPassword(), year + month);
+            //userDao.getMarks(getUsername(), getPassword(), year + month);
+            getMarks(year+month);
         }
         if (GlobalConfig.getInstance().getAppVersionBean() != null && (boolean) SPUtils.get(this, "settings", "update_key", true)) {
             check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
@@ -482,9 +390,11 @@ public class HomeActivity extends BaseActivity {
                             String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
                             if (month.length() == 1)
                                 month = "0" + month;
-                            userDao.getMarks(getUsername(), getPassword(), year + month);
+                            //userDao.getMarks(getUsername(), getPassword(), year + month);
+                            getMarks(year+month);
                         }
-                        userDao1.getSystemPhoneNumber(getUsername(), getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+                        //userDao1.getSystemPhoneNumber(getUsername(), getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+                        getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
                         userDao2.getAd(1, getUsername(), getPassword());
                         if (GlobalConfig.getInstance().getAppVersionBean() != null && (boolean) SPUtils.get(HomeActivity.this, "settings", "update_key", true)) {
                             check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
@@ -531,5 +441,102 @@ public class HomeActivity extends BaseActivity {
             return true;
         }
         return false;
+    }
+    public void getMarks(String time){
+        OkHttpUtils.post().url(Interfaces.GET_MARKS)
+                .addParams("loginName",getUsername())
+                .addParams("loginPwd",getPassword())
+                .addParams("date",time)
+                .build().execute(new StringCallback() {
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                try {
+                    String[] result =response.split("\\|");
+                    if (result[0].equals("0")) {
+                        String[] dates = result[1].split(",");
+                        if (date.equals(dates[dates.length - 1])) {
+                            mPreferenceUtil.putString(getUsername(), date, true);
+
+                        } else {
+                            mPreferenceUtil.putString(getUsername(), dates[dates.length - 1], true);
+                            Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
+                            startActivity(intent);
+                        }
+                    } else {
+                        //toast(result[1]);
+                        if (result[1].equals("没有签到记录")) {
+                            Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+                } catch (Exception e) {
+                    toast(R.string.getserverdata_exception);
+                }
+            }
+        });
+    }
+    public void getSystemPhoneNumber(String count){
+        Logger.i("phoneNumberCount", count);
+        OkHttpUtils.post().url(Interfaces.GET_SYSTEM_PHONE_NUMBER)
+                .addParams("loginName",getUsername())
+                .addParams("loginPwd",getPassword())
+                .addParams("phoneNumberCount", count)
+                .build().execute(new StringCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                try {
+                    Log.i("system_result", response);
+                    result = response.split("\\|");
+                    if (result[0].equals("0")) {
+                        list = new ArrayList<>();
+                        try {
+                            list = gson.fromJson(result[1], new TypeToken<ArrayList<SystemNumber>>() {
+                            }.getType());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        final ArrayList<String> numbers = new ArrayList<>();
+                        final ContactData contactData = new ContactData();
+                        contactData.setContactName("Call吧电话");
+                        for (SystemNumber user : list) {
+                            numbers.add(user.getPhoneNumber());
+                            Logger.i("phonenumber", user.getPhoneNumber());
+                        }
+                        MainService.system_contact = true;
+                        if (ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话").equals("0"))
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
+                                }
+                            }).start();
+                        else {
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ContactsAccessPublic.deleteContact(HomeActivity.this, new ContactsManager(getContentResolver()).getContactID("Call吧电话"));
+                                    ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
+                                }
+                            }).start();
+                        }
+                    } else {
+
+                    }
+                } catch (Exception e) {
+
+                }
+            }
+        });
     }
 }

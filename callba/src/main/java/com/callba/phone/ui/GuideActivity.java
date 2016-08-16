@@ -35,7 +35,7 @@ public class GuideActivity extends BaseActivity implements OnClickListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+	/*	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 			Window window = getWindow();
 			window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
 			);
@@ -45,7 +45,7 @@ public class GuideActivity extends BaseActivity implements OnClickListener {
 					| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 					| View.SYSTEM_UI_FLAG_FULLSCREEN
 					| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-		}
+		}*/
 	}
 
 	@Override

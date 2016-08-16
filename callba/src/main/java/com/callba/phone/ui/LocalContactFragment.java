@@ -84,12 +84,6 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
-        mListView.setOnItemClickListener(this);
-        mListView.setOnItemLongClickListener(this);
-        IntentFilter intentFilter = new IntentFilter("com.callba.contact");
-        broadcastReceiver = new ContactBroadcastReceiver();
-        getActivity().registerReceiver(broadcastReceiver, intentFilter);
-        Logger.i("local", "init");
         final ContactController contactController = new ContactController();
         gson = new Gson();
         subscription = rx.Observable.create(new rx.Observable.OnSubscribe<String>() {
@@ -118,7 +112,8 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
 
                 mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
                 mListView.setAdapter(mContactListAdapter);
-
+                mListView.setOnItemClickListener(LocalContactFragment.this);
+                mListView.setOnItemLongClickListener(LocalContactFragment.this);
                 mQuickSearchBar.setListView(mListView);
                 mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
 
@@ -129,6 +124,12 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
                     initContactListView();
             }
         });
+
+        IntentFilter intentFilter = new IntentFilter("com.callba.contact");
+        broadcastReceiver = new ContactBroadcastReceiver();
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+        Logger.i("local", "init");
+
     }
 
     @Override
@@ -206,10 +207,11 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
             public void call(List<ContactEntity> s) {
                 mContactListData.clear();
                 mContactListData.addAll(s);
-
                 mContactListAdapter.notifyDataSetChanged();
+              /*  mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
+                mListView.setAdapter(mContactListAdapter);
 
-                mQuickSearchBar.setListView(mListView);
+                mQuickSearchBar.setListView(mListView);*/
                 mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
 
                 et_search.addTextChangedListener(new ContactSerarchWatcher(
