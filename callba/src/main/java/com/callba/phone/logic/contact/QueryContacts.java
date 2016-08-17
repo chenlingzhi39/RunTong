@@ -91,7 +91,11 @@ public class QueryContacts {
 					Bitmap contactPhoto=null;
 					ContactPersonEntity cb = new ContactPersonEntity();
 					cb.set_id(contactId+"");
+					if(name!=null)
 					cb.setDisplayName(name);
+					else {cb.setDisplayName("");
+					cb.setTypeName("#");
+					}
 					if (number.startsWith("+86")) {// 去除多余的中国地区号码标志，对这个程序没有影响。
 						cb.setPhoneNumber(number.substring(3));
 					} else {

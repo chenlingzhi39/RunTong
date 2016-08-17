@@ -364,6 +364,8 @@ public class NineKeyboardQuickSearch {
 		}
 
 		for (QuickQueryContactBean bean : currSearchContactList) {
+			if(bean.getSearchSortKeyBean()==null)
+				continue;
 			// 手机号码
 			String phoneNum = bean.getPhoneNumber();
 			// 姓名简称

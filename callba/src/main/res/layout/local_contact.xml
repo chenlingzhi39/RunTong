@@ -34,7 +34,8 @@
             android:fadingEdge="none"
             android:fastScrollEnabled="false"
             android:scrollbars="none"
-            android:cacheColorHint="@android:color/transparent"/>
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@null"/>
 
         <com.callba.phone.view.QuickSearchBar
             android:id="@+id/qsb_contact"

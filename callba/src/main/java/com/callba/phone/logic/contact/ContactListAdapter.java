@@ -108,7 +108,9 @@ public class ContactListAdapter extends BaseAdapter {
 			viewHolder_ABC.tvABC.setText(contactIndexEntity.getIndexName());
 		} else {
 			ContactPersonEntity contactPersonEntity = (ContactPersonEntity) bean;
-			viewHolder_Item.tvDisplayName.setText(contactPersonEntity.getDisplayName());
+			if(contactPersonEntity.getDisplayName().equals(""))
+				viewHolder_Item.tvDisplayName.setText("未知");
+			else viewHolder_Item.tvDisplayName.setText(contactPersonEntity.getDisplayName());
 			Bitmap bitmap=ContactsManager.getAvatar(mContext,contactPersonEntity.get_id(),false);
 			if(bitmap!=null)
 				viewHolder_Item.avatar.setImageBitmap(bitmap);

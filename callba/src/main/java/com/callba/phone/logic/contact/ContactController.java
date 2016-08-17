@@ -77,11 +77,11 @@ public class ContactController {
 				List<String> contactPhones=new ArrayList<>();
 				Logger.i("contact_size",mAllContactPersonEntities.size()+"");
 				for(int i=0;i<mAllContactPersonEntities.size();i++){
-					if(!mAllContactPersonEntities.get(i).getDisplayName().equals("Call吧电话"))
+					/*if(!mAllContactPersonEntities.get(i).getDisplayName().equals("Call吧电话"))
 					{
 					phoneNumbers+=mAllContactPersonEntities.get(i).getDisplayName()+",";
-					}
-					Logger.i("contact_number",mAllContactPersonEntities.get(i).getPhoneNumber());
+					}*/
+					Logger.i("contact_number",mAllContactPersonEntities.get(i).get_id()+" "+mAllContactPersonEntities.get(i).getPhoneNumber());
 					if(i==0)
 					{personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0)));
 						contactPhones.add(mAllContactPersonEntities.get(0).getPhoneNumber());
