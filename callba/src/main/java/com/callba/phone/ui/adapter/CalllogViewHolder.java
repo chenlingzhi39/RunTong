@@ -37,7 +37,9 @@ public class CalllogViewHolder extends BaseViewHolder<CalldaCalllogBean> {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         time.setText(simpleDateFormat.format(new Date(data.getCallLogTime())));
         if(data.getCalllogDuration()==0)
+            if(data.getCallLogType()!=CalldaCalllogBean.OUTGOING_CALL)
             state.setHint("未接通");
+            else state.setHint("已接通");
         else{
             state.setHint(getTime(data.getCalllogDuration()));
         }

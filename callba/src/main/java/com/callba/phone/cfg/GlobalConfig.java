@@ -32,12 +32,8 @@ public class GlobalConfig implements Serializable{
 	}
 
 	private String sipIP;		//sip服务器地址
-	private String callSetting;	//拨打设置
-	private boolean isCallBackAutoAnswer;	//回拨是否自动接听
-	private boolean isAutoLogin;//是否自动登陆
 	private boolean isSipRegistered;//记录sip服务是否成功注册
 	private List<ContactPersonEntity> contactBeans;//本地联系人列表
-	private boolean keyBoardSetting;//键盘音设置
 	private long lastInterceptCallTime;	//最后拦截呼叫时间
 	private String ivPath;//键盘广告路径
 	private String ivPathBack;//回拨广告路径
@@ -90,15 +86,6 @@ public class GlobalConfig implements Serializable{
 		this.advertisements3 = advertisements3;
 	}
 
-	public boolean getKeyBoardSetting() {
-		return keyBoardSetting;
-	}
-
-	public void setKeyBoardSetting(boolean keyBoardSetting) {
-		this.keyBoardSetting = keyBoardSetting;
-	}
-
-
 	/**
 	 * 获取sip服务器地址
 	 * @return
@@ -117,76 +104,6 @@ public class GlobalConfig implements Serializable{
 
 
 
-	/**
-	 * 获取呼叫设置
-	 * @return
-	 */
-	public String getCallSetting() {
-		return callSetting;
-	}
-
-	/**
-	 * 设置呼叫设置
-	 * @param callSetting
-	 */
-	public void setCallSetting(String callSetting) {
-		this.callSetting = callSetting;
-	}
-
-	/**
-	 * 获取回拨是否自动接听
-	 * @return
-	 */
-	public boolean isCallBackAutoAnswer() {
-		return isCallBackAutoAnswer;
-	}
-	
-	/**
-	 * 设置回拨是否自动接听
-	 * @param isCallBackAutoAnswer
-	 */
-	public void setCallBackAutoAnswer(boolean isCallBackAutoAnswer) {
-		this.isCallBackAutoAnswer = isCallBackAutoAnswer;
-	}
-
-	/**
-	 * 获取直拨sip服务注册状态
-	 * @return
-	 */
-	public boolean isSipRegistered() {
-		try {
-//			LinphoneManager.getInstance();
-		} catch (Exception e) {
-			isSipRegistered = false;
-			return false;
-		}
-		return isSipRegistered;
-	}
-
-	/**
-	 * 设置sip服务注册状态
-	 * @param isSipRegistered
-	 */
-	public void setSipRegistered(boolean isSipRegistered) {
-		this.isSipRegistered = isSipRegistered;
-	}
-
-	/**
-	 * 获取是否自动登陆
-	 * @return
-	 */
-	public boolean isAutoLogin() {
-		return isAutoLogin;
-	}
-
-	/**
-	 * 设置是否自动登陆
-	 * @param isAutoLogin
-	 */
-	public void setAutoLogin(boolean isAutoLogin) {
-		this.isAutoLogin = isAutoLogin;
-	}
-	
 	/**
 	 * 获取本地联系人
 	 * @return
@@ -245,12 +162,8 @@ public class GlobalConfig implements Serializable{
 	@SuppressWarnings("unchecked")
 	public void saveGlobalCfg(Bundle outState) {
 		outState.putString("sipip", sipIP);
-		outState.putString("callSetting", callSetting);
 		outState.putString("ivPath", ivPath);
 		outState.putString("ivPathBack", ivPathBack);
-		outState.putBoolean("isBackcallAutoAnswer", isCallBackAutoAnswer);
-		outState.putBoolean("isAutoLogin", isAutoLogin);
-		outState.putBoolean("keyBoardSetting", keyBoardSetting);
 		outState.putLong("interval",interval);
 		outState.putSerializable("dialAd",dialAd);
 		outState.putSerializable("appVersion",appVersionBean);
@@ -276,12 +189,8 @@ public class GlobalConfig implements Serializable{
 	@SuppressWarnings("unchecked")
 	public void restoreGlobalCfg(Bundle savedInstanceState) {
 		sipIP = savedInstanceState.getString("sipip");
-		isCallBackAutoAnswer = savedInstanceState.getBoolean("isBackcallAutoAnswer");
-		isAutoLogin = savedInstanceState.getBoolean("isAutoLogin");
-		callSetting = savedInstanceState.getString("callSetting");
 		ivPath = savedInstanceState.getString("ivPath");
 		ivPathBack = savedInstanceState.getString("ivPathBack");
-		keyBoardSetting = savedInstanceState.getBoolean("keyBoardSetting");
 		contactBeans = (ArrayList<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0);
 		interval=savedInstanceState.getLong("interval",interval);
 		dialAd=(DialAd) savedInstanceState.getSerializable("dialAd");

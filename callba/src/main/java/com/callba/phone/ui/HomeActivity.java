@@ -149,7 +149,7 @@ public class HomeActivity extends BaseActivity {
         banner.setViewRes(localImages);
         // 判断是否自动启动
         if (savedInstanceState == null
-                && GlobalConfig.getInstance().isAutoLogin()
+                && (boolean)SPUtils.get(this,Constant.PACKAGE_NAME,Constant.Auto_Login,false)
                 && !LoginController.getInstance().getUserLoginState()) {
             Log.i("MainCallActivity", "auto");
             Logger.i("MainCallActivity", "MainCallActivity  oncreate autoLogin");

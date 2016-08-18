@@ -354,7 +354,7 @@ public class ContactDetailActivity extends BaseActivity {
         Log.i("original", resource.getHeight() * width / resource.getWidth() + "");
         if (resource.getHeight() * width / resource.getWidth() <= image_height) {
             //image.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, image_height));
-            appbar.setLayoutParams(new AppBarLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, image_height));
+            image.setLayoutParams(new CollapsingToolbarLayout.LayoutParams(CollapsingToolbarLayout.LayoutParams.MATCH_PARENT, image_height));
         }
         if (resource.getHeight() * width / resource.getWidth() > image_height && resource.getHeight() * width / resource.getWidth() <= image_max_height) {
             Log.i("height1", resource.getHeight() * width / resource.getWidth() + "");

@@ -35,6 +35,7 @@ import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.SystemNumber;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
@@ -314,10 +315,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         add_contact.setOnClickListener(this);
         send_message.setOnClickListener(this);
         add_to_contact.setOnClickListener(this);
-        if (!GlobalConfig.getInstance().isAutoLogin()) {
-            // 查询余额
-            //queryUserBalance();
-        }
 
         String s = getResources().getConfiguration().locale.getCountry();
         Logger.v("语言环境", s);
@@ -376,7 +373,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
         // 检测键盘音设置是否改变
         if (num1 != null) {
-            if (GlobalConfig.getInstance().getKeyBoardSetting()) {
+            if ((boolean) SPUtils.get(this, Constant.PACKAGE_NAME,Constant.KeyboardSetting,true)) {
                 num1.setImageResource(R.drawable.call_1);
             } else {
                 num1.setImageResource(R.drawable.call_1);
@@ -1191,7 +1188,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (GlobalConfig.getInstance().getKeyBoardSetting())
+        if ((boolean)SPUtils.get(this, Constant.PACKAGE_NAME,Constant.KeyboardSetting,true))
             getMenuInflater().inflate(R.menu.menu_open_ring, menu);
         else getMenuInflater().inflate(R.menu.menu_close_ring, menu);
         return super.onCreateOptionsMenu(menu);
@@ -1201,14 +1198,11 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ring:
-                boolean isKeyboardToneOn = GlobalConfig.getInstance()
-                        .getKeyBoardSetting();
-
-                GlobalConfig.getInstance().setKeyBoardSetting(
-                        !isKeyboardToneOn);
+                boolean isKeyboardToneOn =(boolean)SPUtils.get(this, Constant.PACKAGE_NAME,Constant.KeyboardSetting,true);
+                SPUtils.put(this, Constant.PACKAGE_NAME,Constant.KeyboardSetting,!isKeyboardToneOn);
                 SharedPreferenceUtil.getInstance(this).putBoolean(
                         Constant.KeyboardSetting, !isKeyboardToneOn, true);
-                if (GlobalConfig.getInstance().getKeyBoardSetting()) {
+                if ((boolean)SPUtils.get(this, Constant.PACKAGE_NAME,Constant.KeyboardSetting,true)) {
                     item.setIcon(R.drawable.open_ring);
                     item.setTitle(R.string.close_ring);
                 } else {

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 
+import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
 
 public class KeyboardUtil {
@@ -17,9 +18,9 @@ public class KeyboardUtil {
 	private boolean keyflag;
 
 	public void startDTMF(int number, Context context) {
-		keyflag= GlobalConfig.getInstance().getKeyBoardSetting();
+		keyflag= (boolean)SPUtils.get(context, Constant.PACKAGE_NAME,Constant.KeyboardSetting,true);
 		Logger.i(TAG, keyflag+"");
-		if (!GlobalConfig.getInstance().getKeyBoardSetting()) {
+		if (!keyflag) {
 			return;
 		}
 		@SuppressWarnings("static-access")

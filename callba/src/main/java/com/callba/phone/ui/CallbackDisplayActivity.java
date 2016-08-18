@@ -27,8 +27,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.callba.phone.bean.DialAd;
 import com.callba.phone.bean.UserDao;
+import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.ContactsManager;
+import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SimpleHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -166,7 +168,7 @@ public class CallbackDisplayActivity extends BaseActivity {
                             //回拨成功，开启自动接听
                             AutoAnswerReceiver.answerPhone(CallbackDisplayActivity.this);
                             calllogService.saveBackCallLog(name, number);
-                            if (GlobalConfig.getInstance().getKeyBoardSetting())
+                            if ((boolean)SPUtils.get(CallbackDisplayActivity.this, Constant.PACKAGE_NAME,Constant.KeyboardSetting,true))
                                 playSound();
                         } else {
                             //统计回拨失败数据

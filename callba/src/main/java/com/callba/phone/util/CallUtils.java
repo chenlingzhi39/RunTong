@@ -36,7 +36,7 @@ public class CallUtils {
 	 * @param callname
 	 */
 	public void judgeCallMode(Context context, String callNum, String callname,String id) {
-		callSeting = GlobalConfig.getInstance().getCallSetting();
+		callSeting =(String) SPUtils.get(context,Constant.PACKAGE_NAME,Constant.CALL_SETTING,Constant.CALL_SETTING_HUI_BO);
 		callNum = PhoneUtils.formatAvailPhoneNumber(callNum);
 		
 		callNum = addQuHao(context, callNum);
@@ -76,7 +76,7 @@ public class CallUtils {
 	public void judgeCallMode(Context context, String callNumber, final onCallModeDialogDismissListener callModeDialogDismissListener) {
 		String callUserName = queryNameByPhoneNumber(callNumber);
 		
-		callSeting = GlobalConfig.getInstance().getCallSetting();
+		callSeting = (String) SPUtils.get(context,Constant.PACKAGE_NAME,Constant.CALL_SETTING,Constant.CALL_SETTING_HUI_BO);
 		callNumber = PhoneUtils.formatAvailPhoneNumber(callNumber);
 		
 		callNumber = addQuHao(context, callNumber);

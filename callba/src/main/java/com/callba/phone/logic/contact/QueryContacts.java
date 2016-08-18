@@ -49,7 +49,7 @@ public class QueryContacts {
 			@Override
 			public void run() {
 				asyncQuery.startQuery(0, null, uri, projection, null, null,
-						"sort_key COLLATE LOCALIZED asc"); // 按照sort_key升序查询
+						"_id COLLATE LOCALIZED asc"); // 按照sort_key升序查询
 			}
 		}).start();
 
@@ -95,6 +95,7 @@ public class QueryContacts {
 					cb.setDisplayName(name);
 					else {cb.setDisplayName("");
 					cb.setTypeName("#");
+						cb.setSearchSortKeyBean(PinYinUtil.converterPinYinToSearchBean(""));
 					}
 					if (number.startsWith("+86")) {// 去除多余的中国地区号码标志，对这个程序没有影响。
 						cb.setPhoneNumber(number.substring(3));
@@ -102,7 +103,8 @@ public class QueryContacts {
 						cb.setPhoneNumber(number.replace(" ", "").replace("-",
 								""));
 					}
-
+					if(number==null)
+						cb.setPhoneNumber("");
 					if (name != null && !"".equals(name)) {
 						
 						SearchSortKeyBean searchSortKeyBean = PinYinUtil.converterPinYinToSearchBean(name.trim());

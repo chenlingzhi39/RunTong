@@ -3,10 +3,8 @@ package com.callba.phone.ui;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -16,18 +14,14 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.widget.LinearLayout;
 
 import com.callba.R;
-import com.callba.phone.bean.Contact;
 import com.callba.phone.ui.base.BaseActivity;
-import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
-import com.callba.phone.cfg.GlobalSetting;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.service.MainService;
@@ -36,6 +30,7 @@ import com.callba.phone.util.AppVersionChecker.AppVersionBean;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
+import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.util.ZipUtil;
@@ -60,9 +55,8 @@ public class WelcomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        init();
         mSharedPreferenceUtil = SharedPreferenceUtil.getInstance(this);
-
+        init();
     }
 
     /**
@@ -85,8 +79,7 @@ public class WelcomeActivity extends BaseActivity {
 //				Logger.i(TAG, "初始化PushManager对象（初始化推送服务）" + clientid);
                 // 启动服务
                 //startService(new Intent(WelcomeActivity.this, MainService.class));
-                if (Constant.CALL_SETTING_HUI_BO.equals(GlobalConfig
-                        .getInstance().getCallSetting())) {
+                if (Constant.CALL_SETTING_HUI_BO.equals((String) SPUtils.get(WelcomeActivity.this,Constant.PACKAGE_NAME,Constant.CALL_SETTING,Constant.CALL_SETTING_HUI_BO))) {
                     return;
                 }
             }
@@ -176,8 +169,7 @@ public class WelcomeActivity extends BaseActivity {
             // 获取版本信息
             sendGetVersionTask();
         }
-        // 初始化环境参数
-        GlobalSetting.initEnvirment(this);
+
     }
 
     /**
@@ -186,6 +178,8 @@ public class WelcomeActivity extends BaseActivity {
      * @author zhw
      */
     private void sendGetVersionTask() {
+        currentGetVersionTime+=1;
+        Logger.i("retry_time",System.currentTimeMillis()+"");
         OkHttpUtils.post().url(Interfaces.Version)
                 .addParams("softType", "android")
                 .build().execute(new StringCallback() {
@@ -220,12 +214,12 @@ public class WelcomeActivity extends BaseActivity {
             // 成功获取key
             //check2Upgrade(appVersionBean);
             gotoActivity();
-        } /*else if (currentGetVersionTime <= Constant.GETVERSION_RETRY_TIMES) {
+        } else if (currentGetVersionTime <= Constant.GETVERSION_RETRY_TIMES) {
 
 			// 再次发送获取任务
 			sendGetVersionTask();
 
-		}*/ else {
+		} else {
             // 统计获取版本失败次数
             //MobclickAgent.onEvent(this, "version_timeout");
             String secretKey = UserManager.getSecretKey(this);
@@ -291,7 +285,7 @@ public class WelcomeActivity extends BaseActivity {
             mSharedPreferenceUtil.putBoolean(Constant.ISFRISTSTART, false);
             mSharedPreferenceUtil.putBoolean(Constant.Auto_Login, true); // 默认自动启动
             mSharedPreferenceUtil.commit();
-        } else if (GlobalConfig.getInstance().isAutoLogin()) {
+        } else if ((boolean)SPUtils.get(this,Constant.PACKAGE_NAME,Constant.Auto_Login,false)) {
             String username = mSharedPreferenceUtil
                     .getString(Constant.LOGIN_USERNAME);
             if (TextUtils.isEmpty(username)) {

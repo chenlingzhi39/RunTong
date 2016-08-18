@@ -31,6 +31,7 @@ import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.SmsTools;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -402,7 +403,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                         preferenceUtil.commit();
                         Intent intent = new Intent(RegisterActivity.this, MainTabActivity.class);
                         LoginController.getInstance().setUserLoginState(false);
-                        GlobalConfig.getInstance().setAutoLogin(true);
+                        SPUtils.put(RegisterActivity.this,Constant.PACKAGE_NAME,Constant.Auto_Login,false);
                         intent.putExtra("isLogin", false);
 				/*	new Thread(new Runnable() {
 						@Override
