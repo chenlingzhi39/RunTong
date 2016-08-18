@@ -105,18 +105,12 @@ public class WelcomeActivity extends BaseActivity {
 
     public void init() {
         //insertDummyContactWrapper();
-        SimpleHandler.getInstance().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
                 initEnvironment();
                 // 设置用户的登录状态
                 LoginController.getInstance().setUserLoginState(false);
 
                 // 启动服务
                 asyncInitLoginEnvironment();
-            }
-        },500);
 		/*rootView=(LinearLayout) findViewById(R.id.root);
 		AlphaAnimation alphaAnimation=new AlphaAnimation(0.0f,1.0f);
 		alphaAnimation.setDuration(2000);
@@ -139,23 +133,6 @@ public class WelcomeActivity extends BaseActivity {
 		});
 		rootView.startAnimation(alphaAnimation);*/
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-     /*   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window window = getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
-            );
-            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        }*/
     }
 
 
