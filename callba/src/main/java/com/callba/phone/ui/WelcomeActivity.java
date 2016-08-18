@@ -66,6 +66,7 @@ public class WelcomeActivity extends BaseActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                startService(new Intent(WelcomeActivity.this, MainService.class));
                 startZip();
                 // mPushAgent = PushAgent.getInstance(WelcomeActivity.this);
                 // mPushAgent.onAppStart();
@@ -104,7 +105,9 @@ public class WelcomeActivity extends BaseActivity {
 
     public void init() {
         //insertDummyContactWrapper();
-        startService(new Intent(WelcomeActivity.this, MainService.class));
+        SimpleHandler.getInstance().postDelayed(new Runnable() {
+            @Override
+            public void run() {
 
                 initEnvironment();
                 // 设置用户的登录状态
@@ -112,9 +115,8 @@ public class WelcomeActivity extends BaseActivity {
 
                 // 启动服务
                 asyncInitLoginEnvironment();
-
-
-
+            }
+        },500);
 		/*rootView=(LinearLayout) findViewById(R.id.root);
 		AlphaAnimation alphaAnimation=new AlphaAnimation(0.0f,1.0f);
 		alphaAnimation.setDuration(2000);
@@ -161,7 +163,6 @@ public class WelcomeActivity extends BaseActivity {
         String s = getResources().getConfiguration().locale.getCountry();
         Logger.v("语言环境", s);
         Locale.setDefault(new Locale("zh"));
-        // 查询联系人
         isNetworkAvail = NetworkDetector.detect(WelcomeActivity.this);
         alertNetWork(isNetworkAvail);
         if (isNetworkAvail) {
@@ -182,6 +183,7 @@ public class WelcomeActivity extends BaseActivity {
         Logger.i("retry_time",System.currentTimeMillis()+"");
         OkHttpUtils.post().url(Interfaces.Version)
                 .addParams("softType", "android")
+                .addHeader("Connection","close")
                 .build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
@@ -189,7 +191,6 @@ public class WelcomeActivity extends BaseActivity {
                 AppVersionBean appVersionBean = new AppVersionBean();
                 checkLoginKey(appVersionBean);
             }
-
             @Override
             public void onResponse(String response, int id) {
                 AppVersionBean appVersionBean = AppVersionChecker.parseVersionInfo(WelcomeActivity.this, response);
@@ -217,7 +218,7 @@ public class WelcomeActivity extends BaseActivity {
         } else if (currentGetVersionTime <= Constant.GETVERSION_RETRY_TIMES) {
 
 			// 再次发送获取任务
-			sendGetVersionTask();
+                    sendGetVersionTask();
 
 		} else {
             // 统计获取版本失败次数

@@ -73,29 +73,6 @@ public class MyApplication extends Application {
         options.setAutoLogin(false);
         EaseUI.getInstance().init(this,options);*/
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request();
-
-                        // try the request
-                        Response response = chain.proceed(request);
-
-                        int tryCount = 0;
-                        while (!response.isSuccessful() && tryCount < 3) {
-
-                            Logger.d("intercept", "Request is not successful - " + tryCount);
-
-                            tryCount++;
-
-                            // retry the request
-                            response = chain.proceed(request);
-                        }
-
-                        // otherwise just pass the original response on
-                        return response;
-                    }
-                }).retryOnConnectionFailure(true)
                 .connectTimeout(6000, TimeUnit.MILLISECONDS)
                 .readTimeout(6000, TimeUnit.MILLISECONDS)
                 .build();

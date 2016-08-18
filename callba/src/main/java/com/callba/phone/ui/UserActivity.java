@@ -81,7 +81,9 @@ public class UserActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
+        if(UserManager.getNickname(this).equals(""))
         number.setText(getUsername());
+        else number.setText(UserManager.getNickname(this));
         versionCode.setHint(BuildConfig.VERSION_NAME);
         progressDialog=new ProgressDialog(this);
         progressDialog.setMessage("正在检查更新");
@@ -91,6 +93,9 @@ public class UserActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
+        if(UserManager.getNickname(this).equals(""))
+            number.setText(getUsername());
+        else number.setText(UserManager.getNickname(this));
                 if (!UserManager.getUserAvatar(UserActivity.this).equals(""))
                     Glide.with(UserActivity.this).load(UserManager.getUserAvatar(UserActivity.this)).into(userHead);
                 if (!UserManager.getSignature(UserActivity.this).equals("")) {
