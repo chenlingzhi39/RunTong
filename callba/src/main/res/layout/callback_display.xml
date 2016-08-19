@@ -97,15 +97,9 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="horizontal" >
+                android:orientation="vertical" >
 
-                <TextView
-                    android:id="@+id/countdown"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="25sp"
-                    android:visibility="invisible" />
+
 
                 <TextView
                     android:id="@+id/tv_status"
@@ -114,6 +108,13 @@
                     android:text="@string/zzhuibo"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
+                <TextView
+                    android:id="@+id/countdown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:visibility="invisible" />
             </LinearLayout>
 
             <RelativeLayout

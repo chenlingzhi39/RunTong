@@ -41,7 +41,6 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import okhttp3.Call;
-import okhttp3.Request;
 
 
 public class WelcomeActivity extends BaseActivity {
@@ -234,7 +233,7 @@ public class WelcomeActivity extends BaseActivity {
         Logger.i(TAG, "currentGetVersionTime : " + currentGetVersionTime);
 
         if (!TextUtils.isEmpty(appVersionBean.getSecretKey())) {
-            //UserManager.putSecretKey(WelcomeActivity.this, appVersionBean.getSecretKey());
+            UserManager.putSecretKey(WelcomeActivity.this, appVersionBean.getSecretKey());
             // 成功获取key
             //check2Upgrade(appVersionBean);
             gotoActivity();

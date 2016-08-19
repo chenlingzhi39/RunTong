@@ -40,7 +40,7 @@ public class ContactSerarchWatcher implements TextWatcher {
 		mSearchContactEntities = new ArrayList<ContactEntity>();
 		mSearchContactEntities.addAll(filterListContactList);
 		
-		mContactController = new ContactController();
+
 	}
 
 	@Override
@@ -51,6 +51,7 @@ public class ContactSerarchWatcher implements TextWatcher {
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		List<ContactEntity> contactEntities;
+		mContactController = new ContactController();
 		if(!s.toString().equals(""))
 	     contactEntities = mContactController.searchContact(s.toString(), mSearchContactEntities);
 		else  contactEntities= mSearchContactEntities;

@@ -203,7 +203,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        if (mMenuId != -1)
+        if (mMenuId != -1&&getClass()!= WelcomeActivity.class)
             getMenuInflater().inflate(mMenuId, menu);
         return super.onCreateOptionsMenu(menu);
     }

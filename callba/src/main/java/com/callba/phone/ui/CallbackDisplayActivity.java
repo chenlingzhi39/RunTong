@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -56,6 +57,7 @@ public class CallbackDisplayActivity extends BaseActivity {
     private TextView tv_name;
     private TextView tv_num;
     private TextView tv_status;
+    private TextView count_down;
     private CalllogService calllogService;
     private Button cancel;
     private MediaPlayer mp;
@@ -64,7 +66,25 @@ public class CallbackDisplayActivity extends BaseActivity {
     private DialAd dialAd;
     private ImageView background;
     private CircleImageView avatar;
+    TimeCount time;
+    class TimeCount extends CountDownTimer {
+        RegisterActivity activity;
 
+        public TimeCount(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+
+        }
+
+        @Override
+        public void onFinish() {// 计时完毕
+            finish();
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {// 计时过程
+            count_down.setText(millisUntilFinished / 1000 + "秒后自动关闭");
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //loadADImage();
@@ -75,6 +95,7 @@ public class CallbackDisplayActivity extends BaseActivity {
         cancel = (Button) findViewById(R.id.cancel);
         background = (ImageView) findViewById(R.id.iv_call_bg);
         avatar = (CircleImageView) findViewById(R.id.avatar);
+        count_down=(TextView)findViewById(R.id.countdown);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,12 +238,15 @@ public class CallbackDisplayActivity extends BaseActivity {
              */
             private void delayFinish() {
                 //呼叫失败，延迟关闭
-                SimpleHandler.getInstance().postDelayed(new Runnable() {
+                time=new TimeCount(10000,1000);
+                time.start();
+                count_down.setVisibility(View.VISIBLE);
+             /*   SimpleHandler.getInstance().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         finish();
                     }
-                }, 2000);
+                }, 2000);*/
             }
         };
         final Message msg = mHandler.obtainMessage();
