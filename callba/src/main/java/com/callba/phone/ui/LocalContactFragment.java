@@ -120,7 +120,6 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
                 et_search.addTextChangedListener(new ContactSerarchWatcher(
                         mContactListAdapter, mContactListData, mQuickSearchBar));
                 progressBar.setVisibility(View.GONE);
-                if (GlobalConfig.getInstance().getContactBeans() != null)
                     initContactListView();
             }
         });

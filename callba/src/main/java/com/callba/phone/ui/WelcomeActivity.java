@@ -2,12 +2,14 @@ package com.callba.phone.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.LinearLayout;
 
@@ -38,25 +41,67 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import okhttp3.Call;
-
+import okhttp3.Request;
 
 
 public class WelcomeActivity extends BaseActivity {
     public static final String TAG = "WelcomeActivity";
-    private SharedPreferenceUtil mSharedPreferenceUtil;
-    private Handler mHandler;
     private boolean isNetworkAvail = false; // 当前是否有可用网络
-    private LinearLayout rootView;
     // 记录当前获取key的次数
     private int currentGetVersionTime = 0;
-
+    ProgressDialog progressDialog;
     // private PushAgent mPushAgent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mSharedPreferenceUtil = SharedPreferenceUtil.getInstance(this);
-        init();
+      /*  OkHttpUtils.post().url(Interfaces.Query_Balance)
+                .addParams("loginName",getUsername())
+                .addParams("loginPwd",getPassword())
+                .addParams("softType","android")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onAfter(int id) {
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onBefore(Request request, int id) {
+                progressDialog= ProgressDialog.show(WelcomeActivity.this,"","正在查询余额");
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                if(e instanceof UnknownHostException)toast(R.string.conn_failed);
+                else toast(R.string.network_error);
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                try {
+                    String[] result = response.split("\\|");
+                    Log.i("get_balance", response);
+                    if (result[0].equals("0"))
+                     toast(result[1]);
+                    else toast(result[1]);
+                } catch (Exception e) {
+                    toast(R.string.network_error);
+                }
+            }
+        });*/
+      /*  OkHttpUtils.post().url(Interfaces.Version)
+                .addParams("softType", "android")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+               toast(e.toString());
+            }
+            @Override
+            public void onResponse(String response, int id) {
+                toast(response);
+            }
+        });*/
+       init();
     }
 
     /**
@@ -105,12 +150,13 @@ public class WelcomeActivity extends BaseActivity {
 
     public void init() {
         //insertDummyContactWrapper();
-                initEnvironment();
-                // 设置用户的登录状态
-                LoginController.getInstance().setUserLoginState(false);
+        // 设置用户的登录状态
+        LoginController.getInstance().setUserLoginState(false);
 
-                // 启动服务
-                asyncInitLoginEnvironment();
+        // 启动服务
+        asyncInitLoginEnvironment();
+                initEnvironment();
+
 		/*rootView=(LinearLayout) findViewById(R.id.root);
 		AlphaAnimation alphaAnimation=new AlphaAnimation(0.0f,1.0f);
 		alphaAnimation.setDuration(2000);
@@ -159,8 +205,8 @@ public class WelcomeActivity extends BaseActivity {
         currentGetVersionTime+=1;
         Logger.i("retry_time",System.currentTimeMillis()+"");
         OkHttpUtils.post().url(Interfaces.Version)
+                .tag(this)
                 .addParams("softType", "android")
-                .addHeader("Connection","close")
                 .build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
@@ -188,12 +234,12 @@ public class WelcomeActivity extends BaseActivity {
         Logger.i(TAG, "currentGetVersionTime : " + currentGetVersionTime);
 
         if (!TextUtils.isEmpty(appVersionBean.getSecretKey())) {
-            UserManager.putSecretKey(WelcomeActivity.this, appVersionBean.getSecretKey());
+            //UserManager.putSecretKey(WelcomeActivity.this, appVersionBean.getSecretKey());
             // 成功获取key
             //check2Upgrade(appVersionBean);
             gotoActivity();
         } else if (currentGetVersionTime <= Constant.GETVERSION_RETRY_TIMES) {
-
+            //OkHttpUtils.getInstance().cancelTag(this);
 			// 再次发送获取任务
                     sendGetVersionTask();
 
@@ -208,7 +254,7 @@ public class WelcomeActivity extends BaseActivity {
                 alertUserGetVersionFailed();
             } else {
                 //check2Upgrade(appVersionBean);
-                gotoActivity();
+                        gotoActivity();
             }
         }
     }
@@ -251,34 +297,31 @@ public class WelcomeActivity extends BaseActivity {
      */
     private void gotoActivity() {
         // 判断是不是第一次使用
-        boolean isFirstStart = mSharedPreferenceUtil.getBoolean(
-                Constant.ISFRISTSTART, true);
+        boolean isFirstStart =(boolean)SPUtils.get(this,Constant.PACKAGE_NAME,Constant.ISFRISTSTART,true);
+
 
         if (isFirstStart) {
             // 第一次启动，跳转到新功能介绍页面
             Intent intent = new Intent(WelcomeActivity.this,
                     FunIntroduceActivity.class);
             WelcomeActivity.this.startActivity(intent);
-
-            mSharedPreferenceUtil.putBoolean(Constant.ISFRISTSTART, false);
-            mSharedPreferenceUtil.putBoolean(Constant.Auto_Login, true); // 默认自动启动
-            mSharedPreferenceUtil.commit();
+            SPUtils.put(this,Constant.PACKAGE_NAME,Constant.ISFRISTSTART, false);
+            SPUtils.put(this,Constant.PACKAGE_NAME,Constant.Auto_Login, true);
         } else if ((boolean)SPUtils.get(this,Constant.PACKAGE_NAME,Constant.Auto_Login,false)) {
-            String username = mSharedPreferenceUtil
-                    .getString(Constant.LOGIN_USERNAME);
+            String username = getUsername();
             if (TextUtils.isEmpty(username)) {
                 Intent intent = new Intent(WelcomeActivity.this,
                         GuideActivity.class);
                 WelcomeActivity.this.startActivity(intent);
-
                 finish();
                 return;
             }
             // 自动登陆
             Intent intent = new Intent(WelcomeActivity.this,
                     MainTabActivity.class);
-            intent.putExtra("frompage", "WelcomeActivity");
+            //intent.putExtra("frompage", "WelcomeActivity");
             WelcomeActivity.this.startActivity(intent);
+            //OkHttpUtils.getInstance().cancelTag(this);
         } else {
             // 手动登陆
             Intent intent = new Intent(WelcomeActivity.this,
@@ -411,6 +454,7 @@ public class WelcomeActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_CANCELED && requestCode == 0) {
+
             SimpleHandler.getInstance().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -423,7 +467,6 @@ public class WelcomeActivity extends BaseActivity {
                     }
                 }
             },2000);
-
         }
 
     }

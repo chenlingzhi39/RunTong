@@ -187,7 +187,7 @@ public class MainTabActivity extends TabActivity {
         });
 
         //异常启动，跳转到第一个页签
-        if (savedInstanceState != null) {
+       /* if (savedInstanceState != null) {
             try {
                 String frompage = getIntent().getStringExtra("frompage");
                 if (!TextUtils.isEmpty(frompage)
@@ -196,7 +196,7 @@ public class MainTabActivity extends TabActivity {
                 }
             } catch (Exception e) {
             }
-        }
+        }*/
 
         if (getIntent().getBooleanExtra(Constant.ACCOUNT_CONFLICT, false) && !isConflictDialogShow) {
             showConflictDialog();
