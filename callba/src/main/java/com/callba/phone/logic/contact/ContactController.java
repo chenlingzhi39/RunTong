@@ -92,7 +92,7 @@ public class ContactController {
 					{
 					phoneNumbers+=mAllContactPersonEntities.get(i).getDisplayName()+",";
 					}*/
-					//phoneNumbers+=mAllContactPersonEntities.get(i).getPhoneNumber()+",";
+				phoneNumbers+=mAllContactPersonEntities.get(i).getPhoneNumber()+",";
 					Logger.i("contact_number",mAllContactPersonEntities.get(i).get_id()+" "+mAllContactPersonEntities.get(i).getPhoneNumber());
 					if(i==0)
 					{personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0)));
@@ -108,14 +108,15 @@ public class ContactController {
 					}
 					personEntities.get(personEntities.size()-1).setContactPhones(contactPhones);
 				}
-      /*  Logger.i("phoneNumbers",phoneNumbers);
+        Logger.i("phoneNumbers",phoneNumbers);
         Logger.i("add_url",Interfaces.ADD_FRIENDS+"?loginName="+UserManager.getUsername(contaxt)+"&loginPwd="+UserManager.getPassword(contaxt)+"&phoneNumbers="+phoneNumbers);
+		//FileUtils.writeObjectToFile(StorageUtils.getFilesDirectory(contaxt)+File.separator+"contact.txt",phoneNumbers);
 		OkHttpUtils
 				.post()
 				.url(Interfaces.ADD_FRIENDS)
 				.addParams("loginName", UserManager.getUsername(contaxt))
 				.addParams("loginPwd",  UserManager.getPassword(contaxt))
-				.addParams("phoneNumbers","18651587187")
+				.addParams("phoneNumbers",phoneNumbers)
 				.build().execute(new StringCallback() {
 			@Override
 			public void onError(Call call, Exception e, int id) {
@@ -124,6 +125,7 @@ public class ContactController {
 
 			@Override
 			public void onResponse(String response, int id) {
+				try {
 				Logger.i("add_results",response);
                 String[] result=response.split("\\|");
 					  if(result[0].equals("0")){
@@ -140,6 +142,7 @@ public class ContactController {
 
 							  @Override
 							  public void onResponse(String response, int id) {
+								  try{
 								  Logger.i("get_result",response);
 								  String[] result = response.split("\\|");
 								  if (result[0].equals("0")) {
@@ -158,12 +161,14 @@ public class ContactController {
 									  }
 										  DemoHelper.getInstance().updateContactList(mList);
 										  LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-								  }
+								  }}catch (Exception e){e.printStackTrace();}
 							  }
 						  });
-					  }
+					  }}catch (Exception e){
+					e.printStackTrace();
+				}
 			}
-		});*/
+		});
 
 		/*for(ContactPersonEntity contactPersonEntity : mAllContactPersonEntities) {
 
