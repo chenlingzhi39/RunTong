@@ -26,8 +26,17 @@ public class EaseUser extends EMContact {
 	 */
 	protected String avatar;
 	protected String sign;
+	protected String remark;
 	public EaseUser(String username){
 	    this.username = username;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
 	public String getInitialLetter() {

@@ -74,7 +74,7 @@ public class MyApplication extends Application {
         EaseUI.getInstance().init(this,options);*/
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(6000, TimeUnit.MILLISECONDS)
-                .readTimeout(6000, TimeUnit.MILLISECONDS)
+                .readTimeout(20000, TimeUnit.MILLISECONDS)
                 .writeTimeout(6000,TimeUnit.MILLISECONDS)
                 .build();
         OkHttpUtils.initClient(okHttpClient);

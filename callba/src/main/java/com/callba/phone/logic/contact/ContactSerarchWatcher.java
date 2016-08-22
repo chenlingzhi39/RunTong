@@ -3,10 +3,12 @@ package com.callba.phone.logic.contact;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.BaseAdapter;
 
+import com.callba.phone.MyApplication;
 import com.callba.phone.view.QuickSearchBar;
 
 /**
@@ -54,13 +56,15 @@ public class ContactSerarchWatcher implements TextWatcher {
 		mContactController = new ContactController();
 		if(!s.toString().equals(""))
 	     contactEntities = mContactController.searchContact(s.toString(), mSearchContactEntities);
-		else  contactEntities= mSearchContactEntities;
-		mQuickSearchBar.setListSearchMap(mContactController.getSearchMap());
-		
+		else  {contactEntities= mSearchContactEntities;
+			MyApplication.getInstance().sendBroadcast(new Intent("com.callba.contact"));
+			return;
+		}
 		mFilterListContactEntities.clear();
 		mFilterListContactEntities.addAll(contactEntities);
-		
+
 		mListViewAdapter.notifyDataSetChanged();
+		mQuickSearchBar.setListSearchMap(mContactController.getSearchMap());
 	}
 
 	@Override

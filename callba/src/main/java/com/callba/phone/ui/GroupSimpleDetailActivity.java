@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.callba.R;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.util.EaseUserUtils;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMGroupInfo;
@@ -177,7 +178,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
          if(!group.getMembers().contains(EMClient.getInstance().getCurrentUser()))
              btn_add_group.setEnabled(true);
          tv_name.setText(group.getGroupName());
-         tv_admin.setText(group.getOwner());
+		 EaseUserUtils.setUserNick(group.getOwner(),tv_admin);
          tv_introduction.setText(group.getDescription());
      }
 	public class DialogHelper implements DialogInterface.OnDismissListener {

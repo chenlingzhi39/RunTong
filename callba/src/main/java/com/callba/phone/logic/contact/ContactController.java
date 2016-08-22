@@ -7,19 +7,32 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
+import com.callba.phone.Constant;
+import com.callba.phone.DemoHelper;
 import com.callba.phone.MyApplication;
+import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.ContactMutliNumBean;
+import com.callba.phone.bean.EaseUser;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.ContactsManager;
+import com.callba.phone.manager.UserManager;
+import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.FileUtils;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.StorageUtils;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import okhttp3.Call;
 
 /** 
  * 联系人业务逻辑管理
@@ -35,7 +48,7 @@ public class ContactController {
 	
 	//所有的联系人集合
 	private List<ContactPersonEntity> mAllContactPersonEntities;
-	
+	private List<ContactMutliNumBean> personEntities;
 	//检索的字母、位置索引表
 	private Map<String, Integer> letterSearchMap;
 	private UserDao userDao;
@@ -52,19 +65,17 @@ public class ContactController {
 	 * @return
 	 */
 	public Map<String, Integer> getSearchMap() {
-		if(letterSearchMap == null) {
-			sortContactByLetter(mAllContactPersonEntities);
-		}
-		
+
+			sortContactByLetter(personEntities);
+
 		return letterSearchMap;
 	}
-	
 	/**
 	 * 获取用于ListView显示的数据(默认数据为当前联系人)
 	 * @return
 	 */
 	public List<ContactEntity> getFilterListContactEntities() {
-		return sortContactByLetter(mAllContactPersonEntities);
+		return sortContactByLetter(personEntities);
 	}
 	
 	/**
@@ -72,7 +83,7 @@ public class ContactController {
 	 * @return
 	 */
 	public synchronized List<ContactMutliNumBean> getFilterListContactEntitiesNoDuplicate() {
-		final List<ContactMutliNumBean> personEntities = new ArrayList<ContactMutliNumBean>();
+		personEntities = new ArrayList<ContactMutliNumBean>();
 		String phoneNumbers="";
 				List<String> contactPhones=new ArrayList<>();
 				Logger.i("contact_size",mAllContactPersonEntities.size()+"");
@@ -81,6 +92,7 @@ public class ContactController {
 					{
 					phoneNumbers+=mAllContactPersonEntities.get(i).getDisplayName()+",";
 					}*/
+					//phoneNumbers+=mAllContactPersonEntities.get(i).getPhoneNumber()+",";
 					Logger.i("contact_number",mAllContactPersonEntities.get(i).get_id()+" "+mAllContactPersonEntities.get(i).getPhoneNumber());
 					if(i==0)
 					{personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0)));
@@ -96,14 +108,14 @@ public class ContactController {
 					}
 					personEntities.get(personEntities.size()-1).setContactPhones(contactPhones);
 				}
-
-		Logger.i("phoneNumbers",phoneNumbers);
-		/*OkHttpUtils
+      /*  Logger.i("phoneNumbers",phoneNumbers);
+        Logger.i("add_url",Interfaces.ADD_FRIENDS+"?loginName="+UserManager.getUsername(contaxt)+"&loginPwd="+UserManager.getPassword(contaxt)+"&phoneNumbers="+phoneNumbers);
+		OkHttpUtils
 				.post()
 				.url(Interfaces.ADD_FRIENDS)
-				.addParams("loginName", GlobalConfig.getInstance().getUsername())
-				.addParams("loginPwd",  GlobalConfig.getInstance().getPassword())
-				.addParams("phoneNumbers",phoneNumbers)
+				.addParams("loginName", UserManager.getUsername(contaxt))
+				.addParams("loginPwd",  UserManager.getPassword(contaxt))
+				.addParams("phoneNumbers","18651587187")
 				.build().execute(new StringCallback() {
 			@Override
 			public void onError(Call call, Exception e, int id) {
@@ -118,8 +130,8 @@ public class ContactController {
 						  OkHttpUtils
 								  .post()
 								  .url(Interfaces.GET_FRIENDS)
-								  .addParams("loginName", GlobalConfig.getInstance().getUsername())
-								  .addParams("loginPwd",  GlobalConfig.getInstance().getPassword())
+								  .addParams("loginName", UserManager.getUsername(contaxt))
+								  .addParams("loginPwd",  UserManager.getPassword(contaxt))
 								  .build().execute(new StringCallback() {
 							  @Override
 							  public void onError(Call call, Exception e, int id) {

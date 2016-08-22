@@ -10,7 +10,7 @@ public interface Interfaces {
 	 */
 	String BASIC_URL = "http://inter.boboit.cn/inter/basic";
 
-	
+
 	/**
 	 * 获取版本信息
 	 */
@@ -191,6 +191,10 @@ public interface Interfaces {
 	 * 赠送优惠券
 	 */
 	String GIVE_COUPON="http://inter.boboit.cn/inter/givecoupontofriend/givecoupontofriend.jsp";
+	/**
+	 * 添加备注
+	 */
+	String UPDATE_REMARK="http://inter.boboit.cn/inter/friend/updateremark.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

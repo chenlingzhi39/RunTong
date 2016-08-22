@@ -51,6 +51,8 @@ public class DemoDBManager {
                     values.put(UserDao.COLUMN_NAME_AVATAR, user.getAvatar());
                 if(user.getSign()!=null)
                     values.put(UserDao.COLUMN_NAME_SIGN,user.getSign());
+                if(user.getRemark()!=null)
+                    values.put(UserDao.COLUMN_NAME_REMARK,user.getRemark());
                 db.replace(UserDao.TABLE_NAME, null, values);
             }
         }
@@ -71,10 +73,12 @@ public class DemoDBManager {
                 String nick = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_NICK));
                 String avatar = cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_AVATAR));
                 String sign=cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_SIGN));
+                String remark=cursor.getString(cursor.getColumnIndex(UserDao.COLUMN_NAME_REMARK));
                 EaseUser user = new EaseUser(username);
                 user.setNick(nick);
                 user.setAvatar(avatar);
                 user.setSign(sign);
+                user.setRemark(remark);
                 if (username.equals(Constant.NEW_FRIENDS_USERNAME) || username.equals(Constant.GROUP_USERNAME)
                         || username.equals(Constant.CHAT_ROOM)|| username.equals(Constant.CHAT_ROBOT)) {
                         user.setInitialLetter("");

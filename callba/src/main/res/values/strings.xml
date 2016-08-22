@@ -126,7 +126,7 @@
 	<string name="setup_success">设置成功</string>
     <string name="Logoff_notification">下线通知</string>
     <string name="connect_conflict">同一帐号已在其他设备登录</string>
-	<string name="result_data_error">数据异常！</string>
+	<string name="result_data_error">数据异常,请重新登录</string>
 	<string name="login_timeout">登录超时！</string>
 	<string name="login_exception">登录异常！</string>
 	

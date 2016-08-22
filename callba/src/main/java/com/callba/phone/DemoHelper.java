@@ -1290,19 +1290,19 @@ public class DemoHelper {
                        notifyContactsSyncListener(false);
                        return;
                    }*/
-                   Map<String, EaseUser> userlist = new HashMap<String, EaseUser>();
+//                   Map<String, EaseUser> userlist = new HashMap<String, EaseUser>();
                /*    for (String username : usernames) {
                        EaseUser user = new EaseUser(username);
                        EaseCommonUtils.setUserInitialLetter(user);
                        userlist.put(username, user);
                    }*/
                    // 存入内存
-                   getContactList().clear();
-                   getContactList().putAll(userlist);
-                    // 存入db
-                   UserDao dao = new UserDao(appContext);
-                   List<EaseUser> users = new ArrayList<EaseUser>(userlist.values());
-                   dao.saveContactList(users);
+//                   getContactList().clear();
+//                   getContactList().putAll(userlist);
+//                    // 存入db
+//                   UserDao dao = new UserDao(appContext);
+//                   List<EaseUser> users = new ArrayList<EaseUser>(userlist.values());
+//                   dao.saveContactList(users);
 
                    demoModel.setContactSynced(true);
                    EMLog.d(TAG, "set contact syn status to true");
