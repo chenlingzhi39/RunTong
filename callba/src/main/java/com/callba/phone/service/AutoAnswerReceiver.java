@@ -36,7 +36,7 @@ public class AutoAnswerReceiver {
 				case TelephonyManager.CALL_STATE_RINGING:
 					try {
 						ActivityUtil.finishCallBackDisplayPages();
-						if (!(boolean)SPUtils.get(context, Constant.PACKAGE_NAME,Constant.BackCall_AutoAnswer,true)) {
+						if (!(boolean)SPUtils.get(context, Constant.SETTINGS,Constant.BackCall_AutoAnswer,true)) {
 							//不自动接听来电
 							return;
 						}

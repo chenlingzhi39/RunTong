@@ -8,7 +8,7 @@ import android.os.Environment;
  */
 public class Constant {
 	public static final String PACKAGE_NAME = "callba";
-	
+	public static final String SETTINGS="settings";
 	
 	public static final String SENT_SMS_ACTION = "sent_sms_action";
 	public static final String DELIVERED_SMS_ACTION = "delivered_sms_action";
@@ -32,7 +32,10 @@ public class Constant {
 	 * 回拨自动接听
 	 */
 	public static final String BackCall_AutoAnswer = "BackCall_AutoAnswer";
-	
+	/**
+	 * 回拨铃声
+	 */
+	public static final String Callback_Ring="Callback_Ring";
 	/**
 	 * 键盘音设置
 	 */

@@ -478,7 +478,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         orderInfo += "&total_fee=" + "\"" + price + "\"";
 
         // 服务器异步通知页面路径
-        orderInfo += "&notify_url=" + "\"" + "http://notify.msp.hk/notify.htm" + "\"";
+        orderInfo += "&notify_url=" + "\"" + "http://inter.boboit.cn/inter/pay/alipay_notify_url.jsp?loginName="+getUsername()+"&loginPwd="+getPassword() + "\"";
 
         // 服务接口名称， 固定值
         orderInfo += "&service=\"mobile.securitypay.pay\"";
@@ -494,7 +494,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         // 取值范围：1m～15d。
         // m-分钟，h-小时，d-天，1c-当天（无论交易何时创建，都在0点关闭）。
         // 该参数数值不接受小数点，如1.5h，可转换为90m。
-        orderInfo += "&it_b_pay=\"30m\"";
+        orderInfo += "&it_b_pay=\"3d\"";
 
         // extern_token为经过快登授权获取到的alipay_open_id,带上此参数用户将使用授权的账户进行支付
         // orderInfo += "&extern_token=" + "\"" + extern_token + "\"";

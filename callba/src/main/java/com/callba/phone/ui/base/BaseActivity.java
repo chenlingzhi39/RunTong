@@ -1,6 +1,7 @@
 package com.callba.phone.ui.base;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -29,8 +30,11 @@ import com.callba.R;
 import com.callba.phone.MyApplication;
 import com.callba.phone.SystemBarTintManager;
 import com.callba.phone.bean.ApiService;
+import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.ui.ContactDetailActivity;
 import com.callba.phone.ui.HomeActivity;
+import com.callba.phone.ui.LoginActivity;
 import com.callba.phone.ui.MainCallActivity;
 import com.callba.phone.ui.MainTabActivity;
 import com.callba.phone.ui.MessageActivity;
@@ -88,11 +92,12 @@ public class BaseActivity extends AppCompatActivity {
     public Subscription subscription;
 
     public TelephonyManager telephonyManager;
+
     @SuppressLint("InlinedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        telephonyManager=(TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
+        telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
         if (getClass().isAnnotationPresent(ActivityFragmentInject.class)) {
             ActivityFragmentInject annotation = getClass()
                     .getAnnotation(ActivityFragmentInject.class);
@@ -100,15 +105,16 @@ public class BaseActivity extends AppCompatActivity {
             navigationId = annotation.navigationId();
             mMenuId = annotation.menuId();
             mToolbarTitle = annotation.toolbarTitle();
-        } else if(getClass()!= WelcomeActivity.class){
+        } else if (getClass() != WelcomeActivity.class) {
             throw new RuntimeException(
                     "Class must add annotations of ActivityFragmentInitParams.class");
         }
-        if(getClass()!= WelcomeActivity.class)
-        {setContentView(mContentViewId);
-        initToolbar();
-        if (mToolbarTitle != -1)
-            setToolbarTitle(mToolbarTitle);}
+        if (getClass() != WelcomeActivity.class) {
+            setContentView(mContentViewId);
+            initToolbar();
+            if (mToolbarTitle != -1)
+                setToolbarTitle(mToolbarTitle);
+        }
 
         MyApplication.activities.add(this);
 
@@ -135,11 +141,11 @@ public class BaseActivity extends AppCompatActivity {
 			}
 		}*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (this.getClass() != UserActivity.class&&this.getClass()!= ContactDetailActivity.class) {
+            if (this.getClass() != UserActivity.class && this.getClass() != ContactDetailActivity.class) {
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
         }
-        if ((Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP || Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1)&&!Build.MANUFACTURER.equals("Xiaomi")&&!Build.MANUFACTURER.equals("Meizu")) {
+        if ((Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP || Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1) && !Build.MANUFACTURER.equals("Xiaomi") && !Build.MANUFACTURER.equals("Meizu")) {
             if (this.getClass() == MainCallActivity.class ||
                     this.getClass() == ContactActivity.class ||
                     this.getClass() == HomeActivity.class ||
@@ -150,7 +156,7 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (this.getClass() != UserActivity.class&&this.getClass()!= ContactDetailActivity.class) {
+            if (this.getClass() != UserActivity.class && this.getClass() != ContactDetailActivity.class) {
                 if (Build.MANUFACTURER.equals("Xiaomi"))
                     ActivityUtil.MIUISetStatusBarLightMode(getWindow(), true);
                 if (Build.MANUFACTURER.equals("Meizu"))
@@ -165,7 +171,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(subscription!=null)subscription.unsubscribe();
+        if (subscription != null) subscription.unsubscribe();
         MyApplication.activities.remove(this);
 
         if (MyApplication.activities.size() < 1) {
@@ -203,7 +209,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        if (mMenuId != -1&&getClass()!= WelcomeActivity.class)
+        if (mMenuId != -1 && getClass() != WelcomeActivity.class)
             getMenuInflater().inflate(mMenuId, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -402,6 +408,7 @@ public class BaseActivity extends AppCompatActivity {
 										uri);
 								startActivity(intent);*/
                                 if (!UpdateService.is_downloading) {
+                                    toast("开始下载更新");
                                     Intent updateIntent = new Intent(
                                             getApplicationContext(),
                                             UpdateService.class);
@@ -418,20 +425,12 @@ public class BaseActivity extends AppCompatActivity {
                                 e.printStackTrace();
 
 							/*	CalldaToast calldaToast = new CalldaToast();
-								calldaToast.showToast(getApplicationContext(),
+                                calldaToast.showToast(getApplicationContext(),
 										R.string.upgrade_openfailed);*/
                                 toast(getString(R.string.upgrade_openfailed));
                             }
                         }
                     });
-            builder.setNegativeButton(R.string.exit,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    });
-
             AlertDialog alertDialog = builder.create();
             alertDialog.setCanceledOnTouchOutside(false);
             alertDialog.setCancelable(false);
@@ -457,6 +456,7 @@ public class BaseActivity extends AppCompatActivity {
 											Intent.ACTION_VIEW, uri);
 									startActivity(intent);*/
                                     if (!UpdateService.is_downloading) {
+                                        toast("开始下载更新");
                                         Intent updateIntent = new Intent(
                                                 getApplicationContext(),
                                                 UpdateService.class);

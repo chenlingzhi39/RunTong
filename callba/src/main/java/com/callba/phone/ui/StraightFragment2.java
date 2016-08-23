@@ -855,7 +855,7 @@ public class StraightFragment2 extends BaseFragment {
         orderInfo += "&total_fee=" + "\"" + price + "\"";
 
         // 服务器异步通知页面路径
-        orderInfo += "&notify_url=" + "\"" + "http://inter.boboit.cn/inter/pay/alipay_notify_url.jsp" + "\"";
+        orderInfo += "&notify_url=" + "\"" + "http://inter.boboit.cn/inter/pay/alipay_notify_url.jsp?loginName="+getUsername()+"&loginPwd="+getPassword() + "\"";
 
         // 服务接口名称， 固定值
         orderInfo += "&service=\"mobile.securitypay.pay\"";

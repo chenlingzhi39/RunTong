@@ -48,6 +48,7 @@
     <string name="delete">删除</string>
     <string name="game">我的游戏</string>
     <string name="sign_in">我的签到</string>
+    <string name="sign_in_settings">签到设置</string>
     <string name="refresh">刷新</string>
     <string name="share">分享</string>
     <string name="message">消息</string>
@@ -105,6 +106,7 @@
     <string name="help">帮助中心</string>
     <string name="logout">退出登录</string>
     <string name="update">版本更新</string>
+    <string name="callback_settings">回拨设置</string>
     <string name="add">添加</string>
     <string name="register">注册</string>
     <string name="app_name">Call吧</string>

@@ -368,7 +368,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     protected void onResume() {
         // 查询通话记录
         calllogService.setQueryLocalCalllogCount(50);
-        calllogService.startQueryCallLog();
+        calllogService.startQueryCallLog(true);
         // 刷新余额
 
         // 检测键盘音设置是否改变
@@ -1093,7 +1093,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         @Override
         public void onDeleteCompleted() {
             calllogService.setQueryLocalCalllogCount(50);
-            calllogService.startQueryCallLog();
+            calllogService.startQueryCallLog(true);
         }
     }
 
@@ -1106,7 +1106,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         @Override
         public void onReceive(Context context, Intent intent) {
             calllogService.setQueryLocalCalllogCount(50);
-            calllogService.startQueryCallLog();
+            calllogService.startQueryCallLog(true);
         }
     }
 

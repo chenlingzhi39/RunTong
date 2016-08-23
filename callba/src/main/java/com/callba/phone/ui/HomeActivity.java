@@ -18,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.callba.R;
+import com.callba.phone.MyApplication;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Advertisement;
@@ -53,6 +54,8 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import de.greenrobot.dao.Mark;
+import de.greenrobot.dao.MarkDao;
 import okhttp3.Call;
 import okhttp3.Request;
 
@@ -100,11 +103,12 @@ public class HomeActivity extends BaseActivity {
     private Gson gson;
     private String[] result;
     List<SystemNumber> list;
-
+    private MarkDao markDao;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
+        markDao = MyApplication.getInstance().getDaoSession().getMarkDao();
         gson = new Gson();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");//获取当前时间
         date = formatter.format(new Date(System.currentTimeMillis()));
@@ -181,14 +185,16 @@ public class HomeActivity extends BaseActivity {
         //userDao1.getSystemPhoneNumber(getUsername(), getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
         getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
         userDao2.getAd(1, getUsername(), getPassword());
-        if (!mPreferenceUtil.getString(getUsername()).equals(date) && (boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", false)) {
+        if((boolean)SPUtils.get(HomeActivity.this, "settings", "sign_key", false))
+            signIn();
+     /*   if (!mPreferenceUtil.getString(getUsername()).equals(date) && (boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", false)) {
             String year = Calendar.getInstance().get(Calendar.YEAR) + "";
             String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
             if (month.length() == 1)
                 month = "0" + month;
             //userDao.getMarks(getUsername(), getPassword(), year + month);
             getMarks(year+month);
-        }
+        }*/
         if (GlobalConfig.getInstance().getAppVersionBean() != null && (boolean) SPUtils.get(this, "settings", "update_key", true)) {
             check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
         }
@@ -385,15 +391,16 @@ public class HomeActivity extends BaseActivity {
                     if (resultInfo[0].equals("0")) { //处理登录成功返回信息
                         LoginController.parseLoginSuccessResult(HomeActivity.this, username, password, resultInfo);
                         LoginController.getInstance().setUserLoginState(true);
-                        if (!mPreferenceUtil.getString(getUsername()).equals(date) && (boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", false)) {
+                       /* if (!mPreferenceUtil.getString(getUsername()).equals(date) && (boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", false)) {
                             String year = Calendar.getInstance().get(Calendar.YEAR) + "";
                             String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
                             if (month.length() == 1)
                                 month = "0" + month;
                             //userDao.getMarks(getUsername(), getPassword(), year + month);
                             getMarks(year+month);
-                        }
-                        //userDao1.getSystemPhoneNumber(getUsername(), getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+                        }*/
+                        if((boolean)SPUtils.get(HomeActivity.this, "settings", "sign_key", false))
+                            signIn();
                         getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
                         userDao2.getAd(1, getUsername(), getPassword());
                         if (GlobalConfig.getInstance().getAppVersionBean() != null && (boolean) SPUtils.get(HomeActivity.this, "settings", "update_key", true)) {
@@ -538,5 +545,42 @@ public class HomeActivity extends BaseActivity {
                 }
             }
         });
+    }
+    public void signIn(){
+        OkHttpUtils.post().url(Interfaces.Sign)
+                .addParams("loginName",getUsername())
+                .addParams("loginPwd",getPassword())
+                .addParams("softType","android")
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        try {
+                            result =response.split("\\|");
+                            Log.i("get_sign", response);
+                            if (result[0].equals("0"))
+                            {toast(result[1]);
+                                Mark mark = new Mark();
+                                mark.setUsername(getUsername());
+                                mark.setMonth(Calendar.getInstance().get(Calendar.MONTH) + 1);
+                                try {
+                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+                                    mark.setDate(formatter.parse(date));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                markDao.insert(mark);
+                                UserManager.putGold(HomeActivity.this,UserManager.getGold(HomeActivity.this) + 3);
+                            }
+                        } catch (Exception e) {
+                           e.printStackTrace();
+                        }
+                    }
+                });
     }
 }

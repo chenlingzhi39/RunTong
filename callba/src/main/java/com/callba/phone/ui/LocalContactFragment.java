@@ -76,6 +76,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
     private ContactBroadcastReceiver broadcastReceiver;
     private Gson gson;
     private boolean first=true;
+    private ContactController contactController;
     public static LocalContactFragment newInstance() {
         LocalContactFragment localContactFragment = new LocalContactFragment();
         return localContactFragment;
@@ -84,7 +85,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
-        final ContactController contactController = new ContactController();
+        contactController = new ContactController();
         gson = new Gson();
         subscription = rx.Observable.create(new rx.Observable.OnSubscribe<String>() {
             @Override
@@ -118,7 +119,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
                 mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
 
                 et_search.addTextChangedListener(new ContactSerarchWatcher(
-                        mContactListAdapter, mContactListData, mQuickSearchBar));
+                        mContactListAdapter, mContactListData, mQuickSearchBar,contactController));
                 progressBar.setVisibility(View.GONE);
                     initContactListView();
             }
@@ -185,8 +186,8 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
     }
 
     private void initContactListView() {
-        final ContactController contactController = new ContactController();
         gson = new Gson();
+        contactController = new ContactController();
         subscription = rx.Observable.create(new rx.Observable.OnSubscribe<List<ContactMutliNumBean>>() {
             @Override
             public void call(Subscriber<? super List<ContactMutliNumBean>> subscriber) {
@@ -214,7 +215,7 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
                 mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
 
                 et_search.addTextChangedListener(new ContactSerarchWatcher(
-                        mContactListAdapter, mContactListData, mQuickSearchBar));
+                        mContactListAdapter, mContactListData, mQuickSearchBar,contactController));
                 if(!et_search.getText().toString().equals(""))
                     et_search.setText(et_search.getText().toString());
                 progressBar.setVisibility(View.GONE);

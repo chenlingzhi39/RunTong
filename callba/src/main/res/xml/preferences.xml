@@ -17,11 +17,11 @@
             android:title="@string/shake"
             />
     </com.jenzz.materialpreference.PreferenceCategory>
-    <com.jenzz.materialpreference.PreferenceCategory android:title="@string/sign_in">
+    <com.jenzz.materialpreference.PreferenceCategory android:title="@string/sign_in_settings">
         <com.jenzz.materialpreference.SwitchPreference
             android:key="sign_key"
             android:defaultValue="false"
-            android:title="登录自动跳转签到"
+            android:title="登录自动签到"
             />
     </com.jenzz.materialpreference.PreferenceCategory>
     <com.jenzz.materialpreference.PreferenceCategory android:title="@string/update">
@@ -29,6 +29,19 @@
             android:key="update_key"
             android:defaultValue="true"
             android:title="登录自动提醒"
+            />
+    </com.jenzz.materialpreference.PreferenceCategory>
+    <com.jenzz.materialpreference.PreferenceCategory android:title="@string/callback_settings">
+        <com.jenzz.materialpreference.SwitchPreference
+            android:key="BackCall_AutoAnswer"
+            android:defaultValue="true"
+            android:title="自动接听"
+            android:summary="部分机型无效"
+            />
+        <com.jenzz.materialpreference.SwitchPreference
+            android:key="Callback_Ring"
+            android:defaultValue="true"
+            android:title="等待接听时播放铃声"
             />
     </com.jenzz.materialpreference.PreferenceCategory>
 </PreferenceScreen>

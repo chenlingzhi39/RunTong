@@ -130,7 +130,7 @@ public class SelectContactActivity extends BaseActivity implements View.OnClickL
         mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
 
         et_search.addTextChangedListener(new ContactSerarchWatcher(
-                mContactListAdapter, mContactListData, mQuickSearchBar));
+                mContactListAdapter, mContactListData, mQuickSearchBar,contactController));
     }
 
     /**

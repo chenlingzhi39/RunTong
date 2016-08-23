@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.callba"
-    android:versionCode="118"
-    android:versionName="1.1.8">
+    android:versionCode="119"
+    android:versionName="1.1.9">
 
     <uses-sdk android:minSdkVersion="8" />
 
@@ -257,6 +257,10 @@
             android:name="com.callba.phone.widget.chatrow.EaseShowBigImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide" />
+        <activity android:name=".phone.widget.chatrow.EaseShowVideoActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/horizontal_slide"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity
             android:name=".phone.ui.HelpActivity"
             android:launchMode="singleTop"

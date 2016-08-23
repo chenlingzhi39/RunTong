@@ -286,7 +286,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     @Override
     public void success(String msg) {
         toast(msg);
-        SharedPreferenceUtil.getInstance(this).putString(getUsername(), date, true);
+        //SharedPreferenceUtil.getInstance(this).putString(getUsername(), date, true);
            /* calendar.removeAllMarks();
            list.add(df.format(today));
            calendar.addMarks(list, 0);*/

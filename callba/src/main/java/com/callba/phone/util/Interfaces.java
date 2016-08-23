@@ -5,12 +5,9 @@ package com.callba.phone.util;
  * @author Zhang
  */
 public interface Interfaces {
-	/**
-	 * 根路径"http://inter.runtong77.com/inter/basic"
-	 */
 	String BASIC_URL = "http://inter.boboit.cn/inter/basic";
 
-
+    String URL="http://inter.boboit.cn/inter";
 	/**
 	 * 获取版本信息
 	 */
@@ -50,47 +47,47 @@ public interface Interfaces {
 	/**
 	 * 查询用户套餐
 	 */
-	String QUERY_MEAL = "http://inter.boboit.cn/inter/suite/user_suites.jsp";
+	String QUERY_MEAL =URL+ "/suite/user_suites.jsp";
 	/**
 	 * 查询用户通话记录
 	 */
-	String QUERY_CALLLOG = "http://inter.boboit.cn/inter/callrecord/callrecord.jsp";
+	String QUERY_CALLLOG = URL+"/callrecord/callrecord.jsp";
 	/**
 	 * 回拨
 	 */
-	String DIAL_CALLBACK = "http://inter.boboit.cn/inter/call/callbacking.jsp";
+	String DIAL_CALLBACK = URL+ "/call/callbacking.jsp";
 	/**
 	 * 闰通卡支付
 	 */
-	String CALLDA_PAY = "http://inter.boboit.cn/inter/pay/pay_card.jsp";
+	String CALLDA_PAY = URL+ "/pay/pay_card.jsp";
 	/**
 	 * 获取广告1
 	 */
-	String GET_ADVERTICEMENT1 ="http://inter.boboit.cn/inter/ad/ad1.jsp";
+	String GET_ADVERTICEMENT1 =URL+ "/ad/ad1.jsp";
 	/**
 	 * 获取广告2
 	 */
-	String GET_ADVERTICEMENT2 ="http://inter.boboit.cn/inter/ad/ad2.jsp";
+	String GET_ADVERTICEMENT2 =URL+ "/ad/ad2.jsp";
 	/**
 	 * 获取广告3
 	 */
-	String GET_ADVERTICEMENT3 ="http://inter.boboit.cn/inter/ad/ad3.jsp";
+	String GET_ADVERTICEMENT3 =URL+ "/ad/ad3.jsp";
 	/**
 	 * 获取广告4
 	 */
-	String GET_ADVERTICEMENT4 ="http://inter.boboit.cn/inter/ad/ad4.jsp";
+	String GET_ADVERTICEMENT4 =URL+ "/ad/ad4.jsp";
 	/**
 	 * 附近的人
 	 */
-	String GET_NEARBY="http://inter.boboit.cn/inter/nearby/nearby.jsp";
+	String GET_NEARBY=URL+ "/nearby/nearby.jsp";
 	/**
 	 * 保存位置
 	 */
-	String SAVE_LOCATION="http://inter.boboit.cn/inter/savelocation/savelocation.jsp";
+	String SAVE_LOCATION=URL+ "/savelocation/savelocation.jsp";
 	/**
 	 * 获取签到日期
 	 */
-	String GET_MARKS="http://inter.boboit.cn/inter/getmarks/getmarks.jsp";
+	String GET_MARKS=URL+ "/getmarks/getmarks.jsp";
 	/**
 	 * 上传头像
 	 */
@@ -102,27 +99,27 @@ public interface Interfaces {
 	/**
 	 * 获取动态
 	 */
-	String GET_MOODS="http://inter.boboit.cn/inter/circle/getmood.jsp";
+	String GET_MOODS=URL+ "/circle/getmood.jsp";
 	/**
 	 * 发心情
 	 */
-    String SEND_MOODS="http://inter.boboit.cn/inter/circle/sendmood.jsp";
+    String SEND_MOODS=URL+ "/circle/sendmood.jsp";
 	/**
 	 * 获取Call吧号码
 	 */
-	String GET_SYSTEM_PHONE_NUMBER="http://inter.boboit.cn/inter/basic/systemphonebook.jsp";
+	String GET_SYSTEM_PHONE_NUMBER=URL+ "/basic/systemphonebook.jsp";
 	/**
 	 * 下订单
 	 */
-	String SET_ORDER="http://inter.boboit.cn/inter/pay/pay_online_order.jsp";
+	String SET_ORDER=URL+ "/pay/pay_online_order.jsp";
 	/**
 	 * 支付完成
 	 */
-	String PAY_SUCCESS="http://inter.boboit.cn/inter/pay/app_notify_url.jsp";
+	String PAY_SUCCESS=URL+ "/pay/app_notify_url.jsp";
 	/**
 	 * 帮助中心
 	 */
-	String HELP_CENTER = "http://inter.boboit.cn/inter/help/help_android.html";
+	String HELP_CENTER = URL+ "/help/help_android.html";
 	/**
 	 * 添加好友
 	 */
@@ -130,71 +127,71 @@ public interface Interfaces {
 	/**
 	 * 获取好友列表
 	 */
-	String GET_FRIENDS="http://inter.boboit.cn/inter/friend/friendlist.jsp";
+	String GET_FRIENDS=URL+ "/friend/friendlist.jsp";
 	/**
 	 * 删除好友
 	 */
-	String DELETE_FRIENDS="http://inter.boboit.cn/inter/friend/deletefriend.jsp";
+	String DELETE_FRIENDS=URL+ "/friend/deletefriend.jsp";
 	/**
 	 * 添加多个好友
 	 */
-	String ADD_FRIENDS="http://inter.boboit.cn/inter/friend/addfriends.jsp";
+	String ADD_FRIENDS=URL+ "/friend/addfriends.jsp";
 	/**
 	 * 订单
 	 */
-	String ORDER="http://inter.boboit.cn/inter/myorder/myorder.jsp";
+	String ORDER=URL+ "/myorder/myorder.jsp";
 	/**
 	 * 团队
 	 */
-	String TEAM="http://inter.boboit.cn/inter/myteam/myteam.jsp";
+	String TEAM=URL+ "/myteam/myteam.jsp";
 	/**
 	 * A类客户
 	 */
-	String A_TYPE="http://inter.boboit.cn/inter/mypotentialcustomer/mypotentialcustomer.jsp";
+	String A_TYPE=URL+ "/mypotentialcustomer/mypotentialcustomer.jsp";
 	/**
 	 * 累计佣金明细
 	 */
-	String PROFIT="http://inter.boboit.cn/inter/myprofit/myprofit.jsp";
+	String PROFIT=URL+ "/myprofit/myprofit.jsp";
 	/**
 	 * 提现记录
 	 */
-	String TXRECORD="http://inter.boboit.cn/inter/mytxrecord/mytxrecord.jsp";
+	String TXRECORD=URL+ "/mytxrecord/mytxrecord.jsp";
 	/**
 	 * 获取二维码
 	 */
-	String IMAGE_QR="http://inter.boboit.cn/inter/myqr/myqr.jsp";
+	String IMAGE_QR=URL+ "/myqr/myqr.jsp";
 	/**
 	 * 提现
 	 */
-	String TX="http://inter.boboit.cn/inter/tx/tx.jsp";
+	String TX=URL+ "/tx/tx.jsp";
 	/**
 	 * 流量卡充值
 	 */
-	String FLOW_CARD="http://inter.boboit.cn/inter/pay/pay_card_flow.jsp";
+	String FLOW_CARD=URL+ "/pay/pay_card_flow.jsp";
 	/**
 	 * 流量包订单
 	 */
-	String FLOW_ORDER="http://inter.boboit.cn/inter/pay/pay_flow_online_order.jsp";
+	String FLOW_ORDER=URL+ "/pay/pay_flow_online_order.jsp";
 	/**
 	 * 金币兑换
 	 */
-	String EXCHANGE_BALANCE="http://inter.boboit.cn/inter/exchangebalance/exchangebalance.jsp";
+	String EXCHANGE_BALANCE=URL+ "/exchangebalance/exchangebalance.jsp";
 	/**
 	 * 优惠券
 	 */
-	String COUPON="http://inter.boboit.cn/inter/mycoupon/mycoupon.jsp";
+	String COUPON=URL+ "/mycoupon/mycoupon.jsp";
 	/**
 	 *流量包
 	 */
-	String FLOW_ITEM="http://inter.boboit.cn/inter//items/items.jsp";
+	String FLOW_ITEM=URL+ "/items/items.jsp";
 	/**
 	 * 赠送优惠券
 	 */
-	String GIVE_COUPON="http://inter.boboit.cn/inter/givecoupontofriend/givecoupontofriend.jsp";
+	String GIVE_COUPON=URL+ "/givecoupontofriend/givecoupontofriend.jsp";
 	/**
 	 * 添加备注
 	 */
-	String UPDATE_REMARK="http://inter.boboit.cn/inter/friend/updateremark.jsp";
+	String UPDATE_REMARK=URL+ "/friend/updateremark.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

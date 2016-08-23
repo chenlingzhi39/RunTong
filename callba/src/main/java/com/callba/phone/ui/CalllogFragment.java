@@ -1,22 +1,25 @@
 package com.callba.phone.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.bean.ContactMutliNumBean;
-import com.callba.phone.ui.base.BaseFragment;
-import com.callba.phone.ui.adapter.CalllogAdapter;
-import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.CalldaCalllogBean;
+import com.callba.phone.bean.ContactMutliNumBean;
 import com.callba.phone.logic.contact.ContactEntity;
 import com.callba.phone.service.CalllogService;
+import com.callba.phone.ui.adapter.CalllogAdapter;
+import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
+import com.callba.phone.ui.base.BaseFragment;
+import com.callba.phone.util.ScrimUtil;
 import com.callba.phone.widget.DividerItemDecoration;
 
 import java.text.SimpleDateFormat;
@@ -41,10 +44,17 @@ public class CalllogFragment extends BaseFragment {
     CalllogAdapter calllogAdapter;
     @InjectView(R.id.text)
     TextView text;
+    @InjectView(R.id.shadow)
+    View shadow;
 
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
+        shadow.setBackground(
+                ScrimUtil.makeCubicGradientScrimDrawable(
+                        Color.parseColor("#55000000"), //颜色
+                        8, //渐变层数
+                        Gravity.TOP));
         calllogService = new CalllogService(getActivity(), new CalllogService.CalldaCalllogListener() {
             @Override
             public void onQueryCompleted(final List<CalldaCalllogBean> calldaCalllogBeans) {
@@ -69,7 +79,7 @@ public class CalllogFragment extends BaseFragment {
                             startActivity(intent);
                         }
                     });
-                    if(beans.size()==0)text.setVisibility(View.VISIBLE);
+                    if (beans.size() == 0) text.setVisibility(View.VISIBLE);
                 } else {
 
                 }
@@ -80,7 +90,7 @@ public class CalllogFragment extends BaseFragment {
 
             }
         });
-        calllogService.startQueryCallLog();
+        calllogService.startQueryCallLog(false);
     }
 
 

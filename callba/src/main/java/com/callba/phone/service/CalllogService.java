@@ -97,12 +97,13 @@ public class CalllogService {
 	/**
 	 * 开启通话记录查询
 	 */
-	public void startQueryCallLog() {
+	public void startQueryCallLog(final boolean hasBack) {
 		final List<CalldaCalllogBean> totalCallLogBeans = new ArrayList<CalldaCalllogBean>();
 
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
+				if(hasBack)
 				totalCallLogBeans.addAll(queryBackCalllog());
 				totalCallLogBeans.addAll(queryLocalCalllog());
 

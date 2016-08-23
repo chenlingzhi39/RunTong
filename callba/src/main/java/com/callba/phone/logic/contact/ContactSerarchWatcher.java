@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.widget.BaseAdapter;
 
 import com.callba.phone.MyApplication;
+import com.callba.phone.util.Logger;
 import com.callba.phone.view.QuickSearchBar;
 
 /**
@@ -32,13 +33,13 @@ public class ContactSerarchWatcher implements TextWatcher {
 	 * @param filterListContactList	ListView填充数据
 	 */
 	public ContactSerarchWatcher(BaseAdapter listViewAdapter,
-				List<ContactEntity> filterListContactList, QuickSearchBar quickSearchBar) {
+				List<ContactEntity> filterListContactList, QuickSearchBar quickSearchBar,ContactController contactController) {
 		super();
 		
 		this.mListViewAdapter = listViewAdapter;
 		this.mFilterListContactEntities = filterListContactList;
 		this.mQuickSearchBar = quickSearchBar;
-		
+		this.mContactController=contactController;
 		mSearchContactEntities = new ArrayList<ContactEntity>();
 		mSearchContactEntities.addAll(filterListContactList);
 		
@@ -52,19 +53,13 @@ public class ContactSerarchWatcher implements TextWatcher {
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
-		List<ContactEntity> contactEntities;
-		mContactController = new ContactController();
-		if(!s.toString().equals(""))
-	     contactEntities = mContactController.searchContact(s.toString(), mSearchContactEntities);
-		else  {contactEntities= mSearchContactEntities;
-			MyApplication.getInstance().sendBroadcast(new Intent("com.callba.contact"));
-			return;
-		}
+		List<ContactEntity> contactEntities = mContactController.searchContact(s.toString(), mSearchContactEntities);
+		mQuickSearchBar.setListSearchMap(mContactController.getSearchMap());
+
 		mFilterListContactEntities.clear();
 		mFilterListContactEntities.addAll(contactEntities);
 
 		mListViewAdapter.notifyDataSetChanged();
-		mQuickSearchBar.setListSearchMap(mContactController.getSearchMap());
 	}
 
 	@Override

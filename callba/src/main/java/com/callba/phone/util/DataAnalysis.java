@@ -175,7 +175,7 @@ public class DataAnalysis {
 
 		@Override
 		public void onDeleteCompleted() {
-			calllogService.startQueryCallLog();
+			calllogService.startQueryCallLog(true);
 		}
 	}
 }

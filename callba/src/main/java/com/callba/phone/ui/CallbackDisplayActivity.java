@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -59,13 +60,14 @@ public class CallbackDisplayActivity extends BaseActivity {
     private TextView tv_status;
     private TextView count_down;
     private CalllogService calllogService;
-    private Button cancel;
+    private FloatingActionButton cancel,voice;
     private MediaPlayer mp;
     private UserDao userDao;
     private Gson gson;
     private DialAd dialAd;
     private ImageView background;
     private CircleImageView avatar;
+    private boolean state=false;
     TimeCount time;
     class TimeCount extends CountDownTimer {
         RegisterActivity activity;
@@ -92,7 +94,8 @@ public class CallbackDisplayActivity extends BaseActivity {
         tv_name = (TextView) findViewById(R.id.tv_name);
         tv_num = (TextView) findViewById(R.id.tv_num);
         tv_status = (TextView) findViewById(R.id.tv_status);
-        cancel = (Button) findViewById(R.id.cancel);
+        cancel = (FloatingActionButton) findViewById(R.id.cancel);
+        voice= (FloatingActionButton) findViewById(R.id.voice);
         background = (ImageView) findViewById(R.id.iv_call_bg);
         avatar = (CircleImageView) findViewById(R.id.avatar);
         count_down=(TextView)findViewById(R.id.countdown);
@@ -100,6 +103,26 @@ public class CallbackDisplayActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        if((boolean)SPUtils.get(CallbackDisplayActivity.this, Constant.SETTINGS,Constant.Callback_Ring,true)){
+            voice.setImageResource(R.drawable.ic_notifications_on_white_24dp);
+        }else {
+            voice.setImageResource(R.drawable.ic_notifications_off_white_24dp);
+        }
+        voice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if((boolean)SPUtils.get(CallbackDisplayActivity.this, Constant.SETTINGS,Constant.Callback_Ring,true)){
+                    voice.setImageResource(R.drawable.ic_notifications_off_white_24dp);
+                    SPUtils.put(CallbackDisplayActivity.this, Constant.SETTINGS,Constant.Callback_Ring,false);
+                    if(mp!=null)if(mp.isPlaying())mp.pause();
+                }else{
+                    voice.setImageResource(R.drawable.ic_notifications_on_white_24dp);
+                    SPUtils.put(CallbackDisplayActivity.this, Constant.SETTINGS,Constant.Callback_Ring,true);
+                    if(mp!=null)mp.start();
+                    else if(state)playSound();
+                }
             }
         });
         Intent intent = this.getIntent();
@@ -111,6 +134,9 @@ public class CallbackDisplayActivity extends BaseActivity {
             if (bitmap != null)
                 avatar.setImageBitmap(bitmap);
         }
+        if(name.equals(""))
+            tv_name.setText("未知");
+        else
         tv_name.setText(name);
         tv_num.setText(number);
         // tv_status.setText(number);
@@ -186,10 +212,11 @@ public class CallbackDisplayActivity extends BaseActivity {
                         String[] content = result.split("\\|");
                         Log.i("dial_result", result);
                         if ("0".equals(content[0])) {
+                            state=true;
                             //回拨成功，开启自动接听
                             AutoAnswerReceiver.answerPhone(CallbackDisplayActivity.this);
                             calllogService.saveBackCallLog(name, number);
-                            if ((boolean)SPUtils.get(CallbackDisplayActivity.this, Constant.PACKAGE_NAME,Constant.KeyboardSetting,true))
+                            if ((boolean)SPUtils.get(CallbackDisplayActivity.this, Constant.SETTINGS,Constant.Callback_Ring,true))
                                 playSound();
                         } else {
                             //统计回拨失败数据
