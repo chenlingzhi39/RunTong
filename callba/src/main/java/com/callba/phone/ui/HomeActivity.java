@@ -195,7 +195,8 @@ public class HomeActivity extends BaseActivity {
             //userDao.getMarks(getUsername(), getPassword(), year + month);
             getMarks(year+month);
         }*/
-        if (GlobalConfig.getInstance().getAppVersionBean() != null && (boolean) SPUtils.get(this, "settings", "update_key", true)) {
+        if (GlobalConfig.getInstance().getAppVersionBean() != null) {
+            if(GlobalConfig.getInstance().getAppVersionBean().isForceUpgrade()||(boolean) SPUtils.get(this, "settings", "update_key", true))
             check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
         }
     }

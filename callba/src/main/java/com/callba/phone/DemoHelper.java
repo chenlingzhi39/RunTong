@@ -931,8 +931,8 @@ public class DemoHelper {
 			        EMLog.d(TAG, "onMessageReceived id : " + message.getMsgId());
                     Intent intent = new Intent("com.callba.chat");
                     intent.putExtra("message",message);
-                    appContext.sendBroadcast(new Intent("message_num"));
                     appContext.sendBroadcast(intent);
+                    //appContext.sendBroadcast(new Intent("message_num"));
 			        //应用在后台，不需要刷新UI,通知栏提示新消息
 			        if(!easeUI.hasForegroundActivies()){
 			            getNotifier().onNewMsg(message);

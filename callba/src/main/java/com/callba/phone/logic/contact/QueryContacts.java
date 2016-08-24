@@ -88,7 +88,6 @@ public class QueryContacts {
 					if(TextUtils.isEmpty(number)) {
 						continue;
 					}
-					Bitmap contactPhoto=null;
 					ContactPersonEntity cb = new ContactPersonEntity();
 					cb.set_id(contactId+"");
 					if(name!=null)

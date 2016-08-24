@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
@@ -63,7 +64,7 @@ public class MyApplication extends Application {
     }
     @Override
     public void onCreate() {
-        MultiDex.install(this);
+       // MultiDex.install(this);
         super.onCreate();
         myApplication = this;
         //CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/STXIHEI.TTF").setFontAttrId(R.attr.fontPath).build());

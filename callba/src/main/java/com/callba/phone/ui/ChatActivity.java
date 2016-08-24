@@ -38,6 +38,7 @@ import com.callba.phone.ui.ease.EaseGroupRemoveListener;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.widget.EaseAlertDialog;
 import com.callba.phone.widget.EaseChatExtendMenu;
 import com.callba.phone.widget.EaseChatInputMenu;
@@ -211,7 +212,6 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         super.onStop();
         // unregister this event listener when this activity enters the
         // background
-
         // 把此activity 从foreground activity 列表里移除
         DemoHelper.getInstance().popActivity(this);
     }
@@ -222,7 +222,6 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         if(groupListener!=null)
         EMClient.getInstance().groupManager().removeGroupChangeListener(groupListener);
         super.onDestroy();
-
     }
 
     protected void onConversationInit(){
@@ -572,7 +571,12 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 // 如果消息不是和当前聊天ID的消息
                 EaseUI.getInstance().getNotifier().onNewMsg(message);
             }
-
+            SimpleHandler.getInstance().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    sendBroadcast(new Intent("message_num"));
+                }
+            },100);
         }
     }
 
@@ -804,4 +808,5 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     public EaseCustomChatRowProvider onSetCustomChatRowProvider() {
         return null;
     }
+
 }

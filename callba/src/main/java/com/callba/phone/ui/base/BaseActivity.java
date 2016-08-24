@@ -3,16 +3,20 @@ package com.callba.phone.ui.base;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -32,6 +36,7 @@ import com.callba.phone.SystemBarTintManager;
 import com.callba.phone.bean.ApiService;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.logic.login.LoginController;
+import com.callba.phone.ui.BalanceActivity;
 import com.callba.phone.ui.ContactDetailActivity;
 import com.callba.phone.ui.HomeActivity;
 import com.callba.phone.ui.LoginActivity;
@@ -92,11 +97,11 @@ public class BaseActivity extends AppCompatActivity {
     public Subscription subscription;
 
     public TelephonyManager telephonyManager;
-
     @SuppressLint("InlinedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
         if (getClass().isAnnotationPresent(ActivityFragmentInject.class)) {
             ActivityFragmentInject annotation = getClass()
@@ -392,6 +397,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void check2Upgrade(final AppVersionChecker.AppVersionBean appVersionBean, boolean is_toast) {
+        if (appVersionBean.isHasNewVersion()){
         if (appVersionBean.isForceUpgrade()) {
             // 强制升级
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -401,12 +407,7 @@ public class BaseActivity extends AppCompatActivity {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            try {
-                            /*	Uri uri = Uri.parse(appVersionBean
-                                        .getDownloadUrl());
-								Intent intent = new Intent(Intent.ACTION_VIEW,
-										uri);
-								startActivity(intent);*/
+
                                 if (!UpdateService.is_downloading) {
                                     toast("开始下载更新");
                                     Intent updateIntent = new Intent(
@@ -418,17 +419,11 @@ public class BaseActivity extends AppCompatActivity {
                                                     .getDownloadUrl());
                                     updateIntent.putExtra("version_code", appVersionBean.getServerVersionCode());
                                     startService(updateIntent);
+
                                 } else {
                                     toast("正在下载更新");
                                 }
-                            } catch (ActivityNotFoundException e) {
-                                e.printStackTrace();
 
-							/*	CalldaToast calldaToast = new CalldaToast();
-                                calldaToast.showToast(getApplicationContext(),
-										R.string.upgrade_openfailed);*/
-                                toast(getString(R.string.upgrade_openfailed));
-                            }
                         }
                     });
             AlertDialog alertDialog = builder.create();
@@ -439,7 +434,6 @@ public class BaseActivity extends AppCompatActivity {
         } else {
 
 
-            if (appVersionBean.isHasNewVersion()) {
                 // 存在新版本
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.sjts);
@@ -449,12 +443,7 @@ public class BaseActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                try {
-									/*Uri uri = Uri.parse(appVersionBean
-											.getDownloadUrl());
-									Intent intent = new Intent(
-											Intent.ACTION_VIEW, uri);
-									startActivity(intent);*/
+
                                     if (!UpdateService.is_downloading) {
                                         toast("开始下载更新");
                                         Intent updateIntent = new Intent(
@@ -469,14 +458,6 @@ public class BaseActivity extends AppCompatActivity {
                                     } else {
                                         toast("正在下载更新");
                                     }
-                                } catch (ActivityNotFoundException e) {
-                                    e.printStackTrace();
-									/*CalldaToast calldaToast = new CalldaToast();
-									calldaToast.showToast(
-											getApplicationContext(),
-											R.string.upgrade_openfailed);*/
-                                    toast(getString(R.string.upgrade_openfailed));
-                                }
 
                             }
                         });
@@ -495,10 +476,11 @@ public class BaseActivity extends AppCompatActivity {
                 alertDialog.setCancelable(true);
                 alertDialog.show();
 
-            } else {
-                // 无新版本
-                if (is_toast) toast("已是最新版本");
             }
+        }
+        else {
+            // 无新版本
+            if (is_toast) toast("已是最新版本");
         }
     }
 

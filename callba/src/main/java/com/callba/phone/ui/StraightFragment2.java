@@ -756,7 +756,7 @@ public class StraightFragment2 extends BaseFragment {
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
-                        userDao.pay(getUsername(), getPassword(), outTradeNo, "success");
+                        //userDao.pay(getUsername(), getPassword(), outTradeNo, "success");
                         if (has_iid) has_iid = false;
                         is_coupon = false;
                         ll_coupon.setVisibility(View.GONE);
@@ -771,7 +771,7 @@ public class StraightFragment2 extends BaseFragment {
                         } else {
                             // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
                             Toast.makeText(getActivity(), "支付失败", Toast.LENGTH_SHORT).show();
-                            userDao.pay(getUsername(), getPassword(), outTradeNo, "failure");
+                           // userDao.pay(getUsername(), getPassword(), outTradeNo, "failure");
                         }
                     }
                     break;
