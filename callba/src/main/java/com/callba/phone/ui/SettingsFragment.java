@@ -8,13 +8,15 @@ import android.preference.PreferenceScreen;
 import com.callba.R;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.DemoModel;
+import com.callba.phone.LogcatHelper;
+import com.callba.phone.MyApplication;
 import com.jenzz.materialpreference.SwitchPreference;
 
 /**
  * Created by PC-20160514 on 2016/7/2.
  */
 public class SettingsFragment extends PreferenceFragment {
-    SwitchPreference message,voice,shake;
+    SwitchPreference message,voice,shake,log;
     private DemoModel settingsModel;
     public static SettingsFragment newInstance(){
         SettingsFragment settingsFragment=new SettingsFragment();
@@ -29,6 +31,7 @@ public class SettingsFragment extends PreferenceFragment {
         message = (SwitchPreference) findPreference("message_key");
         voice=(SwitchPreference)findPreference("voice_key");
         shake=(SwitchPreference)findPreference("shake_key");
+        //log=(SwitchPreference)findPreference("log_key");
         message.setDefaultValue(settingsModel.getSettingMsgNotification());
         voice.setDefaultValue(settingsModel.getSettingMsgSound());
         shake.setDefaultValue(settingsModel.getSettingMsgVibrate());
@@ -50,6 +53,12 @@ public class SettingsFragment extends PreferenceFragment {
             case "shake_key":
                 settingsModel.setSettingMsgVibrate(!settingsModel.getSettingMsgVibrate());
                 break;
+          /*  case "log_key":
+                if(log.isChecked())
+                    LogcatHelper.getInstance(MyApplication.getInstance()).start();
+                else
+                    LogcatHelper.getInstance(MyApplication.getInstance()).stop();
+                break;*/
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }

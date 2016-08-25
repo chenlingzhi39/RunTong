@@ -54,52 +54,6 @@ public class WelcomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      /*  OkHttpUtils.post().url(Interfaces.Query_Balance)
-                .addParams("loginName",getUsername())
-                .addParams("loginPwd",getPassword())
-                .addParams("softType","android")
-                .build().execute(new StringCallback() {
-            @Override
-            public void onAfter(int id) {
-                progressDialog.dismiss();
-            }
-
-            @Override
-            public void onBefore(Request request, int id) {
-                progressDialog= ProgressDialog.show(WelcomeActivity.this,"","正在查询余额");
-            }
-
-            @Override
-            public void onError(Call call, Exception e, int id) {
-                if(e instanceof UnknownHostException)toast(R.string.conn_failed);
-                else toast(R.string.network_error);
-            }
-
-            @Override
-            public void onResponse(String response, int id) {
-                try {
-                    String[] result = response.split("\\|");
-                    Log.i("get_balance", response);
-                    if (result[0].equals("0"))
-                     toast(result[1]);
-                    else toast(result[1]);
-                } catch (Exception e) {
-                    toast(R.string.network_error);
-                }
-            }
-        });*/
-      /*  OkHttpUtils.post().url(Interfaces.Version)
-                .addParams("softType", "android")
-                .build().execute(new StringCallback() {
-            @Override
-            public void onError(Call call, Exception e, int id) {
-               toast(e.toString());
-            }
-            @Override
-            public void onResponse(String response, int id) {
-                toast(response);
-            }
-        });*/
        init();
     }
 
@@ -110,23 +64,8 @@ public class WelcomeActivity extends BaseActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                startService(new Intent(WelcomeActivity.this, MainService.class));
-                startZip();
-                // mPushAgent = PushAgent.getInstance(WelcomeActivity.this);
-                // mPushAgent.onAppStart();
-                // mPushAgent.enable();
-                // 初始化PushManager对象（初始化推送服务）
 
-//				PushManager.getInstance().initialize(
-//						WelcomeActivity.this.getApplicationContext());
-//				String clientid = PushManager.getInstance().getClientid(
-//						getApplicationContext());
-//				Logger.i(TAG, "初始化PushManager对象（初始化推送服务）" + clientid);
-                // 启动服务
-                //startService(new Intent(WelcomeActivity.this, MainService.class));
-                if (Constant.CALL_SETTING_HUI_BO.equals((String) SPUtils.get(WelcomeActivity.this,Constant.PACKAGE_NAME,Constant.CALL_SETTING,Constant.CALL_SETTING_HUI_BO))) {
-                    return;
-                }
+                startZip();
             }
         }).start();
     }
@@ -151,7 +90,7 @@ public class WelcomeActivity extends BaseActivity {
         //insertDummyContactWrapper();
         // 设置用户的登录状态
         LoginController.getInstance().setUserLoginState(false);
-
+        startService(new Intent(WelcomeActivity.this, MainService.class));
         // 启动服务
         asyncInitLoginEnvironment();
                 initEnvironment();

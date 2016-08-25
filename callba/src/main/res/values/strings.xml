@@ -107,6 +107,7 @@
     <string name="logout">退出登录</string>
     <string name="update">版本更新</string>
     <string name="callback_settings">回拨设置</string>
+    <string name="log_settings">log设置</string>
     <string name="add">添加</string>
     <string name="register">注册</string>
     <string name="app_name">Call吧</string>

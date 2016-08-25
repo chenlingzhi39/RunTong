@@ -25,9 +25,12 @@ import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.callba.BuildConfig;
+import com.callba.phone.cfg.*;
+import com.callba.phone.cfg.Constant;
 import com.callba.phone.ui.WelcomeActivity;
 import com.callba.phone.util.HttpUtils;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.StorageUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -51,7 +54,6 @@ public class MyApplication extends Application {
     }
     public static List<Activity> activities = new ArrayList<Activity>();
 //	private PushAgent mPushAgent;
-
     private long lastRestartTimeMillis = System.currentTimeMillis();
     //实现ConnectionListener接口
     private DaoSession mDaoSession;
@@ -73,6 +75,10 @@ public class MyApplication extends Application {
         options.setAcceptInvitationAlways(false);
         options.setAutoLogin(false);
         EaseUI.getInstance().init(this,options);*/
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(this);
+       /* if((boolean)SPUtils.get(this, Constant.SETTINGS,Constant.LOG_KEY,false))
+        LogcatHelper.getInstance(this).start();*/
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(6000, TimeUnit.MILLISECONDS)
                 .readTimeout(20000, TimeUnit.MILLISECONDS)
@@ -155,6 +161,8 @@ public class MyApplication extends Application {
 
 
     public void onTerminate() {
+       /* if((boolean)SPUtils.get(this, Constant.SETTINGS,Constant.LOG_KEY,false))
+        LogcatHelper.getInstance(this).stop();*/
         super.onTerminate();
         for (Activity activity : activities) {
             activity.finish();

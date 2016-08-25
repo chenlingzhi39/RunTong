@@ -52,6 +52,7 @@ import com.callba.phone.service.UpdateService;
 import com.callba.phone.ui.WelcomeActivity;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
+import com.callba.phone.util.Logger;
 
 import java.lang.reflect.Field;
 import java.util.List;

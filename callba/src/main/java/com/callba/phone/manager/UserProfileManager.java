@@ -135,7 +135,8 @@ public class UserProfileManager {
                         callback.onSuccess(mList);
                     }
                 } catch (Exception e) {
-                    Toast.makeText(appContext, appContext.getString(R.string.getserverdata_exception), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                    //Toast.makeText(appContext, appContext.getString(R.string.getserverdata_exception), Toast.LENGTH_SHORT).show();
                 }
             }
         });

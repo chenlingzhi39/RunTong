@@ -65,6 +65,7 @@ import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -776,6 +777,7 @@ public class DemoHelper {
 
                     }
                     }catch(Exception e){
+                        e.printStackTrace();
                        Toast.makeText(appContext,R.string.getserverdata_exception,Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -1132,6 +1134,8 @@ public class DemoHelper {
      * @param contactList
      */
     public void updateContactList(List<EaseUser> contactInfoList) {
+        if(contactList==null)
+            contactList=getContactList();
          for (EaseUser u : contactInfoList) {
             contactList.put(u.getUsername(), u);
          }

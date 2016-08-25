@@ -149,7 +149,7 @@ public class MessageActivity extends BaseActivity {
      * 连接断开
      */
     protected void onConnectionDisconnected() {
-        //errorItemContainer.setVisibility(View.VISIBLE);
+       errorItemContainer.setVisibility(View.VISIBLE);
     }
 
     @Override

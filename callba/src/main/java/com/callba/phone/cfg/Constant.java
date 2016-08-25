@@ -188,4 +188,5 @@ public class Constant {
 	public static final String BALANCE="balance";
 	public static final String CREATE_TIME="create_time";
 	public static final String PROPORTION="proportion";
+	public static final String LOG_KEY="log_key";
 }
