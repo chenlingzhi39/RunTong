@@ -37,6 +37,7 @@ import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.Constant;
 import com.callba.phone.ui.adapter.GroupAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.util.EaseUserUtils;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
 import com.hyphenate.exceptions.HyphenateException;
@@ -52,7 +53,7 @@ import java.util.List;
 public class GroupsActivity extends BaseActivity {
     public static final String TAG = "GroupsActivity";
     private ListView groupListView;
-    protected List<EMGroup> grouplist;
+    protected List<EMGroup> grouplist,myGroupList,joinGroupList,allGroupList;
     private GroupAdapter groupAdapter;
     private InputMethodManager inputMethodManager;
     public static GroupsActivity instance;
@@ -60,7 +61,6 @@ public class GroupsActivity extends BaseActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private LocalBroadcastManager broadcastManager;
     private BroadcastReceiver broadcastReceiver;
-
     Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             swipeRefreshLayout.setRefreshing(false);
@@ -89,7 +89,8 @@ public class GroupsActivity extends BaseActivity {
         grouplist =EMClient.getInstance().groupManager().getAllGroups();
         groupListView = (ListView) findViewById(R.id.list);
         //show group list
-        groupAdapter = new GroupAdapter(this, 1, grouplist);
+        sortGroupList();
+        groupAdapter = new GroupAdapter(this, 1, allGroupList,myGroupList.size());
         groupListView.setAdapter(groupAdapter);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
@@ -187,7 +188,8 @@ public class GroupsActivity extends BaseActivity {
 
     private void refresh() {
         grouplist = EMClient.getInstance().groupManager().getAllGroups();
-        groupAdapter = new GroupAdapter(this, 1, grouplist);
+        sortGroupList();
+        groupAdapter = new GroupAdapter(this, 1, allGroupList,myGroupList.size());
         groupListView.setAdapter(groupAdapter);
         groupAdapter.notifyDataSetChanged();
     }
@@ -198,7 +200,18 @@ public class GroupsActivity extends BaseActivity {
         super.onDestroy();
         instance = null;
     }
-
+  private void sortGroupList(){
+      myGroupList=new ArrayList<>();
+      joinGroupList=new ArrayList<>();
+      allGroupList=new ArrayList<>();
+      for(EMGroup emGroup:grouplist){
+          if(emGroup.getOwner().equals(EMClient.getInstance().getCurrentUser()))
+              myGroupList.add(emGroup);
+              else joinGroupList.add(emGroup);
+      }
+      allGroupList.addAll(myGroupList);
+      allGroupList.addAll(joinGroupList);
+  }
 
 
 }

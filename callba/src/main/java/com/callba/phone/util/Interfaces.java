@@ -192,6 +192,14 @@ public interface Interfaces {
 	 * 添加备注
 	 */
 	String UPDATE_REMARK=URL+ "/friend/updateremark.jsp";
+	/**
+	 * 意见反馈
+	 */
+	String OPINION=URL+"/useropinions/useropinions.jsp";
+	/**
+	 * 获取金币
+	 */
+	String GET_GOLD_FROM_SHARE=URL+"/givegoldforshare/givegoldforshare.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

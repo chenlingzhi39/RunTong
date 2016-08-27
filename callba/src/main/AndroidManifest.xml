@@ -65,47 +65,63 @@
         <service android:name=".phone.service.UpdateService" />
 
         <activity
+            android:name=".phone.ui.RemarkActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
             android:name=".phone.ui.SelectDialPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />
         <activity
             android:name=".phone.ui.SelectPicPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />
-        <activity android:name=".phone.ui.SelectFriendActivity"
+        <activity
+            android:name=".phone.ui.OpinionActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.ui.CouponActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".phone.ui.SelectFriendActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"/>
-        <activity android:name=".phone.ui.TXActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.ui.CouponActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.ui.ImageQRActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.ui.TXActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"/>
-        <activity android:name=".phone.ui.ProfitActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.ui.ImageQRActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.ui.TXRecordActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.ui.ProfitActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"/>
-        <activity android:name=".phone.ui.ATypeActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.ui.TXRecordActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
-        <activity android:name=".phone.ui.TeamActivity"
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.ui.ATypeActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"/>
+            android:theme="@style/BaseAppTheme.AppTheme" />
+        <activity
+            android:name=".phone.ui.TeamActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.FamilyActivity"
             android:launchMode="singleTop"
@@ -257,10 +273,11 @@
             android:name="com.callba.phone.widget.chatrow.EaseShowBigImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide" />
-        <activity android:name=".phone.widget.chatrow.EaseShowVideoActivity"
+        <activity
+            android:name=".phone.widget.chatrow.EaseShowVideoActivity"
             android:screenOrientation="portrait"
             android:theme="@style/horizontal_slide"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".phone.ui.HelpActivity"
             android:launchMode="singleTop"
@@ -349,7 +366,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".phone.ui.HomeActivity"
             android:launchMode="singleTop"
@@ -616,7 +633,7 @@
     <uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <!-- linphone -->
     <!-- Needed to allow Linphone to install on tablets, since android.permission.CALL_PHONE implies android.hardware.telephony is required -->
     <uses-feature

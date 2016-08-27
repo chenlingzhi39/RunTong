@@ -29,7 +29,7 @@
 		        android:fastScrollAlwaysVisible="false"
 		        android:fastScrollEnabled="false" />
 		 </android.support.v4.widget.SwipeRefreshLayout>
-		 
+
     </FrameLayout>
 
 </LinearLayout>

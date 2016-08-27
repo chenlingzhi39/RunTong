@@ -97,13 +97,11 @@ public class BaseActivity extends AppCompatActivity {
     }*/
     public Subscription subscription;
 
-    public TelephonyManager telephonyManager;
     @SuppressLint("InlinedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        telephonyManager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
         if (getClass().isAnnotationPresent(ActivityFragmentInject.class)) {
             ActivityFragmentInject annotation = getClass()
                     .getAnnotation(ActivityFragmentInject.class);

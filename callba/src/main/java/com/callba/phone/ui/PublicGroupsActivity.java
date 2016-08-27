@@ -14,9 +14,12 @@
 
 package com.callba.phone.ui;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,8 +36,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.Constant;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.util.Logger;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMCursorResult;
 import com.hyphenate.chat.EMGroupInfo;
@@ -62,6 +67,8 @@ public class PublicGroupsActivity extends BaseActivity {
     private ProgressBar footLoadingPB;
     private TextView footLoadingText;
     private ArrayList<String> groupIds;
+    private LocalBroadcastManager broadcastManager;
+    private BroadcastReceiver broadcastReceiver;
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -108,7 +115,19 @@ public class PublicGroupsActivity extends BaseActivity {
 
             }
         });
-
+        IntentFilter intentFilter = new IntentFilter();
+        //intentFilter.addAction(Constant.ACTION_CONTACT_CHANAGED);
+        intentFilter.addAction(Constant.ACTION_GROUP_CHANAGED);
+        broadcastManager = LocalBroadcastManager.getInstance(this);
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Logger.i("group","changed");
+                isFirstLoading=true;
+                loadAndShowData();
+            }
+        };
+        broadcastManager.registerReceiver(broadcastReceiver, intentFilter);
     }
 
     /**
@@ -218,4 +237,10 @@ public class PublicGroupsActivity extends BaseActivity {
        }
        return  infos;
    }
+
+    @Override
+    protected void onDestroy() {
+        broadcastManager.unregisterReceiver(broadcastReceiver);
+        super.onDestroy();
+    }
 }

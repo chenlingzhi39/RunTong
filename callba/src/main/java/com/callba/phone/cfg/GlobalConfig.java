@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import com.callba.phone.bean.Advertisement;
@@ -22,7 +23,11 @@ import com.callba.phone.util.AppVersionChecker;
 public class GlobalConfig implements Serializable{
 	private static GlobalConfig globalConfig;
 	private GlobalConfig(){}
-	
+	private Context context;
+	public void init(Context context){
+		this.context=context;
+	}
+
 	public static synchronized GlobalConfig getInstance() {
 		if(globalConfig == null) {
 			globalConfig = new GlobalConfig();

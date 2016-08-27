@@ -18,6 +18,7 @@ import com.callba.phone.SocializeConfigDemo;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CircleTextView;
@@ -44,7 +45,10 @@ import com.umeng.socialize.sso.QZoneSsoHandler;
 import com.umeng.socialize.sso.SinaSsoHandler;
 import com.umeng.socialize.sso.TencentWBSsoHandler;
 import com.umeng.socialize.sso.UMWXHandler;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,6 +62,8 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import de.greenrobot.dao.Mark;
 import de.greenrobot.dao.MarkDao;
+import okhttp3.Call;
+import okhttp3.Request;
 
 /**
  * Created by PC-20160514 on 2016/5/24.
@@ -706,8 +712,49 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
             @Override
             public void onComplete(SHARE_MEDIA platform, int eCode,
                                    SocializeEntity entity) {
+                Logger.i("eCode",eCode+"");
                /* Toast.makeText(SignInActivity.this, platform + " code = " + eCode, 0)
                         .show();*/
+                if(eCode==200){
+                    OkHttpUtils.post().url(Interfaces.GET_GOLD_FROM_SHARE)
+                            .addParams("loginName",getUsername())
+                            .addParams("loginPwd",getPassword())
+                            .build().execute(new StringCallback() {
+
+                        @Override
+                        public void onAfter(int id) {
+                           progressDialog.dismiss();
+                        }
+
+                        @Override
+                        public void onBefore(Request request, int id) {
+                         progressDialog=ProgressDialog.show(SignInActivity.this,"","获取金币中");
+                        }
+
+                        @Override
+                        public void onError(Call call, Exception e, int id) {
+                            if(e instanceof UnknownHostException){
+                                toast(R.string.conn_failed);
+                            }else toast(R.string.network_error);
+                        }
+
+                        @Override
+                        public void onResponse(String response, int id) {
+                        try {
+                            String[] result=response.split("\\|");
+                            if(result[0].equals("0"))
+                            {
+                                toast(result[1]);
+                                UserManager.putGold(SignInActivity.this,UserManager.getGold(SignInActivity.this)+5);
+                            }else{
+                                toast(result[1]);
+                            }
+                        }catch (Exception e){
+                            toast(R.string.getserverdata_exception);
+                        }
+                        }
+                    });
+                }
             }
         });
 

@@ -103,7 +103,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setIcon(android.R.drawable.ic_dialog_info);
             builder.setTitle("程序出错啦");
-            builder.setMessage("请把错误报告以邮件的形式提交给我们，谢谢！");
+            builder.setMessage("请把错误报告以邮件的形式提交给我们，谢谢(错误报告保存路径为/sdcard/crash)");
             builder.setPositiveButton(android.R.string.ok,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -146,7 +146,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 
                             } catch (Exception e) {
                                 Toast.makeText(context,
-                                        "There are no email clients installed.",
+                                        "请安装电子邮件客户端",
                                         Toast.LENGTH_SHORT).show();
                             } finally {
                                 dialog.dismiss();

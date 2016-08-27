@@ -68,6 +68,8 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import okhttp3.Call;
@@ -662,7 +664,9 @@ public class DemoHelper {
                 // PendingIntent.FLAG_UPDATE_CURRENT
                 // );
                 PendingIntent contentIntent = PendingIntent.getActivity(
-                        appContext, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                        appContext, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                mBuilder.setFullScreenIntent(contentIntent, true);
+                mBuilder.setAutoCancel(true);
                 mBuilder.setContentIntent(contentIntent);
       /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             mBuilder.setFullScreenIntent(contentIntent, true);*/
@@ -670,8 +674,15 @@ public class DemoHelper {
                 Notification notification = mBuilder.build();
                 notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
                 //notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                NotificationManager mNotificationManager = (NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                final NotificationManager mNotificationManager = (NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
                 mNotificationManager.notify(0526, notification);
+                Timer timer=new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                       mNotificationManager.cancel(0526);
+                    }
+                },5000);
             }
         }
 
@@ -769,6 +780,7 @@ public class DemoHelper {
                             user.setAvatar(baseUser.getUrl_head());
                             user.setNick(baseUser.getNickname());
                             user.setSign(baseUser.getSign());
+                            user.setRemark(baseUser.getRemark());
                             EaseCommonUtils.setUserInitialLetter(user);
                             mList.add(user);
                         }

@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.callba.R;
+import com.callba.phone.util.Logger;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
 
@@ -39,12 +40,14 @@ public class GroupAdapter extends ArrayAdapter<EMGroup> {
 	private LayoutInflater inflater;
 	private String newGroup;
 	private String addPublicGroup;
-
-	public GroupAdapter(Context context, int res, List<EMGroup> groups) {
+    private int pos;
+	private boolean is_filter;
+	public GroupAdapter(Context context, int res, List<EMGroup> groups,int position) {
 		super(context, res, groups);
 		this.inflater = LayoutInflater.from(context);
 		newGroup = context.getResources().getString(R.string.The_new_group_chat);
 		addPublicGroup = context.getResources().getString(R.string.add_public_group_chat);
+		this.pos=position;
 	}
 
 	@Override
@@ -75,12 +78,14 @@ public class GroupAdapter extends ArrayAdapter<EMGroup> {
 			final ImageButton clearSearch = (ImageButton) convertView.findViewById(R.id.search_clear);
 			query.addTextChangedListener(new TextWatcher() {
 				public void onTextChanged(CharSequence s, int start, int before, int count) {
-					getFilter().filter(s);
 					if (s.length() > 0) {
+						is_filter=true;
 						clearSearch.setVisibility(View.VISIBLE);
 					} else {
+						is_filter=false;
 						clearSearch.setVisibility(View.INVISIBLE);
 					}
+					getFilter().filter(s);
 				}
 
 				public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -107,15 +112,31 @@ public class GroupAdapter extends ArrayAdapter<EMGroup> {
 			}
 			((ImageView) convertView.findViewById(R.id.avatar)).setImageResource(R.drawable.em_add_public_group);
 			((TextView) convertView.findViewById(R.id.name)).setText(addPublicGroup);
-			((TextView) convertView.findViewById(R.id.header)).setVisibility(View.VISIBLE);
+			//((TextView) convertView.findViewById(R.id.header)).setVisibility(View.VISIBLE);
 
 		} else {
 			if (convertView == null) {
 				convertView = inflater.inflate(R.layout.em_row_group, null);
 			}
-			((TextView) convertView.findViewById(R.id.name)).setText(getItem(position - 3).getGroupName());
-            if(getItem(position - 3).getOwner().equals(EMClient.getInstance().getCurrentUser()))
-				((TextView) convertView.findViewById(R.id.name)).setTextColor(Color.parseColor("#ffcc0000"));
+			Logger.i("is_filter",is_filter+"");
+			if(is_filter)
+			{convertView.findViewById(R.id.type).setVisibility(View.VISIBLE);
+				convertView.findViewById(R.id.header).setVisibility(View.GONE);
+				if(getItem(position - 3).getOwner().equals(EMClient.getInstance().getCurrentUser()))
+				((TextView) convertView.findViewById(R.id.type)).setText("我创建的");
+            else ((TextView) convertView.findViewById(R.id.type)).setText("我加入的");}else
+			{convertView.findViewById(R.id.type).setVisibility(View.GONE);}
+			if(position==pos+3)
+			{if(!is_filter){(convertView.findViewById(R.id.header)).setVisibility(View.VISIBLE);
+				((TextView) convertView.findViewById(R.id.header)).setText("我加入的群("+(getCount()-3-pos)+")");}
+			else convertView.findViewById(R.id.header).setVisibility(View.GONE);}
+			if(position==3&&pos>0)
+			{if(!is_filter){(convertView.findViewById(R.id.header)).setVisibility(View.VISIBLE);
+				((TextView) convertView.findViewById(R.id.header)).setText("我创建的群("+pos+")");}
+				else convertView.findViewById(R.id.header).setVisibility(View.GONE);
+			}
+			((TextView) convertView.findViewById(R.id.name)).setText(getItem(position - 3).getGroupName()
+			);
 		}
 
 		return convertView;

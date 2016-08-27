@@ -64,6 +64,7 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 			holder.groupContainer = (LinearLayout) convertView.findViewById(R.id.ll_group);
 			holder.groupname = (TextView) convertView.findViewById(R.id.tv_groupName);
 			holder.result=(TextView)convertView.findViewById(R.id.result);
+			holder.type=(TextView)convertView.findViewById(R.id.type);
 			// holder.time = (TextView) convertView.findViewById(R.id.time);
 			convertView.setTag(holder);
 		} else {
@@ -124,10 +125,12 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 					if (TextUtils.isEmpty(msg.getReason())) {
 						holder.reason.setText(str4 + msg.getGroupName());
 					}
+					holder.type.setText("入群申请");
 				} else if (msg.getStatus() == InviteMesageStatus.GROUPINVITATION) {
 				    if (TextUtils.isEmpty(msg.getReason())) {
                         holder.reason.setText(str8 + msg.getGroupName());
                     }
+					holder.type.setText("加群邀请");
 				}
 				
 				// 设置点击事件
@@ -160,12 +163,14 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
                 holder.status.setVisibility(View.GONE);
                 holder.reason.setText(str);
 				holder.result.setVisibility(View.GONE);
+				holder.type.setText("入群申请");
             } else if(msg.getStatus() == InviteMesageStatus.GROUPINVITATION_DECLINED){
 				EaseUser user=EaseUserUtils.getUserInfo(msg.getGroupInviter());
 				String str = (user!=null?user.getNick():msg.getGroupInviter()) + str9 + msg.getGroupName();
 				holder.status.setVisibility(View.GONE);
 				holder.reason.setText(str);
 				holder.result.setVisibility(View.GONE);
+				holder.type.setText("加群邀请");
             }
 
 			// 设置用户头像
@@ -307,6 +312,7 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 		LinearLayout groupContainer;
 		TextView groupname;
 		TextView result;
+		TextView type;
 		// TextView time;
 	}
 

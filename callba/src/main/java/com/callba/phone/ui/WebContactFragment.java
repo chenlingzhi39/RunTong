@@ -232,10 +232,11 @@ public class WebContactFragment extends BaseFragment {
                                     user.setAvatar(baseUser.getUrl_head());
                                     user.setNick(baseUser.getNickname());
                                     user.setSign(baseUser.getSign());
+                                    user.setRemark(baseUser.getRemark());
                                     EaseCommonUtils.setUserInitialLetter(user);
-                                    DemoHelper.getInstance().updateContactList(mList);
                                     mList.add(user);
                                 }
+                                DemoHelper.getInstance().updateContactList(mList);
                                 refresh();
                             } else {
                                 toast(result[1]);
@@ -303,6 +304,10 @@ public class WebContactFragment extends BaseFragment {
         } else if (item.getItemId() == R.id.add_to_blacklist) {
             moveToBlacklist(toBeProcessUsername);
             return true;
+        }else if(item.getItemId()==R.id.change_remark){
+            Intent intent=new Intent(getActivity(),RemarkActivity.class);
+            intent.putExtra("username",toBeProcessUsername);
+            startActivity(intent);
         }
         return super.onContextItemSelected(item);
     }

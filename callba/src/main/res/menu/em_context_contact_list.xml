@@ -6,5 +6,8 @@
      <item
         android:id="@+id/add_to_blacklist"
         android:title="@string/Move_into_the_blacklist_new"/>
-
+     <item
+          android:id="@+id/change_remark"
+         android:title="@string/set_remark"
+         />
 </menu>

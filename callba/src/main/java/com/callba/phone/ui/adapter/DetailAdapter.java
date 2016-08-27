@@ -143,6 +143,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                                                                     user.setAvatar(baseUser.getUrl_head());
                                                                     user.setNick(baseUser.getNickname());
                                                                     user.setSign(baseUser.getSign());
+                                                                    user.setRemark(baseUser.getRemark());
                                                                     EaseCommonUtils.setUserInitialLetter(user);
                                                                     mList.add(user);
                                                                 }

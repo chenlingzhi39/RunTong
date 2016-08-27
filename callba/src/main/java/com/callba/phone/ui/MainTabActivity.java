@@ -266,7 +266,7 @@ public class MainTabActivity extends TabActivity {
         return intent;
     }
 
-    @Override
+   /* @Override
     protected void onSaveInstanceState(Bundle outState) {
         //保存全局参数
         GlobalConfig.getInstance().saveGlobalCfg(outState);
@@ -276,7 +276,7 @@ public class MainTabActivity extends TabActivity {
     @Override
     protected void onRestoreInstanceState(Bundle state) {
         GlobalConfig.getInstance().restoreGlobalCfg(state);
-      /*  EMClient.getInstance().login(UserManager.getUsername(this)+"-callba",UserManager.getOriginalPassword(this),new EMCallBack() {//回调
+      *//*  EMClient.getInstance().login(UserManager.getUsername(this)+"-callba",UserManager.getOriginalPassword(this),new EMCallBack() {//回调
             @Override
             public void onSuccess() {
 
@@ -296,14 +296,9 @@ public class MainTabActivity extends TabActivity {
             public void onError(int code, String message) {
                 Log.d("main", "登录聊天服务器失败！");
             }
-        });*/
+        });*//*
         super.onRestoreInstanceState(state);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
+    }*/
 
     @Override
     protected void onResume() {

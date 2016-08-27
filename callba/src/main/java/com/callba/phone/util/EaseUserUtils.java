@@ -79,6 +79,9 @@ public class EaseUserUtils {
                // buffer.replace(3,8,"****");
 
         	}
+            if(user.getRemark()!=null)
+                if(user.getRemark().length()>0)
+                textView.setText(user.getRemark());
         }
     }
     

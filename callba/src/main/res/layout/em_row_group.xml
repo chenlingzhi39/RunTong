@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:background="?attr/selectableItemBackground"
-    android:gravity="center_vertical" >
-
+    android:orientation="vertical" >
+ <TextView
+    android:id="@+id/header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#E0E0E0"
+    android:paddingBottom="2dp"
+    android:paddingLeft="10dp"
+    android:paddingTop="2dp"
+    android:textColor="#8a99ac"
+    android:textSize="15sp"
+    android:visibility="gone" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center_vertical" >
     <ImageView
         android:id="@+id/avatar"
         android:layout_width="55dp"
@@ -23,5 +37,14 @@
         android:layout_toRightOf="@id/avatar"
         android:textColor="#8C8C8C"
         android:textSize="16sp" />
-
-</RelativeLayout>
+    <TextView
+        android:id="@+id/type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:textColor="#8C8C8C"
+        android:layout_marginRight="7dp"
+        android:textSize="16sp" />
+    </RelativeLayout>
+</LinearLayout>

@@ -21,7 +21,6 @@ public class DemoModel {
         context = ctx;
         PreferenceManager.init(context);
     }
-    
     public boolean saveContactList(List<EaseUser> contactList) {
         UserDao dao = new UserDao(context);
         dao.saveContactList(contactList);

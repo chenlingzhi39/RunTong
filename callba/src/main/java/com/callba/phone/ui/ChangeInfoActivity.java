@@ -272,7 +272,10 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         public DialogHelper(int id) {
             mView = getLayoutInflater().inflate(id, null);
             change = (EditText) mView.findViewById(R.id.et_change);
+            change.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
             change.setInputType(InputType.TYPE_CLASS_TEXT);
+            change.setSingleLine(false);
+            change.setHorizontallyScrolling(false);
             change.requestFocus();
             Timer timer = new Timer(); //设置定时器
             timer.schedule(new TimerTask() {

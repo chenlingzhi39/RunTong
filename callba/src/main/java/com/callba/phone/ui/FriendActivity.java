@@ -352,14 +352,12 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                                                             String s = getResources().getString(R.string.Add_a_friend);
                                                             //EMClient.getInstance().contactManager().addContact(entity.getPhoneNumber()+"-callba", s);
                                                             sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-                                                            List<EaseUser> mList = new ArrayList<EaseUser>();
                                                             EaseUser user = new EaseUser(entity.getPhoneNumber() + "-callba");
                                                             user.setAvatar(entity.getUrl_head());
                                                             user.setNick(entity.getNickname());
                                                             user.setSign(entity.getSign());
                                                             EaseCommonUtils.setUserInitialLetter(user);
-                                                            mList.add(user);
-                                                            DemoHelper.getInstance().updateContactList(mList);
+                                                            DemoHelper.getInstance().saveContact(user);
                                                             //LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
                                                             runOnUiThread(new Runnable() {
                                                                 public void run() {

@@ -247,7 +247,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+ /*   @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         if(GlobalConfig.getInstance().getContactBeans()!=null)
@@ -262,5 +262,5 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         if(savedInstanceState!=null)
             if(savedInstanceState.getParcelableArrayList("contact")!=null)
         GlobalConfig.getInstance().setContactBeans((ArrayList<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0));
-    }
+    }*/
 }

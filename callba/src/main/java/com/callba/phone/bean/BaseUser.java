@@ -8,7 +8,7 @@ private String phoneNumber;
 private String nickname;
 private String sign;
 private String url_head;
-
+private String remark;
     public String getNickname() {
         return nickname;
     }
@@ -40,4 +40,9 @@ private String url_head;
     public void setUrl_head(String url_head) {
         this.url_head = url_head;
     }
+
+    public String getRemark() {
+        return remark;
+    }
+
 }

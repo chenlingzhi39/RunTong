@@ -129,6 +129,7 @@ public class UserProfileManager {
                             user.setAvatar(baseUser.getUrl_head());
                             user.setNick(baseUser.getNickname());
                             user.setSign(baseUser.getSign());
+                            user.setRemark(baseUser.getRemark());
                             EaseCommonUtils.setUserInitialLetter(user);
                             mList.add(user);
                         }
@@ -199,6 +200,7 @@ public class UserProfileManager {
                             user.setAvatar(baseUser.getUrl_head());
                             user.setNick(baseUser.getNickname());
                             user.setSign(baseUser.getSign());
+                            user.setRemark(baseUser.getRemark());
                             EaseCommonUtils.setUserInitialLetter(user);
                             mList.add(user);
                         }

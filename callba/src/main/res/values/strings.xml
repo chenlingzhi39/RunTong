@@ -68,6 +68,7 @@
     <string name="input_text">添加文本</string>
     <string name="center">个人中心</string>
     <string name="settings">设置</string>
+    <string name="opinion">意见反馈</string>
     <string name="my_number">我的账号</string>
     <string name="my_commission">我的佣金</string>
     <string name="get_commission">提现</string>
@@ -132,7 +133,9 @@
 	<string name="result_data_error">数据异常,请重新登录</string>
 	<string name="login_timeout">登录超时！</string>
 	<string name="login_exception">登录异常！</string>
-	
+	<string name="remark_name">备注名</string>
+    <string name="remark_info">备注信息</string>
+    <string name="set_remark">设置备注</string>
 	<string name="getdata_fail">获取数据失败</string>
 	<string name="network_error">网络不给力，请检查网络设置</string>
     <string name="conn_timeout">请求超时！</string>

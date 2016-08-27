@@ -46,6 +46,10 @@ public class TXActivity extends BaseActivity {
 
     @OnClick(R.id.ok)
     public void onClick() {
+        if(commission.getText().toString().equals("")){
+            toast("佣金数量不能为空");
+            return;
+        }
         if(commission.getText().toString().equals("0"))
             return;
         if(Integer.parseInt(commission.getText().toString())%100!=0)

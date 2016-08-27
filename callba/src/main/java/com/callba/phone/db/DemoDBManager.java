@@ -115,6 +115,10 @@ public class DemoDBManager {
             values.put(UserDao.COLUMN_NAME_NICK, user.getNick());
         if(user.getAvatar() != null)
             values.put(UserDao.COLUMN_NAME_AVATAR, user.getAvatar());
+        if(user.getRemark()!=null)
+            values.put(UserDao.COLUMN_NAME_REMARK,user.getRemark());
+        if(user.getSign()!=null)
+            values.put(UserDao.COLUMN_NAME_SIGN,user.getSign());
         if(db.isOpen()){
             db.replace(UserDao.TABLE_NAME, null, values);
         }

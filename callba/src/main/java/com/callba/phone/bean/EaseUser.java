@@ -15,7 +15,9 @@ package com.callba.phone.bean;
 
 import com.hyphenate.chat.EMContact;
 
-public class EaseUser extends EMContact {
+import java.io.Serializable;
+
+public class EaseUser extends EMContact{
     
     /**
      * 昵称首字母

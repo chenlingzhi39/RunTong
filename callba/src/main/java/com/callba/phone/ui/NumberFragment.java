@@ -95,7 +95,7 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInputFromWindow(card.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
             }
-        }, 1000); //设置300毫秒的时长
+        }, 300); //设置300毫秒的时长
     }
 
     @Override

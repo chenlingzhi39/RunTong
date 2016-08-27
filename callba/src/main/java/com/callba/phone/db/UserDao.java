@@ -76,7 +76,6 @@ public class UserDao {
 	public void saveContact(EaseUser user){
 	    DemoDBManager.getInstance().saveContact(user);
 	}
-	
 	public void setDisabledGroups(List<String> groups){
 	    DemoDBManager.getInstance().setDisabledGroups(groups);
     }
