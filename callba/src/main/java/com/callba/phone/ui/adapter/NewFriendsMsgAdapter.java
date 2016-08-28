@@ -34,6 +34,7 @@ import com.callba.phone.db.InviteMessage;
 import com.callba.phone.db.InviteMessage.*;
 import com.callba.phone.db.InviteMessgeDao;
 import com.callba.phone.util.EaseUserUtils;
+import com.callba.phone.util.Logger;
 import com.hyphenate.chat.EMClient;
 
 
@@ -86,7 +87,7 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 		
 		final InviteMessage msg = getItem(position);
 		if (msg != null) {
-		    
+			Logger.i("state",msg.getStatus()+"");
 		    holder.agree.setVisibility(View.INVISIBLE);
 		    
 			if(msg.getGroupId() != null){ // 显示群聊提示
@@ -153,17 +154,25 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 				holder.status.setVisibility(View.GONE);
 				holder.result.setVisibility(View.VISIBLE);
 				holder.result.setText(str5);
+				if (TextUtils.isEmpty(msg.getReason())) {
+					holder.reason.setText(str4 + msg.getGroupName());
+				}
+				holder.type.setText("入群申请");
 			} else if(msg.getStatus() == InviteMesageStatus.REFUSED){
 				holder.status.setVisibility(View.GONE);
 				holder.result.setVisibility(View.VISIBLE);
 				holder.result.setText(str6);
+				if (TextUtils.isEmpty(msg.getReason())) {
+					holder.reason.setText(str4 + msg.getGroupName());
+				}
+				holder.type.setText("入群申请");
 			} else if(msg.getStatus() == InviteMesageStatus.GROUPINVITATION_ACCEPTED){
 				EaseUser user=EaseUserUtils.getUserInfo(msg.getGroupInviter());
 			    String str = (user!=null?user.getNick():msg.getGroupInviter()) + str9 + msg.getGroupName();
                 holder.status.setVisibility(View.GONE);
                 holder.reason.setText(str);
 				holder.result.setVisibility(View.GONE);
-				holder.type.setText("入群申请");
+				holder.type.setText("加群邀请");
             } else if(msg.getStatus() == InviteMesageStatus.GROUPINVITATION_DECLINED){
 				EaseUser user=EaseUserUtils.getUserInfo(msg.getGroupInviter());
 				String str = (user!=null?user.getNick():msg.getGroupInviter()) + str9 + msg.getGroupName();
