@@ -64,8 +64,9 @@
 
         <service android:name=".phone.service.UpdateService" />
         <activity android:name=".phone.ui.UserInfoActivity"
-
-
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
             />
         <activity
             android:name=".phone.ui.RemarkActivity"

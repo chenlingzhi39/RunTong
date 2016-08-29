@@ -205,6 +205,13 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         if(isMessageListInited)
             messageList.refreshSelectLast();
         DemoHelper.getInstance().pushActivity(this);
+        if (chatType == EaseConstant.CHATTYPE_SINGLE) { // 单聊
+            // 设置标题
+            if(EaseUserUtils.getUserInfo(toChatUsername) != null){
+                EaseUserUtils.setUserNick(toChatUsername,title);
+            }else title.setText(toChatUsername.length()>=11?toChatUsername.substring(0,11):toChatUsername);
+            //titleBar.setRightImageResource(R.drawable.ease_mm_title_remove);
+        }
 
     }
     @Override
@@ -720,7 +727,9 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 toGroupDetails();
                 break;
             case R.id.person:
-
+                Intent intent=new Intent(ChatActivity.this,UserInfoActivity.class);
+                intent.putExtra("username",userName);
+                startActivity(intent);
                 break;
         }
         return super.onOptionsItemSelected(item);

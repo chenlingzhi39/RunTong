@@ -3,6 +3,7 @@ package com.callba.phone.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -60,20 +61,20 @@ public class UserInfoActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        userName = getIntent().getStringExtra("userName");
+        userName = getIntent().getStringExtra("username");
         user = EaseUserUtils.getUserInfo(userName);
-        number.setHint("手机号:" + userName);
+        if(userName.length()>10){
+        number.setHint("手机号:" + userName.substring(0,11));
         if (user != null) {
-            if (!user.getNick().equals("")) {
+            frame.setVisibility(View.VISIBLE);
+            if (!TextUtils.isEmpty(user.getNick())) {
                 tv_remark.setText(user.getNick());
-                nickName.setVisibility(View.VISIBLE);
-                nickName.setText("昵称:" + user.getNick());
-                frame.setVisibility(View.VISIBLE);
+                nickName.setHint("昵称:" + user.getNick());
             }
-            if (user.getRemark() != null && !user.getRemark().equals(""))
+            if (!TextUtils.isEmpty(user.getRemark()))
             { tv_remark.setText(user.getRemark());
-              nickName.setVisibility(View.GONE);
-            }
+              nickName.setVisibility(View.VISIBLE);
+            }else nickName.setVisibility(View.GONE);
             if (!user.getAvatar().equals(""))
                 Glide.with(this).load(user.getAvatar()).into(avatar);
 
@@ -83,7 +84,7 @@ public class UserInfoActivity extends BaseActivity {
             OkHttpUtils.post().url(Interfaces.USER_INFO)
                     .addParams("loginName", getUsername())
                     .addParams("loginPwd", getPassword())
-                    .addParams("phoneNumber", userName)
+                    .addParams("phoneNumber", userName.substring(0,11))
                     .build()
                     .execute(new StringCallback() {
                         @Override
@@ -110,8 +111,8 @@ public class UserInfoActivity extends BaseActivity {
                                 if (result[0].equals("0")) {
                                     BaseUser baseUser = gson.fromJson(result[1], new TypeToken<BaseUser>() {
                                     }.getType());
-                                    if (!user.getAvatar().equals(""))
-                                        Glide.with(UserInfoActivity.this).load(user.getAvatar()).into(avatar);
+                                    if (!baseUser.getUrl_head().equals(""))
+                                        Glide.with(UserInfoActivity.this).load(baseUser.getUrl_head()).into(avatar);
                                     if (!baseUser.getNickname().equals(""))
                                         tv_remark.setText(baseUser.getNickname());
                                 } else toast(result[1]);
@@ -121,12 +122,14 @@ public class UserInfoActivity extends BaseActivity {
                             }
                         }
                     });
-        }
+        }}else {tv_remark.setText(userName);}
     }
 
     @OnClick(R.id.set_remark)
     public void onClick() {
-        startActivityForResult(new Intent(UserInfoActivity.this, RemarkActivity.class), 0);
+        Intent intent=new Intent(UserInfoActivity.this, RemarkActivity.class);
+        intent.putExtra("username",userName);
+        startActivityForResult(intent, 0);
     }
 
     @Override
@@ -134,9 +137,14 @@ public class UserInfoActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             String remark = data.getStringExtra("remark");
-            if (!remark.equals(""))
+            if (!TextUtils.isEmpty(remark)){
                 tv_remark.setText(remark);
-            else tv_remark.setText(remark);
+                nickName.setVisibility(View.VISIBLE);
+                nickName.setHint("昵称:" + user.getNick());
+            }
+            else {tv_remark.setText(user.getNick());
+                nickName.setVisibility(View.GONE);
+            }
         }
     }
 }

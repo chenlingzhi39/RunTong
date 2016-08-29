@@ -1,6 +1,7 @@
 package com.callba.phone.util;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -69,11 +70,9 @@ public class EaseUserUtils {
                 return;
             }
         	EaseUser user = getUserInfo(username);
-        	if(user != null && user.getNick() != null){
+        	if(user != null &&!TextUtils.isEmpty(user.getNick())){
         		textView.setText(user.getNick());
-                if(user.getRemark()!=null)
-                    if(user.getRemark().length()>0)
-                        textView.setText(user.getRemark());
+
         	}else{
                 if(username.length()>=11)
                 {StringBuffer buffer = new StringBuffer(username.substring(0,11));
@@ -82,7 +81,8 @@ public class EaseUserUtils {
                // buffer.replace(3,8,"****");
 
         	}
-
+            if(user != null &&!TextUtils.isEmpty(user.getRemark()))
+                    textView.setText(user.getRemark());
         }
     }
     

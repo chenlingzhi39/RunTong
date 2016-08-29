@@ -1,6 +1,7 @@
 package com.callba.phone.ui;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -84,7 +85,12 @@ public class RemarkActivity extends BaseActivity {
                                          String[] result=response.split("\\|");
                                          if(result[0].equals("0"))
                                          {  user.setRemark(remark.getText().toString());
-                                             DemoHelper.getInstance().saveContact(user);}
+                                             EaseCommonUtils.setUserInitialLetter(user);
+                                             DemoHelper.getInstance().saveContact(user);
+                                             Intent intent=new Intent();
+                                             intent.putExtra("remark",remark.getText().toString());
+                                            setResult(RESULT_OK,intent);
+                                         }
                                          toast(result[1]);
                                      }catch (Exception e){
                                          toast(R.string.getserverdata_exception);
