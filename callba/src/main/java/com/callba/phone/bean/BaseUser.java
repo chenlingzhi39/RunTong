@@ -45,4 +45,7 @@ private String remark;
         return remark;
     }
 
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 }

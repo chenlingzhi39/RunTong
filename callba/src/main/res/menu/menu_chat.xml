@@ -6,4 +6,9 @@
         android:title="@string/clear"
         app:showAsAction="always"
         />
+    <item android:id="@+id/person"
+        android:title="@string/clear"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_person_grey600_48dp"
+        />
 </menu>

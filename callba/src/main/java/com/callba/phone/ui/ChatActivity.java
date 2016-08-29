@@ -129,7 +129,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
           if (chatType == EaseConstant.CHATTYPE_SINGLE) { // 单聊
               // 设置标题
               if(EaseUserUtils.getUserInfo(toChatUsername) != null){
-                  title.setText(EaseUserUtils.getUserInfo(toChatUsername).getNick());
+                  EaseUserUtils.setUserNick(toChatUsername,title);
               }else title.setText(toChatUsername.length()>=11?toChatUsername.substring(0,11):toChatUsername);
               //titleBar.setRightImageResource(R.drawable.ease_mm_title_remove);
           } else {
@@ -718,6 +718,9 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 break;
             case R.id.detail:
                 toGroupDetails();
+                break;
+            case R.id.person:
+
                 break;
         }
         return super.onOptionsItemSelected(item);

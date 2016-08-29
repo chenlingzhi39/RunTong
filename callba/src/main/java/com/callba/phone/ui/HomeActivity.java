@@ -404,7 +404,8 @@ public class HomeActivity extends BaseActivity {
                             signIn();
                         getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
                         userDao2.getAd(1, getUsername(), getPassword());
-                        if (GlobalConfig.getInstance().getAppVersionBean() != null && (boolean) SPUtils.get(HomeActivity.this, "settings", "update_key", true)) {
+                        if (GlobalConfig.getInstance().getAppVersionBean() != null) {
+                            if(GlobalConfig.getInstance().getAppVersionBean().isForceUpgrade()||(boolean) SPUtils.get(HomeActivity.this, "settings", "update_key", true))
                             check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
                         }
                     } else {

@@ -194,6 +194,7 @@ public class DemoDBManager {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int id = -1;
         if(db.isOpen()){
+            db.delete(InviteMessgeDao.TABLE_NAME, InviteMessgeDao.COLUMN_NAME_FROM + " = ? and "+InviteMessgeDao.COLUMN_NAME_GROUP_ID+ " = ?", new String[]{message.getFrom(),message.getGroupId()});
             ContentValues values = new ContentValues();
             values.put(InviteMessgeDao.COLUMN_NAME_FROM, message.getFrom());
             values.put(InviteMessgeDao.COLUMN_NAME_GROUP_ID, message.getGroupId());

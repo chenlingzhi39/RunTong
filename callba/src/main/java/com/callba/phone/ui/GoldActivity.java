@@ -61,7 +61,7 @@ public class GoldActivity extends BaseActivity {
         private EditText change;
 
         public DialogHelper() {
-            mView = getLayoutInflater().inflate(R.layout.dialog_change_number, null);
+            mView = getLayoutInflater().inflate(R.layout.dialog_change_gold, null);
             change = (EditText) mView.findViewById(R.id.et_change);
             change.setHint("当前兑换比率为"+UserManager.getProportion(GoldActivity.this)+"比1");
             change.requestFocus();

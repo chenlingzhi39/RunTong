@@ -107,7 +107,6 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     // 整个平台的Controller, 负责管理整个SDK的配置、操作等处理
     private UMSocialService mController = UMServiceFactory.getUMSocialService(
             SocializeConfigDemo.DESCRIPTOR, RequestType.SOCIAL);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -744,7 +743,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                             String[] result=response.split("\\|");
                             if(result[0].equals("0"))
                             {
-                                toast(result[1]);
+                                toast("获取成功");
                                 UserManager.putGold(SignInActivity.this,UserManager.getGold(SignInActivity.this)+5);
                             }else{
                                 toast(result[1]);

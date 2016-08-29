@@ -63,7 +63,10 @@
         </meta-data>-->
 
         <service android:name=".phone.service.UpdateService" />
+        <activity android:name=".phone.ui.UserInfoActivity"
 
+
+            />
         <activity
             android:name=".phone.ui.RemarkActivity"
             android:launchMode="singleTop"

@@ -200,6 +200,10 @@ public interface Interfaces {
 	 * 获取金币
 	 */
 	String GET_GOLD_FROM_SHARE=URL+"/givegoldforshare/givegoldforshare.jsp";
+	/**
+	 * 获取用户信息
+	 */
+	String USER_INFO=URL+"/userinfo/userinfo.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

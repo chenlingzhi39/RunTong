@@ -27,6 +27,7 @@ import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SimpleHandler;
 import com.jzxiang.pickerview.TimePickerDialog;
 import com.jzxiang.pickerview.data.Type;
 import com.jzxiang.pickerview.listener.OnDateSetListener;
@@ -71,14 +72,14 @@ public class QueryCalllogActivity extends BaseActivity implements
 						R.id.tv_calllog_time, R.id.tv_calllog_duration,
 						R.id.tv_calllog_money });
 		lv_calllog.setAdapter(adapter);
-		Date date=new Date();
-		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+		Date date=new Date(System.currentTimeMillis());
+		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM");
 		time=format.format(date);
 		bt_date.setText(time);
         refreshLayout.setOnRefreshListener(this);
 		refreshLayout.setColorSchemeResources(R.color.orange);
 		mDialogYearMonthDay = new TimePickerDialog.Builder()
-				.setType(Type.YEAR_MONTH_DAY)
+				.setType(Type.YEAR_MONTH)
 				.setCallBack(this)
 				.build();
 		queryCalllog(time);
@@ -93,7 +94,7 @@ public class QueryCalllogActivity extends BaseActivity implements
 
 	@Override
 	public void onDateSet(TimePickerDialog timePickerView, long millseconds) {
-		SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM");
 		time=simpleDateFormat.format(new Date(millseconds));
 		bt_date.setText(time);
 		data.clear();
@@ -191,50 +192,57 @@ public class QueryCalllogActivity extends BaseActivity implements
 	 * 查询通话记录
 	 */
 	private void queryCalllog(String date) {
-		if(first){
-        progressBar.setVisibility(View.VISIBLE);
-		first=false;}else refreshLayout.setRefreshing(true);
-		OkHttpUtils.post().url(Interfaces.QUERY_CALLLOG)
-				.addParams("loginName", getUsername())
-				.addParams("loginPwd", getPassword())
-				.addParams("date",date)
-				.build().execute(new StringCallback() {
-			@Override
-			public void onAfter(int id) {
-				progressBar.setVisibility(View.GONE);
-				refreshLayout.setVisibility(View.VISIBLE);
-				refreshLayout.setRefreshing(false);
-			}
-
-			@Override
-			public void onBefore(Request request, int id) {
-
-			}
-
-			@Override
-			public void onError(Call call, Exception e, int id) {
-				toast(R.string.getserverdata_failed);
-			}
-
-			@Override
-			public void onResponse(String response, int id) {
-				try {
-					Logger.i("callog_result",response);
-					String[] result = response.split("\\|");
-
-					if ("0".equals(result[0])) {
-						// 成功fanhui数据
-						Logger.i("查询话单通话记录", response);
-						parseData(result);
-					} else if ("1".equals(result[0])) {
-						toast(result[1]);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					toast(R.string.getserverdata_exception);
+		try {
+			String[] dates = date.split("\\-");
+			if (first) {
+				progressBar.setVisibility(View.VISIBLE);
+				first = false;
+			} else refreshLayout.setRefreshing(true);
+			OkHttpUtils.post().url(Interfaces.QUERY_CALLLOG)
+					.addParams("loginName", getUsername())
+					.addParams("loginPwd", getPassword())
+					.addParams("year", dates[0])
+					.addParams("month", dates[1])
+					.build().execute(new StringCallback() {
+				@Override
+				public void onAfter(int id) {
+					progressBar.setVisibility(View.GONE);
+					refreshLayout.setVisibility(View.VISIBLE);
+					refreshLayout.setRefreshing(false);
 				}
-			}
-		});
+
+				@Override
+				public void onBefore(Request request, int id) {
+
+				}
+
+				@Override
+				public void onError(Call call, Exception e, int id) {
+					toast(R.string.getserverdata_failed);
+				}
+
+				@Override
+				public void onResponse(String response, int id) {
+					try {
+						Logger.i("callog_result", response);
+						String[] result = response.split("\\|");
+
+						if ("0".equals(result[0])) {
+							// 成功fanhui数据
+							Logger.i("查询话单通话记录", response);
+							parseData(result);
+						} else if ("1".equals(result[0])) {
+							toast(result[1]);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						toast(R.string.getserverdata_exception);
+					}
+				}
+			});
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 

@@ -35,6 +35,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.Constant;
+import com.callba.phone.bean.EaseUser;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.ui.ease.ExitGroupDialog;
@@ -92,7 +94,6 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
     private TextView title;
 	private TextView introduction;
 	private RelativeLayout rl_introduction;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
@@ -144,13 +145,10 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 		EMClient.getInstance().groupManager().addGroupChangeListener(groupChangeListener);
 		
 		title.setText(group.getGroupName() + "(" + group.getAffiliationsCount() + st);
-		
-		List<String> members = new ArrayList<String>();
-		members.addAll(group.getMembers());
-		
-		adapter = new GridAdapter(this, R.layout.em_grid, members);
-		userGridview.setAdapter(adapter);
 
+		
+		adapter = new GridAdapter(this, R.layout.em_grid, group.getMembers());
+		userGridview.setAdapter(adapter);
 		// 保证每次进详情看到的都是最新的group
 		updateGroup();
 
@@ -307,10 +305,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 
 	private void refreshMembers(){
 	    adapter.clear();
-        List<String> members = new ArrayList<String>();
-        members.addAll(group.getMembers());
-        adapter.addAll(members);
-        
+        adapter.addAll(group.getMembers());
         adapter.notifyDataSetChanged();
 	}
 	
@@ -719,10 +714,9 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 							deleteMembersFromGroup(username);
 						} else {
 							// 正常情况下点击user，可以进入用户详情或者聊天页面等等
-							// startActivity(new
-							// Intent(GroupDetailsActivity.this,
-							// ChatActivity.class).putExtra("userId",
-							// user.getUsername()));
+							Intent intent = new Intent(GroupDetailsActivity.this, ChatActivity.class);
+							intent.putExtra(Constant.EXTRA_USER_ID, getItem(position));
+							startActivity(intent);
 
 						}
 					}
@@ -791,6 +785,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 					}
 				});
 			}
+
 			return convertView;
 		}
 

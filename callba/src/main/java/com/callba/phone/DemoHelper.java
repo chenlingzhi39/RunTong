@@ -652,7 +652,7 @@ public class DemoHelper {
                         .setLargeIcon(
                                bitmap)
                         .setContentTitle("群信息")
-                        .setContentText(user!=null?user.getNick():msg.getFrom().substring(0,11)+"申请加入群"+"\""+msg.getGroupName()+"\"");
+                        .setContentText((user!=null?user.getNick():msg.getFrom().substring(0,11))+"申请加入群"+"\""+msg.getGroupName()+"\"");
                 Intent notificationIntent = new Intent(appContext, NewFriendsMsgActivity.class);
                 notificationIntent.putExtra("username", username);
                 // TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -665,24 +665,24 @@ public class DemoHelper {
                 // );
                 PendingIntent contentIntent = PendingIntent.getActivity(
                         appContext, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-                mBuilder.setFullScreenIntent(contentIntent, true);
+                //mBuilder.setFullScreenIntent(contentIntent, false);
                 mBuilder.setAutoCancel(true);
                 mBuilder.setContentIntent(contentIntent);
       /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             mBuilder.setFullScreenIntent(contentIntent, true);*/
-                mBuilder.setTicker(user!=null?user.getNick():msg.getFrom().substring(0,11)+"申请加入群"+"\""+msg.getGroupName()+"\"");
+                mBuilder.setTicker((user!=null?user.getNick():msg.getFrom().substring(0,11))+"申请加入群"+"\""+msg.getGroupName()+"\"");
                 Notification notification = mBuilder.build();
                 notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
                 //notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 final NotificationManager mNotificationManager = (NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
                 mNotificationManager.notify(0526, notification);
-                Timer timer=new Timer();
+             /*   Timer timer=new Timer();
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
                        mNotificationManager.cancel(0526);
                     }
-                },5000);
+                },5000);*/
             }
         }
 
@@ -697,7 +697,7 @@ public class DemoHelper {
             msg.setTo(groupId);
             msg.setMsgId(UUID.randomUUID().toString());
             StringBuffer buffer = new StringBuffer(accepter.substring(0,11));
-            msg.addBody(new EMTextMessageBody(getUserInfo(accepter)!=null?getUserInfo(accepter).getNick():buffer.toString() + " " +st4));
+            msg.addBody(new EMTextMessageBody((getUserInfo(accepter)!=null?getUserInfo(accepter).getNick():buffer.toString()) + " " +st4));
             msg.setStatus(Status.SUCCESS);
             // 保存同意消息
             EMClient.getInstance().chatManager().saveMessage(msg);

@@ -10,6 +10,7 @@ import com.callba.phone.DemoHelper;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.ui.base.BaseActivity;
+import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Interfaces;
 import com.zhy.http.okhttp.OkHttpUtils;
