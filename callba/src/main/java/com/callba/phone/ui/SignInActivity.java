@@ -282,10 +282,6 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
     @Override
     public void start() {

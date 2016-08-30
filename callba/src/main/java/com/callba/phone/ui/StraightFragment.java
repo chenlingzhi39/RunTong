@@ -42,6 +42,8 @@ import com.callba.phone.util.Logger;
 import com.callba.phone.util.NumberAddressService;
 import com.callba.phone.util.PayResult;
 import com.callba.phone.util.SignUtils;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -55,6 +57,8 @@ import java.util.TimerTask;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.Request;
 
 /**
  * Created by PC-20160514 on 2016/5/18.
@@ -124,6 +128,34 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
                         //userDao1.pay(getUsername(), getPassword(), outTradeNo, "success");
+                        OkHttpUtils.post().addParams("loginName",getUsername())
+                                .addParams("loginPwd",getPassword())
+                                .addParams("orderNumber",outTradeNo)
+                                .addParams("payResult", "success")
+                                .build()
+                                .execute(new StringCallback() {
+                                    @Override
+                                    public void onAfter(int id) {
+
+                                    }
+
+                                    @Override
+                                    public void onBefore(Request request, int id) {
+
+                                    }
+
+                                    @Override
+                                    public void onError(Call call, Exception e, int id) {
+
+                                    }
+
+                                    @Override
+                                    public void onResponse(String response, int id) {
+                                        try{String[] result=response.split("\\|");
+                                            toast(result[1]);
+                                        }catch (Exception e){}
+                                    }
+                                });
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
                         // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
