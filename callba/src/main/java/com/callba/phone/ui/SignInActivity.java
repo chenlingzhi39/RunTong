@@ -283,6 +283,12 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     }
 
     @Override
+    protected void onResume() {
+        gold.setText(getString(R.string.gold) + ":" + UserManager.getGold(this));
+        super.onResume();
+    }
+
+    @Override
     public void start() {
         circle.setEnabled(false);
         btn_signIn.setEnabled(false);
