@@ -757,6 +757,34 @@ public class StraightFragment2 extends BaseFragment {
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
                         //userDao.pay(getUsername(), getPassword(), outTradeNo, "success");
+                        OkHttpUtils.post().addParams("loginName",getUsername())
+                                .addParams("loginPwd",getPassword())
+                                .addParams("orderNumber",outTradeNo)
+                                .addParams("payResult", "success")
+                                .build()
+                                .execute(new StringCallback() {
+                                    @Override
+                                    public void onAfter(int id) {
+
+                                    }
+
+                                    @Override
+                                    public void onBefore(Request request, int id) {
+
+                                    }
+
+                                    @Override
+                                    public void onError(Call call, Exception e, int id) {
+
+                                    }
+
+                                    @Override
+                                    public void onResponse(String response, int id) {
+                                      try{String[] result=response.split("\\|");
+                                         toast(result[1]);
+                                      }catch (Exception e){}
+                                    }
+                                });
                         if (has_iid) has_iid = false;
                         is_coupon = false;
                         ll_coupon.setVisibility(View.GONE);

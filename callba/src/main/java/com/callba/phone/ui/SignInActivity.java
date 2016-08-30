@@ -284,7 +284,6 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
 
     @Override
     protected void onResume() {
-        gold.setText(getString(R.string.gold) + ":" + UserManager.getGold(this));
         super.onResume();
     }
 
@@ -751,6 +750,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                             {
                                 toast("获取成功");
                                 UserManager.putGold(SignInActivity.this,UserManager.getGold(SignInActivity.this)+5);
+                                gold.setText(getString(R.string.gold) + ":" + UserManager.getGold(SignInActivity.this));
                             }else{
                                 toast(result[1]);
                             }
