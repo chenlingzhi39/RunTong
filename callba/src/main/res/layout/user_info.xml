@@ -55,4 +55,31 @@
         android:textSize="18sp"
         android:id="@+id/set_remark"/>
     </FrameLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@color/white"
+        >
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/clear_chat"
+            android:padding="10dp"
+            android:gravity="left|center"
+            android:textSize="18sp"
+            android:id="@+id/clear_chat"/>
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/delete_friend"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/em_btn_style_alert_dialog_special"
+        android:layout_margin="10dp"
+        android:textColor="@color/white"
+        android:text="@string/delete_friend"
+        android:textSize="18sp"
+        android:visibility="gone"/>
 </LinearLayout>

@@ -3,9 +3,13 @@ package com.callba.phone.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -15,7 +19,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.callba.R;
+import com.callba.phone.ui.adapter.ImagePagerAdapter;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 
@@ -31,7 +37,7 @@ public class FunIntroduceActivity extends BaseActivity implements OnPageChangeLi
 		super.onCreate(savedInstanceState);
 
 		mViewPager = (ViewPager) this.findViewById(R.id.view_pager);
-		mViewPager.setAdapter(new MyPagerAdapter());
+		mViewPager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager()));
 		mViewPager.addOnPageChangeListener(this);
 		
 		dots = new ArrayList<View>();
@@ -85,20 +91,65 @@ public class FunIntroduceActivity extends BaseActivity implements OnPageChangeLi
 			}
 		}
 	}
-	
+	public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
+
+		final int PAGE_COUNT = 4;
+
+		public SimpleFragmentPagerAdapter(FragmentManager fm) {
+			super(fm);
+
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			ImageFragment imageFragment=new ImageFragment();
+			Bundle bundle=new Bundle();
+			switch (position) {
+				case 0:
+					bundle.putInt("id",R.drawable.introduce_bg1);
+					imageFragment.setArguments(bundle);
+					return imageFragment;
+				case 1:
+					bundle.putInt("id",R.drawable.introduce_bg2);
+					imageFragment.setArguments(bundle);
+					return imageFragment;
+				case 2:
+					bundle.putInt("id",R.drawable.introduce_bg3);
+					imageFragment.setArguments(bundle);
+					return imageFragment;
+				case 3:
+					bundle.putInt("id",0);
+					imageFragment.setArguments(bundle);
+					return imageFragment;
+				default:
+					return null;
+
+			}
+
+		}
+
+		@Override
+		public int getCount() {
+			return PAGE_COUNT;
+		}
+
+
+	}
 	class MyPagerAdapter extends PagerAdapter {
 		private List<View> views;
 		
 		public MyPagerAdapter() {
 			views = new ArrayList<View>();
-			View v1 = new View(FunIntroduceActivity.this);
-			View v2 = new View(FunIntroduceActivity.this);
-			View v3 = new View(FunIntroduceActivity.this);
-			View v4 = new View(FunIntroduceActivity.this);
-			
-			v1.setBackgroundResource(R.drawable.introduce_bg1);
+			ImageView v1 = new ImageView(FunIntroduceActivity.this);
+			ImageView v2 = new ImageView(FunIntroduceActivity.this);
+			ImageView v3 = new ImageView(FunIntroduceActivity.this);
+			ImageView v4 = new ImageView(FunIntroduceActivity.this);
+			Glide.with(FunIntroduceActivity.this).load(R.drawable.introduce_bg1).into(v1);
+			Glide.with(FunIntroduceActivity.this).load(R.drawable.introduce_bg2).into(v2);
+			Glide.with(FunIntroduceActivity.this).load(R.drawable.introduce_bg3).into(v3);
+		/*	v1.setBackgroundResource(R.drawable.introduce_bg1);
 			v2.setBackgroundResource(R.drawable.introduce_bg2);
-			v3.setBackgroundResource(R.drawable.introduce_bg3);
+			v3.setBackgroundResource(R.drawable.introduce_bg3);*/
 			v3.setClickable(true);
 			v3.setOnClickListener(new View.OnClickListener() {
 				@Override

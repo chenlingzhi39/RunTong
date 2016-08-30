@@ -69,24 +69,14 @@ import okhttp3.Request;
 
 )
 public class HomeActivity extends BaseActivity {
-    @InjectView(R.id.recharge)
-    TextView recharge;
     @InjectView(R.id.mall)
     TextView mall;
-    @InjectView(R.id.flow)
-    TextView flow;
     @InjectView(R.id.game)
     TextView game;
     @InjectView(R.id.sign_in)
     TextView signIn;
     @InjectView(R.id.banner)
     BannerLayout banner;
-    @InjectView(R.id.ad)
-    WebView webView;
-    @InjectView(R.id.progressBar)
-    ProgressBar progressBar;
-    @InjectView(R.id.relative)
-    RelativeLayout relative;
     private String yue;
     /* @InjectView(R.id.view_pager)
      AutoScrollViewPager viewPager;

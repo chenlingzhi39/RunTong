@@ -148,7 +148,8 @@ public class ChangePasswordActivity extends BaseActivity implements UserDao.Post
                 e.printStackTrace();
                 if(e instanceof UnknownHostException)toast(R.string.conn_failed);
                 else if(e instanceof SocketException){
-                    toast("修改成功");
+                    if(!e.toString().contains("failed to connect to"))
+                    {  toast("修改成功");
                     UserManager.putOriginalPassword(ChangePasswordActivity.this,new_password);
                     try {
                         String encryptPwd = DesUtil.encrypt(new_password,
@@ -158,7 +159,9 @@ public class ChangePasswordActivity extends BaseActivity implements UserDao.Post
                         ex.printStackTrace();
                         toast(R.string.result_data_error);
                     }
-                    finish();
+                    finish();}
+                    else
+                        toast(R.string.network_error);
                 }
                 else
                 toast(R.string.network_error);

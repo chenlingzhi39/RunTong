@@ -714,10 +714,11 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 							deleteMembersFromGroup(username);
 						} else {
 							// 正常情况下点击user，可以进入用户详情或者聊天页面等等
-							Intent intent = new Intent(GroupDetailsActivity.this, ChatActivity.class);
+							if(!getItem(position).equals(EMClient.getInstance().getCurrentUser()))
+							{Intent intent = new Intent(GroupDetailsActivity.this, ChatActivity.class);
 							intent.putExtra(Constant.EXTRA_USER_ID, getItem(position));
 							startActivity(intent);
-
+							}
 						}
 					}
 

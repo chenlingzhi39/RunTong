@@ -85,8 +85,7 @@ public class ImageQRActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         retry.setVisibility(View.GONE);
-                        Logger.i("order_result", response);
-                        try{
+                        try{  Logger.i("order_result", response);
                         final String[] result = response.split("\\|");
                         if (result[0].equals("0")) {
 

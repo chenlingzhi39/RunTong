@@ -51,7 +51,8 @@
             android:singleLine="true"
             android:textColor="@color/black"
             android:textSize="34.0sp"
-            android:layout_weight="3"/>
+            android:layout_weight="3"
+            android:inputType="number"/>
 
         <TextView
             android:id="@+id/tv_location"

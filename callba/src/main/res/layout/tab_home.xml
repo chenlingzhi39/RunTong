@@ -8,27 +8,13 @@
     android:background="@color/white">
     <include layout="@layout/toolbar_padding"
         />
-
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:id="@+id/relative"
-        android:visibility="gone">
-<WebView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:src="@drawable/home_banner"
-    android:scaleType="fitXY"
-    android:id="@+id/ad"/>
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone"
-            />
-    </RelativeLayout>
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
     <com.callba.phone.view.BannerLayout
         android:id="@+id/banner"
         android:layout_width="match_parent"
@@ -49,37 +35,61 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@color/white">
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:id="@+id/recharge"
-          android:drawableTop="@drawable/recharge"
-          android:layout_weight="1"
-          android:text="@string/recharge"
-          android:drawablePadding="10dp"
-          android:padding="10dp"
-          android:gravity="center"
-          android:clickable="true"
-          android:background="?attr/selectableItemBackground"
-          android:textSize="12sp"/>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:id="@+id/recharge">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/recharge"
+                android:text="@string/recharge"
+                android:drawablePadding="10dp"
+                android:padding="10dp"
+                android:layout_centerInParent="true"
+                android:textSize="12sp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/discount_corner"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:visibility="gone"
+                />
+        </RelativeLayout>
         <View
             android:layout_width="1px"
             android:layout_height="match_parent"
             android:background="@color/light_black"
             />
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:id="@+id/flow">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/flow"
             android:drawableTop="@drawable/flow"
-            android:layout_weight="1"
             android:text="@string/flow"
             android:drawablePadding="10dp"
             android:padding="10dp"
-            android:gravity="center"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackground"
+            android:layout_centerInParent="true"
             android:textSize="12sp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/discount_corner"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:visibility="gone"
+                />
+        </RelativeLayout>
         <View
             android:layout_width="1px"
             android:layout_height="match_parent"
@@ -87,7 +97,7 @@
             />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/discount"
             android:drawableTop="@drawable/discount"
@@ -105,7 +115,7 @@
             android:background="@color/light_black"
             />
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/family"
             android:drawableTop="@drawable/family"
@@ -204,4 +214,6 @@
         android:layout_height="1px"
         android:background="@color/light_black"
         />
+        </LinearLayout>
+</ScrollView>
 </LinearLayout>

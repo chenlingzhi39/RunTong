@@ -40,6 +40,7 @@ import com.callba.phone.Constant;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SimpleHandler;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMCursorResult;
 import com.hyphenate.chat.EMGroupInfo;
@@ -67,8 +68,6 @@ public class PublicGroupsActivity extends BaseActivity {
     private ProgressBar footLoadingPB;
     private TextView footLoadingText;
     private ArrayList<String> groupIds;
-    private LocalBroadcastManager broadcastManager;
-    private BroadcastReceiver broadcastReceiver;
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -115,19 +114,6 @@ public class PublicGroupsActivity extends BaseActivity {
 
             }
         });
-        IntentFilter intentFilter = new IntentFilter();
-        //intentFilter.addAction(Constant.ACTION_CONTACT_CHANAGED);
-        intentFilter.addAction(Constant.ACTION_GROUP_CHANAGED);
-        broadcastManager = LocalBroadcastManager.getInstance(this);
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Logger.i("group","changed");
-                isFirstLoading=true;
-                loadAndShowData();
-            }
-        };
-        broadcastManager.registerReceiver(broadcastReceiver, intentFilter);
     }
 
     /**
@@ -240,7 +226,6 @@ public class PublicGroupsActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        broadcastManager.unregisterReceiver(broadcastReceiver);
         super.onDestroy();
     }
 }
