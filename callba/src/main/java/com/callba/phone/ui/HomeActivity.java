@@ -6,19 +6,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.MyApplication;
+import com.callba.phone.bean.Campaign;
+import com.callba.phone.ui.adapter.CampaignAdapter;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Advertisement;
@@ -41,6 +41,7 @@ import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -78,10 +79,6 @@ public class HomeActivity extends BaseActivity {
     @InjectView(R.id.banner)
     BannerLayout banner;
     private String yue;
-    /* @InjectView(R.id.view_pager)
-     AutoScrollViewPager viewPager;
-     @InjectView(R.id.indicator)
-     CirclePageIndicator indicator;*/
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
     private ArrayList<String> webImages = new ArrayList<>();
     private SharedPreferenceUtil mPreferenceUtil;
@@ -94,6 +91,8 @@ public class HomeActivity extends BaseActivity {
     private String[] result;
     List<SystemNumber> list;
     private MarkDao markDao;
+    private ArrayList<Campaign> campaigns;
+    private CampaignAdapter campaignAdapter;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,7 +142,7 @@ public class HomeActivity extends BaseActivity {
         banner.setViewRes(localImages);
         // 判断是否自动启动
         if (savedInstanceState == null
-                && (boolean)SPUtils.get(this,Constant.PACKAGE_NAME,Constant.Auto_Login,false)
+                && (boolean) SPUtils.get(this, Constant.PACKAGE_NAME, Constant.Auto_Login, false)
                 && !LoginController.getInstance().getUserLoginState()) {
             Log.i("MainCallActivity", "auto");
             Logger.i("MainCallActivity", "MainCallActivity  oncreate autoLogin");
@@ -175,7 +174,7 @@ public class HomeActivity extends BaseActivity {
         //userDao1.getSystemPhoneNumber(getUsername(), getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
         getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
         userDao2.getAd(1, getUsername(), getPassword());
-        if((boolean)SPUtils.get(HomeActivity.this, "settings", "sign_key", false))
+        if ((boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", true))
             signIn();
      /*   if (!mPreferenceUtil.getString(getUsername()).equals(date) && (boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", false)) {
             String year = Calendar.getInstance().get(Calendar.YEAR) + "";
@@ -185,9 +184,11 @@ public class HomeActivity extends BaseActivity {
             //userDao.getMarks(getUsername(), getPassword(), year + month);
             getMarks(year+month);
         }*/
+        if((boolean)SPUtils.get(HomeActivity.this,Constant.PACKAGE_NAME,getDate(),true))
+        getActivity();
         if (GlobalConfig.getInstance().getAppVersionBean() != null) {
-            if(GlobalConfig.getInstance().getAppVersionBean().isForceUpgrade()||(boolean) SPUtils.get(this, "settings", "update_key", true))
-            check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
+            if (GlobalConfig.getInstance().getAppVersionBean().isForceUpgrade() || (boolean) SPUtils.get(this, "settings", "update_key", true))
+                check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
         }
     }
 
@@ -305,7 +306,6 @@ public class HomeActivity extends BaseActivity {
         YueDialogHelper helper = new YueDialogHelper();
         Dialog dialog = new AlertDialog.Builder(this, R.style.MyDialogStyle)
                 .setView(helper.getView())
-                .setOnDismissListener(helper)
                 .create();
         helper.setDialog(dialog);
         dialog.show();
@@ -346,7 +346,7 @@ public class HomeActivity extends BaseActivity {
             return;
         }
         OkHttpUtils.post().url(Interfaces.Login)
-        .addParams("loginSign", sign)
+                .addParams("loginSign", sign)
                 .addParams("loginType", "1")
                 .addParams("softType", "android")
                 .addParams("callType", "all")
@@ -390,14 +390,17 @@ public class HomeActivity extends BaseActivity {
                             //userDao.getMarks(getUsername(), getPassword(), year + month);
                             getMarks(year+month);
                         }*/
-                        if((boolean)SPUtils.get(HomeActivity.this, "settings", "sign_key", false))
+                        if ((boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", true))
                             signIn();
                         getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+                        if((boolean)SPUtils.get(HomeActivity.this,Constant.PACKAGE_NAME,getDate(),true))
+                        getActivity();
                         userDao2.getAd(1, getUsername(), getPassword());
                         if (GlobalConfig.getInstance().getAppVersionBean() != null) {
-                            if(GlobalConfig.getInstance().getAppVersionBean().isForceUpgrade()||(boolean) SPUtils.get(HomeActivity.this, "settings", "update_key", true))
-                            check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
+                            if (GlobalConfig.getInstance().getAppVersionBean().isForceUpgrade() || (boolean) SPUtils.get(HomeActivity.this, "settings", "update_key", true))
+                                check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
                         }
+                        MobclickAgent.onProfileSignIn(getUsername());
                     } else {
                         toast(resultInfo[1]);
                         switchManualLogin();
@@ -441,11 +444,12 @@ public class HomeActivity extends BaseActivity {
         }
         return false;
     }
-    public void getMarks(String time){
+
+    public void getMarks(String time) {
         OkHttpUtils.post().url(Interfaces.GET_MARKS)
-                .addParams("loginName",getUsername())
-                .addParams("loginPwd",getPassword())
-                .addParams("date",time)
+                .addParams("loginName", getUsername())
+                .addParams("loginPwd", getPassword())
+                .addParams("date", time)
                 .build().execute(new StringCallback() {
 
             @Override
@@ -456,7 +460,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onResponse(String response, int id) {
                 try {
-                    String[] result =response.split("\\|");
+                    String[] result = response.split("\\|");
                     if (result[0].equals("0")) {
                         String[] dates = result[1].split(",");
                         if (date.equals(dates[dates.length - 1])) {
@@ -480,11 +484,12 @@ public class HomeActivity extends BaseActivity {
             }
         });
     }
-    public void getSystemPhoneNumber(String count){
+
+    public void getSystemPhoneNumber(String count) {
         Logger.i("phoneNumberCount", count);
         OkHttpUtils.post().url(Interfaces.GET_SYSTEM_PHONE_NUMBER)
-                .addParams("loginName",getUsername())
-                .addParams("loginPwd",getPassword())
+                .addParams("loginName", getUsername())
+                .addParams("loginPwd", getPassword())
                 .addParams("phoneNumberCount", count)
                 .build().execute(new StringCallback() {
             @Override
@@ -538,11 +543,12 @@ public class HomeActivity extends BaseActivity {
             }
         });
     }
-    public void signIn(){
+
+    public void signIn() {
         OkHttpUtils.post().url(Interfaces.Sign)
-                .addParams("loginName",getUsername())
-                .addParams("loginPwd",getPassword())
-                .addParams("softType","android")
+                .addParams("loginName", getUsername())
+                .addParams("loginPwd", getPassword())
+                .addParams("softType", "android")
                 .build()
                 .execute(new StringCallback() {
                     @Override
@@ -553,10 +559,10 @@ public class HomeActivity extends BaseActivity {
                     @Override
                     public void onResponse(String response, int id) {
                         try {
-                            result =response.split("\\|");
+                            result = response.split("\\|");
                             Log.i("get_sign", response);
-                            if (result[0].equals("0"))
-                            {toast(result[1]);
+                            if (result[0].equals("0")) {
+                                toast(result[1]);
                                 Mark mark = new Mark();
                                 mark.setUsername(getUsername());
                                 mark.setMonth(Calendar.getInstance().get(Calendar.MONTH) + 1);
@@ -567,12 +573,106 @@ public class HomeActivity extends BaseActivity {
                                     e.printStackTrace();
                                 }
                                 markDao.insert(mark);
-                                UserManager.putGold(HomeActivity.this,UserManager.getGold(HomeActivity.this) + 3);
+                                UserManager.putGold(HomeActivity.this, UserManager.getGold(HomeActivity.this) + 3);
                             }
                         } catch (Exception e) {
-                           e.printStackTrace();
+                            e.printStackTrace();
                         }
                     }
                 });
     }
+
+    public void getActivity() {
+        OkHttpUtils.post().url(Interfaces.ACTIVITY_INFO)
+                .addParams("loginName", getUsername())
+                .addParams("loginPwd", getPassword())
+                .build().execute(new StringCallback() {
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                try {
+                    String[] result = response.split("\\|");
+                    if (result[0].equals("0")) {
+                      campaigns=gson.fromJson(result[1],new TypeToken<ArrayList<Campaign>>() {
+                      }.getType());
+                         showDialog(campaigns);
+                        SPUtils.put(HomeActivity.this,Constant.PACKAGE_NAME,getDate(),false);
+                    }
+                } catch (Exception e) {
+                }
+            }
+        });
+    }
+
+    public void showActivityDialog(String activity) {
+        // 存在新版本
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("活动信息");
+        builder.setMessage(activity);
+        builder.setPositiveButton(R.string.know,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,
+                                        int which) {
+                        dialog.dismiss();
+                    }
+                });
+        android.app.AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(true);
+        alertDialog.setCancelable(true);
+        alertDialog.show();
+
+    }
+    public class DialogHelper implements DialogInterface.OnDismissListener {
+        private AlertDialog mDialog;
+        private View mView;
+        private RecyclerView mealList;
+
+        public DialogHelper(ArrayList<Campaign> campaigns) {
+            mView = getLayoutInflater().inflate(R.layout.dialog_list, null);
+            mealList = (RecyclerView) mView.findViewById(R.id.list);
+            campaignAdapter = new CampaignAdapter(HomeActivity.this);
+            campaignAdapter.addAll(campaigns);
+            mealList.setAdapter(campaignAdapter);
+        }
+
+
+        @Override
+        public void onDismiss(DialogInterface dialogInterface) {
+            mDialog = null;
+        }
+
+        public void setDialog(AlertDialog mDialog) {
+            this.mDialog = mDialog;
+        }
+
+        public View getView() {
+            return mView;
+        }
+    }
+
+    public void showDialog(ArrayList<Campaign> campaigns) {
+        final DialogHelper helper = new DialogHelper(campaigns);
+        dialog = new AlertDialog.Builder(this)
+                .setView(helper.getView()).setTitle("活动信息")
+                .setPositiveButton("知道了", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        helper.setDialog(dialog);
+        dialog.show();
+    }
+    public String getDate(){
+        Date date=new Date(System.currentTimeMillis());
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(date);
+    }
 }
+

@@ -8,11 +8,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.widget.BadgeView;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -30,6 +34,7 @@ public class RechargeActivity extends BaseActivity{
     TabLayout layoutTab;
     @InjectView(R.id.viewpager)
     ViewPager viewpager;
+    private String tabTitles[] = new String[]{"卡号充值", "畅聊套餐"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +67,7 @@ public class RechargeActivity extends BaseActivity{
     public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
         final int PAGE_COUNT = 2;
-        private String tabTitles[] = new String[]{"卡号充值", "畅聊套餐"};
+
         private Context context;
 
         public SimpleFragmentPagerAdapter(FragmentManager fm, Context context) {

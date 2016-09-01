@@ -31,13 +31,12 @@ import android.widget.Toast;
 import com.alipay.sdk.app.PayTask;
 import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.Commodity;
 import com.callba.phone.bean.Coupon;
+import com.callba.phone.bean.Flow;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.Constant;
-import com.callba.phone.ui.adapter.BillAdapter;
-import com.callba.phone.ui.adapter.CouponAdapter;
 import com.callba.phone.ui.adapter.CouponSelectAdapter;
+import com.callba.phone.ui.adapter.FlowAdapter;
 import com.callba.phone.ui.adapter.RadioAdapter;
 import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.util.Interfaces;
@@ -50,6 +49,9 @@ import com.google.gson.reflect.TypeToken;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -71,15 +73,14 @@ import okhttp3.Call;
 import okhttp3.Request;
 
 /**
- * Created by PC-20160514 on 2016/5/18.
+ * Created by PC-20160514 on 2016/9/1.
  */
-@ActivityFragmentInject(
-        contentViewId = R.layout.fragment_straight)
-public class StraightFragment extends BaseFragment implements UserDao.PostListener {
+@ActivityFragmentInject(contentViewId = R.layout.straight_flow)
+public class StraightFragment3 extends BaseFragment implements UserDao.PostListener {
     /*  @InjectView(R.id.price1)
-      RadioButton price1;
-      @InjectView(R.id.price2)
-      RadioButton price2;*/
+   RadioButton price1;
+   @InjectView(R.id.price2)
+   RadioButton price2;*/
     @InjectView(R.id.number)
     TextView number;
     @InjectView(R.id.address)
@@ -98,20 +99,25 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     TextView campaign;
     @InjectView(R.id.bt_coupon)
     Button btCoupon;
+    @InjectView(R.id.now_price_nation)
+    TextView nowPriceNation;
+    @InjectView(R.id.past_price_nation)
+    TextView pastPriceNation;
+    @InjectView(R.id.linear)
+    LinearLayout linear;
     private UserDao userDao, userDao1;
-    private String address;
     private int size;
     private String subject, body, price;
     private String outTradeNo;
-    private ArrayList<Commodity> bills;
-    private BillAdapter billAdapter;
+    private ArrayList<Flow> flows, seperateFlows;
+    private FlowAdapter flowAdapter;
     private CouponSelectAdapter couponSelectAdapter;
     private ArrayList<Coupon> coupons;
     private Coupon coupon;
     private Gson gson;
     private Dialog dialog;
-    private Commodity bill;
-    private HashMap<Integer,Integer> map=new HashMap<>();
+    private Flow flow;
+    private HashMap<Integer, Integer> map = new HashMap<>();
     // 商户PID
     public static final String PARTNER = "2088221931971814";
     // 商户收款账号
@@ -152,7 +158,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
-                        coupons.remove(map.get(billAdapter.getmSelectedItem()));
+                        coupons.remove(map.get(flowAdapter.getmSelectedItem()));
                         map.clear();
                         //userDao1.pay(getUsername(), getPassword(), outTradeNo, "success");
                         Map<String, String> paramsMap = new HashMap<String, String>();
@@ -220,65 +226,17 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
         gson = new Gson();
-        DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        int mDensity = metrics.densityDpi;
-        switch (mDensity) {
-            case 120:
-                size = 15;
-                break;
-            case 160:
-                size = 20;
-                break;
-            case 240:
-                size = 30;
-                break;
-            case 320:
-                size = 40;
-                break;
-            case 480:
-                size = 60;
-                break;
-            case 640:
-                size = 80;
-                break;
-        }
-     /*   Spannable spannable = new SpannableString("39元\n\n（包月畅聊）\n原价150元");
-        spannable.setSpan(new AbsoluteSizeSpan(size), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable.setSpan(new AbsoluteSizeSpan(size / 2), 4, spannable.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        price1.setText(spannable);
-        Spannable spannable1 = new SpannableString("399元\n\n（包年畅聊）\n原价1500元");
-        spannable1.setSpan(new AbsoluteSizeSpan(size), 0, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable1.setSpan(new AbsoluteSizeSpan(size / 2), 5, spannable1.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        price2.setText(spannable1);
-        number.setText(getUsername());*/
+        seperateFlows = new ArrayList<>();
+
+
         String address = NumberAddressService.getAddress(
                 getUsername(), Constant.DB_PATH,
                 getActivity());
         tv_address.setHint(address);
         userDao = new UserDao(getActivity(), this);
-        subject = "39元套餐";
-        body = "包月畅聊";
-        price = "39";
-      /*  group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.price1:
-                        subject = "39元套餐";
-                        body = "包月畅聊";
-                        price = "39";
-                        break;
-                    case R.id.price2:
-                        subject = "399元套餐";
-                        body = "包年畅聊";
-                        price = "399";
-                        break;
-                }
-            }
-        });*/
 
-        getBills();
+
+        query(getUsername());
     }
 
 
@@ -298,7 +256,6 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         toast(msg);
 
     }
-
 
 
     @Override
@@ -331,12 +288,10 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
 
                 String phone_number = cursor.getString(cursor.getColumnIndexOrThrow(Contacts.Phones.NUMBER));
 
+
                 if (phone_number.length() > 10) {
                     number.setText(phone_number);
-                    String address = NumberAddressService.getAddress(
-                            phone_number, Constant.DB_PATH,
-                            getActivity());
-                    tv_address.setHint(address);
+                    query(phone_number);
                 } else
                     toast("请选择手机号!");
                 break;
@@ -347,8 +302,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     }
 
 
-
-    @OnClick({R.id.relative,R.id.contacts, R.id.bt_coupon, R.id.recharge})
+    @OnClick({R.id.relative, R.id.contacts, R.id.bt_coupon, R.id.recharge})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.relative:
@@ -369,9 +323,9 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                         .addParams("phoneNumber", number.getText().toString())
                         .addParams("loginPwd", getPassword())
                         .addParams("softType", "android")
-                        .addParams("cid",coupon!=null?coupon.getCid():"")
+                        .addParams("cid", coupon != null ? coupon.getCid() : "")
                         .addParams("payMethod", "0")
-                        .addParams("iid", bill.getIid())
+                        .addParams("iid", flow.getIid())
                         .build()
                         .execute(new StringCallback() {
                             @Override
@@ -460,14 +414,8 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (helper.getNumber().length() > 10) {
-                            address = NumberAddressService.getAddress(
-                                    helper.getNumber(), Constant.DB_PATH,
-                                    getActivity());
-                            //if (!address.equals("")) {
                             number.setText(helper.getNumber());
-                            tv_address.setHint(address);
-                          /*  } else
-                                toast("请输入正确的手机号!");*/
+                            query(helper.getNumber());
                         } else
                             toast("请输入正确的手机号!");
                     }
@@ -613,8 +561,54 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     private String getSignType() {
         return "sign_type=\"RSA\"";
     }
+    public void query(final String number) {
 
-    public void getBills() {
+        OkHttpUtils.get().url("http://apis.juhe.cn/mobile/get")
+                .addParams("phone", number)
+                .addParams("key", "1dfd68c50bbf3f58755f1d537fe817a4")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onBefore(Request request, int id) {
+                progressDialog = ProgressDialog.show(getActivity(), "", "正在查询归属地");
+            }
+
+            @Override
+            public void onAfter(int id) {
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Toast.makeText(getActivity(), "查询归属地失败", 1).show();
+                tv_address.setHint("");
+
+               linear.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                progressDialog.dismiss();
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.getString("resultcode").equals("200")) {
+                        final JSONObject result = new JSONObject(jsonObject.getString("result"));
+                        final String address = result.getString("company");
+                        tv_address.setHint(address);
+                        getFLows(address);
+
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), "查询归属地失败", 1).show();
+                    tv_address.setHint("");
+                    linear.setVisibility(View.GONE);
+                }
+
+            }
+        });
+    }
+    public void getFLows(final String address) {
         OkHttpUtils.post().url(Interfaces.COMMODITY_INFO)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
@@ -630,34 +624,45 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
             @Override
             public void onResponse(String response, int id) {
                 try {
-                    Logger.i("bill_result", response);
+                    Logger.i("flow_result", response);
                     String[] result = response.split("\\|");
                     if (result[0].equals("0")) {
-                        bills = gson.fromJson(result[1], new TypeToken<ArrayList<Commodity>>() {
+                        flows = gson.fromJson(result[1], new TypeToken<ArrayList<Flow>>() {
                         }.getType());
-                        if (bills.get(0).getActivity() != null)
-                            campaign.setText("活动:" + bills.get(0).getActivity().get(0).getContent());
-                        coupons=bills.get(0).getCoupon();
-                        if(coupons!=null){btCoupon.setVisibility(View.VISIBLE);
-                            btCoupon.setText(coupons.get(0).getTitle());}
-                        else btCoupon.setVisibility(View.GONE);
-                        billAdapter = new BillAdapter(getActivity(), bills, size);
+                        for (Flow flow : flows) {
+                            if (address.contains(flow.getOperators())) {
+                                seperateFlows.add(flow);
+                            }
+                        }
+                        if ( seperateFlows.get(0).getActivity() != null)
+                            campaign.setText("活动:" + flows.get(0).getActivity().get(0).getContent());
+                        flow =  seperateFlows.get(0);
+                        coupons =  seperateFlows.get(0).getCoupon();
+                        if (coupons != null) {
+                            btCoupon.setVisibility(View.VISIBLE);
+                            btCoupon.setText(coupons.get(0).getTitle());
+                        } else btCoupon.setVisibility(View.GONE);
+                        nowPriceNation.setText(flow.getPrice() + "元");
+                        pastPriceNation.setText(flow.getOldPrice() + "元");
+                        flowAdapter = new FlowAdapter(getActivity(), flows);
                         list.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-                        list.setAdapter(billAdapter);
-                        billAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
+                        list.setAdapter(flowAdapter);
+                        flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
                             @Override
                             public void onClick(int position) {
-                                 bill = bills.get(position);
-                                if (bills.get(position).getActivity() != null)
-                                    campaign.setText("活动:" + bills.get(position).getActivity().get(0).getContent());
+                                flow = flows.get(position);
+                                if (flows.get(position).getActivity() != null)
+                                    campaign.setText("活动:" + flows.get(position).getActivity().get(0).getContent());
                                 else campaign.setText("");
-                                coupons=bills.get(position).getCoupon();
-                                if(coupons!=null)btCoupon.setVisibility(View.VISIBLE);
+                                coupons = flows.get(position).getCoupon();
+                                if (coupons != null) btCoupon.setVisibility(View.VISIBLE);
                                 else btCoupon.setVisibility(View.GONE);
-                                if(map.get(position)!=null){
-                                    coupon=coupons.get(map.get(position));
+                                if (map.get(position) != null) {
+                                    coupon = coupons.get(map.get(position));
                                     btCoupon.setText(coupons.get(position).getTitle());
                                 }
+                                nowPriceNation.setText(flow.getPrice() + "元");
+                                pastPriceNation.setText(flow.getOldPrice() + "元");
                             }
                         });
                     } else toast(result[1]);
@@ -669,15 +674,16 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         });
     }
 
-  public void showCouponsDialog(ArrayList<Coupon> coupons){
-      final CouponDialogHelper helper = new CouponDialogHelper(coupons);
-      dialog = new AlertDialog.Builder(getActivity())
-              .setView(helper.getView()).setTitle("选择优惠券")
-              .setOnDismissListener(helper)
-              .create();
-      helper.setDialog(dialog);
-      dialog.show();
-  }
+    public void showCouponsDialog(ArrayList<Coupon> coupons) {
+        final CouponDialogHelper helper = new CouponDialogHelper(coupons);
+        dialog = new AlertDialog.Builder(getActivity())
+                .setView(helper.getView()).setTitle("选择优惠券")
+                .setOnDismissListener(helper)
+                .create();
+        helper.setDialog(dialog);
+        dialog.show();
+    }
+
     public class CouponDialogHelper implements DialogInterface.OnDismissListener {
         private Dialog mDialog;
         private View mView;
@@ -686,14 +692,14 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         public CouponDialogHelper(final ArrayList<Coupon> coupons) {
             mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_list, null);
             list = (RecyclerView) mView.findViewById(R.id.list);
-            couponSelectAdapter=new CouponSelectAdapter(getActivity(),coupons);
+            couponSelectAdapter = new CouponSelectAdapter(getActivity(), coupons);
             list.setAdapter(couponSelectAdapter);
             couponSelectAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
                 @Override
                 public void onClick(int position) {
                     btCoupon.setText(coupons.get(position).getTitle());
-                    coupon=coupons.get(position);
-                    map.put(billAdapter.getmSelectedItem(),position);
+                    coupon = coupons.get(position);
+                    map.put(flowAdapter.getmSelectedItem(), position);
                 }
             });
         }

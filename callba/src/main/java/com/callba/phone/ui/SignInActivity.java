@@ -24,6 +24,7 @@ import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.CircleTextView;
 import com.callba.phone.widget.signcalendar.SignCalendar;
 import com.callba.phone.widget.signcalendar.sqlit;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.bean.SocializeEntity;
 import com.umeng.socialize.controller.RequestType;
@@ -463,7 +464,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 //startActivity(new Intent(SignInActivity.this, ShareActivity.class));
                 // 首先在您的Activity中添加如下成员变量
                 addWXPlatform();
-                mController.setShareContent("我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+                mController.setShareContent(getString(R.string.share_content));
                 mController.openShare(this, false);
                 break;
             case R.id.previous:
@@ -513,10 +514,10 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         mController.getConfig().setSsoHandler(new SinaSsoHandler());
         mController.getConfig().setSsoHandler(new TencentWBSsoHandler());
         mController.getConfig().supportQQPlatform(this, "100424468", "c7394704798a158208a74ab60104f0ba",
-                "http://weixin.boboit.cn/download/download.jsp");
+               getString(R.string.download_url));
         mController.getConfig().setSsoHandler(
                 new QZoneSsoHandler(this, "100424468", "c7394704798a158208a74ab60104f0ba"));
-        mController.setShareContent("我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+        mController.setShareContent(getString(R.string.share_content));
         setPlatformOrder();
 
         // 设置微信分享内容
@@ -551,15 +552,15 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         // uMusic.setThumb("http://www.umeng.com/images/pic/social/chart_1.png");
 
         WeiXinShareContent weixinContent = new WeiXinShareContent();
-        weixinContent.setShareContent("我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+        weixinContent.setShareContent(getString(R.string.share_content));
         weixinContent.setTitle("Call吧分享");
-        weixinContent.setTargetUrl("http://weixin.boboit.cn/download/download.jsp");
-        weixinContent.setShareImage(new UMImage(this, "http://www.umeng.com/images/pic/banner_module_social.png"));
+        weixinContent.setTargetUrl(getString(R.string.download_url));
+        weixinContent.setShareImage(localImage);
         mController.setShareMedia(weixinContent);
 
         // 设置朋友圈分享的内容
         CircleShareContent circleMedia = new CircleShareContent();
-        circleMedia.setShareContent("我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+        circleMedia.setShareContent(getString(R.string.share_content));
         circleMedia.setTitle("Call吧分享");
         circleMedia.setShareImage(localImage);
         // circleMedia.setShareMusic(uMusic);
@@ -573,13 +574,13 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
 
         // 设置renren分享内容
         RenrenShareContent renrenShareContent = new RenrenShareContent();
-        renrenShareContent.setShareContent("我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+        renrenShareContent.setShareContent(getString(R.string.share_content));
         UMImage image = new UMImage(this,
                 BitmapFactory.decodeResource(getResources(), R.drawable.logo));
         image.setTitle("Call吧分享");
         image.setThumb("http://www.umeng.com/images/pic/social/integrated_3.png");
         renrenShareContent.setShareImage(image);
-        renrenShareContent.setAppWebSite("http://www.umeng.com/social");
+        renrenShareContent.setAppWebSite("http://www.boboit.cn");
         mController.setShareMedia(renrenShareContent);
 
         UMImage qzoneImage = new UMImage(this,
@@ -593,21 +594,21 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
 
         // 设置QQ空间分享内容
         QZoneShareContent qzone = new QZoneShareContent();
-        qzone.setShareContent("我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
-        qzone.setTargetUrl("http://weixin.boboit.cn/download/download.jsp");
+        qzone.setShareContent(getString(R.string.share_content));
+        qzone.setTargetUrl(getString(R.string.download_url));
         qzone.setTitle("Call吧分享");
         qzone.setShareImage(localImage);
         mController.setShareMedia(qzone);
 
-        video.setThumb(new UMImage(this, BitmapFactory.decodeResource(
-                getResources(), R.drawable.logo)));
+   /*     video.setThumb(new UMImage(this, BitmapFactory.decodeResource(
+                getResources(), R.drawable.logo)));*/
 
         QQShareContent qqShareContent = new QQShareContent();
-        qqShareContent.setShareContent("我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+        qqShareContent.setShareContent(getString(R.string.share_content));
         qqShareContent.setTitle("Call吧分享");
         qqShareContent
                 .setShareImage(new UMImage(this, R.drawable.logo));
-        qqShareContent.setTargetUrl("http://weixin.boboit.cn/download/download.jsp");
+        qqShareContent.setTargetUrl(getString(R.string.download_url));
         mController.setShareMedia(qqShareContent);
 
         // UMusic uMusic = new
@@ -626,14 +627,14 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         umVideo.setTitle("友盟社会化组件视频");
 
         TencentWbShareContent tencent = new TencentWbShareContent();
-        tencent.setShareContent("我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+        tencent.setShareContent(getString(R.string.share_content));
         // 设置tencent分享内容
         mController.setShareMedia(tencent);
 
         // 设置邮件分享内容， 如果需要分享图片则只支持本地图片
         MailShareContent mail = new MailShareContent(localImage);
         mail.setTitle("Call吧分享");
-        mail.setShareContent("我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+        mail.setShareContent(getString(R.string.share_content));
         // 设置tencent分享内容
         mController.setShareMedia(mail);
 
@@ -648,7 +649,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         // mController.setShareMedia(sms);
 
         SinaShareContent sinaContent = new SinaShareContent(localImage);
-        sinaContent.setShareContent("我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+        sinaContent.setShareContent(getString(R.string.share_content));
 //		mController.setShareMedia(sinaContent);
 
         mController.setShareMedia(new UMImage(this, R.drawable.logo));
@@ -691,7 +692,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         umVedio.setThumb(mUMImgBitmap);
         // 设置分享文字内容
         mController
-                .setShareContent("我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+                .setShareContent(getString(R.string.share_content));
         // mController.setShareContent(null);
         // 设置分享图片
         // mController.setShareMedia(mUMImgBitmap);

@@ -197,8 +197,8 @@ public class SelectContactActivity extends BaseActivity implements View.OnClickL
         private NumberAdapter numberAdapter;
 
         public DialogHelper(ArrayList<String> numbers) {
-            mView = getLayoutInflater().inflate(R.layout.dialog_meal, null);
-            mealList = (RecyclerView) mView.findViewById(R.id.meal_list);
+            mView = getLayoutInflater().inflate(R.layout.dialog_list, null);
+            mealList = (RecyclerView) mView.findViewById(R.id.list);
             mealList.setLayoutManager(new LinearLayoutManager(SelectContactActivity.this));
             numberAdapter = new NumberAdapter(SelectContactActivity.this);
             numberAdapter.addAll(numbers);

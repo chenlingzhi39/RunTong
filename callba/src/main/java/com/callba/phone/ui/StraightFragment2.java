@@ -44,6 +44,7 @@ import com.callba.phone.util.PayResult;
 import com.callba.phone.util.SignUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -55,7 +56,9 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -581,46 +584,6 @@ public class StraightFragment2 extends BaseFragment {
                                 }
                             }
                         });
-                          /*  if (address.contains("移动")) {
-                                flows.add(new Flow("500M", "22.50", "28.0", "30.0", "30.0"));
-                                flows.add(new Flow("1000M", "37.50", "47.0", "50.0", "50.0"));
-                                flows.add(new Flow("2000M", "55.00", "66.0", "70.0", "70.0"));
-
-                            }
-                            if (address.contains("联通")) {
-                                flows.add(new Flow("500M", "22.50", "30.0", "30.0", "30.0"));
-                            }
-                            if (address.contains("电信")) {
-                                flows.add(new Flow("500M", "22.50", "28.50", "30.0", "30.0"));
-                                flows.add(new Flow("1000M", "37.50", "47.50", "50.0", "50.0"));
-                            }
-                            flowName.setText(flows.get(0).getName() + "流量包");
-                            nowPriceNation.setText(flows.get(0).getNow_price_nation() + "元");
-                            pastPriceNation.setHint(flows.get(0).getPast_price_nation() + "元");
-                            if (flows.get(0).getNow_price_nation().equals(flows.get(0).getPast_price_nation()))
-                                pastPriceNation.setVisibility(View.GONE);
-                            price=flows.get(0).getNow_price_nation();
-                            subject=flows.get(0).getName()+"套餐";
-                            flowValue=flows.get(0).getName();
-                            flowAdapter = new FlowAdapter(getActivity(), flows);
-                            flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
-                                @Override
-                                public void onClick(int position) {
-                                    flowName.setText(flows.get(position).getName() + "流量包");
-                                    nowPriceLocal.setText(flows.get(position).getNow_price_local() + "元");
-                                    pastPriceLocal.setHint(flows.get(position).getPast_price_local() + "元");
-                                    nowPriceNation.setText(flows.get(position).getNow_price_nation() + "元");
-                                    pastPriceNation.setHint(flows.get(position).getPast_price_nation() + "元");
-                                    if (flows.get(position).getNow_price_nation().equals(flows.get(position).getPast_price_nation()))
-                                        pastPriceNation.setVisibility(View.GONE);
-                                    else pastPriceNation.setVisibility(View.VISIBLE);
-                                    price=flows.get(position).getNow_price_nation();
-                                    flowValue=flows.get(position).getName();
-                                    subject=flows.get(position).getName()+"套餐";
-                                }
-                            });
-                            flowList.setAdapter(flowAdapter);
-                            content.setVisibility(View.VISIBLE);*/
 
                     }
                 } catch (JSONException e) {
@@ -632,83 +595,6 @@ public class StraightFragment2 extends BaseFragment {
 
             }
         });
-      /*  new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final String address = AddressService.getAddress(getActivity(), number);
-                    //把查询结果返回的归属地显示在textView上
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Logger.i("address", address);
-                            String[] result = address.split(" ");
-                            if (result.length < 3) {
-                                tv_address.setHint(address);
-                                content.setVisibility(View.GONE);
-                            } else {
-                                tv_address.setHint(result[2]);
-                                final List<Flow> flows = new ArrayList<>();
-                                if (result[2].contains("移动")) {
-                                    flows.add(new Flow("500M", "22.50", "28.50", "30.0", "30.0"));
-                                    flows.add(new Flow("1000M", "37.50", "48.0", "50.0", "50.0"));
-                                    flows.add(new Flow("2000M", "55.00", "66.0", "70.0", "70.0"));
-
-                                }
-                                if (result[2].contains("联通")) {
-                                    flows.add(new Flow("500M", "22.50", "30.0", "30.0", "30.0"));
-                                }
-                                if (result[2].contains("电信")) {
-                                    flows.add(new Flow("500M", "22.50", "28.50", "30.0", "30.0"));
-                                    flows.add(new Flow("1000M", "37.50", "47.50", "50.0", "50.0"));
-                                }
-                                flowName.setText(flows.get(0).getName() + "流量包");
-                                nowPriceNation.setText(flows.get(0).getNow_price_nation() + "元");
-                                pastPriceNation.setHint(flows.get(0).getPast_price_nation() + "元");
-                                if (flows.get(0).getNow_price_nation().equals(flows.get(0).getPast_price_nation()))
-                                    pastPriceNation.setVisibility(View.GONE);
-                                price=flows.get(0).getNow_price_nation();
-                                subject=flows.get(0).getName()+"套餐";
-                                flowValue=flows.get(0).getName();
-                                flowAdapter = new FlowAdapter(getActivity(), flows);
-                                flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
-                                    @Override
-                                    public void onClick(int position) {
-                                        flowName.setText(flows.get(position).getName() + "流量包");
-                                        nowPriceLocal.setText(flows.get(position).getNow_price_local() + "元");
-                                        pastPriceLocal.setHint(flows.get(position).getPast_price_local() + "元");
-                                        nowPriceNation.setText(flows.get(position).getNow_price_nation() + "元");
-                                        pastPriceNation.setHint(flows.get(position).getPast_price_nation() + "元");
-                                        if (flows.get(position).getNow_price_nation().equals(flows.get(position).getPast_price_nation()))
-                                            pastPriceNation.setVisibility(View.GONE);
-                                        else pastPriceNation.setVisibility(View.VISIBLE);
-                                        price=flows.get(position).getNow_price_nation();
-                                        flowValue=flows.get(position).getName();
-                                        subject=flows.get(position).getName()+"套餐";
-                                    }
-                                });
-                                flowList.setAdapter(flowAdapter);
-                                content.setVisibility(View.VISIBLE);
-                            }
-                            progressDialog.dismiss();
-                        }
-                    });
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getActivity(), "查询归属地失败", 1).show();
-                            tv_address.setHint("");
-                            progressDialog.dismiss();
-                            content.setVisibility(View.GONE);
-                        }
-                    });
-
-                }
-            }
-        }).start();*/
     }
 
     @Override
@@ -757,6 +643,10 @@ public class StraightFragment2 extends BaseFragment {
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
                         //userDao.pay(getUsername(), getPassword(), outTradeNo, "success");
+                        Map<String, String> paramsMap = new HashMap<String, String>();
+                        paramsMap.put("tradeNo", outTradeNo);
+                        paramsMap.put("price", price);
+                        MobclickAgent.onEvent(getActivity(), "pay_success", paramsMap);
                         OkHttpUtils.post().addParams("loginName",getUsername())
                                 .addParams("loginPwd",getPassword())
                                 .addParams("orderNumber",outTradeNo)

@@ -337,8 +337,8 @@ public class DemoHelper {
                 EaseUser user = getUserInfo(message.getFrom());
                 if(user != null){
                     return getUserInfo(message.getFrom()).getNick() + ": " + ticker;
-                }else{
-                    StringBuffer buffer = new StringBuffer(message.getFrom().substring(0,11));
+                }else {
+                    StringBuffer buffer = new StringBuffer(message.getFrom().length()>10?message.getFrom().substring(0,11):message.getFrom());
                     //buffer.replace(3,8,"****");
                     return buffer + ": " + ticker;
                 }
@@ -346,10 +346,19 @@ public class DemoHelper {
             
             @Override
             public String getLatestText(EMMessage message, int fromUsersNum, int messageNum) {
+                String ticker = EaseCommonUtils.getMessageDigest(message, appContext);
+                if(message.getType() == Type.TXT){
+                    ticker = ticker.replaceAll("\\[.{2,3}\\]", "[表情]");
+                }
                 EaseUser user = getUserInfo(message.getFrom());
-                StringBuffer buffer = new StringBuffer(message.getFrom().substring(0,11));
+                if(user != null){
+                    return getUserInfo(message.getFrom()).getNick() + ": " + ticker;
+                }else {
+                    StringBuffer buffer = new StringBuffer(message.getFrom().length()>10?message.getFrom().substring(0,11):message.getFrom());
+                    //buffer.replace(3,8,"****");
+                    return buffer + ": " + ticker;
+                }
                 //buffer.replace(3,8,"****");
-                return (user!=null?user.getNick():buffer)+":"+EaseCommonUtils.getMessageDigest(message,appContext);
                 // return fromUsersNum + "个基友，发来了" + messageNum + "条消息";
             }
             
@@ -946,7 +955,7 @@ public class DemoHelper {
                     Intent intent = new Intent("com.callba.chat");
                     intent.putExtra("message",message);
                     appContext.sendBroadcast(intent);
-                    //appContext.sendBroadcast(new Intent("message_num"));
+                    appContext.sendBroadcast(new Intent("message_num"));
 			        //应用在后台，不需要刷新UI,通知栏提示新消息
 			        if(!easeUI.hasForegroundActivies()){
 			            getNotifier().onNewMsg(message);

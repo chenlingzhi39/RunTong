@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.Constant;
@@ -31,12 +32,14 @@ import com.hyphenate.chat.EMClient;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import okhttp3.Call;
+import okhttp3.Request;
 
 /**
  * Created by PC-20160514 on 2016/6/22.
@@ -61,6 +64,7 @@ public class AddContactActivity extends BaseActivity {
     String toAddUsername;
     ProgressDialog progressDialog;
     Gson gson=new Gson();
+    BaseUser baseUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,10 +86,51 @@ public class AddContactActivity extends BaseActivity {
             }
 
             // TODO 从服务器获取此contact,如果不存在提示不存在此用户
+        OkHttpUtils.post().url(Interfaces.USER_INFO)
+                .addParams("loginName",getUsername())
+                .addParams("loginPwd",getPassword())
+                .addParams("phoneNumber",name)
+                .build().execute(new StringCallback() {
+            @Override
+            public void onAfter(int id) {
+             progressDialog.dismiss();
+            }
 
-            //服务器存在此用户，显示此用户和添加按钮
-            searchedUserLayout.setVisibility(View.VISIBLE);
-            nameText.setText(toAddUsername);
+            @Override
+            public void onBefore(Request request, int id) {
+             progressDialog=ProgressDialog.show(AddContactActivity.this,"","正在查找用户");
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                if (e instanceof UnknownHostException) {
+                    toast(R.string.conn_failed);
+                } else toast(R.string.network_error);
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                {
+                    try {
+                        String[] result = response.split("\\|");
+                        if (result[0].equals("0")) {
+                            baseUser = gson.fromJson(result[1], new TypeToken<BaseUser>() {
+                            }.getType());
+                           if(!TextUtils.isEmpty(baseUser.getUrl_head()))
+                               Glide.with(AddContactActivity.this).load(baseUser.getUrl_head()).into(avatar);
+                            nameText.setText(baseUser.getNickname());
+                            //服务器存在此用户，显示此用户和添加按钮
+                            searchedUserLayout.setVisibility(View.VISIBLE);
+                        } else toast(result[1]);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        toast(R.string.getserverdata_exception);
+                    }
+                }
+            }
+        });
+
+
 
         }
 
@@ -95,14 +140,15 @@ public class AddContactActivity extends BaseActivity {
      * @param view
      */
     public void addContact(View view){
-        if(EMClient.getInstance().getCurrentUser().equals(nameText.getText().toString()+"-callba")){
+        Logger.i("phoneNumber",baseUser.getPhoneNumber()+"");
+        if(EMClient.getInstance().getCurrentUser().equals(toAddUsername+"-callba")){
             new EaseAlertDialog(this, R.string.not_add_myself).show();
             return;
         }
 
-        if(DemoHelper.getInstance().getContactList().containsKey(nameText.getText().toString()+"-callba")){
+        if(DemoHelper.getInstance().getContactList().containsKey(toAddUsername+"-callba")){
             //提示已在好友列表中(在黑名单列表里)，无需添加
-            if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(nameText.getText().toString()+"-callba")){
+            if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(toAddUsername+"-callba")){
                 new EaseAlertDialog(this, R.string.user_already_in_contactlist).show();
                 return;
             }
@@ -146,19 +192,15 @@ public class AddContactActivity extends BaseActivity {
                 .url(Interfaces.ADD_FRIEND)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd",  getPassword())
-                .addParams("phoneNumber",nameText.getText().toString())
+                .addParams("phoneNumber",toAddUsername)
                 .build()
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         e.printStackTrace();
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                progressDialog.dismiss();
-                                String s2 = getResources().getString(R.string.Request_add_buddy_failure);
-                                Toast.makeText(getApplicationContext(), s2 , 1).show();
-                            }
-                        });
+                        if (e instanceof UnknownHostException) {
+                            toast(R.string.conn_failed);
+                        } else toast(R.string.network_error);
                     }
 
                     @Override

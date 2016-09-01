@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.ClipboardManager;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.bean.EaseUser;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
@@ -738,9 +740,26 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 toGroupDetails();
                 break;
             case R.id.person:
-                Intent intent = new Intent(ChatActivity.this, UserInfoActivity.class);
+                Intent intent = new Intent(this, UserInfoActivity.class);
                 intent.putExtra("username", userName);
                 startActivityForResult(intent,USER_INFO);
+                break;
+            case R.id.callback:
+                String name;
+                if(toChatUsername.length()>10){
+                EaseUser user=EaseUserUtils.getUserInfo(toChatUsername);
+                name=toChatUsername;
+                if (user != null) {
+                    if(!TextUtils.isEmpty(user.getNick()))
+                    name=user.getNick();
+                    if(!TextUtils.isEmpty(user.getRemark()))
+                        name=user.getRemark();
+                }
+                Intent intent1 = new Intent(this, SelectDialPopupWindow.class);
+                intent1.putExtra("name",name);
+                intent1.putExtra("number", toChatUsername.substring(0,11));
+
+                startActivity(intent1);}else toast("不支持的用户类型");
                 break;
         }
         return super.onOptionsItemSelected(item);

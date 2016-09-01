@@ -190,7 +190,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 public void onClick(View v) {
                     Uri smsToUri = Uri.parse("smsto://" + bean.getContactPhones().get(0));
                     Intent mIntent = new Intent(Intent.ACTION_SENDTO, smsToUri);
-                    mIntent.putExtra("sms_body", "我是" + UserManager.getNickname(context) + "，我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！");
+                    mIntent.putExtra("sms_body", "我是" + UserManager.getNickname(context) + "，"+context.getString(R.string.share_content));
                     context.startActivity(mIntent);
                 }
             });

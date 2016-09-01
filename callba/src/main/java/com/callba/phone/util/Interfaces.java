@@ -204,6 +204,14 @@ public interface Interfaces {
 	 * 获取用户信息
 	 */
 	String USER_INFO=URL+"/userinfo/userinfo.jsp";
+	/**
+	 * 活动信息
+	 */
+	String ACTIVITY_INFO=URL+"/activity/activity.jsp";
+	/**
+	 * 商品信息
+	 */
+	String COMMODITY_INFO=URL+"/items/items2.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

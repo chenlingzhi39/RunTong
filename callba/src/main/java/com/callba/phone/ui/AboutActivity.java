@@ -67,7 +67,7 @@ public class AboutActivity extends BaseActivity {
                 intent.setType("text/plain"); // 分享发送的数据类型
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Callba分享"); // 分享的主题
-                intent.putExtra(Intent.EXTRA_TEXT, "我正在使用CALL吧！ CALL吧“0月租”“0漫游”“通话不计分钟”，赶快加入我们吧！"); // 分享的内容
+                intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_content)); // 分享的内容
                 startActivity(Intent.createChooser(intent, "选择分享"));// 目标应用选择对话框的标题*/
                 break;
             case R.id.url:

@@ -205,6 +205,7 @@ public class NumberFragment2 extends BaseFragment {
                         .addParams("loginName", getUsername())
                         .addParams("loginPwd", getPassword())
                         .addParams("cardNumber", card.getText().toString())
+                        .addParams("phoneNumber",number.getText().toString())
                         .build().execute(new StringCallback() {
                     @Override
                     public void onAfter(int id) {

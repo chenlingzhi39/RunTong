@@ -186,8 +186,8 @@ public class AccountActivity extends BaseActivity {
         private MealAdapter mealAdapter;
 
         public DialogHelper(ArrayList<Meal> meals) {
-            mView = getLayoutInflater().inflate(R.layout.dialog_meal, null);
-            mealList = (RecyclerView) mView.findViewById(R.id.meal_list);
+            mView = getLayoutInflater().inflate(R.layout.dialog_list, null);
+            mealList = (RecyclerView) mView.findViewById(R.id.list);
             mealAdapter = new MealAdapter(AccountActivity.this);
             mealAdapter.addAll(meals);
             mealList.setAdapter(mealAdapter);

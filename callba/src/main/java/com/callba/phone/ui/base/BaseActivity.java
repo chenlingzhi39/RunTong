@@ -2,7 +2,7 @@ package com.callba.phone.ui.base;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -20,6 +20,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
@@ -53,6 +54,7 @@ import com.callba.phone.ui.WelcomeActivity;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.Logger;
+import com.umeng.analytics.MobclickAgent;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -96,7 +98,7 @@ public class BaseActivity extends AppCompatActivity {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }*/
     public Subscription subscription;
-
+    public AlertDialog dialog;
     @SuppressLint("InlinedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -359,13 +361,13 @@ public class BaseActivity extends AppCompatActivity {
         if (isSendNotification) {
             //showBackRunNotification();
         }
-        //	MobclickAgent.onResume(this);
+     	MobclickAgent.onResume(this);
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        //	MobclickAgent.onPause(this);
+        MobclickAgent.onPause(this);
         super.onPause();
     }
 
@@ -425,10 +427,10 @@ public class BaseActivity extends AppCompatActivity {
 
                         }
                     });
-            AlertDialog alertDialog = builder.create();
-            alertDialog.setCanceledOnTouchOutside(false);
-            alertDialog.setCancelable(false);
-            alertDialog.show();
+            dialog = builder.create();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setCancelable(false);
+            dialog.show();
 
         } else {
 
@@ -470,10 +472,10 @@ public class BaseActivity extends AppCompatActivity {
                             }
                         });
 
-                AlertDialog alertDialog = builder.create();
-                alertDialog.setCanceledOnTouchOutside(true);
-                alertDialog.setCancelable(true);
-                alertDialog.show();
+               dialog = builder.create();
+               dialog.setCanceledOnTouchOutside(true);
+                dialog.setCancelable(true);
+                dialog.show();
 
             }
         }

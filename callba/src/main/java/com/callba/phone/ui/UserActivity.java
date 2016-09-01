@@ -28,6 +28,7 @@ import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.SimpleHandler;
+import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -152,6 +153,7 @@ public class UserActivity extends BaseActivity {
                                     activity.finish();
                                 }
                                 startActivity(new Intent(UserActivity.this, LoginActivity.class));
+                                MobclickAgent.onProfileSignOff();
                             }
                         });
                 builder.setNegativeButton(R.string.cancel,

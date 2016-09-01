@@ -84,11 +84,12 @@ public class FlowActivity extends BaseActivity {
                     return NumberFragment2.newInstance();
 
                 case 1:
-                    StraightFragment2 straightFragment2=new StraightFragment2();
+
+                 /*   StraightFragment2 straightFragment2=new StraightFragment2();
                     Bundle bundle=new Bundle();
                     bundle.putSerializable("coupon",coupon);
-                    straightFragment2.setArguments(bundle);
-                    return straightFragment2;
+                    straightFragment2.setArguments(bundle);*/
+                    return StraightFragment3.newInstance();
 
                 default:
                     return null;

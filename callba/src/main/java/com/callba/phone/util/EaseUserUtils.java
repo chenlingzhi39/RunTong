@@ -41,12 +41,18 @@ public class EaseUserUtils {
      */
     public static void setUserAvatar(Context context, String username, ImageView imageView){
     	EaseUser user = getUserInfo(username);
+
         if(username.equals(UserManager.getUsername(context)+"-callba")){
             if(!UserManager.getUserAvatar(context).equals(""))
                 Glide.with(context).load(UserManager.getUserAvatar(context)).into(imageView);
             return;
         }
-        if(user != null && user.getAvatar() != null){
+        if(user!=null){
+            if(!TextUtils.isEmpty(user.getAvatar())){
+                Glide.with(context).load(user.getAvatar()).into(imageView);
+            }
+        }else  Glide.with(context).load(R.drawable.logo).into(imageView);
+       /* if(user != null && user.getAvatar() != null){
             try {
                 int avatarResId = Integer.parseInt(user.getAvatar());
                 Glide.with(context).load(avatarResId).into(imageView);
@@ -56,7 +62,7 @@ public class EaseUserUtils {
             }
         }else{
             Glide.with(context).load(R.drawable.logo).into(imageView);
-        }
+        }*/
 
     }
     

@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 
 import com.callba.R;
@@ -14,7 +15,7 @@ import java.util.List;
 public abstract class RadioAdapter<T> extends RecyclerView.Adapter<RadioAdapter.ViewHolder> {
     public int mSelectedItem = 0;
     public List<T> mItems;
-    private Context mContext;
+    public Context mContext;
    public interface ItemClickListener{
        void onClick(int position);
    }
@@ -47,10 +48,11 @@ public abstract class RadioAdapter<T> extends RecyclerView.Adapter<RadioAdapter.
     class ViewHolder extends RecyclerView.ViewHolder {
 
         public RadioButton mRadio;
-
+        public ImageView corner;
         public ViewHolder(final View inflate) {
             super(inflate);
             mRadio = (RadioButton) inflate.findViewById(R.id.radio);
+            corner=(ImageView) inflate.findViewById(R.id.corner);
             View.OnClickListener clickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -62,6 +64,10 @@ public abstract class RadioAdapter<T> extends RecyclerView.Adapter<RadioAdapter.
             itemView.setOnClickListener(clickListener);
             mRadio.setOnClickListener(clickListener);
         }
+    }
+
+    public int getmSelectedItem() {
+        return mSelectedItem;
     }
 
     public void setmSelectedItem(int mSelectedItem) {
