@@ -629,6 +629,7 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                 .build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
+                linear.setVisibility(View.GONE);
                 if (e instanceof UnknownHostException) {
                     toast(R.string.conn_failed);
                 } else toast(R.string.network_error);
@@ -700,8 +701,11 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                             }
                         });
                         linear.setVisibility(View.VISIBLE);
-                    } else toast(result[1]);
+                    } else {toast(result[1]);
+                        linear.setVisibility(View.GONE);
+                    }
                 } catch (Exception e) {
+                    linear.setVisibility(View.GONE);
                     e.printStackTrace();
                     toast(R.string.getserverdata_exception);
                 }

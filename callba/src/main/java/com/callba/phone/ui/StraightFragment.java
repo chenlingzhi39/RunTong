@@ -36,7 +36,6 @@ import com.callba.phone.bean.Coupon;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.ui.adapter.BillAdapter;
-import com.callba.phone.ui.adapter.CouponAdapter;
 import com.callba.phone.ui.adapter.CouponSelectAdapter;
 import com.callba.phone.ui.adapter.RadioAdapter;
 import com.callba.phone.ui.base.BaseFragment;
@@ -98,6 +97,8 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     TextView campaign;
     @InjectView(R.id.bt_coupon)
     Button btCoupon;
+    @InjectView(R.id.linear)
+    LinearLayout linear;
     private UserDao userDao, userDao1;
     private String address;
     private int size;
@@ -111,8 +112,8 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     private Gson gson;
     private Dialog dialog;
     private Commodity bill;
-    private HashMap<Integer,Integer> map=new HashMap<>();
-    int bill_pos=0,coupon_pos=0;
+    private HashMap<Integer, Integer> map = new HashMap<>();
+    int bill_pos = 0, coupon_pos = 0;
     // 商户PID
     public static final String PARTNER = "2088221931971814";
     // 商户收款账号
@@ -153,12 +154,12 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
-                        if(map.get(billAdapter.getmSelectedItem())!=0&&coupons.size()>1)
-                        {coupons.remove((int)map.get(billAdapter.getmSelectedItem()));
-                            map.put(billAdapter.getmSelectedItem(),0);
-                            coupon=coupons.get(0);
+                        if (map.get(billAdapter.getmSelectedItem()) != 0 && coupons.size() > 1) {
+                            coupons.remove((int) map.get(billAdapter.getmSelectedItem()));
+                            map.put(billAdapter.getmSelectedItem(), 0);
+                            coupon = coupons.get(0);
                             btCoupon.setText(coupon.getTitle());
-                            if(coupons.size()==1){
+                            if (coupons.size() == 1) {
                                 btCoupon.setVisibility(View.GONE);
                                 coupons.clear();
                             }
@@ -310,7 +311,6 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     }
 
 
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -357,8 +357,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     }
 
 
-
-    @OnClick({R.id.relative,R.id.contacts, R.id.bt_coupon, R.id.recharge})
+    @OnClick({R.id.relative, R.id.contacts, R.id.bt_coupon, R.id.recharge})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.relative:
@@ -385,17 +384,17 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                         coupons.clear();
                     }
                 }*/
-                Map<String, String> params=new HashMap<>();
+                Map<String, String> params = new HashMap<>();
                 params.put("loginName", getUsername());
                 params.put("phoneNumber", number.getText().toString());
                 params.put("loginPwd", getPassword());
                 params.put("softType", "android");
                 params.put("payMethod", "0");
                 params.put("iid", bill.getIid());
-                if(coupon!=null)
-                if(coupon.getCid()!=null){
-                    params.put("cid",coupon.getCid());
-                }
+                if (coupon != null)
+                    if (coupon.getCid() != null) {
+                        params.put("cid", coupon.getCid());
+                    }
                 OkHttpUtils.post().url(Interfaces.PAY_ORDER)
                         .params(params)
                         .build()
@@ -514,7 +513,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
      */
     public void pay() {
 
-        String orderInfo = getOrderInfo(bill.getPrice()+"元套餐", bill.getTitle(), price);
+        String orderInfo = getOrderInfo(bill.getPrice() + "元套餐", bill.getTitle(), price);
 
         /**
          * 特别注意，这里的签名逻辑需要放在服务端，切勿将私钥泄露在代码中！
@@ -648,6 +647,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                 .build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
+                linear.setVisibility(View.GONE);
                 if (e instanceof UnknownHostException) {
                     toast(R.string.conn_failed);
                 } else toast(R.string.network_error);
@@ -661,55 +661,60 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     if (result[0].equals("0")) {
                         bills = gson.fromJson(result[1], new TypeToken<ArrayList<Commodity>>() {
                         }.getType());
-                        if (bills.get(0).getActivity().size()>0)
+                        if (bills.get(0).getActivity().size() > 0)
                             campaign.setText("活动:" + bills.get(0).getActivity().get(0).getContent());
-                        for(int i=0;i<bills.size();i++)
-                        if(bills.get(i).getCoupon().size()>0){
-                            bills.get(i).getCoupon().add(0,new Coupon("不使用优惠券"));
-                            if(getArguments().getString("cid")!=null)
-                            for(int j=0;j< bills.get(i).getCoupon().size();j++)
-                            {if(bills.get(i).getCoupon().get(j).getCid()!=null)
-                                if (bills.get(i).getCoupon().get(j).getCid().equals(getArguments().getString("cid"))){
-                                    bill_pos=i;
-                                    coupon_pos=j;
-                                }
+                        for (int i = 0; i < bills.size(); i++)
+                            if (bills.get(i).getCoupon().size() > 0) {
+                                bills.get(i).getCoupon().add(0, new Coupon("不使用优惠券"));
+                                if (getArguments().getString("cid") != null)
+                                    for (int j = 0; j < bills.get(i).getCoupon().size(); j++) {
+                                        if (bills.get(i).getCoupon().get(j).getCid() != null)
+                                            if (bills.get(i).getCoupon().get(j).getCid().equals(getArguments().getString("cid"))) {
+                                                bill_pos = i;
+                                                coupon_pos = j;
+                                            }
+                                    }
                             }
-                        }
-                        bill=bills.get(bill_pos);
-                        coupons=bill.getCoupon();
-                        if(coupons.size()>0){
+                        bill = bills.get(bill_pos);
+                        coupons = bill.getCoupon();
+                        if (coupons.size() > 0) {
                             btCoupon.setVisibility(View.VISIBLE);
                             btCoupon.setText(coupons.get(coupon_pos).getTitle());
-                            coupon=coupons.get(coupon_pos);}
-                        else btCoupon.setVisibility(View.GONE);
+                            coupon = coupons.get(coupon_pos);
+                        } else btCoupon.setVisibility(View.GONE);
                         billAdapter = new BillAdapter(getActivity(), bills, size);
                         billAdapter.setmSelectedItem(bill_pos);
                         list.setLayoutManager(new GridLayoutManager(getActivity(), 2));
                         list.setAdapter(billAdapter);
                         map.clear();
-                        map.put(billAdapter.getmSelectedItem(),coupon_pos);
+                        map.put(billAdapter.getmSelectedItem(), coupon_pos);
                         billAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
                             @Override
                             public void onClick(int position) {
-                                 bill = bills.get(position);
-                                if (bills.get(position).getActivity() .size()>0)
+                                bill = bills.get(position);
+                                if (bills.get(position).getActivity().size() > 0)
                                     campaign.setText("活动:" + bills.get(position).getActivity().get(0).getContent());
                                 else campaign.setText("");
-                                coupons=bills.get(position).getCoupon();
-                                if(coupons.size()>0){btCoupon.setVisibility(View.VISIBLE);
-                                    if(map.get(position)!=null)
-                                    {  coupon=coupons.get(map.get(position));
-                                        btCoupon.setText(coupons.get(map.get(position)).getTitle());}else{
-                                        coupon=coupons.get(0);
+                                coupons = bills.get(position).getCoupon();
+                                if (coupons.size() > 0) {
+                                    btCoupon.setVisibility(View.VISIBLE);
+                                    if (map.get(position) != null) {
+                                        coupon = coupons.get(map.get(position));
+                                        btCoupon.setText(coupons.get(map.get(position)).getTitle());
+                                    } else {
+                                        coupon = coupons.get(0);
                                         btCoupon.setText(coupons.get(0).getTitle());
                                     }
-                                }
-                                else btCoupon.setVisibility(View.GONE);
+                                } else btCoupon.setVisibility(View.GONE);
 
                             }
                         });
-                    } else toast(result[1]);
+                        linear.setVisibility(View.VISIBLE);
+                    } else {toast(result[1]);
+                        linear.setVisibility(View.GONE);
+                    }
                 } catch (Exception e) {
+                    linear.setVisibility(View.GONE);
                     e.printStackTrace();
                     toast(R.string.getserverdata_exception);
                 }
@@ -717,15 +722,16 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         });
     }
 
-  public void showCouponsDialog(ArrayList<Coupon> coupons){
-      final CouponDialogHelper helper = new CouponDialogHelper(coupons);
-      dialog = new AlertDialog.Builder(getActivity())
-              .setView(helper.getView()).setTitle("选择优惠券")
-              .setOnDismissListener(helper)
-              .create();
-      helper.setDialog(dialog);
-      dialog.show();
-  }
+    public void showCouponsDialog(ArrayList<Coupon> coupons) {
+        final CouponDialogHelper helper = new CouponDialogHelper(coupons);
+        dialog = new AlertDialog.Builder(getActivity())
+                .setView(helper.getView()).setTitle("选择优惠券")
+                .setOnDismissListener(helper)
+                .create();
+        helper.setDialog(dialog);
+        dialog.show();
+    }
+
     public class CouponDialogHelper implements DialogInterface.OnDismissListener {
         private Dialog mDialog;
         private View mView;
@@ -734,16 +740,16 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         public CouponDialogHelper(final ArrayList<Coupon> coupons) {
             mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_list, null);
             list = (RecyclerView) mView.findViewById(R.id.list);
-            couponSelectAdapter=new CouponSelectAdapter(getActivity(),coupons);
-            if(map.get(billAdapter.getmSelectedItem())!=null)
+            couponSelectAdapter = new CouponSelectAdapter(getActivity(), coupons);
+            if (map.get(billAdapter.getmSelectedItem()) != null)
                 couponSelectAdapter.setmSelectedItem(map.get(billAdapter.getmSelectedItem()));
             list.setAdapter(couponSelectAdapter);
             couponSelectAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
                 @Override
                 public void onClick(int position) {
                     btCoupon.setText(coupons.get(position).getTitle());
-                    coupon=coupons.get(position);
-                    map.put(billAdapter.getmSelectedItem(),position);
+                    coupon = coupons.get(position);
+                    map.put(billAdapter.getmSelectedItem(), position);
                     mDialog.dismiss();
                 }
             });
