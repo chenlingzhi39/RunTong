@@ -41,6 +41,7 @@ public class RechargeActivity extends BaseActivity{
         ButterKnife.inject(this);
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
         layoutTab.setupWithViewPager(viewpager);
+        viewpager.setCurrentItem(getIntent().getIntExtra("index",0));
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -83,7 +84,11 @@ public class RechargeActivity extends BaseActivity{
                     return NumberFragment.newInstance();
 
                 case 1:
-                    return StraightFragment.newInstance();
+                Bundle bundle=new Bundle();
+                        bundle.putString("cid",getIntent().getStringExtra("cid"));
+                        StraightFragment straightFragment=new StraightFragment();
+                        straightFragment.setArguments(bundle);
+                    return straightFragment;
 
                 default:
                     return null;

@@ -18,7 +18,7 @@ public class Coupon implements Serializable{
     String cid;
 
     public Coupon(String content) {
-        this.content = content;
+        this.title = content;
     }
 
     public String getContent() {

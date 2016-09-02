@@ -459,7 +459,7 @@ public class BaseActivity extends AppCompatActivity {
                                     } else {
                                         toast("正在下载更新");
                                     }
-
+                        showActivity();
                             }
                         });
                 builder.setNegativeButton(R.string.cancel,
@@ -482,6 +482,7 @@ public class BaseActivity extends AppCompatActivity {
         else {
             // 无新版本
             if (is_toast) toast("已是最新版本");
+            if(!is_toast)showActivity();
         }
     }
 
@@ -493,4 +494,7 @@ public class BaseActivity extends AppCompatActivity {
         return UserManager.getPassword(this);
     }
 
+    public void showActivity(){
+
+    }
 }

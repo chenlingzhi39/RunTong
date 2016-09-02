@@ -1,6 +1,7 @@
 package com.callba.phone.util;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -51,7 +52,12 @@ public class EaseUserUtils {
             if(!TextUtils.isEmpty(user.getAvatar())){
                 Glide.with(context).load(user.getAvatar()).into(imageView);
             }
-        }else  Glide.with(context).load(R.drawable.logo).into(imageView);
+        }else {
+            if(username.equals("admin")){
+                Glide.with(context).load(R.drawable.system_message).into(imageView);
+            }
+            else Glide.with(context).load(R.drawable.logo).into(imageView);}
+
        /* if(user != null && user.getAvatar() != null){
             try {
                 int avatarResId = Integer.parseInt(user.getAvatar());
@@ -89,6 +95,10 @@ public class EaseUserUtils {
         	}
             if(user != null &&!TextUtils.isEmpty(user.getRemark()))
                     textView.setText(user.getRemark());
+            if(username.equals("admin")){
+                textView.setText("系统消息");
+                textView.setTextColor(Color.parseColor("#dd191d"));
+            }else textView.setTextColor(Color.parseColor("#000000"));
         }
     }
     

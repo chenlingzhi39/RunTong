@@ -356,6 +356,7 @@ public class DemoHelper {
                 }else {
                     StringBuffer buffer = new StringBuffer(message.getFrom().length()>10?message.getFrom().substring(0,11):message.getFrom());
                     //buffer.replace(3,8,"****");
+
                     return buffer + ": " + ticker;
                 }
                 //buffer.replace(3,8,"****");

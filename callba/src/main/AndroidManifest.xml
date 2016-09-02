@@ -369,8 +369,7 @@
             android:name=".phone.ui.RechargeActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan" />
+            android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.HomeActivity"
             android:launchMode="singleTop"

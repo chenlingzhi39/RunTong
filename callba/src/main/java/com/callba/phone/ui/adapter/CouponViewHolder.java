@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.ui.FlowActivity;
 import com.callba.phone.bean.Coupon;
+import com.callba.phone.ui.RechargeActivity;
 import com.callba.phone.ui.SelectFriendActivity;
 
 import butterknife.ButterKnife;
@@ -45,10 +46,18 @@ public class CouponViewHolder extends BaseViewHolder<Coupon> {
         getFlow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), FlowActivity.class);
-                intent.putExtra("index", 1);
-                intent.putExtra("coupon",data);
-                ((Activity)getContext()).startActivityForResult(intent,0);
+                Intent intent;
+                if(data.getType().equals("0"))
+                { intent = new Intent(getContext(), RechargeActivity.class);
+                    intent.putExtra("index",1);
+                    intent.putExtra("cid",data.getCid());
+                ((Activity)getContext()).startActivityForResult(intent,0);}
+                else{
+                    intent = new Intent(getContext(), FlowActivity.class);
+                    intent.putExtra("index",1);
+                    intent.putExtra("cid",data.getCid());
+                    ((Activity)getContext()).startActivityForResult(intent,0);
+                }
             }
         });
         giveFlow.setOnClickListener(new View.OnClickListener() {

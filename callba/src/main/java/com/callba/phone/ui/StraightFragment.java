@@ -112,6 +112,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     private Dialog dialog;
     private Commodity bill;
     private HashMap<Integer,Integer> map=new HashMap<>();
+    int bill_pos=0,coupon_pos=0;
     // 商户PID
     public static final String PARTNER = "2088221931971814";
     // 商户收款账号
@@ -152,8 +153,16 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
-                        coupons.remove(map.get(billAdapter.getmSelectedItem()));
-                        map.clear();
+                        if(map.get(billAdapter.getmSelectedItem())!=0&&coupons.size()>1)
+                        {coupons.remove((int)map.get(billAdapter.getmSelectedItem()));
+                            map.put(billAdapter.getmSelectedItem(),0);
+                            coupon=coupons.get(0);
+                            btCoupon.setText(coupon.getTitle());
+                            if(coupons.size()==1){
+                                btCoupon.setVisibility(View.GONE);
+                                coupons.clear();
+                            }
+                        }
                         //userDao1.pay(getUsername(), getPassword(), outTradeNo, "success");
                         Map<String, String> paramsMap = new HashMap<String, String>();
                         paramsMap.put("tradeNo", outTradeNo);
@@ -220,6 +229,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
         gson = new Gson();
+        number.setText(getUsername());
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int mDensity = metrics.densityDpi;
@@ -364,14 +374,30 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                 showCouponsDialog(coupons);
                 break;
             case R.id.recharge:
-                OkHttpUtils.post().url(Interfaces.FLOW_ORDER)
-                        .addParams("loginName", getUsername())
-                        .addParams("phoneNumber", number.getText().toString())
-                        .addParams("loginPwd", getPassword())
-                        .addParams("softType", "android")
-                        .addParams("cid",coupon!=null?coupon.getCid():"")
-                        .addParams("payMethod", "0")
-                        .addParams("iid", bill.getIid())
+              /*  if(map.get(billAdapter.getmSelectedItem())!=0&&coupons.size()>1)
+                {Logger.i("coupon_position",map.get(billAdapter.getmSelectedItem())+"");
+                    coupons.remove((int)map.get(billAdapter.getmSelectedItem()));
+                    map.put(billAdapter.getmSelectedItem(),0);
+                    coupon=coupons.get(0);
+                    btCoupon.setText(coupon.getTitle());
+                    if(coupons.size()==1){
+                        btCoupon.setVisibility(View.GONE);
+                        coupons.clear();
+                    }
+                }*/
+                Map<String, String> params=new HashMap<>();
+                params.put("loginName", getUsername());
+                params.put("phoneNumber", number.getText().toString());
+                params.put("loginPwd", getPassword());
+                params.put("softType", "android");
+                params.put("payMethod", "0");
+                params.put("iid", bill.getIid());
+                if(coupon!=null)
+                if(coupon.getCid()!=null){
+                    params.put("cid",coupon.getCid());
+                }
+                OkHttpUtils.post().url(Interfaces.PAY_ORDER)
+                        .params(params)
                         .build()
                         .execute(new StringCallback() {
                             @Override
@@ -488,7 +514,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
      */
     public void pay() {
 
-        String orderInfo = getOrderInfo(subject, body, price);
+        String orderInfo = getOrderInfo(bill.getPrice()+"元套餐", bill.getTitle(), price);
 
         /**
          * 特别注意，这里的签名逻辑需要放在服务端，切勿将私钥泄露在代码中！
@@ -635,29 +661,51 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     if (result[0].equals("0")) {
                         bills = gson.fromJson(result[1], new TypeToken<ArrayList<Commodity>>() {
                         }.getType());
-                        if (bills.get(0).getActivity() != null)
+                        if (bills.get(0).getActivity().size()>0)
                             campaign.setText("活动:" + bills.get(0).getActivity().get(0).getContent());
-                        coupons=bills.get(0).getCoupon();
-                        if(coupons!=null){btCoupon.setVisibility(View.VISIBLE);
-                            btCoupon.setText(coupons.get(0).getTitle());}
+                        for(int i=0;i<bills.size();i++)
+                        if(bills.get(i).getCoupon().size()>0){
+                            bills.get(i).getCoupon().add(0,new Coupon("不使用优惠券"));
+                            if(getArguments().getString("cid")!=null)
+                            for(int j=0;j< bills.get(i).getCoupon().size();j++)
+                            {if(bills.get(i).getCoupon().get(j).getCid()!=null)
+                                if (bills.get(i).getCoupon().get(j).getCid().equals(getArguments().getString("cid"))){
+                                    bill_pos=i;
+                                    coupon_pos=j;
+                                }
+                            }
+                        }
+                        bill=bills.get(bill_pos);
+                        coupons=bill.getCoupon();
+                        if(coupons.size()>0){
+                            btCoupon.setVisibility(View.VISIBLE);
+                            btCoupon.setText(coupons.get(coupon_pos).getTitle());
+                            coupon=coupons.get(coupon_pos);}
                         else btCoupon.setVisibility(View.GONE);
                         billAdapter = new BillAdapter(getActivity(), bills, size);
+                        billAdapter.setmSelectedItem(bill_pos);
                         list.setLayoutManager(new GridLayoutManager(getActivity(), 2));
                         list.setAdapter(billAdapter);
+                        map.clear();
+                        map.put(billAdapter.getmSelectedItem(),coupon_pos);
                         billAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
                             @Override
                             public void onClick(int position) {
                                  bill = bills.get(position);
-                                if (bills.get(position).getActivity() != null)
+                                if (bills.get(position).getActivity() .size()>0)
                                     campaign.setText("活动:" + bills.get(position).getActivity().get(0).getContent());
                                 else campaign.setText("");
                                 coupons=bills.get(position).getCoupon();
-                                if(coupons!=null)btCoupon.setVisibility(View.VISIBLE);
-                                else btCoupon.setVisibility(View.GONE);
-                                if(map.get(position)!=null){
-                                    coupon=coupons.get(map.get(position));
-                                    btCoupon.setText(coupons.get(position).getTitle());
+                                if(coupons.size()>0){btCoupon.setVisibility(View.VISIBLE);
+                                    if(map.get(position)!=null)
+                                    {  coupon=coupons.get(map.get(position));
+                                        btCoupon.setText(coupons.get(map.get(position)).getTitle());}else{
+                                        coupon=coupons.get(0);
+                                        btCoupon.setText(coupons.get(0).getTitle());
+                                    }
                                 }
+                                else btCoupon.setVisibility(View.GONE);
+
                             }
                         });
                     } else toast(result[1]);
@@ -687,6 +735,8 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
             mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_list, null);
             list = (RecyclerView) mView.findViewById(R.id.list);
             couponSelectAdapter=new CouponSelectAdapter(getActivity(),coupons);
+            if(map.get(billAdapter.getmSelectedItem())!=null)
+                couponSelectAdapter.setmSelectedItem(map.get(billAdapter.getmSelectedItem()));
             list.setAdapter(couponSelectAdapter);
             couponSelectAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
                 @Override
@@ -694,6 +744,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     btCoupon.setText(coupons.get(position).getTitle());
                     coupon=coupons.get(position);
                     map.put(billAdapter.getmSelectedItem(),position);
+                    mDialog.dismiss();
                 }
             });
         }

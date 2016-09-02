@@ -212,6 +212,10 @@ public interface Interfaces {
 	 * 商品信息
 	 */
 	String COMMODITY_INFO=URL+"/items/items2.jsp";
+	/**
+	 * 订单号
+	 */
+	String PAY_ORDER=URL+"/pay/pay_online_order2.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 import com.alipay.sdk.app.PayTask;
 import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.bean.Commodity;
 import com.callba.phone.bean.Coupon;
 import com.callba.phone.bean.Flow;
 import com.callba.phone.bean.UserDao;
@@ -118,6 +120,7 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
     private Dialog dialog;
     private Flow flow;
     private HashMap<Integer, Integer> map = new HashMap<>();
+    private int flow_pos=0,coupon_pos=0;
     // 商户PID
     public static final String PARTNER = "2088221931971814";
     // 商户收款账号
@@ -158,8 +161,17 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(getActivity(), "支付成功", Toast.LENGTH_SHORT).show();
-                        coupons.remove(map.get(flowAdapter.getmSelectedItem()));
-                        map.clear();
+                        if(map.get(flowAdapter.getmSelectedItem())!=0&&coupons.size()>1)
+                        {coupons.remove((int)map.get(flowAdapter.getmSelectedItem()));
+                            map.put(flowAdapter.getmSelectedItem(),0);
+                            coupon=coupons.get(0);
+                            btCoupon.setText(coupon.getTitle());
+                            if(coupons.size()==1){
+                                btCoupon.setVisibility(View.GONE);
+                                coupons.clear();
+                            }
+
+                        }
                         //userDao1.pay(getUsername(), getPassword(), outTradeNo, "success");
                         Map<String, String> paramsMap = new HashMap<String, String>();
                         paramsMap.put("tradeNo", outTradeNo);
@@ -217,8 +229,8 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
         ;
     };
 
-    public static StraightFragment newInstance() {
-        StraightFragment straightFragment = new StraightFragment();
+    public static StraightFragment3 newInstance() {
+        StraightFragment3 straightFragment = new StraightFragment3();
         return straightFragment;
     }
 
@@ -227,16 +239,13 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
         ButterKnife.inject(this, fragmentRootView);
         gson = new Gson();
         seperateFlows = new ArrayList<>();
-
-
-        String address = NumberAddressService.getAddress(
-                getUsername(), Constant.DB_PATH,
-                getActivity());
-        tv_address.setHint(address);
         userDao = new UserDao(getActivity(), this);
-
-
+        number.setText(getUsername());
+        pastPriceNation.getPaint().setAntiAlias(true);//抗锯齿
+        pastPriceNation.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
+        pastPriceNation.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         query(getUsername());
+        body="包月流量";
     }
 
 
@@ -318,14 +327,19 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                 showCouponsDialog(coupons);
                 break;
             case R.id.recharge:
-                OkHttpUtils.post().url(Interfaces.FLOW_ORDER)
-                        .addParams("loginName", getUsername())
-                        .addParams("phoneNumber", number.getText().toString())
-                        .addParams("loginPwd", getPassword())
-                        .addParams("softType", "android")
-                        .addParams("cid", coupon != null ? coupon.getCid() : "")
-                        .addParams("payMethod", "0")
-                        .addParams("iid", flow.getIid())
+                Map<String, String> params=new HashMap<>();
+                params.put("loginName", getUsername());
+                params.put("phoneNumber", number.getText().toString());
+                params.put("loginPwd", getPassword());
+                params.put("softType", "android");
+                params.put("payMethod", "0");
+                params.put("iid", flow.getIid());
+                if(coupon!=null)
+                    if(coupon.getCid()!=null){
+                        params.put("cid",coupon.getCid());
+                    }
+                OkHttpUtils.post().url(Interfaces.PAY_ORDER)
+                        .params(params)
                         .build()
                         .execute(new StringCallback() {
                             @Override
@@ -436,7 +450,7 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
      */
     public void pay() {
 
-        String orderInfo = getOrderInfo(subject, body, price);
+        String orderInfo = getOrderInfo(flow.getTitle(), body, price);
 
         /**
          * 特别注意，这里的签名逻辑需要放在服务端，切勿将私钥泄露在代码中！
@@ -592,11 +606,10 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                     JSONObject jsonObject = new JSONObject(response);
                     if (jsonObject.getString("resultcode").equals("200")) {
                         final JSONObject result = new JSONObject(jsonObject.getString("result"));
-                        final String address = result.getString("company");
+                        String address = result.getString("company");
                         tv_address.setHint(address);
+                        Logger.i("address",address);
                         getFLows(address);
-
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -612,7 +625,7 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
         OkHttpUtils.post().url(Interfaces.COMMODITY_INFO)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
-                .addParams("itemType", "0")
+                .addParams("itemType", "1")
                 .build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
@@ -629,42 +642,64 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                     if (result[0].equals("0")) {
                         flows = gson.fromJson(result[1], new TypeToken<ArrayList<Flow>>() {
                         }.getType());
+                        seperateFlows.clear();
                         for (Flow flow : flows) {
                             if (address.contains(flow.getOperators())) {
                                 seperateFlows.add(flow);
                             }
                         }
-                        if ( seperateFlows.get(0).getActivity() != null)
-                            campaign.setText("活动:" + flows.get(0).getActivity().get(0).getContent());
-                        flow =  seperateFlows.get(0);
-                        coupons =  seperateFlows.get(0).getCoupon();
-                        if (coupons != null) {
+                        if ( seperateFlows.get(0).getActivity().size()>0)
+                            campaign.setText("活动:" + seperateFlows.get(0).getActivity().get(0).getContent());
+                        for(int i=0;i<flows.size();i++)
+                            if(flows.get(i).getCoupon().size()>0){
+                                flows.get(i).getCoupon().add(0,new Coupon("不使用优惠券"));
+                                if(getArguments().getString("cid")!=null)
+                                    for(int j=0;j< flows.get(i).getCoupon().size();j++)
+                                    {if(flows.get(i).getCoupon().get(j).getCid()!=null)
+                                        if (flows.get(i).getCoupon().get(j).getCid().equals(getArguments().getString("cid"))){
+                                            flow_pos=i;
+                                            coupon_pos=j;
+                                        }
+                                    }
+                            }
+                        flow =  seperateFlows.get(flow_pos);
+                        coupons = flow.getCoupon();
+                        if (coupons .size()>0) {
                             btCoupon.setVisibility(View.VISIBLE);
-                            btCoupon.setText(coupons.get(0).getTitle());
+                            btCoupon.setText(coupons.get(coupon_pos).getTitle());
+                            coupon=coupons.get(coupon_pos);
                         } else btCoupon.setVisibility(View.GONE);
                         nowPriceNation.setText(flow.getPrice() + "元");
                         pastPriceNation.setText(flow.getOldPrice() + "元");
-                        flowAdapter = new FlowAdapter(getActivity(), flows);
-                        list.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                        flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
+                        flowAdapter.setmSelectedItem(flow_pos);
+                        list.setLayoutManager(new GridLayoutManager(getActivity(), 3));
                         list.setAdapter(flowAdapter);
+                        map.clear();
+                        map.put(flowAdapter.getmSelectedItem(),coupon_pos);
                         flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
                             @Override
                             public void onClick(int position) {
-                                flow = flows.get(position);
-                                if (flows.get(position).getActivity() != null)
-                                    campaign.setText("活动:" + flows.get(position).getActivity().get(0).getContent());
+                                flow = seperateFlows.get(position);
+                                if (seperateFlows.get(position).getActivity().size()>0)
+                                    campaign.setText("活动:" + seperateFlows.get(position).getActivity().get(0).getContent());
                                 else campaign.setText("");
-                                coupons = flows.get(position).getCoupon();
-                                if (coupons != null) btCoupon.setVisibility(View.VISIBLE);
+                                coupons = seperateFlows.get(position).getCoupon();
+                                if (coupons.size()>0)
+                                {btCoupon.setVisibility(View.VISIBLE);
+                                    if(map.get(position)!=null)
+                                    { coupon=coupons.get(map.get(position));
+                                    btCoupon.setText(coupons.get(map.get(position)).getTitle());}else{
+                                        coupon=coupons.get(0);
+                                        btCoupon.setText(coupons.get(0).getTitle());
+                                    }
+                              }
                                 else btCoupon.setVisibility(View.GONE);
-                                if (map.get(position) != null) {
-                                    coupon = coupons.get(map.get(position));
-                                    btCoupon.setText(coupons.get(position).getTitle());
-                                }
                                 nowPriceNation.setText(flow.getPrice() + "元");
                                 pastPriceNation.setText(flow.getOldPrice() + "元");
                             }
                         });
+                        linear.setVisibility(View.VISIBLE);
                     } else toast(result[1]);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -693,6 +728,8 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
             mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_list, null);
             list = (RecyclerView) mView.findViewById(R.id.list);
             couponSelectAdapter = new CouponSelectAdapter(getActivity(), coupons);
+            if(map.get(flowAdapter.getmSelectedItem())!=null)
+                couponSelectAdapter.setmSelectedItem(map.get(flowAdapter.getmSelectedItem()));
             list.setAdapter(couponSelectAdapter);
             couponSelectAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
                 @Override
@@ -700,6 +737,7 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                     btCoupon.setText(coupons.get(position).getTitle());
                     coupon = coupons.get(position);
                     map.put(flowAdapter.getmSelectedItem(), position);
+                    mDialog.dismiss();
                 }
             });
         }

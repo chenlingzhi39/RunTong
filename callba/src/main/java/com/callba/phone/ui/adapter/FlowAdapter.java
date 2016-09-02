@@ -19,7 +19,7 @@ public class FlowAdapter extends RadioAdapter<Flow>{
     public void onBindViewHolder(RadioAdapter.ViewHolder viewHolder, int i) {
         super.onBindViewHolder(viewHolder, i);
         viewHolder.mRadio.setText(mItems.get(i).getFlowValue());
-        if (mItems.get(i).getActivity() != null)
+        if (mItems.get(i).getActivity() .size()>0)
             viewHolder.corner.setVisibility(View.VISIBLE);
         else
             viewHolder.corner.setVisibility(View.GONE);

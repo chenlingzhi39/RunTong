@@ -132,10 +132,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         toChatUsername = userName;
         if (chatType == EaseConstant.CHATTYPE_SINGLE) { // 单聊
             // 设置标题
-            if (EaseUserUtils.getUserInfo(toChatUsername) != null) {
                 EaseUserUtils.setUserNick(toChatUsername, title);
-            } else
-                title.setText(toChatUsername.length() >= 11 ? toChatUsername.substring(0, 11) : toChatUsername);
             //titleBar.setRightImageResource(R.drawable.ease_mm_title_remove);
         } else {
             //titleBar.setRightImageResource(R.drawable.ease_to_group_details_normal);
@@ -213,10 +210,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
             DemoHelper.getInstance().pushActivity(this);
             if (chatType == EaseConstant.CHATTYPE_SINGLE) { // 单聊
                 // 设置标题
-                if (EaseUserUtils.getUserInfo(toChatUsername) != null) {
                     EaseUserUtils.setUserNick(toChatUsername, title);
-                } else
-                    title.setText(toChatUsername.length() >= 11 ? toChatUsername.substring(0, 11) : toChatUsername);
                 //titleBar.setRightImageResource(R.drawable.ease_mm_title_remove);
             }
         }
@@ -726,8 +720,11 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (chatType == EaseConstant.CHATTYPE_SINGLE)
+        if (chatType == EaseConstant.CHATTYPE_SINGLE&&toChatUsername.length()>=11)
             getMenuInflater().inflate(R.menu.menu_chat, menu);
+        else if(chatType == EaseConstant.CHATTYPE_SINGLE&&toChatUsername.length()<11){
+            getMenuInflater().inflate(R.menu.clear, menu);
+        }
         if (chatType == EaseConstant.CHATTYPE_GROUP)
             getMenuInflater().inflate(R.menu.menu_group_detail, menu);
         return super.onCreateOptionsMenu(menu);
@@ -760,6 +757,9 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 intent1.putExtra("number", toChatUsername.substring(0,11));
 
                 startActivity(intent1);}else toast("不支持的用户类型");
+                break;
+            case R.id.clear:
+                         emptyHistory();
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -184,8 +184,8 @@ public class HomeActivity extends BaseActivity {
             //userDao.getMarks(getUsername(), getPassword(), year + month);
             getMarks(year+month);
         }*/
-        if((boolean)SPUtils.get(HomeActivity.this,Constant.PACKAGE_NAME,getDate(),true))
-        getActivity();
+
+
         if (GlobalConfig.getInstance().getAppVersionBean() != null) {
             if (GlobalConfig.getInstance().getAppVersionBean().isForceUpgrade() || (boolean) SPUtils.get(this, "settings", "update_key", true))
                 check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
@@ -393,13 +393,11 @@ public class HomeActivity extends BaseActivity {
                         if ((boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", true))
                             signIn();
                         getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
-                        if((boolean)SPUtils.get(HomeActivity.this,Constant.PACKAGE_NAME,getDate(),true))
-                        getActivity();
-                        userDao2.getAd(1, getUsername(), getPassword());
                         if (GlobalConfig.getInstance().getAppVersionBean() != null) {
                             if (GlobalConfig.getInstance().getAppVersionBean().isForceUpgrade() || (boolean) SPUtils.get(HomeActivity.this, "settings", "update_key", true))
                                 check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
                         }
+                        userDao2.getAd(1, getUsername(), getPassword());
                         MobclickAgent.onProfileSignIn(getUsername());
                     } else {
                         toast(resultInfo[1]);
@@ -601,7 +599,7 @@ public class HomeActivity extends BaseActivity {
                       campaigns=gson.fromJson(result[1],new TypeToken<ArrayList<Campaign>>() {
                       }.getType());
                          showDialog(campaigns);
-                        SPUtils.put(HomeActivity.this,Constant.PACKAGE_NAME,getDate(),false);
+                        SPUtils.put(HomeActivity.this,Constant.PACKAGE_NAME,"activity_date",getDate());
                     }
                 } catch (Exception e) {
                 }
@@ -673,6 +671,12 @@ public class HomeActivity extends BaseActivity {
         Date date=new Date(System.currentTimeMillis());
         SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
         return format.format(date);
+    }
+
+    @Override
+    public void showActivity() {
+        if(!getDate().equals(SPUtils.get(this,Constant.PACKAGE_NAME,"activity_date","")))
+         getActivity();
     }
 }
 

@@ -89,7 +89,11 @@ public class FlowActivity extends BaseActivity {
                     Bundle bundle=new Bundle();
                     bundle.putSerializable("coupon",coupon);
                     straightFragment2.setArguments(bundle);*/
-                    return StraightFragment3.newInstance();
+                    Bundle bundle=new Bundle();
+                    bundle.putString("cid",getIntent().getStringExtra("cid"));
+                    StraightFragment3 straightFragment=new StraightFragment3();
+                    straightFragment.setArguments(bundle);
+                    return straightFragment;
 
                 default:
                     return null;

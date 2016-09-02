@@ -40,7 +40,7 @@ public class BillAdapter extends RadioAdapter<Commodity> {
         spannable.setSpan(new AbsoluteSizeSpan(size), 0, (mItems.get(i).getPrice() + "元").length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannable.setSpan(new AbsoluteSizeSpan(size / 2), 4, spannable.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         viewHolder.mRadio.setText(spannable);
-        if (mItems.get(i).getActivity() != null)
+        if (mItems.get(i).getActivity().size()>0)
             viewHolder.corner.setVisibility(View.VISIBLE);
         else
             viewHolder.corner.setVisibility(View.GONE);
