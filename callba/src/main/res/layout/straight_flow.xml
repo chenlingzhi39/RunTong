@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/colorPrimary"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -30,93 +31,83 @@
             <TextView
                 android:id="@+id/address"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:hint="账户绑定号码(江苏移动)" />
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/contacts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/contacts"
-            android:id="@+id/contacts"
-            android:clickable="true"/>
+            android:clickable="true"
+            android:src="@drawable/contacts" />
     </RelativeLayout>
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="@drawable/shape_line" />
+    <!--  <RadioGroup
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:layout_marginTop="20sp"
+          android:id="@+id/group">
+          <RadioButton
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:layout_gravity="center"
+              android:button="@null"
+              android:background="@drawable/price_selector"
+              android:layout_marginLeft="20dp"
+              android:layout_marginRight="20dp"
+              android:id="@+id/price1"
+              android:checked="true"
+              android:textColor="@drawable/price_text_selector"
+              android:gravity="center"
+           />
+          <RadioButton
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:layout_gravity="center"
+              android:button="@null"
+              android:background="@drawable/price_selector"
+              android:layout_marginLeft="20dp"
+              android:layout_marginRight="20dp"
+              android:id="@+id/price2"
+              android:textColor="@drawable/price_text_selector"
+              android:gravity="center"
+              />
+      </RadioGroup>-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:id="@+id/content"
+        android:id="@+id/linear"
         android:visibility="gone">
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/flow_list"
+        android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"/>
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="流量包"
-        android:padding="10dp"
-        android:layout_marginLeft="10dp"
-        android:id="@+id/flow_name"/>
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/shape_line" />
-    <LinearLayout
+    <Button
+        android:id="@+id/bt_coupon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:visibility="gone">
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/flow_button_selected"
+        android:text="选择优惠券"
+        android:textColor="?attr/colorAccent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="24元"
-            android:id="@+id/now_price_local"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="30元"
-                android:layout_marginLeft="20dp"
-                android:id="@+id/past_price_local"/>
-        </LinearLayout>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="本地可用，即时生效，当月有效，不支持4G用户，每月限充5次"
-                android:layout_marginTop="10dp"/>
-        </LinearLayout>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/bg_button"
-            android:text="充值"
-            android:textColor="@color/orange"
-            android:layout_marginLeft="20dp"/>
-    </LinearLayout>
     <View
         android:layout_width="fill_parent"
         android:layout_height="2dp"
@@ -128,7 +119,9 @@
         android:layout_height="wrap_content"
         android:padding="20dp"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:layout_marginTop="20dp"
+        >
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -172,35 +165,14 @@
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="@drawable/shape_line" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/coupon"
-            android:visibility="gone">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="是否使用流量券?"
-                android:layout_weight="1"
-                android:paddingLeft="10dp"
-                android:id="@+id/coupon_title"
-                />
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/use_coupon"
-                android:checked="true"/>
-        </LinearLayout>
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:background="@drawable/shape_line" />
-        </LinearLayout>
-    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/campaign"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:padding="10dp"
+        android:textColor="@color/material_red_600" />
+</LinearLayout>
 </LinearLayout>

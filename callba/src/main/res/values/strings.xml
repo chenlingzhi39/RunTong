@@ -142,7 +142,7 @@
     <string name="conn_timeout">请求超时！</string>
     <string name="socket_timeout">响应超时！</string>
     <string name="conn_failed">无法连接到网络</string>
-
+    <string name="know">知道了</string>
     <string name="net_error_getdata_fail">网络连接超时，获取版本失败。</string>
     <string name="switch_net_retry">切换网络</string>
     <string name="retry">重试</string>
@@ -274,7 +274,7 @@
     <string name="current_balance">当前余额</string>
     <string name="directcall">WiFi直拨</string>
     <string name="directcallmore">通话效果取决于手机网速，高速WIFI下用</string>
-    <string name="callback">1KB回拨</string>
+    <string name="callback">回拨</string>
     <string name="callbackmore">通话效果取决于手机信号，整通电话流量1KB</string>
     <string name="searchingcontact">正在查询联系人…</string>
     <string name="wrong_number_format">错误的电话号码格式</string>
@@ -706,4 +706,5 @@
     <string name="no_result">对不起，没有搜索到相关数据！</string>
     <string name="clear">清空</string>
     <string name="clear_chat">清空聊天记录</string>
+    <string name="download_url">http://weixin.boboit.cn/download/download.jsp</string>
 </resources>

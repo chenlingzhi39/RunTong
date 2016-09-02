@@ -20,7 +20,7 @@
     <com.jenzz.materialpreference.PreferenceCategory android:title="@string/sign_in_settings">
         <com.jenzz.materialpreference.SwitchPreference
             android:key="sign_key"
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:title="登录自动签到"
             />
     </com.jenzz.materialpreference.PreferenceCategory>
