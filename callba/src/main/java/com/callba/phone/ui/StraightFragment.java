@@ -317,14 +317,6 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
         ButterKnife.reset(this);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.inject(this, rootView);
-        return rootView;
-    }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

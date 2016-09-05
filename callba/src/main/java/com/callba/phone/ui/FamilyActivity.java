@@ -11,11 +11,18 @@ import com.callba.R;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.util.Interfaces;
+import com.callba.phone.util.Logger;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.json.JSONObject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Call;
 
 /**
  * Created by PC-20160514 on 2016/7/7.
@@ -56,12 +63,36 @@ public class FamilyActivity extends BaseActivity {
         if (!UserManager.getUserAvatar(this).equals(""))
             Glide.with(this).load(UserManager.getUserAvatar(this)).into(avatar);
         name.setText(getUsername());
+        myCommission.setText(UserManager.getCommission(this));
+        OkHttpUtils.post().url(Interfaces.USER_INFO)
+                .addParams("loginName",getUsername())
+                .addParams("loginPwd",getPassword())
+                .addParams("phoneNumber",getUsername())
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
 
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        try {
+                            Logger.i("info_result",response);
+                            String[] result = response.split("\\|");
+                            if(result[0].equals("0"))
+                            {JSONObject jsonObject=new JSONObject(result[1]);
+                            UserManager.putCommission(FamilyActivity.this,jsonObject.getString("profit"));
+                                myCommission.setText(UserManager.getCommission(FamilyActivity.this));
+                            }
+                        }
+                    catch (Exception e){}
+                    }
+                });
     }
 
     @Override
     protected void onResume() {
-        myCommission.setText(UserManager.getCommission(this));
         super.onResume();
     }
 

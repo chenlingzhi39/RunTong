@@ -63,6 +63,9 @@
         </meta-data>-->
 
         <service android:name=".phone.service.UpdateService" />
+        <activity android:name=".phone.ui.CampaignActivity"
+            android:theme="@style/MyDialogStyleBottom"
+            />
         <activity android:name=".phone.ui.UserInfoActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

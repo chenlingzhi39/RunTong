@@ -99,6 +99,7 @@ public class BaseActivity extends AppCompatActivity {
     }*/
     public Subscription subscription;
     public AlertDialog dialog;
+
     @SuppressLint("InlinedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -361,7 +362,7 @@ public class BaseActivity extends AppCompatActivity {
         if (isSendNotification) {
             //showBackRunNotification();
         }
-     	MobclickAgent.onResume(this);
+        MobclickAgent.onResume(this);
         super.onResume();
     }
 
@@ -397,17 +398,17 @@ public class BaseActivity extends AppCompatActivity {
         Toast.makeText(this, getString(id), Toast.LENGTH_SHORT).show();
     }
 
-    public void check2Upgrade(final AppVersionChecker.AppVersionBean appVersionBean, boolean is_toast) {
-        if (appVersionBean.isHasNewVersion()){
-        if (appVersionBean.isForceUpgrade()) {
-            // 强制升级
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.sjts);
-            builder.setMessage(R.string.sjtsxx);
-            builder.setPositiveButton(R.string.upgrade,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+    public void check2Upgrade(final AppVersionChecker.AppVersionBean appVersionBean,final boolean is_toast) {
+        if (appVersionBean.isHasNewVersion()) {
+            if (appVersionBean.isForceUpgrade()) {
+                // 强制升级
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.sjts);
+                builder.setMessage(R.string.sjtsxx);
+                builder.setPositiveButton(R.string.upgrade,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
                                 if (!UpdateService.is_downloading) {
                                     toast("开始下载更新");
@@ -425,14 +426,14 @@ public class BaseActivity extends AppCompatActivity {
                                     toast("正在下载更新");
                                 }
 
-                        }
-                    });
-            dialog = builder.create();
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.setCancelable(false);
-            dialog.show();
+                            }
+                        });
+                dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.setCancelable(false);
+                dialog.show();
 
-        } else {
+            } else {
 
 
                 // 存在新版本
@@ -445,21 +446,21 @@ public class BaseActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog,
                                                 int which) {
 
-                                    if (!UpdateService.is_downloading) {
-                                        toast("开始下载更新");
-                                        Intent updateIntent = new Intent(
-                                                getApplicationContext(),
-                                                UpdateService.class);
-                                        updateIntent.putExtra(
-                                                "url",
-                                                appVersionBean
-                                                        .getDownloadUrl());
-                                        updateIntent.putExtra("version_code", appVersionBean.getServerVersionCode());
-                                        startService(updateIntent);
-                                    } else {
-                                        toast("正在下载更新");
-                                    }
-                        showActivity();
+                                if (!UpdateService.is_downloading) {
+                                    toast("开始下载更新");
+                                    Intent updateIntent = new Intent(
+                                            getApplicationContext(),
+                                            UpdateService.class);
+                                    updateIntent.putExtra(
+                                            "url",
+                                            appVersionBean
+                                                    .getDownloadUrl());
+                                    updateIntent.putExtra("version_code", appVersionBean.getServerVersionCode());
+                                    startService(updateIntent);
+                                } else {
+                                    toast("正在下载更新");
+                                }
+
                             }
                         });
                 builder.setNegativeButton(R.string.cancel,
@@ -472,17 +473,23 @@ public class BaseActivity extends AppCompatActivity {
                             }
                         });
 
-               dialog = builder.create();
-               dialog.setCanceledOnTouchOutside(true);
+                dialog = builder.create();
+                dialog.setCanceledOnTouchOutside(true);
                 dialog.setCancelable(true);
+                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        if (!is_toast)
+                            showActivity();
+                    }
+                });
                 dialog.show();
 
             }
-        }
-        else {
+        } else {
             // 无新版本
             if (is_toast) toast("已是最新版本");
-            if(!is_toast)showActivity();
+            if (!is_toast) showActivity();
         }
     }
 
@@ -494,7 +501,7 @@ public class BaseActivity extends AppCompatActivity {
         return UserManager.getPassword(this);
     }
 
-    public void showActivity(){
+    public void showActivity() {
 
     }
 }

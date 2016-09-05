@@ -4,7 +4,7 @@ package com.callba.phone.bean;
  * Created by PC-20160514 on 2016/9/1.
  */
 public class Campaign {
-String title,imgUrl,intTime,startTime,endTime,state,content;
+String title,imgUrl,intTime,startTime,endTime,state,content,type;
 
     public String getContent() {
         return content;
@@ -60,5 +60,13 @@ String title,imgUrl,intTime,startTime,endTime,state,content;
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

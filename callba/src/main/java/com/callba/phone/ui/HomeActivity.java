@@ -1,36 +1,41 @@
 package com.callba.phone.ui;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.MyApplication;
-import com.callba.phone.bean.Campaign;
-import com.callba.phone.ui.adapter.CampaignAdapter;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Advertisement;
+import com.callba.phone.bean.Campaign;
 import com.callba.phone.bean.ContactData;
+import com.callba.phone.bean.HomeItem;
 import com.callba.phone.bean.SystemNumber;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.service.MainService;
+import com.callba.phone.ui.adapter.CampaignAdapter;
+import com.callba.phone.ui.adapter.HomeAdapter;
+import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.DesUtil;
@@ -70,14 +75,9 @@ import okhttp3.Request;
 
 )
 public class HomeActivity extends BaseActivity {
-    @InjectView(R.id.mall)
-    TextView mall;
-    @InjectView(R.id.game)
-    TextView game;
-    @InjectView(R.id.sign_in)
-    TextView signIn;
-    @InjectView(R.id.banner)
     BannerLayout banner;
+    @InjectView(R.id.list)
+    RecyclerView homeList;
     private String yue;
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
     private ArrayList<String> webImages = new ArrayList<>();
@@ -93,10 +93,78 @@ public class HomeActivity extends BaseActivity {
     private MarkDao markDao;
     private ArrayList<Campaign> campaigns;
     private CampaignAdapter campaignAdapter;
+    private ArrayList<HomeItem> homeItems;
+    private HomeAdapter homeAdapter;
+    private View headerView;
+    private boolean has_image;
+    private String img_url;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
+        homeItems = new ArrayList<>();
+        homeItems.add(new HomeItem(getString(R.string.recharge), R.drawable.recharge));
+        homeItems.add(new HomeItem(getString(R.string.flow), R.drawable.flow));
+        homeItems.add(new HomeItem(getString(R.string.discount), R.drawable.discount));
+        homeItems.add(new HomeItem(getString(R.string.family), R.drawable.family));
+        homeItems.add(new HomeItem(getString(R.string.mall), R.drawable.mall));
+        homeItems.add(new HomeItem(getString(R.string.sale), R.drawable.sale));
+        homeItems.add(new HomeItem(getString(R.string.game), R.drawable.game));
+        homeItems.add(new HomeItem(getString(R.string.sign_in), R.drawable.signin));
+        homeAdapter = new HomeAdapter(this);
+        homeAdapter.addAll(homeItems);
+        headerView = getLayoutInflater().inflate(R.layout.home_header, null);
+        banner = (BannerLayout) headerView.findViewById(R.id.banner);
+        homeAdapter.addHeader(new RecyclerArrayAdapter.ItemView() {
+            @Override
+            public View onCreateView(ViewGroup parent) {
+                return headerView;
+            }
+
+            @Override
+            public void onBindView(View headerView) {
+          /*      localImages.add(R.drawable.ad4);
+                localImages.add(R.drawable.ad5);
+                localImages.add(R.drawable.ad6);
+                banner.setViewRes(localImages);*/
+            }
+        });
+        homeAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent;
+                switch (position){
+                    case 0:
+                        intent = new Intent(HomeActivity.this, RechargeActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        startActivity(new Intent(HomeActivity.this, FlowActivity.class));
+                        break;
+                    case 2:
+                        startActivity(new Intent(HomeActivity.this, CouponActivity.class));
+                        break;
+                    case 3:
+                        startActivity(new Intent(HomeActivity.this, FamilyActivity.class));
+                        break;
+                    case 4:
+                        toast("暂未开放");
+                        break;
+                    case 5:
+                        toast("暂未开放");
+                        break;
+                    case 6:
+                        toast("暂未开放");
+                        break;
+                    case 7:
+                        intent = new Intent(HomeActivity.this, SignInActivity.class);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        });
+        homeList.setLayoutManager(new GridLayoutManager(this, 4));
+        homeList.setAdapter(homeAdapter);
         markDao = MyApplication.getInstance().getDaoSession().getMarkDao();
         gson = new Gson();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");//获取当前时间
@@ -208,48 +276,6 @@ public class HomeActivity extends BaseActivity {
 
         // 关闭主tab页面
         ActivityUtil.finishMainTabPages();
-    }
-
-
-    @OnClick({R.id.recharge, R.id.discount, R.id.sale, R.id.mall, R.id.flow, R.id.family, R.id.game, R.id.sign_in})
-    public void onClick(View view) {
-        Intent intent;
-        switch (view.getId()) {
-            case R.id.recharge:
-                intent = new Intent(HomeActivity.this, RechargeActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.discount:
-                Log.i("home", "search_yue");
-                //queryUserBalance();
-              /*  intent=new Intent(HomeActivity.this,AccountActivity.class);
-                startActivity(intent);*/
-                startActivity(new Intent(HomeActivity.this, CouponActivity.class));
-                break;
-            case R.id.sale:
-                toast("暂未开放");
-                break;
-            case R.id.mall:
-                toast("暂未开放");
-                break;
-            case R.id.flow:
-                startActivity(new Intent(HomeActivity.this, FlowActivity.class));
-                //toast("暂未开放");
-                break;
-            case R.id.family:
-                startActivity(new Intent(HomeActivity.this, FamilyActivity.class));
-                //toast("暂未开放");
-                /*intent = new Intent(HomeActivity.this, CommunityActivity.class);
-                startActivity(intent);*/
-                break;
-            case R.id.game:
-                toast("暂未开放");
-                break;
-            case R.id.sign_in:
-                intent = new Intent(HomeActivity.this, SignInActivity.class);
-                startActivity(intent);
-                break;
-        }
     }
 
 
@@ -596,10 +622,26 @@ public class HomeActivity extends BaseActivity {
                 try {
                     String[] result = response.split("\\|");
                     if (result[0].equals("0")) {
-                      campaigns=gson.fromJson(result[1],new TypeToken<ArrayList<Campaign>>() {
-                      }.getType());
-                         showDialog(campaigns);
-                        SPUtils.put(HomeActivity.this,Constant.PACKAGE_NAME,"activity_date",getDate());
+                        campaigns = gson.fromJson(result[1], new TypeToken<ArrayList<Campaign>>() {
+                        }.getType());
+                        for(Campaign campaign:campaigns){
+                            if(Integer.parseInt(campaign.getType())<homeAdapter.getData().size())
+                            homeAdapter.getData().get(Integer.parseInt(campaign.getType())).setIs_discount(true);
+                            if(!has_image&&campaign.getType().equals("20")){
+                                img_url=campaign.getImgUrl();
+                                campaigns.remove(campaign);
+                                has_image=true;
+                            }
+                        }
+                        homeAdapter.notifyDataSetChanged();
+                        if (!getDate().equals(SPUtils.get(HomeActivity.this, Constant.PACKAGE_NAME, "activity_date", "")))
+                        if(has_image){
+                            Intent intent=new Intent(HomeActivity.this,CampaignActivity.class);
+                            intent.putExtra("image",img_url);
+                            startActivity(intent);
+                        }else
+                        {showDialog(campaigns);
+                        SPUtils.put(HomeActivity.this, Constant.PACKAGE_NAME, "activity_date", getDate());}
                     }
                 } catch (Exception e) {
                 }
@@ -607,25 +649,7 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
-    public void showActivityDialog(String activity) {
-        // 存在新版本
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setTitle("活动信息");
-        builder.setMessage(activity);
-        builder.setPositiveButton(R.string.know,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog,
-                                        int which) {
-                        dialog.dismiss();
-                    }
-                });
-        android.app.AlertDialog alertDialog = builder.create();
-        alertDialog.setCanceledOnTouchOutside(true);
-        alertDialog.setCancelable(true);
-        alertDialog.show();
 
-    }
     public class DialogHelper implements DialogInterface.OnDismissListener {
         private AlertDialog mDialog;
         private View mView;
@@ -667,16 +691,17 @@ public class HomeActivity extends BaseActivity {
         helper.setDialog(dialog);
         dialog.show();
     }
-    public String getDate(){
-        Date date=new Date(System.currentTimeMillis());
-        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+
+    public String getDate() {
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         return format.format(date);
     }
 
     @Override
     public void showActivity() {
-        if(!getDate().equals(SPUtils.get(this,Constant.PACKAGE_NAME,"activity_date","")))
-         getActivity();
+
+            getActivity();
     }
 }
 
