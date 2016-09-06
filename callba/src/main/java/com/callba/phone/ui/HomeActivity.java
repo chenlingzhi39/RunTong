@@ -108,7 +108,7 @@ public class HomeActivity extends BaseActivity {
         homeItems.add(new HomeItem(getString(R.string.discount), R.drawable.discount));
         homeItems.add(new HomeItem(getString(R.string.family), R.drawable.family));
         homeItems.add(new HomeItem(getString(R.string.mall), R.drawable.mall));
-        homeItems.add(new HomeItem(getString(R.string.sale), R.drawable.sale));
+        homeItems.add(new HomeItem(getString(R.string.service), R.drawable.sale));
         homeItems.add(new HomeItem(getString(R.string.game), R.drawable.game));
         homeItems.add(new HomeItem(getString(R.string.sign_in), R.drawable.signin));
         homeAdapter = new HomeAdapter(this);
@@ -620,6 +620,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onResponse(String response, int id) {
                 try {
+                    Logger.i("campaign_result",response);
                     String[] result = response.split("\\|");
                     if (result[0].equals("0")) {
                         campaigns = gson.fromJson(result[1], new TypeToken<ArrayList<Campaign>>() {

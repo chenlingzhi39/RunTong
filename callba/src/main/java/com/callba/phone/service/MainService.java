@@ -2,6 +2,7 @@ package com.callba.phone.service;
 
 import java.util.List;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -9,9 +10,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.ContactsContract;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
@@ -69,7 +72,6 @@ public class MainService extends Service {
             }
         }
     };
-
 
 
     @Override
@@ -243,4 +245,5 @@ public class MainService extends Service {
             }
         }
     }
+
 }

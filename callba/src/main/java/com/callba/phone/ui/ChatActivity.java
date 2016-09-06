@@ -1,6 +1,7 @@
 package com.callba.phone.ui;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.bean.EaseUser;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
@@ -111,7 +113,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     private EaseVoiceRecorderView voiceRecorderView;
     private GroupListener groupListener;
     public static ChatActivity activityInstance;
-
+    private NotificationManager notificationManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,10 +132,17 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         listView = messageList.getListView();
         userName = getIntent().getStringExtra(Constant.EXTRA_USER_ID);
         toChatUsername = userName;
+        Logger.i("userName",userName);
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (chatType == EaseConstant.CHATTYPE_SINGLE) { // 单聊
             // 设置标题
                 EaseUserUtils.setUserNick(toChatUsername, title);
             //titleBar.setRightImageResource(R.drawable.ease_mm_title_remove);
+            if(GlobalConfig.getInstance().getMessage()!=null){
+                Logger.i("username",GlobalConfig.getInstance().getMessage().getFrom());
+                if(GlobalConfig.getInstance().getMessage().getFrom().equals(toChatUsername)&&GlobalConfig.getInstance().getMessage().getChatType()==  EMMessage.ChatType.Chat);
+                notificationManager.cancel(0525);
+            }
         } else {
             //titleBar.setRightImageResource(R.drawable.ease_to_group_details_normal);
             if (chatType == EaseConstant.CHATTYPE_GROUP) {
@@ -144,6 +153,10 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 // 监听当前会话的群聊解散被T事件
                 groupListener = new GroupListener();
                 EMClient.getInstance().groupManager().addGroupChangeListener(groupListener);
+                if(GlobalConfig.getInstance().getMessage()!=null){
+                    if(GlobalConfig.getInstance().getMessage().getTo().equals(toChatUsername)&&GlobalConfig.getInstance().getMessage().getChatType()==  EMMessage.ChatType.GroupChat);
+                    notificationManager.cancel(0525);
+                }
             } else {
                 //onChatRoomViewCreation();
             }

@@ -365,18 +365,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                 showCouponsDialog(coupons);
                 break;
             case R.id.recharge:
-              /*  if(map.get(billAdapter.getmSelectedItem())!=0&&coupons.size()>1)
-                {Logger.i("coupon_position",map.get(billAdapter.getmSelectedItem())+"");
-                    coupons.remove((int)map.get(billAdapter.getmSelectedItem()));
-                    map.put(billAdapter.getmSelectedItem(),0);
-                    coupon=coupons.get(0);
-                    btCoupon.setText(coupon.getTitle());
-                    if(coupons.size()==1){
-                        btCoupon.setVisibility(View.GONE);
-                        coupons.clear();
-                    }
-                }*/
-                Map<String, String> params = new HashMap<>();
+                HashMap<String, String> params = new HashMap<>();
                 params.put("loginName", getUsername());
                 params.put("phoneNumber", number.getText().toString());
                 params.put("loginPwd", getPassword());

@@ -32,4 +32,11 @@
         android:visibility="gone"
         android:id="@+id/is_discount"
         />
+    <View
+        android:layout_width="1px"
+        android:layout_height="83dp"
+        android:background="@color/light_black"
+        android:layout_alignParentBottom="true"
+         android:layout_alignParentRight="true"
+        />
 </RelativeLayout>

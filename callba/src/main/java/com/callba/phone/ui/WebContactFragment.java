@@ -1,5 +1,6 @@
 package com.callba.phone.ui;
 
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -403,6 +404,8 @@ public class WebContactFragment extends BaseFragment {
                 case R.id.application_item:
                     // 进入申请与通知页面
                     startActivity(new Intent(getActivity(), NewFriendsMsgActivity.class));
+                    NotificationManager notificationManager = (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.cancel(0526);
                     break;
                 case R.id.black_item:
                     startActivity(new Intent(getActivity(), BlacklistActivity.class));

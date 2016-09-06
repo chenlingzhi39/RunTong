@@ -13,6 +13,7 @@ import com.callba.phone.bean.DialAd;
 import com.callba.phone.logic.contact.ContactEntity;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.util.AppVersionChecker;
+import com.hyphenate.chat.EMMessage;
 
 /** 
  * 存储程序全局变量
@@ -48,7 +49,15 @@ public class GlobalConfig implements Serializable{
 	private DialAd dialAd;
 	private long interval=600000;
     private AppVersionChecker.AppVersionBean appVersionBean;
+    private EMMessage message;
 
+	public EMMessage getMessage() {
+		return message;
+	}
+
+	public void setMessage(EMMessage message) {
+		this.message = message;
+	}
 
 	public AppVersionChecker.AppVersionBean getAppVersionBean() {
 		return appVersionBean;

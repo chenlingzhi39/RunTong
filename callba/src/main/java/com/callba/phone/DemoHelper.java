@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.callba.R;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.ui.ChatActivity;
 import com.callba.phone.ui.MainTabActivity;
 import com.callba.phone.ui.NewFriendsMsgActivity;
@@ -40,6 +41,7 @@ import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.PreferenceManager;
 import com.callba.phone.util.SimpleHandler;
+import com.callba.phone.util.StringUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hyphenate.EMCallBack;
@@ -297,7 +299,10 @@ public class DemoHelper {
             @Override
             public String getTitle(EMMessage message) {
               //修改标题,这里使用默认
+                if (message.getChatType() == ChatType.Chat)  // 单聊信息
                 return "你有一条新消息";
+                    else if (message.getChatType() == ChatType.GroupChat)return "你有一条群消息";
+                else return "你有一条新消息";
             }
             
             @Override
@@ -340,6 +345,8 @@ public class DemoHelper {
                 }else {
                     StringBuffer buffer = new StringBuffer(message.getFrom().length()>10?message.getFrom().substring(0,11):message.getFrom());
                     //buffer.replace(3,8,"****");
+                    if(message.getFrom().equals("admin"))
+                        buffer=new StringBuffer("系统消息");
                     return buffer + ": " + ticker;
                 }
             }
@@ -354,9 +361,11 @@ public class DemoHelper {
                 if(user != null){
                     return getUserInfo(message.getFrom()).getNick() + ": " + ticker;
                 }else {
+
                     StringBuffer buffer = new StringBuffer(message.getFrom().length()>10?message.getFrom().substring(0,11):message.getFrom());
                     //buffer.replace(3,8,"****");
-
+                    if(message.getFrom().equals("admin"))
+                    buffer=new StringBuffer("系统消息");
                     return buffer + ": " + ticker;
                 }
                 //buffer.replace(3,8,"****");
@@ -678,6 +687,7 @@ public class DemoHelper {
                 //mBuilder.setFullScreenIntent(contentIntent, false);
                 mBuilder.setAutoCancel(true);
                 mBuilder.setContentIntent(contentIntent);
+                mBuilder.setPriority(Notification.PRIORITY_HIGH);
       /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             mBuilder.setFullScreenIntent(contentIntent, true);*/
                 mBuilder.setTicker((user!=null?user.getNick():msg.getFrom().substring(0,11))+"申请加入群"+"\""+msg.getGroupName()+"\"");

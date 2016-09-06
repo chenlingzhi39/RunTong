@@ -11,6 +11,7 @@
  */
 package com.callba.phone.bean;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -28,8 +29,11 @@ import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 
 import com.callba.R;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.controller.EaseUI;
 import com.callba.phone.controller.EaseUI.*;
+import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.Logger;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 
@@ -135,12 +139,12 @@ public class EaseNotifier {
         }
         
         // 判断app是否在后台
-        if (!EasyUtils.isAppRunningForeground(appContext)) {
+        if (!ActivityUtil.isAppForeground(appContext)) {
             EMLog.d(TAG, "app is running in backgroud");
             sendNotification(message, false);
+            GlobalConfig.getInstance().setMessage(message);
         } else {
             sendNotification(message, true);
-
         }
         
         viberateAndPlayTone(message);
@@ -278,6 +282,7 @@ public class EaseNotifier {
             mBuilder.setContentText(summaryBody);
             mBuilder.setContentIntent(pendingIntent);
             mBuilder.setLargeIcon(notificationInfoProvider.getLargeIcon(message));
+            mBuilder.setPriority(Notification.PRIORITY_HIGH);
             // mBuilder.setNumber(notificationNum);
             Notification notification = mBuilder.build();
 
@@ -421,4 +426,5 @@ public class EaseNotifier {
          */
         Intent getLaunchIntent(EMMessage message);
     }
+
 }

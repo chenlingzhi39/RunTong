@@ -2,6 +2,7 @@ package com.callba.phone.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -23,7 +24,8 @@ public class CampaignActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.campaign);
         ButterKnife.inject(this);
-        Glide.with(this).load(getIntent().getStringExtra("image")).into(image);
+        if(!TextUtils.isEmpty(getIntent().getStringExtra("image")))
+       Glide.with(this).load(getIntent().getStringExtra("image")).into(image);
     }
 
     @OnClick(R.id.close)

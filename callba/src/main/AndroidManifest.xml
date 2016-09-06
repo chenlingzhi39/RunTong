@@ -44,8 +44,35 @@
             android:value="b4a6afcc1d6426ef0ccd1985898e6ba4" />
         <!-- 定位需要的服务 -->
         <service android:name="com.amap.api.location.APSService"></service>
-        <service android:name="com.callba.phone.service.MainService"></service>
+        <service android:name="com.callba.phone.service.MainService" />
 
+        <receiver
+            android:name=".phone.receiver.WakeReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.wake.gray" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".phone.service.GrayService"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":gray" />
+        <service
+            android:name=".phone.service.GrayService$GrayInnerService"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":gray" />
+        <service android:name=".phone.receiver.WakeReceiver$WakeGrayInnerService"
+            android:enabled="true"
+            android:exported="false"
+            />
+        <service android:name=".phone.receiver.WakeReceiver$WakeNotifyService"
+            android:enabled="true"
+            android:exported="false"
+            />
         <!--   <meta-data
                android:name="UMENG_APPKEY"
                android:value="5371aef356240bac320264f5" />-->
@@ -63,14 +90,15 @@
         </meta-data>-->
 
         <service android:name=".phone.service.UpdateService" />
-        <activity android:name=".phone.ui.CampaignActivity"
-            android:theme="@style/MyDialogStyleBottom"
-            />
-        <activity android:name=".phone.ui.UserInfoActivity"
+
+        <activity
+            android:name=".phone.ui.CampaignActivity"
+            android:theme="@style/MyDialogStyleBottom" />
+        <activity
+            android:name=".phone.ui.UserInfoActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            />
+            android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.RemarkActivity"
             android:launchMode="singleTop"
