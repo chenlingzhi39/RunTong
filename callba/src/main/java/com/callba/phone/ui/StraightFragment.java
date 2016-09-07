@@ -686,8 +686,9 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                                         coupon = coupons.get(0);
                                         btCoupon.setText(coupons.get(0).getTitle());
                                     }
-                                } else btCoupon.setVisibility(View.GONE);
-
+                                } else {btCoupon.setVisibility(View.GONE);
+                                coupon=null;
+                                }
                             }
                         });
                         linear.setVisibility(View.VISIBLE);

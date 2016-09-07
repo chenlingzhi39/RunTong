@@ -219,6 +219,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     protected void onResume() {
         super.onResume();
         if (isMessageListInited) {
+            Locale.setDefault(new Locale("zh"));
             messageList.refreshSelectLast();
             DemoHelper.getInstance().pushActivity(this);
             if (chatType == EaseConstant.CHATTYPE_SINGLE) { // 单聊
@@ -821,7 +822,11 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
 
     @Override
     public void onAvatarClick(String username) {
-
+        if(!username.equals(EMClient.getInstance().getCurrentUser())||!username.equals("admin"))
+        {Intent intent = new Intent(this, UserInfoActivity.class);
+        intent.putExtra("username", username);
+            intent.putExtra("is_group",true);
+        startActivity(intent);}
     }
 
     @Override

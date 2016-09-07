@@ -108,7 +108,7 @@ public class HomeActivity extends BaseActivity {
         homeItems.add(new HomeItem(getString(R.string.discount), R.drawable.discount));
         homeItems.add(new HomeItem(getString(R.string.family), R.drawable.family));
         homeItems.add(new HomeItem(getString(R.string.mall), R.drawable.mall));
-        homeItems.add(new HomeItem(getString(R.string.service), R.drawable.sale));
+        homeItems.add(new HomeItem(getString(R.string.service), R.drawable.service));
         homeItems.add(new HomeItem(getString(R.string.game), R.drawable.game));
         homeItems.add(new HomeItem(getString(R.string.sign_in), R.drawable.signin));
         homeAdapter = new HomeAdapter(this);
@@ -240,7 +240,7 @@ public class HomeActivity extends BaseActivity {
             userDao2.getAd(1, GlobalConfig.getInstance().getUsername(), GlobalConfig.getInstance().getPassword());
         }*/
         //userDao1.getSystemPhoneNumber(getUsername(), getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
-        getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+        //getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
         userDao2.getAd(1, getUsername(), getPassword());
         if ((boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", true))
             signIn();
@@ -418,7 +418,7 @@ public class HomeActivity extends BaseActivity {
                         }*/
                         if ((boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", true))
                             signIn();
-                        getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
+                        // getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
                         if (GlobalConfig.getInstance().getAppVersionBean() != null) {
                             if (GlobalConfig.getInstance().getAppVersionBean().isForceUpgrade() || (boolean) SPUtils.get(HomeActivity.this, "settings", "update_key", true))
                                 check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);

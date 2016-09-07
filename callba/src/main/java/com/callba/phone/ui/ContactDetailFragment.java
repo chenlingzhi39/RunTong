@@ -275,7 +275,7 @@ public class ContactDetailFragment extends BaseFragment {
                     public void onClick(View v) {
                         Uri smsToUri = Uri.parse("smsto://" + bean.getContactPhones().get(0));
                         Intent mIntent = new Intent(Intent.ACTION_SENDTO, smsToUri);
-                        mIntent.putExtra("sms_body", "我是" + UserManager.getNickname(getActivity()) + "，"+getString(R.string.share_content));
+                        mIntent.putExtra("sms_body", "亲！我正在使用【Call吧】！电话/流量：便宜好省、还能赚钱、通话无限畅聊，邀您来体验，赶紧来"+getString(R.string.download_url));
                         startActivity(mIntent);
                     }
                 });

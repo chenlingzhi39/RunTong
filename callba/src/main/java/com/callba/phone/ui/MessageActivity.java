@@ -13,6 +13,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.KeyEvent;
@@ -29,12 +30,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.bean.EaseUser;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.Constant;
 import com.callba.phone.ui.adapter.ConversationAdapter;
 import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SimpleHandler;
@@ -149,7 +152,7 @@ public class MessageActivity extends BaseActivity {
      * 连接断开
      */
     protected void onConnectionDisconnected() {
-       //errorItemContainer.setVisibility(View.VISIBLE);
+        //errorItemContainer.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -169,10 +172,10 @@ public class MessageActivity extends BaseActivity {
                 this, DividerItemDecoration.VERTICAL_LIST));
         conversationListview.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ConversationAdapter(this);
-        subscription =rx.Observable.create(new rx.Observable.OnSubscribe<List<EMConversation>>() {
+        subscription = rx.Observable.create(new rx.Observable.OnSubscribe<List<EMConversation>>() {
             @Override
             public void call(Subscriber<? super List<EMConversation>> subscriber) {
-                List<EMConversation> emConversations=loadConversationList();
+                List<EMConversation> emConversations = loadConversationList();
                 subscriber.onNext(emConversations);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMConversation>>() {
@@ -264,10 +267,10 @@ public class MessageActivity extends BaseActivity {
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                subscription =rx.Observable.create(new rx.Observable.OnSubscribe<List<EMConversation>>() {
+                subscription = rx.Observable.create(new rx.Observable.OnSubscribe<List<EMConversation>>() {
                     @Override
                     public void call(Subscriber<? super List<EMConversation>> subscriber) {
-                        List<EMConversation> emConversations=loadConversationList();
+                        List<EMConversation> emConversations = loadConversationList();
                         subscriber.onNext(emConversations);
                     }
                 }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMConversation>>() {
@@ -301,8 +304,8 @@ public class MessageActivity extends BaseActivity {
      */
     protected List<EMConversation> loadConversationList() {
 
-                // 获取所有会话，包括陌生人
-                Map < String, EMConversation > conversations = EMClient.getInstance().chatManager().getAllConversations();
+        // 获取所有会话，包括陌生人
+        Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
         // 过滤掉messages size为0的conversation
         /**
          * 如果在排序过程中有新消息收到，lastMsgTime会发生变化
@@ -371,10 +374,10 @@ public class MessageActivity extends BaseActivity {
                 SimpleHandler.getInstance().post(new Runnable() {
                     @Override
                     public void run() {
-                        subscription =rx.Observable.create(new rx.Observable.OnSubscribe<List<EMConversation>>() {
+                        subscription = rx.Observable.create(new rx.Observable.OnSubscribe<List<EMConversation>>() {
                             @Override
                             public void call(Subscriber<? super List<EMConversation>> subscriber) {
-                                List<EMConversation> emConversations=loadConversationList();
+                                List<EMConversation> emConversations = loadConversationList();
                                 subscriber.onNext(emConversations);
                             }
                         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMConversation>>() {
@@ -448,6 +451,19 @@ public class MessageActivity extends BaseActivity {
 //                    if(username == null)
 //                        username = user.getNick();
                     String username = conversation.getUserName();
+                    if (conversation.getType() == EMConversation.EMConversationType.GroupChat)
+                        username = EMClient.getInstance().groupManager().getGroup(conversation.getUserName()).getGroupName();
+                    else if (conversation.getType() == EMConversation.EMConversationType.Chat) {
+                        EaseUser user = EaseUserUtils.getUserInfo(conversation.getUserName());
+                        if (user != null) {
+                            if (!TextUtils.isEmpty(user.getNick()))
+                                username = user.getNick();
+                            if (!TextUtils.isEmpty(user.getRemark()))
+                                username = user.getRemark();
+                        }
+                        if (conversation.getUserName().equals("admin"))
+                            username = "系统消息";
+                    }
                     if (username.startsWith(prefixString)) {
                         newValues.add(conversation);
                     } else {

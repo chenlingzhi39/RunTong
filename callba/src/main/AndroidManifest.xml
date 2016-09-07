@@ -104,7 +104,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+            />
         <activity
             android:name=".phone.ui.SelectDialPopupWindow"
             android:theme="@style/MyDialogStyleBottom" />

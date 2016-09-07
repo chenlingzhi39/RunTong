@@ -1,86 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
-    <include layout="@layout/toolbar"/>
-<RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:background="@color/white"
-    android:layout_marginTop="20dp">
-    <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:id="@+id/avatar"
-        android:src="@drawable/ease_default_avatar"
-        android:scaleType="fitXY"
-        />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/avatar"
-        android:layout_marginLeft="10dp"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/remark" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/number" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/nick_name"
-            android:visibility="gone"/>
-    </LinearLayout>
-</RelativeLayout>
-    <FrameLayout
+    <include layout="@layout/toolbar" />
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:background="@color/white"
-        android:visibility="gone"
-        android:id="@+id/frame">
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:text="@string/set_remark"
-        android:padding="10dp"
-        android:gravity="left|center"
-        android:textSize="18sp"
-        android:id="@+id/set_remark"/>
-    </FrameLayout>
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ease_default_avatar" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/avatar"
+
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/remark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/nick_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+        </LinearLayout>
+    </RelativeLayout>
+
     <FrameLayout
+        android:id="@+id/frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:background="@color/white"
-        >
+        android:visibility="gone">
+
         <Button
+            android:id="@+id/set_remark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackground"
-            android:text="@string/clear_chat"
-            android:padding="10dp"
             android:gravity="left|center"
-            android:textSize="18sp"
-            android:id="@+id/clear_chat"/>
+            android:padding="10dp"
+            android:text="@string/set_remark"
+            android:textSize="18sp" />
     </FrameLayout>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@color/white">
+
+        <Button
+            android:id="@+id/signature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:ellipsize="end"
+            android:padding="10dp"
+            android:singleLine="true"
+            android:textSize="18sp"
+            android:gravity="left|center"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@color/white">
+
+        <Button
+            android:id="@+id/clear_chat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="left|center"
+            android:padding="10dp"
+            android:text="@string/clear_chat"
+            android:textSize="18sp" />
+    </FrameLayout>
+    <Button
+        android:id="@+id/send_message"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/em_btn_green_selector"
+        android:text="发消息"
+        android:textColor="@color/white"
+        android:layout_marginTop="10dp"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
     <Button
         android:id="@+id/delete_friend"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/em_btn_style_alert_dialog_special"
         android:layout_margin="10dp"
-        android:textColor="@color/white"
+        android:background="@drawable/em_btn_style_alert_dialog_special"
         android:text="@string/delete_friend"
+        android:textColor="@color/white"
         android:textSize="18sp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </LinearLayout>

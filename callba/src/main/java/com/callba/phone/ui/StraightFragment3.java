@@ -688,7 +688,9 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                                         btCoupon.setText(coupons.get(0).getTitle());
                                     }
                               }
-                                else btCoupon.setVisibility(View.GONE);
+                                else {btCoupon.setVisibility(View.GONE);
+                                coupon=null;
+                                }
                                 nowPriceNation.setText(flow.getPrice() + "元");
                                 pastPriceNation.setText(flow.getOldPrice() + "元");
                             }

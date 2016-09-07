@@ -1,5 +1,6 @@
 package com.callba.phone.ui.adapter;
 
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,10 +64,12 @@ public class ConversationViewHolder extends BaseViewHolder<EMConversation> {
             avatar.setImageResource(R.drawable.ease_group_icon);
             EMGroup group = EMClient.getInstance().groupManager().getGroup(username);
             name.setText(group != null ? group.getGroupName() : username);
+            name.setTextColor(Color.parseColor("#000000"));
         } else if(conversation.getType() == EMConversation.EMConversationType.ChatRoom){
            avatar.setImageResource(R.drawable.ease_group_icon);
             EMChatRoom room = EMClient.getInstance().chatroomManager().getChatRoom(username);
             name.setText(room != null && !TextUtils.isEmpty(room.getName()) ? room.getName() : username);
+            name.setTextColor(Color.parseColor("#000000"));
         }else {
             EaseUserUtils.setUserAvatar(getContext(), username,avatar);
             EaseUserUtils.setUserNick(username,name);

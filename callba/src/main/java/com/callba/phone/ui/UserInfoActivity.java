@@ -1,5 +1,6 @@
 package com.callba.phone.ui;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.callba.R;
+import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.BaseUser;
@@ -67,12 +69,19 @@ public class UserInfoActivity extends BaseActivity {
     Button clearChat;
     @InjectView(R.id.delete_friend)
     Button deleteFriend;
+    @InjectView(R.id.signature)
+    Button signature;
+    @InjectView(R.id.send_message)
+    Button sendMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        userName = getIntent().getStringExtra("username");
+        if (getIntent().getBooleanExtra("is_group", false))
+         sendMessage.setVisibility(View.VISIBLE);
+        else  sendMessage.setVisibility(View.GONE);
+            userName = getIntent().getStringExtra("username");
         user = EaseUserUtils.getUserInfo(userName);
         if (userName.length() > 10) {
             number.setHint("手机号:" + userName.substring(0, 11));
@@ -87,9 +96,10 @@ public class UserInfoActivity extends BaseActivity {
                     tv_remark.setText(user.getRemark());
                     nickName.setVisibility(View.VISIBLE);
                 } else nickName.setVisibility(View.GONE);
-                if (!user.getAvatar().equals(""))
+                if (!TextUtils.isEmpty(user.getAvatar()))
                     Glide.with(this).load(user.getAvatar()).into(avatar);
-
+                if (!TextUtils.isEmpty(user.getSign()))
+                    signature.setText("个性签名:" + user.getSign());
 
             } else {
                 gson = new Gson();
@@ -123,10 +133,12 @@ public class UserInfoActivity extends BaseActivity {
                                     if (result[0].equals("0")) {
                                         BaseUser baseUser = gson.fromJson(result[1], new TypeToken<BaseUser>() {
                                         }.getType());
-                                        if (!baseUser.getUrl_head().equals(""))
+                                        if (!TextUtils.isEmpty(baseUser.getUrl_head()))
                                             Glide.with(UserInfoActivity.this).load(baseUser.getUrl_head()).into(avatar);
-                                        if (!baseUser.getNickname().equals(""))
+                                        if (!TextUtils.isEmpty(baseUser.getNickname()))
                                             tv_remark.setText(baseUser.getNickname());
+                                        if (!TextUtils.isEmpty(baseUser.getSign()))
+                                            signature.setText("个性签名:" + user.getSign());
                                     } else toast(result[1]);
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -157,7 +169,7 @@ public class UserInfoActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.set_remark, R.id.clear_chat, R.id.delete_friend})
+    @OnClick({R.id.set_remark, R.id.clear_chat, R.id.delete_friend, R.id.signature,R.id.send_message})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.set_remark:
@@ -219,6 +231,21 @@ public class UserInfoActivity extends BaseActivity {
                         }
                     }
                 }, true).show();
+                break;
+            case R.id.signature:
+                if (!TextUtils.isEmpty(user.getSign())) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(user.getSign());
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.setCanceledOnTouchOutside(true);
+                    alertDialog.setCancelable(true);
+                    alertDialog.show();
+                }
+                break;
+            case R.id.send_message:
+                intent = new Intent(this,ChatActivity.class);
+                intent.putExtra(Constant.EXTRA_USER_ID,getIntent().getStringExtra("username"));
+                startActivity(intent);
                 break;
         }
     }
