@@ -243,6 +243,7 @@
     <string name="receive_yzm">验证码已发送，请查收短信！</string>
     <string name="wrong_pwd">密码错误！</string>
     <string name="same_pwd">新密码不能相同！</string>
+    <string name="see_team">查看团队</string>
     <!-- one key register -->
     <string name="onekey_register_info">无需输入手机号短信一键注册</string>
     <string name="onekey_registering">正在一键注册</string>

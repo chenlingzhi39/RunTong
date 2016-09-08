@@ -216,6 +216,14 @@ public interface Interfaces {
 	 * 订单号
 	 */
 	String PAY_ORDER=URL+"/pay/pay_online_order2.jsp";
+	/**
+	 * 我的团队
+	 */
+	String GET_TEAM2=URL+"/myteam/myteam2.jsp";
+	/**
+	 * 我的A类客户
+	 */
+	String GET_ATYPE2=URL+"/mypotentialcustomer/mypotentialcustomer2.jsp";
 	int GET_CODE_START=0;
 	int GET_CODE_FAILURE=1;
 	int GET_KEY_SUCCESS=2;

@@ -642,8 +642,7 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                     if (result[0].equals("0")) {
                         bills = gson.fromJson(result[1], new TypeToken<ArrayList<Commodity>>() {
                         }.getType());
-                        if (bills.get(0).getActivity().size() > 0)
-                            campaign.setText("活动:" + bills.get(0).getActivity().get(0).getContent());
+
                         for (int i = 0; i < bills.size(); i++)
                             if (bills.get(i).getCoupon().size() > 0) {
                                 bills.get(i).getCoupon().add(0, new Coupon("不使用优惠券"));
@@ -657,6 +656,8 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                                     }
                             }
                         bill = bills.get(bill_pos);
+                        if (bill.getActivity().size() > 0)
+                            campaign.setText("活动:" + bill.getActivity().get(0).getContent());
                         coupons = bill.getCoupon();
                         if (coupons.size() > 0) {
                             btCoupon.setVisibility(View.VISIBLE);

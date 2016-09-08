@@ -56,6 +56,7 @@ public class TeamFragment extends BaseFragment {
         ButterKnife.inject(this,fragmentRootView);
         teamAdapter = new TeamAdapter(getActivity());
         teams = (ArrayList<Team>) getArguments().getParcelableArrayList("list").get(0);
+        Logger.i("team_size",teams.size()+"");
         list.addItemDecoration(new DividerItemDecoration(
                 getActivity(), DividerItemDecoration.VERTICAL_LIST));
             teamAdapter.addAll(teams);
@@ -79,7 +80,11 @@ public class TeamFragment extends BaseFragment {
     private void showDialog(final Team entity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(entity.getNickname());
-        builder.setItems(new String[] { getString(R.string.add_friend) },
+        String item2;
+        if(getActivity().getClass()==TeamActivity.class||getActivity().getClass()==TeamActivity2.class)
+            item2="查看团队";
+        else item2="查看A类客户";
+        builder.setItems(new String[] {getString(R.string.add_friend),item2},
                 new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
@@ -170,6 +175,17 @@ public class TeamFragment extends BaseFragment {
                                             }
                                         });
 
+                                break;
+                            case 1:
+                                if(getActivity().getClass()==TeamActivity.class||getActivity().getClass()==TeamActivity2.class)
+                                {Intent intent=new Intent(getActivity(),TeamActivity2.class);
+                                intent.putExtra("number",entity.getPhoneNumber());
+                                startActivity(intent);
+                                }else {
+                                    Intent intent=new Intent(getActivity(),ATypeActivity2.class);
+                                    intent.putExtra("number",entity.getPhoneNumber());
+                                    startActivity(intent);
+                                }
                                 break;
                             default:
                                 break;

@@ -642,8 +642,7 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                                 seperateFlows.add(flow);
                             }
                         }
-                        if ( seperateFlows.get(0).getActivity().size()>0)
-                            campaign.setText("活动:" + seperateFlows.get(0).getActivity().get(0).getContent());
+
                         for(int i=0;i<seperateFlows.size();i++)
                             if(seperateFlows.get(i).getCoupon().size()>0){
                                 seperateFlows.get(i).getCoupon().add(0,new Coupon("不使用优惠券"));
@@ -657,6 +656,8 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                                     }
                             }
                         flow =  seperateFlows.get(flow_pos);
+                        if (flow.getActivity().size()>0)
+                            campaign.setText("活动:" + flow.getActivity().get(0).getContent());
                         coupons = flow.getCoupon();
                         if (coupons .size()>0) {
                             btCoupon.setVisibility(View.VISIBLE);
