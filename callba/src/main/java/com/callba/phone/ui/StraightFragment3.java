@@ -178,6 +178,36 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                         paramsMap.put("tradeNo", outTradeNo);
                         paramsMap.put("price", price);
                         MobclickAgent.onEvent(getActivity(), "pay_success", paramsMap);
+                        OkHttpUtils.post().url(Interfaces.PAY_SUCCESS).addParams("loginName", getUsername())
+                                .addParams("loginPwd", getPassword())
+                                .addParams("orderNumber", outTradeNo)
+                                .addParams("payResult", "success")
+                                .build()
+                                .execute(new StringCallback() {
+                                    @Override
+                                    public void onAfter(int id) {
+
+                                    }
+
+                                    @Override
+                                    public void onBefore(Request request, int id) {
+
+                                    }
+
+                                    @Override
+                                    public void onError(Call call, Exception e, int id) {
+
+                                    }
+
+                                    @Override
+                                    public void onResponse(String response, int id) {
+                                        try {
+                                            String[] result = response.split("\\|");
+                                            toast(result[1]);
+                                        } catch (Exception e) {
+                                        }
+                                    }
+                                });
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
                         // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
@@ -331,7 +361,7 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                                         Logger.i("trade", results[1]);
                                         String[] results1 = results[1].split(",");
                                         outTradeNo = results1[0];
-                                        price = results[1];
+                                        price = results1[1];
                                         pay();
                                     } else {
                                         toast(results[1]);
