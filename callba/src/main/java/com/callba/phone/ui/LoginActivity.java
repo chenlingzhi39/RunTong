@@ -17,31 +17,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.logic.contact.ContactEntity;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
-import com.callba.phone.logic.contact.ContactPersonEntity;
-import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
-import com.callba.phone.util.DesUtil;
-import com.callba.phone.util.Interfaces;
-import com.callba.phone.util.Logger;
-import com.callba.phone.util.SharedPreferenceUtil;
+
 import com.callba.phone.view.CleanableEditText;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
-
-import org.apache.http.conn.ConnectTimeoutException;
-
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-
-import okhttp3.Call;
-import okhttp3.Request;
 
 @ActivityFragmentInject(
         contentViewId = R.layout.login,
@@ -53,11 +35,9 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
     private Button bn_login, bn_retrievePass;
     private EditText et_password;
     private CleanableEditText et_username;
-    private ProgressDialog progressDialog;
 
     private String username; // 登录的用户名
     private String password; // 密码
-    private SharedPreferenceUtil mPreferenceUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +51,6 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
         et_username = (CleanableEditText) this.findViewById(R.id.et_login_name);
         et_password = (EditText) this.findViewById(R.id.et_login_password);
-        mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
         if (getIntent().getStringExtra("number") != null) {
             et_username.setText(getIntent().getStringExtra("number"));
             et_password.setText(getIntent().getStringExtra("password"));
@@ -87,7 +66,6 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
                     InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(bn_login.getWindowToken(), 0);
                     login();
-                    mPreferenceUtil.putBoolean(Constant.IS_FROMGUIDE, false, true);
                 }
                 return false;
             }
@@ -101,10 +79,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
                 InputMethodManager imm = (InputMethodManager) this
                         .getSystemService(INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(bn_login.getWindowToken(), 0);
-
                 login();
-                mPreferenceUtil.putBoolean(Constant.IS_FROMGUIDE, false, true);
-
                 break;
 
             case R.id.bn_login_retrievePass:
@@ -143,7 +118,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
             return;
         }
 
-        // 加密，生成loginSign
+     /*   // 加密，生成loginSign
         String source = username + "," + password;
         String sign = null;
         try {
@@ -151,14 +126,15 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         } catch (Exception e) {
             e.printStackTrace();
 			
-			/*CalldaToast calldaToast = new CalldaToast();
-			calldaToast.showToast(getApplicationContext(), R.string.key_exception);*/
+			CalldaToast calldaToast = new CalldaToast();
+			calldaToast.showToast(getApplicationContext(), R.string.key_exception);
             toast(getString(R.string.key_exception));
             return;
-        }
-
-
-        OkHttpUtils.post().url(Interfaces.Login)
+        }*/
+        UserManager.putUsername(this,username);
+        UserManager.putOriginalPassword(this,password);
+        gotoMainActivity();
+     /*   OkHttpUtils.post().url(Interfaces.Login)
                 .addParams("loginSign", sign)
                 .addParams("loginType", "1")
                 .addParams("softType", "android")
@@ -202,7 +178,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
                     toast(R.string.getserverdata_exception);
                 }
             }
-        });
+        });*/
     }
 
     /**

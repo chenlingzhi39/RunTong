@@ -37,12 +37,13 @@ import com.callba.phone.ui.adapter.HomeAdapter;
 import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.RxBus;
 import com.callba.phone.util.SPUtils;
-import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -64,6 +65,8 @@ import de.greenrobot.dao.Mark;
 import de.greenrobot.dao.MarkDao;
 import okhttp3.Call;
 import okhttp3.Request;
+import rx.Observable;
+import rx.functions.Action1;
 
 
 /**
@@ -81,7 +84,6 @@ public class HomeActivity extends BaseActivity {
     private String yue;
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
     private ArrayList<String> webImages = new ArrayList<>();
-    private SharedPreferenceUtil mPreferenceUtil;
     private ProgressDialog progressDialog;
     private String username;
     private String password;
@@ -98,6 +100,7 @@ public class HomeActivity extends BaseActivity {
     private View headerView;
     private boolean has_image;
     private String img_url;
+    private Observable<Boolean> mRefreshAdObservable;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,9 +172,6 @@ public class HomeActivity extends BaseActivity {
         gson = new Gson();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");//获取当前时间
         date = formatter.format(new Date(System.currentTimeMillis()));
-        mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
-        mPreferenceUtil.putBoolean(Constant.IS_FROMGUIDE, false, true);
-        mPreferenceUtil.commit();
         userDao2 = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void failure(String msg) {
@@ -188,7 +188,6 @@ public class HomeActivity extends BaseActivity {
                 final ArrayList<Advertisement> list;
                 list = gson.fromJson(msg, new TypeToken<ArrayList<Advertisement>>() {
                 }.getType());
-                GlobalConfig.getInstance().setAdvertisements1(list);
                 webImages.clear();
                 for (Advertisement advertisement : list) {
                     webImages.add(advertisement.getImage());
@@ -208,16 +207,22 @@ public class HomeActivity extends BaseActivity {
         localImages.add(R.drawable.ad5);
         localImages.add(R.drawable.ad6);
         banner.setViewRes(localImages);
+        autoLogin();
+        mRefreshAdObservable= RxBus.get().register("refresh_ad", Boolean.class);
+        mRefreshAdObservable.subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+                userDao2.getAd(1, getUsername(), getPassword());
+            }
+        });
         // 判断是否自动启动
-        if (savedInstanceState == null
+      /*  if (savedInstanceState == null
                 && (boolean) SPUtils.get(this, Constant.PACKAGE_NAME, Constant.Auto_Login, false)
                 && !LoginController.getInstance().getUserLoginState()) {
-            Log.i("MainCallActivity", "auto");
-            Logger.i("MainCallActivity", "MainCallActivity  oncreate autoLogin");
             // 登录
             autoLogin();
             return;
-        }/* else {
+        }*//* else {
 
             // 检查内存数据是否正常
             String username = GlobalConfig.getInstance().getUsername();
@@ -241,9 +246,9 @@ public class HomeActivity extends BaseActivity {
         }*/
         //userDao1.getSystemPhoneNumber(getUsername(), getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
         //getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
-        userDao2.getAd(1, getUsername(), getPassword());
+     /*   userDao2.getAd(1, getUsername(), getPassword());
         if ((boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", true))
-            signIn();
+            signIn();*/
      /*   if (!mPreferenceUtil.getString(getUsername()).equals(date) && (boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", false)) {
             String year = Calendar.getInstance().get(Calendar.YEAR) + "";
             String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
@@ -254,18 +259,16 @@ public class HomeActivity extends BaseActivity {
         }*/
 
 
-        if (GlobalConfig.getInstance().getAppVersionBean() != null) {
+      /*  if (GlobalConfig.getInstance().getAppVersionBean() != null) {
             if (GlobalConfig.getInstance().getAppVersionBean().isForceUpgrade() || (boolean) SPUtils.get(this, "settings", "update_key", true))
                 check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
-        }
+        }*/
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (GlobalConfig.getInstance().getAdvertisements1() != null)
-            if (GlobalConfig.getInstance().getAdvertisements1().size() == 0)
-                userDao2.getAd(1, getUsername(), getPassword());
     }
 
     // 跳转到起始页
@@ -273,11 +276,9 @@ public class HomeActivity extends BaseActivity {
         Intent intent = new Intent();
         intent.setClass(HomeActivity.this, WelcomeActivity.class);
         startActivity(intent);
-
         // 关闭主tab页面
         ActivityUtil.finishMainTabPages();
     }
-
 
     public class YueDialogHelper implements DialogInterface.OnDismissListener {
         @InjectView(R.id.recharge)
@@ -341,8 +342,8 @@ public class HomeActivity extends BaseActivity {
      * 自动登录
      */
     private void autoLogin() {
-        username = mPreferenceUtil.getString(Constant.LOGIN_USERNAME);
-        password = mPreferenceUtil.getString(Constant.LOGIN_PASSWORD);
+        username = getUsername();
+        password = UserManager.getOriginalPassword(this);
 
         if ("".equals(UserManager.getSecretKey(this))) {
             Log.i("home", "nosecret");
@@ -366,7 +367,6 @@ public class HomeActivity extends BaseActivity {
                     .getSecretKey(this));
         } catch (Exception e) {
             e.printStackTrace();
-
             // 手动登录
             switchManualLogin();
             return;
@@ -422,7 +422,8 @@ public class HomeActivity extends BaseActivity {
                         if (GlobalConfig.getInstance().getAppVersionBean() != null) {
                             if (GlobalConfig.getInstance().getAppVersionBean().isForceUpgrade() || (boolean) SPUtils.get(HomeActivity.this, "settings", "update_key", true))
                                 check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
-                        }
+                            else getActivity();
+                        }else getActivity();
                         userDao2.getAd(1, getUsername(), getPassword());
                         MobclickAgent.onProfileSignIn(getUsername());
                     } else {
@@ -453,6 +454,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         Logger.i("home", "destroy");
+        RxBus.get().unregister("refresh_ad", mRefreshAdObservable);
         super.onDestroy();
     }
 
@@ -469,45 +471,6 @@ public class HomeActivity extends BaseActivity {
         return false;
     }
 
-    public void getMarks(String time) {
-        OkHttpUtils.post().url(Interfaces.GET_MARKS)
-                .addParams("loginName", getUsername())
-                .addParams("loginPwd", getPassword())
-                .addParams("date", time)
-                .build().execute(new StringCallback() {
-
-            @Override
-            public void onError(Call call, Exception e, int id) {
-
-            }
-
-            @Override
-            public void onResponse(String response, int id) {
-                try {
-                    String[] result = response.split("\\|");
-                    if (result[0].equals("0")) {
-                        String[] dates = result[1].split(",");
-                        if (date.equals(dates[dates.length - 1])) {
-                            mPreferenceUtil.putString(getUsername(), date, true);
-
-                        } else {
-                            mPreferenceUtil.putString(getUsername(), dates[dates.length - 1], true);
-                            Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
-                            startActivity(intent);
-                        }
-                    } else {
-                        //toast(result[1]);
-                        if (result[1].equals("没有签到记录")) {
-                            Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
-                            startActivity(intent);
-                        }
-                    }
-                } catch (Exception e) {
-                    toast(R.string.getserverdata_exception);
-                }
-            }
-        });
-    }
 
     public void getSystemPhoneNumber(String count) {
         Logger.i("phoneNumberCount", count);
@@ -635,14 +598,15 @@ public class HomeActivity extends BaseActivity {
                             }
                         }
                         homeAdapter.notifyDataSetChanged();
-                        if (!getDate().equals(SPUtils.get(HomeActivity.this, Constant.PACKAGE_NAME, "activity_date", "")))
-                        if(has_image){
+                       if (!getDate().equals(SPUtils.get(HomeActivity.this, Constant.PACKAGE_NAME, "activity_date", "")))
+                        { SPUtils.put(HomeActivity.this, Constant.PACKAGE_NAME, "activity_date", getDate());
+                            if(has_image){
                             Intent intent=new Intent(HomeActivity.this,CampaignActivity.class);
                             intent.putExtra("image",img_url);
                             startActivity(intent);
                         }else
                         {showDialog(campaigns);
-                        SPUtils.put(HomeActivity.this, Constant.PACKAGE_NAME, "activity_date", getDate());}
+                       }}
                     }
                 } catch (Exception e) {
                 }

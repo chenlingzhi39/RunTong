@@ -41,7 +41,6 @@ import com.callba.phone.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
-import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.widget.BadgeView;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
@@ -265,8 +264,7 @@ public class MainTabActivity extends TabActivity {
         intent.putExtra("frompage", "all");
         return intent;
     }
-
-   /* @Override
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         //保存全局参数
         GlobalConfig.getInstance().saveGlobalCfg(outState);
@@ -276,29 +274,8 @@ public class MainTabActivity extends TabActivity {
     @Override
     protected void onRestoreInstanceState(Bundle state) {
         GlobalConfig.getInstance().restoreGlobalCfg(state);
-      *//*  EMClient.getInstance().login(UserManager.getUsername(this)+"-callba",UserManager.getOriginalPassword(this),new EMCallBack() {//回调
-            @Override
-            public void onSuccess() {
-
-                EMClient.getInstance().groupManager().loadAllGroups();
-                EMClient.getInstance().chatManager().loadAllConversations();
-                Log.d("main", "登录聊天服务器成功！");
-
-                //DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
-            }
-
-            @Override
-            public void onProgress(int progress, String status) {
-
-            }
-
-            @Override
-            public void onError(int code, String message) {
-                Log.d("main", "登录聊天服务器失败！");
-            }
-        });*//*
         super.onRestoreInstanceState(state);
-    }*/
+    }
 
     @Override
     protected void onResume() {
@@ -313,18 +290,6 @@ public class MainTabActivity extends TabActivity {
                 sendBroadcast(intent);
             }
         }, 300);
-       /* DemoHelper sdkHelper = DemoHelper.getInstance();
-        sdkHelper.pushActivity(this);*/
-        //EMClient.getInstance().chatManager().addMessageListener(messageListener);
-        //EMClient.getInstance().chatManager().addMessageListener(msgListener);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        //EMClient.getInstance().chatManager().removeMessageListener(messageListener);
-       /* DemoHelper sdkHelper = DemoHelper.getInstance();
-        sdkHelper.popActivity(this);*/
     }
 
     @Override
@@ -332,11 +297,9 @@ public class MainTabActivity extends TabActivity {
         MyApplication.activities.remove(this);
         if (mNotificationManager != null)
             mNotificationManager.cancel(10);
-        //EMClient.getInstance().chatManager().removeMessageListener(messageListener);
         unregisterReceiver(payReceiver);
         unregisterReceiver(numReceiver);
         unregisterReceiver(tabReceiver);
-        //unregisterBroadcastReceiver();
         super.onDestroy();
     }
 
@@ -383,16 +346,16 @@ public class MainTabActivity extends TabActivity {
             public void onClick(DialogInterface dialog, int which) {
                 UserManager.putOriginalPassword(MainTabActivity.this,"");
                 UserManager.putPassword(MainTabActivity.this,"");
-                GlobalConfig.getInstance().setIvPath("");
                 LoginController.getInstance().setUserLoginState(false);
                 Intent intent0 = new Intent("com.callba.location");
                 intent0.putExtra("action", "logout");
                 sendBroadcast(intent0);
                 Intent intent = new Intent();
                 intent.setClass(MainTabActivity.this, LoginActivity.class);
-                for (Activity activity : MyApplication.activities) {
+            /*    for (Activity activity : MyApplication.activities) {
                     activity.finish();
-                }
+                }*/
+                finish();
                 dialog.dismiss();
                 startActivity(intent);
             }
@@ -414,9 +377,8 @@ public class MainTabActivity extends TabActivity {
             public void onClick(DialogInterface dialog, int which) {
                 UserManager.putUsername(MainTabActivity.this,"");
                 UserManager.putPassword(MainTabActivity.this,"");
-                GlobalConfig.getInstance().setIvPath("");
                 LoginController.getInstance().setUserLoginState(false);
-                SharedPreferenceUtil.getInstance(MainTabActivity.this).putString(com.callba.phone.cfg.Constant.LOGIN_PASSWORD, "", true);
+                UserManager.putOriginalPassword(MainTabActivity.this, "");
                 Intent intent0 = new Intent("com.callba.location");
                 intent0.putExtra("action", "logout");
                 sendBroadcast(intent0);
@@ -454,8 +416,5 @@ public class MainTabActivity extends TabActivity {
                 Log.d("main", "退出聊天服务器失败！");
             }
         });
-
     }
-
-
 }

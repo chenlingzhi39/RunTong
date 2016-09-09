@@ -96,7 +96,6 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 			} else{
 				holder.groupContainer.setVisibility(View.GONE);
 			}
-			
 			holder.reason.setText(msg.getReason());
 			EaseUserUtils.setUserNick(msg.getFrom(),holder.name);
 			// holder.time.setText(DateUtils.getTimestampString(new

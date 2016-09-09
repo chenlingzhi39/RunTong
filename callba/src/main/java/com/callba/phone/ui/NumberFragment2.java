@@ -25,6 +25,7 @@ import com.callba.R;
 import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.util.Interfaces;
+import com.callba.phone.util.RxBus;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -227,6 +228,8 @@ public class NumberFragment2 extends BaseFragment {
                         try {
                             String[] results = response.split("\\|");
                             toast(results[1]);
+                            if(results[1].equals("0"))
+                            RxBus.get().post("refresh_ad",true);
                         } catch (Exception e) {
                             toast(R.string.getserverdata_exception);
                         }

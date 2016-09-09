@@ -27,6 +27,7 @@ import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.NumberAddressService;
+import com.callba.phone.util.RxBus;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -107,14 +108,7 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
     public void success(String msg) {
         toast(msg);
         if (progressDialog != null) progressDialog.dismiss();
-        if (GlobalConfig.getInstance().getAdvertisements1() != null)
-            GlobalConfig.getInstance().getAdvertisements1().clear();
-        if (GlobalConfig.getInstance().getAdvertisements2() != null)
-            GlobalConfig.getInstance().getAdvertisements2().clear();
-        if (GlobalConfig.getInstance().getAdvertisements3() != null)
-            GlobalConfig.getInstance().getAdvertisements3().clear();
-        if (GlobalConfig.getInstance().getDialAd() != null)
-            GlobalConfig.getInstance().setDialAd(null);
+         RxBus.get().post("refresh_ad",true);
     }
 
     @Override

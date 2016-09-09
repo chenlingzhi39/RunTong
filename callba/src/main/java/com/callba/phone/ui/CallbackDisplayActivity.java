@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.conn.ConnectTimeoutException;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -23,7 +21,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,7 +31,6 @@ import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.util.SPUtils;
-import com.callba.phone.util.SimpleHandler;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.callba.R;
@@ -171,7 +167,6 @@ public class CallbackDisplayActivity extends BaseActivity {
                     }.getType());
                     if (dialAds.size() > 0) {
                         dialAd = dialAds.get(0);
-                        GlobalConfig.getInstance().setDialAd(dialAd);
                         Glide.with(CallbackDisplayActivity.this).load(dialAd.getImage()).into(background);
                     }
                 } catch (Exception e) {
@@ -184,9 +179,6 @@ public class CallbackDisplayActivity extends BaseActivity {
 
             }
         });
-        if (GlobalConfig.getInstance().getDialAd() != null)
-            Glide.with(CallbackDisplayActivity.this).load(GlobalConfig.getInstance().getDialAd().getImage()).into(background);
-        else
             userDao.getAd(4, getUsername(), getPassword());
     }
 

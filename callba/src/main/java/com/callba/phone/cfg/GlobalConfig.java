@@ -24,10 +24,6 @@ import com.hyphenate.chat.EMMessage;
 public class GlobalConfig implements Serializable{
 	private static GlobalConfig globalConfig;
 	private GlobalConfig(){}
-	private Context context;
-	public void init(Context context){
-		this.context=context;
-	}
 
 	public static synchronized GlobalConfig getInstance() {
 		if(globalConfig == null) {
@@ -37,17 +33,8 @@ public class GlobalConfig implements Serializable{
 		return globalConfig;
 	}
 
-	private String sipIP;		//sip服务器地址
-	private boolean isSipRegistered;//记录sip服务是否成功注册
 	private List<ContactPersonEntity> contactBeans;//本地联系人列表
 	private long lastInterceptCallTime;	//最后拦截呼叫时间
-	private String ivPath;//键盘广告路径
-	private String ivPathBack;//回拨广告路径
-	private ArrayList<Advertisement> advertisements1;
-	private ArrayList<Advertisement> advertisements2;
-	private ArrayList<Advertisement> advertisements3;
-	private DialAd dialAd;
-	private long interval=600000;
     private AppVersionChecker.AppVersionBean appVersionBean;
     private EMMessage message;
 
@@ -66,58 +53,6 @@ public class GlobalConfig implements Serializable{
 	public void setAppVersionBean(AppVersionChecker.AppVersionBean appVersionBean) {
 		this.appVersionBean = appVersionBean;
 	}
-
-	public DialAd getDialAd() {
-		return dialAd;
-	}
-
-	public void setDialAd(DialAd dialAd) {
-		this.dialAd = dialAd;
-	}
-
-
-	public ArrayList<Advertisement> getAdvertisements1() {
-		return advertisements1;
-	}
-
-	public void setAdvertisements1(ArrayList<Advertisement> advertisements1) {
-		this.advertisements1 = advertisements1;
-	}
-
-	public ArrayList<Advertisement> getAdvertisements2() {
-		return advertisements2;
-	}
-
-	public void setAdvertisements2(ArrayList<Advertisement> advertisements2) {
-		this.advertisements2 = advertisements2;
-	}
-
-	public ArrayList<Advertisement> getAdvertisements3() {
-		return advertisements3;
-	}
-
-	public void setAdvertisements3(ArrayList<Advertisement> advertisements3) {
-		this.advertisements3 = advertisements3;
-	}
-
-	/**
-	 * 获取sip服务器地址
-	 * @return
-	 */
-	public String getSipIP() {
-		return sipIP;
-	}
-
-	/**
-	 * 设置sip服务器地址
-	 * @param sipIP
-	 */
-	public void setSipIP(String sipIP) {
-		this.sipIP = sipIP;
-	}
-
-
-
 	/**
 	 * 获取本地联系人
 	 * @return
@@ -153,47 +88,17 @@ public class GlobalConfig implements Serializable{
 		this.lastInterceptCallTime = lastInterceptCallTime;
 	}
 
-	public String getIvPath() {
-		return ivPath;
-	}
-
-	public void setIvPath(String ivPath) {
-		this.ivPath = ivPath;
-	}
-
-	public String getIvPathBack() {
-		return ivPathBack;
-	}
-
-	public void setIvPathBack(String ivPathBack) {
-		this.ivPathBack = ivPathBack;
-	}
-
 	/**
 	 * 将全局参数保存到outState中
 	 * @param outState
 	 */
 	@SuppressWarnings("unchecked")
 	public void saveGlobalCfg(Bundle outState) {
-		outState.putString("sipip", sipIP);
-		outState.putString("ivPath", ivPath);
-		outState.putString("ivPathBack", ivPathBack);
-		outState.putLong("interval",interval);
-		outState.putSerializable("dialAd",dialAd);
-		outState.putSerializable("appVersion",appVersionBean);
-		ArrayList list1 = new ArrayList();
-		list1.add(advertisements1);
-		outState.putParcelableArrayList("advertisements1",list1);
-		ArrayList list2 = new ArrayList();
-		list2.add(advertisements2);
-		outState.putParcelableArrayList("advertisements2",list2);
-		ArrayList list3 = new ArrayList();
-		list3.add(advertisements3);
-		outState.putParcelableArrayList("advertisements3",list3);
-		@SuppressWarnings("rawtypes")
-		ArrayList list = new ArrayList();
+	    outState.putParcelable("message",message);
+	    outState.putSerializable("appVersion",appVersionBean);
+	/*	ArrayList list = new ArrayList();
 		list.add(contactBeans);
-		outState.putParcelableArrayList("contact", list);
+		outState.putParcelableArrayList("contact", list);*/
 	}
 
 	/**
@@ -202,16 +107,10 @@ public class GlobalConfig implements Serializable{
 	 */
 	@SuppressWarnings("unchecked")
 	public void restoreGlobalCfg(Bundle savedInstanceState) {
-		sipIP = savedInstanceState.getString("sipip");
-		ivPath = savedInstanceState.getString("ivPath");
-		ivPathBack = savedInstanceState.getString("ivPathBack");
-		contactBeans = (ArrayList<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0);
-		interval=savedInstanceState.getLong("interval",interval);
-		dialAd=(DialAd) savedInstanceState.getSerializable("dialAd");
+         message=savedInstanceState.getParcelable("message");
 		appVersionBean=(AppVersionChecker.AppVersionBean) savedInstanceState.getSerializable("appVersion");
-		advertisements1=(ArrayList<Advertisement>)savedInstanceState.getParcelableArrayList("advertisements1").get(0);
-		advertisements2=(ArrayList<Advertisement>)savedInstanceState.getParcelableArrayList("advertisements2").get(0);
-		advertisements3=(ArrayList<Advertisement>)savedInstanceState.getParcelableArrayList("advertisements3").get(0);
+		//contactBeans = (ArrayList<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0);
+
 	}
 }
  

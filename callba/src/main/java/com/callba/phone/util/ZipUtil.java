@@ -11,7 +11,6 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import android.content.Context;
-import android.os.Environment;
 
 import com.callba.phone.cfg.Constant;
 
@@ -103,7 +102,7 @@ public class ZipUtil {
             out.close();
         }
         Logger.v("db位置", str);
-        SharedPreferenceUtil.getInstance(context).putString(Constant.DB_PATH_, str, true);
+        SPUtils.put(context,Constant.PACKAGE_NAME,Constant.DB_PATH_, str);
 		return str;
     }
 }

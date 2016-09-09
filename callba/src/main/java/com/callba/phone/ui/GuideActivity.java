@@ -1,18 +1,13 @@
 package com.callba.phone.ui;
 
 import android.content.Intent;
-import android.os.Build;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 
 import com.callba.R;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.cfg.Constant;
-import com.callba.phone.util.SharedPreferenceUtil;
 @ActivityFragmentInject(
 		contentViewId = R.layout.guide
 )
@@ -22,9 +17,6 @@ public class GuideActivity extends BaseActivity implements OnClickListener {
 	protected void onCreate(android.os.Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		SharedPreferenceUtil mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
-		mPreferenceUtil.putBoolean(Constant.IS_FROMGUIDE, true, true);
-		
 		bn_manual = (Button) this.findViewById(R.id.bn_guide_manual);
 		bn_login = (Button) this.findViewById(R.id.bn_guide_login);
 		

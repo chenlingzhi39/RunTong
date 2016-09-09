@@ -34,7 +34,6 @@ import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.SPUtils;
-import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.util.ZipUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -76,10 +75,10 @@ public class WelcomeActivity extends BaseActivity {
     private void startZip() {
         try {
             Logger.i(TAG, "start zip");
-            if (!new File(SharedPreferenceUtil.getInstance(this).getString(Constant.DB_PATH_)).exists())
+            if (!new File((String)SPUtils.get(this,Constant.PACKAGE_NAME,Constant.DB_PATH_,"")).exists())
                 ZipUtil.copyBigDataBase(WelcomeActivity.this);
             else
-                Constant.DB_PATH = SharedPreferenceUtil.getInstance(this).getString(Constant.DB_PATH_);
+                Constant.DB_PATH =(String)SPUtils.get(this,Constant.PACKAGE_NAME,Constant.DB_PATH_,"");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -237,20 +236,25 @@ public class WelcomeActivity extends BaseActivity {
         // 判断是不是第一次使用
         boolean isFirstStart =(boolean)SPUtils.get(this,Constant.PACKAGE_NAME,Constant.ISFRISTSTART,true);
 
-
         if (isFirstStart) {
             // 第一次启动，跳转到新功能介绍页面
             Intent intent = new Intent(WelcomeActivity.this,
                     FunIntroduceActivity.class);
             WelcomeActivity.this.startActivity(intent);
             SPUtils.put(this,Constant.PACKAGE_NAME,Constant.ISFRISTSTART, false);
-            SPUtils.put(this,Constant.PACKAGE_NAME,Constant.Auto_Login, true);
-        } else if ((boolean)SPUtils.get(this,Constant.PACKAGE_NAME,Constant.Auto_Login,false)) {
+        } else {
             String username = getUsername();
             if (TextUtils.isEmpty(username)) {
                 Intent intent = new Intent(WelcomeActivity.this,
                         GuideActivity.class);
-                WelcomeActivity.this.startActivity(intent);
+                startActivity(intent);
+                finish();
+                return;
+            }
+            if (TextUtils.isEmpty(getPassword())) {
+                Intent intent = new Intent(WelcomeActivity.this,
+                        LoginActivity.class);
+                startActivity(intent);
                 finish();
                 return;
             }
@@ -258,14 +262,14 @@ public class WelcomeActivity extends BaseActivity {
             Intent intent = new Intent(WelcomeActivity.this,
                     MainTabActivity.class);
             //intent.putExtra("frompage", "WelcomeActivity");
-            WelcomeActivity.this.startActivity(intent);
+            startActivity(intent);
             //OkHttpUtils.getInstance().cancelTag(this);
-        } else {
+        } /*else {
             // 手动登陆
             Intent intent = new Intent(WelcomeActivity.this,
                     LoginActivity.class);
             WelcomeActivity.this.startActivity(intent);
-        }
+        }*/
         finish();
     }
 

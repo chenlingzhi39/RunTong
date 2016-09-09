@@ -35,6 +35,7 @@ import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.SystemNumber;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.util.RxBus;
 import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.BannerLayout;
@@ -69,6 +70,9 @@ import com.callba.phone.util.SharedPreferenceUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import rx.Observable;
+import rx.functions.Action1;
 
 @ActivityFragmentInject(
         contentViewId = R.layout.newdial,
@@ -159,6 +163,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     private String[] result;
     List<SystemNumber> list;
     PhoneNumTextWatcher phoneNumTextWatcher;
+    private Observable<Boolean> mRefreshAdObservable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,8 +195,13 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.ACTION_TAB_ONRESUME);
         registerReceiver(mainTabOnResumeReceiver, filter);
-        userDao.getAd(3, getUsername(), getPassword());
-
+        mRefreshAdObservable= RxBus.get().register("refresh_ad", Boolean.class);
+        mRefreshAdObservable.subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+                userDao.getAd(3, getUsername(),getPassword());
+            }
+        });
     }
 
 
@@ -339,7 +349,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 gson = new Gson();
                 list = gson.fromJson(msg, new TypeToken<ArrayList<Advertisement>>() {
                 }.getType());
-                GlobalConfig.getInstance().setAdvertisements3(list);
                 webImages.clear();
                 for (Advertisement advertisement : list) {
                     webImages.add(advertisement.getImage());
@@ -379,10 +388,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 num1.setImageResource(R.drawable.call_1);
             }
         }
-        if (GlobalConfig.getInstance().getAdvertisements3() != null)
-            if (GlobalConfig.getInstance().getAdvertisements3().size() == 0)
-                userDao.getAd(3, getUsername(), getPassword());
-
         super.onResume();
     }
 
@@ -940,6 +945,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     protected void onDestroy() {
         Logger.i("maincall", "destroy");
         unregisterReceiver(loginReceiver);
+        RxBus.get().unregister("refresh_ad", mRefreshAdObservable);
         super.onDestroy();
         // 取消广播监听
         try {

@@ -1,8 +1,6 @@
 package com.callba.phone.service;
 
 import java.util.List;
-
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -10,11 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.ContactsContract;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
@@ -23,9 +19,6 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.Constant;
-import com.callba.phone.cfg.GlobalConfig;
-import com.callba.phone.logic.contact.ContactController;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.logic.contact.QueryContactCallback;
 import com.callba.phone.logic.contact.QueryContacts;
@@ -33,7 +26,6 @@ import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.SharedPreferenceUtil;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 
@@ -132,7 +124,7 @@ public class MainService extends Service {
         public void onReceive(Context context, Intent intent) {
             Log.i("location", intent.getStringExtra("action"));
             if (intent.getStringExtra("action").equals("login")) {
-                EMClient.getInstance().login(SharedPreferenceUtil.getInstance(context).getString(Constant.LOGIN_USERNAME) + "-callba", SharedPreferenceUtil.getInstance(context).getString(Constant.LOGIN_PASSWORD), new EMCallBack() {//回调
+                EMClient.getInstance().login(UserManager.getUsername(context) + "-callba", UserManager.getOriginalPassword(context), new EMCallBack() {//回调
                     @Override
                     public void onSuccess() {
 

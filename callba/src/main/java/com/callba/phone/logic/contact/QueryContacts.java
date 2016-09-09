@@ -7,7 +7,6 @@ import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
@@ -15,10 +14,8 @@ import android.text.TextUtils;
 import com.callba.phone.bean.SearchSortKeyBean;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
-import com.callba.phone.service.MainService;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.PinYinUtil;
-import com.callba.phone.util.SharedPreferenceUtil;
 
 /**
  * 查询系统联系人
@@ -127,9 +124,7 @@ public class QueryContacts {
 
 				Logger.i("contact_size",contactLists.size()+"");
 				//保存本地联系人个数
-				SharedPreferenceUtil mPreferenceUtil = SharedPreferenceUtil.getInstance(mContext);
-				int contactsSize = contactLists.size(); 
-				mPreferenceUtil.putString(Constant.CONTACTS_SIZE, String.valueOf(contactsSize), true);
+				int contactsSize = contactLists.size();
 				if (cursor!=null) {
 					cursor.close();
 				}

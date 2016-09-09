@@ -28,7 +28,6 @@ import com.callba.phone.util.HttpUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NetworkDetector;
-import com.callba.phone.util.SharedPreferenceUtil;
 
 
 /** 
@@ -138,11 +137,9 @@ public class LoginController {
 	 */
 	public static void parseLoginSuccessResult(Context context, String username, String password, String[] resultInfo) {
 		if(resultInfo != null) {
-			GlobalConfig.getInstance().setSipIP(resultInfo[4]);
 			DemoHelper.getInstance().setCurrentUserName(username);
 			DemoHelper.getInstance().getUserProfileManager().setCurrentUserAvatar(resultInfo[6]);
 			DemoHelper.getInstance().getUserProfileManager().setCurrentUserNick(resultInfo[7]);
-    		Logger.v("处理登录成功信息", "当前SIP"+ GlobalConfig.getInstance().getSipIP());
 			try {
 				String encryptPwd = DesUtil.encrypt(password,
 						resultInfo[2]);

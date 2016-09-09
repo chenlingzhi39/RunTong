@@ -16,10 +16,13 @@ package com.callba.phone.ui;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -35,6 +38,10 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMGroupInfo;
 import com.hyphenate.exceptions.HyphenateException;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 @ActivityFragmentInject(
 		contentViewId = R.layout.em_activity_group_simle_details,
 		toolbarTitle = R.string.Group_chat_information,
@@ -189,6 +196,16 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 		public DialogHelper() {
 			mView = getLayoutInflater().inflate(R.layout.dialog_change_number, null);
 			change = (EditText) mView.findViewById(R.id.et_change);
+			change.setInputType(InputType.TYPE_CLASS_TEXT);
+			change.requestFocus();
+			Timer timer = new Timer(); //设置定时器
+			timer.schedule(new TimerTask() {
+				@Override
+				public void run() { //弹出软键盘的代码
+					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.toggleSoftInputFromWindow(change.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
+				}
+			}, 300); //设置300毫秒的时长
 		}
 
 		private String getNumber() {

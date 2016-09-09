@@ -136,24 +136,17 @@ public class UserActivity extends BaseActivity {
                                                 int which) {
                                 UserManager.putPassword(UserActivity.this,"");
                                 UserManager.putOriginalPassword(UserActivity.this,"");
-                                GlobalConfig.getInstance().setIvPath("");
-                                if (GlobalConfig.getInstance().getAdvertisements1() != null)
-                                    GlobalConfig.getInstance().getAdvertisements1().clear();
-                                if (GlobalConfig.getInstance().getAdvertisements2() != null)
-                                    GlobalConfig.getInstance().getAdvertisements2().clear();
-                                if (GlobalConfig.getInstance().getAdvertisements3() != null)
-                                    GlobalConfig.getInstance().getAdvertisements3().clear();
-                                if (GlobalConfig.getInstance().getDialAd()!=null)
-                                    GlobalConfig.getInstance().setDialAd(null);
                                 LoginController.getInstance().setUserLoginState(false);
                                 Intent intent0 = new Intent("com.callba.location");
                                 intent0.putExtra("action", "logout");
                                 sendBroadcast(intent0);
-                                for (Activity activity : MyApplication.activities) {
+                               /* for (Activity activity : MyApplication.activities) {
                                     activity.finish();
-                                }
+                                }*/
+                                finish();
                                 startActivity(new Intent(UserActivity.this, LoginActivity.class));
                                 MobclickAgent.onProfileSignOff();
+
                             }
                         });
                 builder.setNegativeButton(R.string.cancel,

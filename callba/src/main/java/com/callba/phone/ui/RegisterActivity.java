@@ -22,25 +22,19 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.callba.R;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.GlobalConfig;
-import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.SPUtils;
-import com.callba.phone.util.SharedPreferenceUtil;
 import com.callba.phone.util.SmsTools;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import org.apache.http.conn.ConnectTimeoutException;
-
 import java.lang.ref.WeakReference;
-import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -70,7 +64,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     private String password;
     private String code;
     private String language = "";
-    private SharedPreferenceUtil preferenceUtil;
     UserDao userDao;
     String key;
     private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
@@ -189,7 +182,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 
     public void init() {
         userDao = new UserDao(this, mHandler);
-        preferenceUtil = SharedPreferenceUtil.getInstance(this);
         Locale locale = getResources().getConfiguration().locale;
         language = locale.getCountry();
         bn_back = (Button) this.findViewById(R.id.bn_mre_back);
@@ -398,12 +390,10 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                     String[] content = response.split("\\|");
                     if ("0".equals(content[0])) {
                         toast(content[1]);
-                        preferenceUtil.putString(Constant.LOGIN_USERNAME, username);
-                        preferenceUtil.putString(Constant.LOGIN_PASSWORD, password);
-                        preferenceUtil.commit();
+                        UserManager.putUsername(RegisterActivity.this,username);
+                        UserManager.putOriginalPassword(RegisterActivity.this,password);
                         Intent intent = new Intent(RegisterActivity.this, MainTabActivity.class);
                         LoginController.getInstance().setUserLoginState(false);
-                        SPUtils.put(RegisterActivity.this,Constant.PACKAGE_NAME,Constant.Auto_Login,false);
                         intent.putExtra("isLogin", false);
 				/*	new Thread(new Runnable() {
 						@Override

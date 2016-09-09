@@ -29,11 +29,14 @@ import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.callba.BuildConfig;
 import com.callba.phone.cfg.*;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.ui.WelcomeActivity;
+import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.HttpUtils;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.StorageUtils;
+import com.hyphenate.chat.EMMessage;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import javax.inject.Inject;
@@ -61,6 +64,7 @@ public class MyApplication extends Application {
     private DaoSession mDaoSession;
     private SQLiteDatabase db;
     private  ApplicationComponent applicationComponent;
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -79,8 +83,6 @@ public class MyApplication extends Application {
         EaseUI.getInstance().init(this,options);*/
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(this);
-        GlobalConfig globalConfig=GlobalConfig.getInstance();
-        globalConfig.init(this);
        /* if((boolean)SPUtils.get(this, Constant.SETTINGS,Constant.LOG_KEY,false))
         LogcatHelper.getInstance(this).start();*/
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -168,9 +170,7 @@ public class MyApplication extends Application {
        /* if((boolean)SPUtils.get(this, Constant.SETTINGS,Constant.LOG_KEY,false))
         LogcatHelper.getInstance(this).stop();*/
         super.onTerminate();
-        for (Activity activity : activities) {
-            activity.finish();
-        }
+
         System.exit(0);
     }
 

@@ -89,7 +89,6 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     XRecyclerView userList;
     @InjectView(R.id.progressBar)
     ProgressBar progressBar;
-    private BannerLayout banner;
     private UserDao userDao, userDao1, userDao2;
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
@@ -119,20 +118,8 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         final View view = getLayoutInflater().inflate(R.layout.banner, null);
         final View view1 = getLayoutInflater().inflate(R.layout.ad, null);
         imageView = (ImageView) view1.findViewById(R.id.image);
-        banner = (BannerLayout) view.findViewById(R.id.banner);
         for (int position = 1; position <= 3; position++)
             localImages.add(getResId("ad" + position, R.drawable.class));
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (GlobalConfig.getInstance().getAdvertisements2() != null && GlobalConfig.getInstance().getAdvertisements2().size() > 0) {
-                    Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                    intent1.setData(Uri.parse(GlobalConfig.getInstance().getAdvertisements2().get(0).getAdurl()));
-                    startActivity(intent1);
-                }
-            }
-        });
-        banner.setViewRes(localImages);
         userDao1 = new UserDao(this, new UserDao.PostListener() {
             @Override
             public void failure(String msg) {
@@ -155,7 +142,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                         Glide.with(getApplicationContext()).load(list.get(0).getImage()).into(imageView);
                     }
                 }, 500);
-                GlobalConfig.getInstance().setAdvertisements2(list);
+
               /*  for (Advertisement advertisement : list) {
                     webImages.add(advertisement.getImage());
                 }
@@ -278,15 +265,6 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
 
             }
         });
-        if (GlobalConfig.getInstance().getAdvertisements2() != null) {
-            Logger.i("ad_image", GlobalConfig.getInstance().getAdvertisements2().get(0).getImage());
-            SimpleHandler.getInstance().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Glide.with(FriendActivity.this).load(GlobalConfig.getInstance().getAdvertisements2().get(0).getImage()).into(imageView);
-                }
-            }, 500);
-        } else
             userDao1.getAd(2, getUsername(), getPassword());
 
     }

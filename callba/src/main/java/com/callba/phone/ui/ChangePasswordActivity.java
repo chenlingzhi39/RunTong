@@ -17,7 +17,6 @@ import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.SharedPreferenceUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -109,7 +108,7 @@ public class ChangePasswordActivity extends BaseActivity implements UserDao.Post
             toast(getString(R.string.input_old_password));
             return;
         }
-            if (!old_password.equals(SharedPreferenceUtil.getInstance(this).getString(Constant.LOGIN_PASSWORD))) {
+            if (!old_password.equals(UserManager.getOriginalPassword(this))) {
                 toast(getString(R.string.wrong_pwd));
                 return;
             }
