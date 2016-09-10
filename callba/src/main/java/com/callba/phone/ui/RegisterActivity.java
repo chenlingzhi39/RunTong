@@ -394,8 +394,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                         UserManager.putOriginalPassword(RegisterActivity.this,password);
                         Intent intent = new Intent(RegisterActivity.this, MainTabActivity.class);
                         LoginController.getInstance().setUserLoginState(false);
-                        intent.putExtra("isLogin", false);
-				/*	new Thread(new Runnable() {
+					/*new Thread(new Runnable() {
 						@Override
 						public void run() {
 							try{
@@ -404,7 +403,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 							}
 						}
 					}).start();*/
-
                         startActivity(intent);
                     } else {
                         toast(content[1]);

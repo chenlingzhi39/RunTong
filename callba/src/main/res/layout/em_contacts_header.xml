@@ -30,7 +30,7 @@
         android:id="@+id/community_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:contactItemImage="@drawable/em_groups_icon"
+        app:contactItemImage="@drawable/circle"
         app:contactItemName="@string/community" />
     <View
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
         android:id="@+id/nearby_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:contactItemImage="@drawable/ease_chat_location_normal"
+        app:contactItemImage="@drawable/position"
         app:contactItemName="@string/friend" />
     <View
         android:layout_width="match_parent"

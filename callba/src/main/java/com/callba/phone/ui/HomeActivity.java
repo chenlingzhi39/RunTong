@@ -37,7 +37,6 @@ import com.callba.phone.ui.adapter.HomeAdapter;
 import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.ActivityUtil;
-import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
@@ -215,54 +214,6 @@ public class HomeActivity extends BaseActivity {
                 userDao2.getAd(1, getUsername(), getPassword());
             }
         });
-        // 判断是否自动启动
-      /*  if (savedInstanceState == null
-                && (boolean) SPUtils.get(this, Constant.PACKAGE_NAME, Constant.Auto_Login, false)
-                && !LoginController.getInstance().getUserLoginState()) {
-            // 登录
-            autoLogin();
-            return;
-        }*//* else {
-
-            // 检查内存数据是否正常
-            String username = GlobalConfig.getInstance().getUsername();
-            String password = GlobalConfig.getInstance().getPassword();
-            if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-                // 重新打开
-                gotoWelcomePage();
-            }
-            sendBroadcast(new Intent("com.callba.login"));
-            Logger.i("date",date);
-            Logger.i("save_date",mPreferenceUtil.getString(GlobalConfig.getInstance().getUsername()));
-            if (!mPreferenceUtil.getString(GlobalConfig.getInstance().getUsername()).equals(date)) {
-                String year = Calendar.getInstance().get(Calendar.YEAR) + "";
-                String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
-                if (month.length() == 1)
-                    month = "0" + month;
-                userDao.getMarks(GlobalConfig.getInstance().getUsername(), GlobalConfig.getInstance().getPassword(), year + month);
-            }
-            userDao1.getSystemPhoneNumber(GlobalConfig.getInstance().getUsername(), GlobalConfig.getInstance().getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
-            userDao2.getAd(1, GlobalConfig.getInstance().getUsername(), GlobalConfig.getInstance().getPassword());
-        }*/
-        //userDao1.getSystemPhoneNumber(getUsername(), getPassword(), ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
-        //getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
-     /*   userDao2.getAd(1, getUsername(), getPassword());
-        if ((boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", true))
-            signIn();*/
-     /*   if (!mPreferenceUtil.getString(getUsername()).equals(date) && (boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", false)) {
-            String year = Calendar.getInstance().get(Calendar.YEAR) + "";
-            String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
-            if (month.length() == 1)
-                month = "0" + month;
-            //userDao.getMarks(getUsername(), getPassword(), year + month);
-            getMarks(year+month);
-        }*/
-
-
-      /*  if (GlobalConfig.getInstance().getAppVersionBean() != null) {
-            if (GlobalConfig.getInstance().getAppVersionBean().isForceUpgrade() || (boolean) SPUtils.get(this, "settings", "update_key", true))
-                check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
-        }*/
     }
 
 
@@ -408,14 +359,6 @@ public class HomeActivity extends BaseActivity {
                     if (resultInfo[0].equals("0")) { //处理登录成功返回信息
                         LoginController.parseLoginSuccessResult(HomeActivity.this, username, password, resultInfo);
                         LoginController.getInstance().setUserLoginState(true);
-                       /* if (!mPreferenceUtil.getString(getUsername()).equals(date) && (boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", false)) {
-                            String year = Calendar.getInstance().get(Calendar.YEAR) + "";
-                            String month = Calendar.getInstance().get(Calendar.MONTH) + 1 + "";
-                            if (month.length() == 1)
-                                month = "0" + month;
-                            //userDao.getMarks(getUsername(), getPassword(), year + month);
-                            getMarks(year+month);
-                        }*/
                         if ((boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", true))
                             signIn();
                         // getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));

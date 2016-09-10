@@ -74,11 +74,7 @@ import okhttp3.Request;
  */
 @ActivityFragmentInject(
         contentViewId = R.layout.fragment_straight)
-public class StraightFragment extends BaseFragment implements UserDao.PostListener {
-    /*  @InjectView(R.id.price1)
-      RadioButton price1;
-      @InjectView(R.id.price2)
-      RadioButton price2;*/
+public class StraightFragment extends BaseFragment {
     @InjectView(R.id.number)
     TextView number;
     @InjectView(R.id.address)
@@ -87,8 +83,6 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     Button recharge;
     @InjectView(R.id.change_number)
     LinearLayout change;
-    /*  @InjectView(R.id.group)
-      RadioGroup group;*/
     @InjectView(R.id.relative)
     RelativeLayout relative;
     @InjectView(R.id.list)
@@ -99,7 +93,6 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
     Button btCoupon;
     @InjectView(R.id.linear)
     LinearLayout linear;
-    private UserDao userDao, userDao1;
     private String address;
     private int size;
     private String subject, body, price;
@@ -165,7 +158,6 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                                 coupons.clear();
                             }
                         }
-                        //userDao1.pay(getUsername(), getPassword(), outTradeNo, "success");
                         Map<String, String> paramsMap = new HashMap<String, String>();
                         paramsMap.put("tradeNo", outTradeNo);
                         paramsMap.put("price", price);
@@ -211,7 +203,6 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                         } else {
                             // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
                             Toast.makeText(getActivity(), "支付失败", Toast.LENGTH_SHORT).show();
-                            //  userDao1.pay(getUsername(), getPassword(), outTradeNo, "failure");
                         }
                     }
                     break;
@@ -270,49 +261,11 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                 getUsername(), Constant.DB_PATH,
                 getActivity());
         tv_address.setHint(address);
-        userDao = new UserDao(getActivity(), this);
         subject = "39元套餐";
         body = "包月畅聊";
         price = "39";
-      /*  group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.price1:
-                        subject = "39元套餐";
-                        body = "包月畅聊";
-                        price = "39";
-                        break;
-                    case R.id.price2:
-                        subject = "399元套餐";
-                        body = "包年畅聊";
-                        price = "399";
-                        break;
-                }
-            }
-        });*/
-
         getBills();
     }
-
-
-    @Override
-    public void start() {
-
-    }
-
-    @Override
-    public void success(String msg) {
-        outTradeNo = msg;
-        pay();
-    }
-
-    @Override
-    public void failure(String msg) {
-        toast(msg);
-
-    }
-
 
     @Override
     public void onDestroyView() {
@@ -418,7 +371,6 @@ public class StraightFragment extends BaseFragment implements UserDao.PostListen
                                 }
                             }
                         });
-                //userDao.setOrder(getUsername(), getPassword(), price, "0", "callback-unlimit-" + price, number.getText().toString());
                 break;
         }
     }

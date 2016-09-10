@@ -78,11 +78,7 @@ import okhttp3.Request;
  * Created by PC-20160514 on 2016/9/1.
  */
 @ActivityFragmentInject(contentViewId = R.layout.straight_flow)
-public class StraightFragment3 extends BaseFragment implements UserDao.PostListener {
-    /*  @InjectView(R.id.price1)
-   RadioButton price1;
-   @InjectView(R.id.price2)
-   RadioButton price2;*/
+public class StraightFragment3 extends BaseFragment {
     @InjectView(R.id.number)
     TextView number;
     @InjectView(R.id.address)
@@ -91,8 +87,6 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
     Button recharge;
     @InjectView(R.id.change_number)
     LinearLayout change;
-    /*  @InjectView(R.id.group)
-      RadioGroup group;*/
     @InjectView(R.id.relative)
     RelativeLayout relative;
     @InjectView(R.id.list)
@@ -107,8 +101,6 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
     TextView pastPriceNation;
     @InjectView(R.id.linear)
     LinearLayout linear;
-    private UserDao userDao, userDao1;
-    private int size;
     private String subject, body, price;
     private String outTradeNo;
     private ArrayList<Flow> flows, seperateFlows;
@@ -173,7 +165,6 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                             }
 
                         }
-                        //userDao1.pay(getUsername(), getPassword(), outTradeNo, "success");
                         Map<String, String> paramsMap = new HashMap<String, String>();
                         paramsMap.put("tradeNo", outTradeNo);
                         paramsMap.put("price", price);
@@ -217,7 +208,6 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                         } else {
                             // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
                             Toast.makeText(getActivity(), "支付失败", Toast.LENGTH_SHORT).show();
-                            //  userDao1.pay(getUsername(), getPassword(), outTradeNo, "failure");
                         }
                     }
                     break;
@@ -240,7 +230,6 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
         ButterKnife.inject(this, fragmentRootView);
         gson = new Gson();
         seperateFlows = new ArrayList<>();
-        userDao = new UserDao(getActivity(), this);
         number.setText(getUsername());
         pastPriceNation.getPaint().setAntiAlias(true);//抗锯齿
         pastPriceNation.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
@@ -248,25 +237,6 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
         query(getUsername());
         body="包月流量";
     }
-
-
-    @Override
-    public void start() {
-
-    }
-
-    @Override
-    public void success(String msg) {
-        outTradeNo = msg;
-        pay();
-    }
-
-    @Override
-    public void failure(String msg) {
-        toast(msg);
-
-    }
-
 
     @Override
     public void onDestroyView() {
@@ -371,7 +341,6 @@ public class StraightFragment3 extends BaseFragment implements UserDao.PostListe
                                 }
                             }
                         });
-                //userDao.setOrder(getUsername(), getPassword(), price, "0", "callback-unlimit-" + price, number.getText().toString());
                 break;
         }
     }

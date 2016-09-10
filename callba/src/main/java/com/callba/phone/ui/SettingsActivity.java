@@ -20,8 +20,7 @@ import butterknife.InjectView;
 @ActivityFragmentInject(
         contentViewId = R.layout.settings,
         toolbarTitle = R.string.settings,
-        navigationId = R.drawable.press_back,
-        menuId=R.menu.settings
+        navigationId = R.drawable.press_back
 )
 public class SettingsActivity extends BaseActivity {
     @InjectView(R.id.fragment)
@@ -40,13 +39,4 @@ public class SettingsActivity extends BaseActivity {
         transaction.commit();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.opinion:
-                startActivity(new Intent(SettingsActivity.this,OpinionActivity.class));
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

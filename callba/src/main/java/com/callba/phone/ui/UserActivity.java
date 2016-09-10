@@ -140,12 +140,9 @@ public class UserActivity extends BaseActivity {
                                 Intent intent0 = new Intent("com.callba.location");
                                 intent0.putExtra("action", "logout");
                                 sendBroadcast(intent0);
-                               /* for (Activity activity : MyApplication.activities) {
-                                    activity.finish();
-                                }*/
-                                finish();
                                 startActivity(new Intent(UserActivity.this, LoginActivity.class));
                                 MobclickAgent.onProfileSignOff();
+                                finish();
 
                             }
                         });
@@ -282,6 +279,9 @@ public class UserActivity extends BaseActivity {
                 startActivity(intent);*/
                 Intent intent = new Intent(UserActivity.this, SettingsActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.opinion:
+                startActivity(new Intent(UserActivity.this,OpinionActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

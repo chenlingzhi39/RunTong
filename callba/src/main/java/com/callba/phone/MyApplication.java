@@ -143,35 +143,12 @@ public class MyApplication extends Application {
                 pendingIntent);
     }
 
-//	private void initUmengPush() {
-//		mPushAgent = PushAgent.getInstance(this);
-//		mPushAgent.setDebugMode(true);
-//		/**
-//		 * 该Handler是在BroadcastReceiver中被调用，故
-//		 * 如果需启动Activity，需添加Intent.FLAG_ACTIVITY_NEW_TASK
-//		 * */
-//		UmengNotificationClickHandler notificationClickHandler = new UmengNotificationClickHandler(){
-//			@Override
-//			public void dealWithCustomAction(Context context, UMessage msg) {
-////				Intent intent =new Intent();
-////				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-////				intent.setClass(context, DialogActivity.class);
-////				startActivity(intent);
-//				
-//				CalldaToast calldaToast = new CalldaToast();
-//				calldaToast.showToast(context, msg.custom);
-//			}
-//		};
-//		mPushAgent.setNotificationClickHandler(notificationClickHandler);
-//	}
 
 
     public void onTerminate() {
        /* if((boolean)SPUtils.get(this, Constant.SETTINGS,Constant.LOG_KEY,false))
         LogcatHelper.getInstance(this).stop();*/
         super.onTerminate();
-
-        System.exit(0);
     }
 
     /**

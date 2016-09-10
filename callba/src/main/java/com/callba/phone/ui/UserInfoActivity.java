@@ -73,15 +73,17 @@ public class UserInfoActivity extends BaseActivity {
     Button signature;
     @InjectView(R.id.send_message)
     Button sendMessage;
+    @InjectView(R.id.frame1)
+    FrameLayout frame1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
         if (getIntent().getBooleanExtra("is_group", false))
-         sendMessage.setVisibility(View.VISIBLE);
-        else  sendMessage.setVisibility(View.GONE);
-            userName = getIntent().getStringExtra("username");
+            sendMessage.setVisibility(View.VISIBLE);
+        else sendMessage.setVisibility(View.GONE);
+        userName = getIntent().getStringExtra("username");
         user = EaseUserUtils.getUserInfo(userName);
         if (userName.length() > 10) {
             number.setHint("手机号:" + userName.substring(0, 11));
@@ -98,8 +100,10 @@ public class UserInfoActivity extends BaseActivity {
                 } else nickName.setVisibility(View.GONE);
                 if (!TextUtils.isEmpty(user.getAvatar()))
                     Glide.with(this).load(user.getAvatar()).into(avatar);
-                if (!TextUtils.isEmpty(user.getSign()))
+                if (!TextUtils.isEmpty(user.getSign())) {
+                    frame1.setVisibility(View.VISIBLE);
                     signature.setText("个性签名:" + user.getSign());
+                }
 
             } else {
                 gson = new Gson();
@@ -133,12 +137,18 @@ public class UserInfoActivity extends BaseActivity {
                                     if (result[0].equals("0")) {
                                         BaseUser baseUser = gson.fromJson(result[1], new TypeToken<BaseUser>() {
                                         }.getType());
+                                        user = new EaseUser(baseUser.getPhoneNumber());
+                                        user.setRemark(baseUser.getRemark());
+                                        user.setSign(baseUser.getSign());
+                                        user.setAvatar(baseUser.getUrl_head());
                                         if (!TextUtils.isEmpty(baseUser.getUrl_head()))
                                             Glide.with(UserInfoActivity.this).load(baseUser.getUrl_head()).into(avatar);
                                         if (!TextUtils.isEmpty(baseUser.getNickname()))
                                             tv_remark.setText(baseUser.getNickname());
-                                        if (!TextUtils.isEmpty(baseUser.getSign()))
-                                            signature.setText("个性签名:" + user.getSign());
+                                        if (!TextUtils.isEmpty(baseUser.getSign())) {
+                                            signature.setText("个性签名:" + baseUser.getSign());
+                                            frame1.setVisibility(View.VISIBLE);
+                                        }
                                     } else toast(result[1]);
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -169,7 +179,7 @@ public class UserInfoActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.set_remark, R.id.clear_chat, R.id.delete_friend, R.id.signature,R.id.send_message})
+    @OnClick({R.id.set_remark, R.id.clear_chat, R.id.delete_friend, R.id.signature, R.id.send_message})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.set_remark:
@@ -243,8 +253,8 @@ public class UserInfoActivity extends BaseActivity {
                 }
                 break;
             case R.id.send_message:
-                intent = new Intent(this,ChatActivity.class);
-                intent.putExtra(Constant.EXTRA_USER_ID,getIntent().getStringExtra("username"));
+                intent = new Intent(this, ChatActivity.class);
+                intent.putExtra(Constant.EXTRA_USER_ID, getIntent().getStringExtra("username"));
                 startActivity(intent);
                 break;
         }

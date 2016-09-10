@@ -146,7 +146,7 @@ public class MainTabActivity extends TabActivity {
                         intent.putExtra("action", "hide");
                     } else {
                         iv.setBackgroundDrawable(getResources().getDrawable(
-                                R.drawable.call_menu_downs));
+                                R.drawable.call_menu_down));
                         intent.putExtra("action", "show");
                     }
 
@@ -168,7 +168,7 @@ public class MainTabActivity extends TabActivity {
                     ImageView iv = (ImageView) view
                             .findViewById(R.id.iv_maintab_icon);
                     iv.setBackgroundDrawable(getResources().getDrawable(
-                            R.drawable.call_menu_downs));
+                            R.drawable.call_menu_down));
                     Intent intent = new Intent("com.runtong.phone.diallayout.show");
                     intent.putExtra("action", "show");
                     MainTabActivity.this.sendBroadcast(intent);

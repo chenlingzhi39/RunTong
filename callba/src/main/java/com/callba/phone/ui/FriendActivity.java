@@ -142,7 +142,14 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                         Glide.with(getApplicationContext()).load(list.get(0).getImage()).into(imageView);
                     }
                 }, 500);
-
+              imageView.setOnClickListener(new View.OnClickListener() {
+                  @Override
+                  public void onClick(View v) {
+                      Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                      intent1.setData(Uri.parse(list.get(0).getAdurl()));
+                      startActivity(intent1);
+                  }
+              });
               /*  for (Advertisement advertisement : list) {
                     webImages.add(advertisement.getImage());
                 }

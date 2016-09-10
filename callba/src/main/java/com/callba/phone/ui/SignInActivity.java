@@ -744,7 +744,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                             if(result[0].equals("0"))
                             {
                                 toast("获取成功");
-                                UserManager.putGold(SignInActivity.this,UserManager.getGold(SignInActivity.this)+5);
+                                UserManager.putGold(SignInActivity.this,Integer.parseInt(result[1]));
                                 gold.setText(getString(R.string.gold) + ":" + UserManager.getGold(SignInActivity.this));
                             }else{
                                 toast(result[1]);
