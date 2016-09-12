@@ -584,9 +584,7 @@ public class StraightFragment extends BaseFragment {
             @Override
             public void onError(Call call, Exception e, int id) {
                 linear.setVisibility(View.GONE);
-                if (e instanceof UnknownHostException) {
-                    toast(R.string.conn_failed);
-                } else toast(R.string.network_error);
+               showException(e);
             }
 
             @Override

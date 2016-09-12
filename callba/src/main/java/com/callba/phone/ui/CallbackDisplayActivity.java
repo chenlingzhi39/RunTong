@@ -30,6 +30,7 @@ import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.ContactsManager;
+import com.callba.phone.util.Logger;
 import com.callba.phone.util.SPUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -153,33 +154,35 @@ public class CallbackDisplayActivity extends BaseActivity {
             window.setStatusBarColor(Color.TRANSPARENT);
         }
         gson = new Gson();
-        userDao = new UserDao(this, new UserDao.PostListener() {
+        OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT4)
+                .addParams("loginName", getUsername())
+                .addParams("loginPwd", getPassword())
+                .addParams("softType", "android")
+                .build().execute(new StringCallback() {
             @Override
-            public void start() {
-
+            public void onError(Call call, Exception e, int id) {
+                e.printStackTrace();
             }
 
             @Override
-            public void success(String msg) {
+            public void onResponse(String response, int id) {
                 try {
-                    List<DialAd> dialAds;
-                    dialAds = gson.fromJson(msg, new TypeToken<ArrayList<DialAd>>() {
-                    }.getType());
-                    if (dialAds.size() > 0) {
-                        dialAd = dialAds.get(0);
-                        Glide.with(CallbackDisplayActivity.this).load(dialAd.getImage()).into(background);
+                    Logger.i("ad_result", response);
+
+                    String[] result = response.split("\\|");
+                    if (result[0].equals("0")) {
+                        List<DialAd> dialAds = gson.fromJson(result[1], new TypeToken<ArrayList<DialAd>>() {
+                        }.getType());
+                        if (dialAds.size() > 0) {
+                            dialAd = dialAds.get(0);
+                            Glide.with(CallbackDisplayActivity.this).load(dialAd.getImage()).into(background);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
-            @Override
-            public void failure(String msg) {
-
-            }
         });
-            userDao.getAd(4, getUsername(), getPassword());
     }
 
     /**
@@ -217,7 +220,6 @@ public class CallbackDisplayActivity extends BaseActivity {
                         } else {
                             //统计回拨失败数据
                             countCallbackFailedData(content[1]);
-
                             delayFinish();
                         }
                         tv_status.setText(content[1]);
@@ -225,26 +227,22 @@ public class CallbackDisplayActivity extends BaseActivity {
                         tv_status.setText(R.string.getserverdata_exception);
                         //统计回拨失败数据
                         countCallbackFailedData(getString(R.string.server_error));
-
                         delayFinish();
                     }
                 } else if (msg.what == Task.TASK_NETWORK_ERROR) {
                     tv_status.setText(R.string.network_error);
                     //统计回拨失败数据
                     countCallbackFailedData(getString(R.string.network_error));
-
                     delayFinish();
                 } else if (msg.what == Task.TASK_TIMEOUT) {
                     tv_status.setText(R.string.network_error);
                     //统计回拨失败数据
                     countCallbackFailedData(getString(R.string.callback_timeout));
-
                     delayFinish();
                 } else if (msg.what == Task.TASK_UNKNOWN_HOST) {
                     tv_status.setText(R.string.conn_failed);
                     //统计回拨失败数据
                     countCallbackFailedData(getString(R.string.conn_failed));
-
                     delayFinish();
                 } else {
                     tv_status.setText(R.string.network_error);

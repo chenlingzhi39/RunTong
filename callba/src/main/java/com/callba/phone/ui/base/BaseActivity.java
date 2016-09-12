@@ -57,6 +57,7 @@ import com.callba.phone.util.Logger;
 import com.umeng.analytics.MobclickAgent;
 
 import java.lang.reflect.Field;
+import java.net.UnknownHostException;
 import java.util.List;
 
 
@@ -503,5 +504,13 @@ public class BaseActivity extends AppCompatActivity {
 
     public void showActivity() {
 
+    }
+    public void showException(Exception e){
+        e.printStackTrace();
+        if (e instanceof UnknownHostException) {
+            toast(R.string.conn_failed);
+        } else {
+            toast(R.string.network_error);
+        }
     }
 }

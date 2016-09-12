@@ -54,7 +54,7 @@ import okhttp3.Request;
 )
 public class RegisterActivity extends BaseActivity implements OnClickListener {
     private Button bn_back, bn_ok_register;
-    private Button bn_register, bn_login;
+    private Button bn_register;
     private ProgressDialog progressDialog;
     private EditText et_account, et_verification, et_password, et_yzm;
     private CheckBox hide;
@@ -64,8 +64,8 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     private String password;
     private String code;
     private String language = "";
-    UserDao userDao;
     String key;
+    private Message message;
     private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
     ContentObserver c;
 
@@ -176,12 +176,37 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
         }
     }
 
+    class TimeCount extends CountDownTimer {
+        RegisterActivity activity;
+
+        public TimeCount(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+
+        }
+
+        @Override
+        public void onFinish() {// 计时完毕
+            send_yzm.setBackgroundColor(activity.getResources().getColor(R.color.orange));
+            send_yzm.setText(activity.getString(R.string.send_yzm));
+            send_yzm.setClickable(true);
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {// 计时过程
+            send_yzm.setClickable(false);//防止重复点击
+            send_yzm.setBackgroundColor(activity.getResources().getColor(R.color.light_black));
+            send_yzm.setText(millisUntilFinished / 1000 + "秒后重新发送");
+        }
+    }
 
     private final MyHandler mHandler = new MyHandler(this);
 
+    public void getMessage(int code) {
+        message = mHandler.obtainMessage();
+        message.what = code;
+    }
 
     public void init() {
-        userDao = new UserDao(this, mHandler);
         Locale locale = getResources().getConfiguration().locale;
         language = locale.getCountry();
         bn_back = (Button) this.findViewById(R.id.bn_mre_back);
@@ -237,8 +262,9 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 							RegisterActivity.this);
 				if(!address.equals(""))
 				{ */
-                    userDao.getRegisterKey(searchNumber);
-				/*}
+                    //userDao.getRegisterKey(searchNumber);
+                    getRegisterKey(searchNumber);
+                /*}
 					else
 				toast("请输入正确的手机号!");*/
                 } else
@@ -377,11 +403,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 
             @Override
             public void onError(Call call, Exception e, int id) {
-                if (e instanceof UnknownHostException) {
-                    toast(R.string.conn_failed);
-                } else {
-                    toast(R.string.network_error);
-                }
+                showException(e);
             }
 
             @Override
@@ -390,8 +412,8 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                     String[] content = response.split("\\|");
                     if ("0".equals(content[0])) {
                         toast(content[1]);
-                        UserManager.putUsername(RegisterActivity.this,username);
-                        UserManager.putOriginalPassword(RegisterActivity.this,password);
+                        UserManager.putUsername(RegisterActivity.this, username);
+                        UserManager.putOriginalPassword(RegisterActivity.this, password);
                         Intent intent = new Intent(RegisterActivity.this, MainTabActivity.class);
                         LoginController.getInstance().setUserLoginState(false);
 					/*new Thread(new Runnable() {
@@ -433,5 +455,98 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
         return super.onOptionsItemSelected(item);
     }
 
+    public void getRegisterKey(final String num) {
+        OkHttpUtils.post().url(Interfaces.Send_SMS)
+                .addParams("phoneNumber", num)
+                .addParams("softType", "android")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onAfter(int id) {
+                super.onAfter(id);
+            }
 
+            @Override
+            public void onBefore(Request request, int id) {
+                Log.i("url", Interfaces.Send_SMS);
+                send_yzm.setClickable(false);
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                showException(e);
+                send_yzm.setClickable(true);
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.i("send_success", response);
+                try {
+                    String[] result = response.split("\\|");
+                    if (result[0].equals("0")) {
+                        String phoneNumber2;
+                        try {
+                            phoneNumber2 = DesUtil.encrypt(num, result[1]);
+                            Log.i("phoneNumber", phoneNumber2);
+                            getCode(phoneNumber2, result[2]);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            send_yzm.setClickable(true);
+                            toast(R.string.getserverdata_exception);
+                        }
+                    } else {
+                        send_yzm.setClickable(true);
+                        toast(result[1]);
+                    }
+                } catch (Exception e) {
+                    send_yzm.setClickable(true);
+                    toast(R.string.getserverdata_exception);
+                }
+            }
+        });
+
+    }
+
+    public void getCode(String phoneNumber, String sign) {
+        OkHttpUtils.post().url(Interfaces.Verification_Code)
+                .addParams("phoneNumber", phoneNumber)
+                .addParams("sign", sign)
+                .addParams("softType", "android")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onBefore(Request request, int id) {
+                Log.i("url", Interfaces.Retrieve_Pass);
+                toast("发送短信请求");
+            }
+
+            @Override
+            public void onAfter(int id) {
+
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                showException(e);
+                send_yzm.setClickable(true);
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                Log.i("get_success", response);
+                try {
+                    String[] result = response.split("\\|");
+                    toast(result[1]);
+                    if (result[0].equals("0")) {
+                        TimeCount time = new TimeCount(60000, 1000);
+                        time.start();
+                    } else {
+                        send_yzm.setClickable(true);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    toast(R.string.getserverdata_exception);
+                    send_yzm.setClickable(true);
+                }
+            }
+        });
+    }
 }

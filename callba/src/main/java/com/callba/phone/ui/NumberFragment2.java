@@ -180,14 +180,6 @@ public class NumberFragment2 extends BaseFragment {
         ButterKnife.reset(this);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.inject(this, rootView);
-        return rootView;
-    }
-
     @OnClick({R.id.contacts, R.id.relative, R.id.recharge})
     public void onClick(View view) {
         switch (view.getId()) {

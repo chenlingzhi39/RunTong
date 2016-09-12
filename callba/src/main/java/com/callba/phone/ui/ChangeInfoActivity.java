@@ -30,14 +30,18 @@ import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.Utils;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -45,6 +49,8 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Call;
+import okhttp3.Request;
 
 /**
  * Created by PC-20160514 on 2016/5/19.
@@ -55,7 +61,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
         navigationId = R.drawable.press_back,
         menuId =R.menu.menu_save
 )
-public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadListener{
+public class ChangeInfoActivity extends BaseActivity{
     @InjectView(R.id.head)
     CircleImageView head;
     @InjectView(R.id.change_head)
@@ -69,7 +75,6 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
     @InjectView(R.id.change_signature)
     RelativeLayout changeSignature;
     private File f;
-    private UserDao userDao,userDao1;
     private ProgressDialog dialog;
     private static final int REQUESTCODE_PICK = 1;
     private static final int REQUESTCODE_CAMERA= 3;
@@ -85,60 +90,11 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         }
         nickName.setHint(UserManager.getNickname(this));
         signature.setHint(UserManager.getSignature(this));
-        userDao=new UserDao(this,this);
-        userDao1=new UserDao(this, new UserDao.PostListener() {
-            @Override
-            public void start() {
-
-            }
-
-            @Override
-            public void success(String msg) {
-            toast(msg);
-                UserManager.putNickname(ChangeInfoActivity.this,nickName.getHint().toString());
-                UserManager.putSignature(ChangeInfoActivity.this,signature.getHint().toString());
-            }
-
-            @Override
-            public void failure(String msg) {
-             toast(msg);
-            }
-        });
         String path = getSDCardPath();
         File file = new File(path + "/temp.jpg");
         imageUri = Uri.fromFile(file);
         File cropFile = new File(getSDCardPath() + "/temp_crop.jpg");
         imageCropUri = Uri.fromFile(cropFile);
-    }
-
-    @Override
-    public void start() {
-        dialog = new ProgressDialog(ChangeInfoActivity.this);
-        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        dialog.setTitle("上传中...");
-        dialog.setIndeterminate(false);
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
-    }
-
-    @Override
-    public void success(String msg) {
-        toast(getString(R.string.change_success));
-        UserManager.putUserAvatar(this,msg);
-        dialog.dismiss();
-        f=null;
-    }
-
-    @Override
-    public void failure(String msg) {
-        toast(msg);
-        dialog.dismiss();
-    }
-
-    @Override
-    public void loading(long total, long current, boolean isUploading) {
-       dialog.setProgress((int)(current/total)*100);
     }
 
     @OnClick(R.id.change_head)
@@ -229,10 +185,10 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
         switch(item.getItemId()){
             case R.id.save:
                 if(f!=null)
-                userDao.changeHead(getUsername(), getPassword(),f);
+                changeHead(f);
                 Logger.i("nickname",nickName.getHint().toString().equals(UserManager.getNickname(this))+"");
                 Logger.i("sign",signature.getHint().toString().equals(UserManager.getSignature(this))+"");
-                    userDao1.changeInfo(getUsername(), getPassword(),!nickName.getHint().toString().equals(UserManager.getNickname(this))?nickName.getHint().toString():null,!signature.getHint().toString().equals(UserManager.getSignature(this))?signature.getHint().toString():null);
+                    changeInfo(!nickName.getHint().toString().equals(UserManager.getNickname(this))?nickName.getHint().toString():null,!signature.getHint().toString().equals(UserManager.getSignature(this))?signature.getHint().toString():null);
                 break;
                case android.R.id.home:
                 Log.i("base", "finish");
@@ -435,4 +391,88 @@ public class ChangeInfoActivity extends BaseActivity implements UserDao.UploadLi
 
         return Environment.getExternalStorageDirectory().getPath();
     }
+    public void changeInfo(String nick, String sign){
+        HashMap<String, String> params=new HashMap<>();
+        params.put("loginName", getUsername());
+        params.put("loginPwd",getPassword());
+        if (nick != null)
+            params.put("nickname", nick);
+        if (sign != null)
+            params.put("sign", sign);
+        if (nick != null || sign != null)
+            OkHttpUtils.post().url(Interfaces.CHANGE_INFO)
+            .params(params)
+            .build().execute(new StringCallback() {
+                @Override
+                public void onError(Call call, Exception e, int id) {
+                    showException(e);
+                }
+
+                @Override
+                public void onResponse(String response, int id) {
+                    try{
+                        String[] result=response.split("\\|");
+                        if(result[0].equals("0")){
+                            UserManager.putNickname(ChangeInfoActivity.this,nickName.getHint().toString());
+                            UserManager.putSignature(ChangeInfoActivity.this,signature.getHint().toString());
+                        }
+                       toast(result[1]);
+                    }catch(Exception e){
+                        showException(e);
+                    }
+
+                }
+            });
+    }
+    public void changeHead(File file){
+        OkHttpUtils.post().url(Interfaces.CHANGE_HEAD)
+                .addParams("loginName",getUsername())
+                .addParams("loginPwd",getPassword())
+                .addFile("file",file.getName(),file)
+                .build().execute(new StringCallback() {
+            @Override
+            public void onAfter(int id) {
+                dialog.dismiss();
+            }
+
+            @Override
+            public void onBefore(Request request, int id) {
+                dialog=ProgressDialog.show(ChangeInfoActivity.this,"","上传中");
+               /* dialog = new ProgressDialog(ChangeInfoActivity.this);
+                dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                dialog.setTitle("上传中...");
+                dialog.setIndeterminate(false);
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                dialog.show();*/
+            }
+
+            @Override
+            public void inProgress(float progress, long total, int id) {
+                dialog.setProgress(((int) progress/(int) total)*100);
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                showException(e);
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+            try{
+                String[] result=response.split("\\|");
+                if(result[0].equals("0")){
+                    toast(R.string.change_success);
+                    UserManager.putUserAvatar(ChangeInfoActivity.this,result[1]);
+                    f=null;
+                }
+                else toast(result[1]);
+            }catch(Exception e){
+                e.printStackTrace();
+                showException(e);
+            }
+            }
+        });
+    }
+
 }

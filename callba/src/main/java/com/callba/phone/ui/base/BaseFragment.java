@@ -8,10 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.*;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.SPUtils;
+
+import java.net.UnknownHostException;
 
 import rx.Subscription;
 
@@ -95,5 +98,12 @@ public abstract class BaseFragment extends Fragment {
 
     public String getPassword() {
         return UserManager.getPassword(getActivity());
+    }
+    public void showException(Exception e){
+        if (e instanceof UnknownHostException) {
+            toast(R.string.conn_failed);
+        } else {
+            toast(R.string.network_error);
+        }
     }
 }

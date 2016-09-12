@@ -125,9 +125,7 @@ public class UserInfoActivity extends BaseActivity {
 
                             @Override
                             public void onError(Call call, Exception e, int id) {
-                                if (e instanceof UnknownHostException) {
-                                    toast(R.string.conn_failed);
-                                } else toast(R.string.network_error);
+                              showException(e);
                             }
 
                             @Override

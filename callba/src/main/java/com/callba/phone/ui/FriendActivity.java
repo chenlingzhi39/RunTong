@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.MyApplication;
 import com.callba.phone.bean.ApiService;
+import com.callba.phone.bean.DialAd;
 import com.callba.phone.manager.RetrofitManager;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.Constant;
@@ -89,7 +91,7 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     XRecyclerView userList;
     @InjectView(R.id.progressBar)
     ProgressBar progressBar;
-    private UserDao userDao, userDao1, userDao2;
+    private UserDao userDao2;
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
     private NearByUserAdapter nearByUserAdapter;
@@ -113,70 +115,12 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         gson = new Gson();
         location.setTextColor(getResources().getColor(R.color.black_2f));
         location.setText(UserManager.getAddress(this));
-        userDao = new UserDao(this, this);
         userList.setLoadingMoreEnabled(false);
         final View view = getLayoutInflater().inflate(R.layout.banner, null);
         final View view1 = getLayoutInflater().inflate(R.layout.ad, null);
         imageView = (ImageView) view1.findViewById(R.id.image);
         for (int position = 1; position <= 3; position++)
             localImages.add(getResId("ad" + position, R.drawable.class));
-        userDao1 = new UserDao(this, new UserDao.PostListener() {
-            @Override
-            public void failure(String msg) {
-                toast(msg);
-            }
-
-            @Override
-            public void start() {
-
-            }
-
-            @Override
-            public void success(String msg) {
-                final ArrayList<Advertisement> list;
-                list = gson.fromJson(msg, new TypeToken<ArrayList<Advertisement>>() {
-                }.getType());
-                SimpleHandler.getInstance().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Glide.with(getApplicationContext()).load(list.get(0).getImage()).into(imageView);
-                    }
-                }, 500);
-              imageView.setOnClickListener(new View.OnClickListener() {
-                  @Override
-                  public void onClick(View v) {
-                      Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                      intent1.setData(Uri.parse(list.get(0).getAdurl()));
-                      startActivity(intent1);
-                  }
-              });
-              /*  for (Advertisement advertisement : list) {
-                    webImages.add(advertisement.getImage());
-                }
-                banner.setViewUrls(webImages);
-                banner.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
-                    @Override
-                    public void onItemClick(int position) {
-                        Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                        intent1.setData(Uri.parse(list.get(position).getAdurl()));
-                        startActivity(intent1);
-                    }
-                });*/
-            }
-        });
-
-
-       /* nearByUserAdapter.addHeader(new RecyclerArrayAdapter.ItemView() {
-            @Override
-            public View onCreateView(ViewGroup parent) {
-                return view1;
-            }
-
-            @Override
-            public void onBindView(View headerView) {
-
-            }
-        });*/
         userDao2 = new UserDao();
         nearByUserAdapter = new NearByUserAdapter(this);
         nearByUserAdapter.setError(R.layout.view_more_error).setOnClickListener(new View.OnClickListener() {
@@ -191,7 +135,6 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
             public void onLoadMore() {
                 is_refresh = false;
                 getNearBy(true);
-                //userDao.getNearBy(getUsername(), getPassword(), UserManager.getLatitude(FriendActivity.this), UserManager.getLongitude(FriendActivity.this), 1000,page+1);
             }
         });
         nearByUserAdapter.setNoMore(R.layout.view_nomore);
@@ -204,7 +147,6 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                 //refresh data here
                 is_refresh = true;
                 getNearBy(false);
-                //userDao.getNearBy(getUsername(), getPassword(), UserManager.getLatitude(FriendActivity.this), UserManager.getLongitude(FriendActivity.this), 1000,page);
             }
 
             @Override
@@ -258,7 +200,23 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                     UserManager.putAddress(FriendActivity.this, aMapLocation.getAddress());
                     UserManager.putLatitude(FriendActivity.this, aMapLocation.getLatitude() + "");
                     UserManager.putLongitude(FriendActivity.this, aMapLocation.getLongitude() + "");
-                    userDao2.saveLocation(getUsername(), getPassword(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                    //userDao2.saveLocation(getUsername(), getPassword(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                    OkHttpUtils.post().url(Interfaces.SAVE_LOCATION)
+                            .addParams("loginName",getUsername())
+                            .addParams("loginPwd",getPassword())
+                            .addParams("latitude",aMapLocation.getLatitude()+"")
+                            .addParams("longitude",aMapLocation.getLongitude()+"")
+                            .build().execute(new StringCallback() {
+                        @Override
+                        public void onError(Call call, Exception e, int id) {
+
+                        }
+
+                        @Override
+                        public void onResponse(String response, int id) {
+                            Log.i("save_success",response);
+                        }
+                    });
                     location.setText(aMapLocation.getAddress());
                 } else {
                     //定位失败
@@ -272,8 +230,47 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
 
             }
         });
-            userDao1.getAd(2, getUsername(), getPassword());
+            //userDao1.getAd(2, getUsername(), getPassword());
+        OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT2)
+                .addParams("loginName", getUsername())
+                .addParams("loginPwd", getPassword())
+                .addParams("softType", "android")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                e.printStackTrace();
+            }
 
+            @Override
+            public void onResponse(String response, int id) {
+                try {
+                    Logger.i("ad_result", response);
+
+                    String[] result = response.split("\\|");
+                    if (result[0].equals("0")) {
+                        final ArrayList<Advertisement> list;
+                        list = gson.fromJson(result[1], new TypeToken<ArrayList<Advertisement>>() {
+                        }.getType());
+                        SimpleHandler.getInstance().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Glide.with(getApplicationContext()).load(list.get(0).getImage()).into(imageView);
+                            }
+                        }, 500);
+                        imageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                                intent1.setData(Uri.parse(list.get(0).getAdurl()));
+                                startActivity(intent1);
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void showDialog(final NearByUser entity) {

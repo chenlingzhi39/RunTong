@@ -51,7 +51,6 @@ public class ChangePasswordActivity extends BaseActivity implements UserDao.Post
     Button ok;
     @InjectView(R.id.confirm_new_password)
     EditText confirmNewPassword;
-    private UserDao userDao;
     private String old_password, new_password,comfirm_new_password;
     private ProgressDialog progressDialog;
     @Override
@@ -87,7 +86,6 @@ public class ChangePasswordActivity extends BaseActivity implements UserDao.Post
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.inject(this);
-        userDao=new UserDao(this,this);
         oldPassword.requestFocus();
         Timer timer = new Timer(); //设置定时器
         timer.schedule(new TimerTask() {

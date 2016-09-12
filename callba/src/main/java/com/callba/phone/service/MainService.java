@@ -25,9 +25,14 @@ import com.callba.phone.logic.contact.QueryContacts;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import okhttp3.Call;
 
 /**
  * 程序主服务，处理后台任务
@@ -226,7 +231,23 @@ public class MainService extends Service {
                 UserManager.putAddress(MainService.this,aMapLocation.getAddress());
                 UserManager.putLatitude(MainService.this,aMapLocation.getLatitude()+"");
                 UserManager.putLongitude(MainService.this,aMapLocation.getLongitude()+"");
-                userDao.saveLocation(UserManager.getUsername(MainService.this), UserManager.getPassword(MainService.this), aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                //userDao.saveLocation(UserManager.getUsername(MainService.this), UserManager.getPassword(MainService.this), aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                OkHttpUtils.post().url(Interfaces.SAVE_LOCATION)
+                        .addParams("loginName",UserManager.getUsername(MainService.this))
+                        .addParams("loginPwd",UserManager.getPassword(MainService.this))
+                        .addParams("latitude",aMapLocation.getLatitude()+"")
+                        .addParams("longitude",aMapLocation.getLongitude()+"")
+                        .build().execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        Log.i("save_success",response);
+                    }
+                });
             } else {
                 //定位失败
                 sb.append("定位失败" + "\n");

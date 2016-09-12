@@ -21,13 +21,21 @@ import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.util.Interfaces;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.builder.PostFormBuilder;
+import com.zhy.http.okhttp.callback.StringCallback;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import me.iwf.photopicker.PhotoPickerActivity;
 import me.iwf.photopicker.utils.PhotoPickerIntent;
+import okhttp3.Call;
+import okhttp3.Request;
 
 
 /**
@@ -38,7 +46,7 @@ import me.iwf.photopicker.utils.PhotoPickerIntent;
         navigationId = R.drawable.press_back,
         menuId = R.menu.menu_post
 )
-public class PostActivity extends BaseActivity implements UserDao.UploadListener{
+public class PostActivity extends BaseActivity{
     @InjectView(R.id.content)
     EditText content;
     @InjectView(R.id.photos)
@@ -49,8 +57,6 @@ public class PostActivity extends BaseActivity implements UserDao.UploadListener
     CheckBox isLocated;
     private PhotoAdapter photoAdapter;
     private View footerView;
-    private ArrayList<String> photoList;
-    private UserDao userDao;
     private ProgressDialog dialog;
 
     @Override
@@ -96,37 +102,6 @@ public class PostActivity extends BaseActivity implements UserDao.UploadListener
         });
         photos.setLayoutManager(new GridLayoutManager(this, 5));
         photos.setAdapter(photoAdapter);
-        userDao=new UserDao(this,this);
-    }
-
-    @Override
-    public void failure(String msg) {
-        toast(msg);
-        dialog.dismiss();
-    }
-
-    @Override
-    public void start() {
-        dialog = new ProgressDialog(PostActivity.this);
-        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        dialog.setTitle("上传中...");
-        dialog.setIndeterminate(false);
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
-    }
-
-    @Override
-    public void success(String msg) {
-        toast(msg);
-        dialog.dismiss();
-        setResult(RESULT_OK);
-        finish();
-    }
-
-    @Override
-    public void loading(long total, long current, boolean isUploading) {
-        dialog.setProgress((int)(current/total)*100);
     }
 
     @Override
@@ -157,7 +132,45 @@ public class PostActivity extends BaseActivity implements UserDao.UploadListener
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.post:
-                userDao.sendMood(getUsername(), getPassword(),content.getText().toString(),(ArrayList<String>) photoAdapter.getData());
+                PostFormBuilder postFormBuilder=OkHttpUtils.post().url(Interfaces.SEND_MOODS)
+                        .addParams("loginName",getUsername())
+                        .addParams("loginPwd",getPassword())
+                        .addParams("content",content.getText().toString());
+                for (String path : photoAdapter.getData())
+                {   File file=new File(path);
+                    postFormBuilder.addFile("file",file.getName(),file);
+                }
+                postFormBuilder.build().execute(new StringCallback() {
+                    @Override
+                    public void onAfter(int id) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void onBefore(Request request, int id) {
+                       dialog=ProgressDialog.show(PostActivity.this,"","上传中");
+                    }
+
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        showException(e);
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                       try{
+                           String[] result=response.split("\\|");
+                           toast(result[1]);
+                           if(result[0].equals("0")){
+                               setResult(RESULT_OK);
+                               finish();
+                           }
+                       }catch (Exception e){
+                           showException(e);
+                       }
+                    }
+
+                });
                 break;
         }
         return super.onOptionsItemSelected(item);

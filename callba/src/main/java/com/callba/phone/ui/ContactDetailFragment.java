@@ -127,9 +127,7 @@ public class ContactDetailFragment extends BaseFragment {
                                         @Override
                                         public void onError(Call call, Exception e, int id) {
                                             e.printStackTrace();
-                                            if (e instanceof UnknownHostException) {
-                                                toast(R.string.conn_failed);
-                                            } else toast(R.string.network_error);
+
                                         }
 
                                         @Override
@@ -210,9 +208,7 @@ public class ContactDetailFragment extends BaseFragment {
 
                                 @Override
                                 public void onError(Call call, Exception e, int id) {
-                                    if (e instanceof UnknownHostException) {
-                                        toast(R.string.conn_failed);
-                                    } else toast(R.string.network_error);
+                                   showException(e);
                                 }
 
                                 @Override
@@ -316,12 +312,4 @@ public class ContactDetailFragment extends BaseFragment {
         ButterKnife.reset(this);
     }
 
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.inject(this, rootView);
-        return rootView;
-    }
 }

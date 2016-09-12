@@ -73,7 +73,7 @@ import okhttp3.Request;
         navigationId = R.drawable.press_back,
         menuId = R.menu.menu_sign
 )
-public class SignInActivity extends BaseActivity implements UserDao.PostListener {
+public class SignInActivity extends BaseActivity{
     @InjectView(R.id.circle)
     CircleTextView circle;
     @InjectView(R.id.popupwindow_calendar)
@@ -95,7 +95,6 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
     // DBManager dbManager;
     boolean isinput = false;
     private String date1 = null;//单天日期
-    private UserDao userDao, userDao1;
     private int constant = 0;
     Calendar cal;
     ArrayList<Integer> monthList = new ArrayList<>();
@@ -141,103 +140,19 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
         /*add("2015-11-10");
         add("2015-11-02");
         add("2015-12-02");*/
-        userDao1 = new UserDao(this, new UserDao.PostListener() {
-            @Override
-            public void start() {
-                progressDialog = ProgressDialog.show(SignInActivity.this, null,
-                        "正在获取签到信息");
-                btn_signIn.setEnabled(false);
-                circle.setEnabled(false);
-            }
-
-            @Override
-            public void success(String msg) {
-                progressDialog.dismiss();
-                if (calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1) {
-                    btn_signIn.setEnabled(true);
-                    circle.setEnabled(true);
-                }
-                try {
-                String[] result = msg.split("\\|");
-                monthList.add(calendar.getCalendarMonth());
-                if (result[0].equals("0")) {
-                    String[] dates = result[1].split(",");
-                    for (String date : dates) {
-                        Mark mark = new Mark();
-                        try {
-                            mark.setDate(df.parse(date));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        mark.setUsername(getUsername());
-                        mark.setMonth(calendar.getCalendarMonth());
-                        markDao.insert(mark);
-                        date = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
-                        Logger.i("date", date);
-                        if (calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1)
-                            list.add(date);
-                        calendar.addMark(date,0);
-                    }
-                    if (dates.length > 0 && calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1) {
-                        try {
-                            if (formatter.parse(date1).getTime() - df.parse(dates[dates.length - 1]).getTime() <= 24 * 60 * 60 * 1000) {
-                                constant = 1;
-                                if (formatter.parse(date1).getTime() == df.parse(dates[dates.length - 1]).getTime()) {
-                                    isinput = true;
-                                    btn_signIn.setText("今日已签，明日继续");
-                                    btn_signIn.setBackgroundResource(R.drawable.button_gray);
-                                    btn_signIn.setEnabled(false);
-                                    circle.setIs_sign(true);
-                                    circle.setEnabled(false);
-                                }
-                                if (dates.length >= 2)
-                                    for (int i = dates.length - 1; i > 0; i--) {
-                                        Date newDate = df.parse(dates[i]);
-                                        Date oldDate = df.parse(dates[i - 1]);
-                                        long l = newDate.getTime() - oldDate.getTime();
-                                        Logger.i("newDate", newDate.getTime() + "");
-                                        Logger.i("oldDate", oldDate.getTime() + "");
-                                        if (l == 24 * 60 * 60 * 1000)
-                                            constant += 1;
-                                        else break;
-                                    }
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-
-                } else toast(result[1]);
-                }catch(Exception e){
-                    toast(R.string.getserverdata_exception);
-                }
-                circle.setConstant(constant);
-            }
-
-            @Override
-            public void failure(String msg) {
-                progressDialog.dismiss();
-                toast(msg);
-                if (!circle.is_sign()) {
-                    btn_signIn.setEnabled(true);
-                    circle.setEnabled(true);
-                }
-            }
-        });
         query();
 
         btn_signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userDao.getSign(getUsername(), getPassword());
+              getSign();
 
             }
         });
         circle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userDao.getSign(getUsername(), getPassword());
+               getSign();
 
             }
         });
@@ -277,66 +192,11 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 query();
             }
         });
-        userDao = new UserDao(this, this);
 
     }
 
 
-    @Override
-    public void start() {
-        circle.setEnabled(false);
-        btn_signIn.setEnabled(false);
-    }
 
-    @Override
-    public void success(String msg) {
-        toast(msg);
-        //SharedPreferenceUtil.getInstance(this).putString(getUsername(), date, true);
-           /* calendar.removeAllMarks();
-           list.add(df.format(today));
-           calendar.addMarks(list, 0);*/
-        //将当前日期标示出来
-        //add(df.format(today));
-        Mark mark = new Mark();
-        mark.setUsername(getUsername());
-        mark.setMonth(cal.get(Calendar.MONTH) + 1);
-        try {
-            mark.setDate(formatter.parse(date1));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        markDao.insert(mark);
-        calendar.addMark(date1, 0);
-        //query();
-        HashMap<String, Integer> bg = new HashMap<String, Integer>();
-        UserManager.putGold(this,UserManager.getGold(this) + 3);
-        gold.setText(getString(R.string.gold) + ":" + UserManager.getGold(this));
-        calendar.setCalendarDayBgColor(date1, R.drawable.bg_sign_today);
-        btn_signIn.setText("今日已签，明日继续");
-        btn_signIn.setBackgroundResource(R.drawable.button_gray);
-        btn_signIn.setEnabled(false);
-        circle.setIs_sign(true);
-        circle.setEnabled(false);
-      /*  try {
-            if (list.size() != 0)
-            {if (formatter.parse(date1).getTime() - formatter.parse(list.get(list.size() - 1)).getTime() ==  24 * 60 * 60 * 1000) {
-                constant += 1;
-            }} else constant += 1;
-
-            circle.setConstant(constant);
-        } catch (Exception e) {
-
-        }*/
-        constant += 1;
-        circle.setConstant(constant);
-    }
-
-    @Override
-    public void failure(String msg) {
-        toast(msg);
-        btn_signIn.setEnabled(true);
-        circle.setEnabled(true);
-    }
 
     public void add(String date) {
         ArrayList<sqlit> persons = new ArrayList<sqlit>();
@@ -362,7 +222,7 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
                 String month = calendar.getCalendarMonth() + "";
                 if (month.length() == 1)
                     month = "0" + month;
-                userDao1.getMarks(getUsername(),getPassword(), year + month);
+               getMarks(year+month);
             }
 
     }
@@ -758,5 +618,161 @@ public class SignInActivity extends BaseActivity implements UserDao.PostListener
             }
         });
 
+    }
+    public void getMarks(String date){
+        OkHttpUtils.post().url(Interfaces.GET_MARKS)
+                .addParams("loginName",getUsername())
+                .addParams("loginPwd",getPassword())
+                .addParams("date",date)
+                .build().execute(new StringCallback() {
+            @Override
+            public void onAfter(int id) {
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onBefore(Request request, int id) {
+                progressDialog = ProgressDialog.show(SignInActivity.this, null,
+                        "正在获取签到信息");
+                btn_signIn.setEnabled(false);
+                circle.setEnabled(false);
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                showException(e);
+                if (!circle.is_sign()) {
+                    btn_signIn.setEnabled(true);
+                    circle.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                if (calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1) {
+                    btn_signIn.setEnabled(true);
+                    circle.setEnabled(true);
+                }
+                try {
+                    String[] result = response.split("\\|");
+                    monthList.add(calendar.getCalendarMonth());
+                    if (result[0].equals("0")) {
+                        String[] dates = result[1].split(",");
+                        for (String date : dates) {
+                            Mark mark = new Mark();
+                            try {
+                                mark.setDate(df.parse(date));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            mark.setUsername(getUsername());
+                            mark.setMonth(calendar.getCalendarMonth());
+                            markDao.insert(mark);
+                            date = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
+                            Logger.i("date", date);
+                            if (calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1)
+                                list.add(date);
+                            calendar.addMark(date,0);
+                        }
+                        if (dates.length > 0 && calendar.getCalendarMonth() == cal.get(Calendar.MONTH) + 1) {
+                            try {
+                                if (formatter.parse(date1).getTime() - df.parse(dates[dates.length - 1]).getTime() <= 24 * 60 * 60 * 1000) {
+                                    constant = 1;
+                                    if (formatter.parse(date1).getTime() == df.parse(dates[dates.length - 1]).getTime()) {
+                                        isinput = true;
+                                        btn_signIn.setText("今日已签，明日继续");
+                                        btn_signIn.setBackgroundResource(R.drawable.button_gray);
+                                        btn_signIn.setEnabled(false);
+                                        circle.setIs_sign(true);
+                                        circle.setEnabled(false);
+                                    }
+                                    if (dates.length >= 2)
+                                        for (int i = dates.length - 1; i > 0; i--) {
+                                            Date newDate = df.parse(dates[i]);
+                                            Date oldDate = df.parse(dates[i - 1]);
+                                            long l = newDate.getTime() - oldDate.getTime();
+                                            Logger.i("newDate", newDate.getTime() + "");
+                                            Logger.i("oldDate", oldDate.getTime() + "");
+                                            if (l == 24 * 60 * 60 * 1000)
+                                                constant += 1;
+                                            else break;
+                                        }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                    } else toast(result[1]);
+                }catch(Exception e){
+                    showException(e);
+                }
+                circle.setConstant(constant);
+            }
+        });
+    }
+    public void getSign(){
+        OkHttpUtils.post().url(Interfaces.Sign)
+                .addParams("loginName",getUsername())
+                .addParams("loginPwd",getPassword())
+                .addParams("softType", "android")
+                .build().execute(new StringCallback() {
+            @Override
+            public void inProgress(float progress, long total, int id) {
+
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                showException(e);
+                btn_signIn.setEnabled(true);
+                circle.setEnabled(true);
+            }
+
+            @Override
+            public void onAfter(int id) {
+
+            }
+
+            @Override
+            public void onBefore(Request request, int id) {
+                circle.setEnabled(false);
+                btn_signIn.setEnabled(false);
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                  try{
+                      String[] result=response.split("\\|");
+                      if(result[0].equals("0")){
+                          Mark mark = new Mark();
+                          mark.setUsername(getUsername());
+                          mark.setMonth(cal.get(Calendar.MONTH) + 1);
+                          try {
+                              mark.setDate(formatter.parse(date1));
+                          } catch (Exception e) {
+                              e.printStackTrace();
+                          }
+                          markDao.insert(mark);
+                          calendar.addMark(date1, 0);
+                          UserManager.putGold(SignInActivity.this,UserManager.getGold(SignInActivity.this) + 3);
+                          gold.setText(getString(R.string.gold) + ":" + UserManager.getGold(SignInActivity.this));
+                          calendar.setCalendarDayBgColor(date1, R.drawable.bg_sign_today);
+                          btn_signIn.setText("今日已签，明日继续");
+                          btn_signIn.setBackgroundResource(R.drawable.button_gray);
+                          btn_signIn.setEnabled(false);
+                          circle.setIs_sign(true);
+                          circle.setEnabled(false);
+                          constant += 1;
+                          circle.setConstant(constant);
+                      }
+                      toast(result[1]);
+                  }catch (Exception e){
+                      e.printStackTrace();
+                      showException(e);
+                  }
+            }
+        });
     }
 }

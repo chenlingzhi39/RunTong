@@ -35,6 +35,7 @@ import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.SystemNumber;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.RxBus;
 import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SimpleHandler;
@@ -66,11 +67,14 @@ import com.callba.phone.util.Logger;
 import com.callba.phone.util.NumberAddressService;
 import com.callba.phone.util.PhoneUtils;
 import com.callba.phone.util.SharedPreferenceUtil;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Call;
 import rx.Observable;
 import rx.functions.Action1;
 
@@ -148,19 +152,11 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
     private DataAnalysis dataAnalysis;
     private Context context;
-
-
-    private BitmapUtils bitmapUtils;
-
-    private BitmapDisplayConfig bigPicDisplayConfig;
     private TextView tv_location;
     private BannerLayout iv_ad;
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
     private ArrayList<String> webImages = new ArrayList<>();
-    private UserDao userDao;
     private Gson gson;
-    private LoginReceiver loginReceiver;
-    private String[] result;
     List<SystemNumber> list;
     PhoneNumTextWatcher phoneNumTextWatcher;
     private Observable<Boolean> mRefreshAdObservable;
@@ -170,6 +166,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         init();
         registerRedpointReceiver();
         ViewUtils.inject(this);
+        gson = new Gson();
         mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
 
 
@@ -199,7 +196,8 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         mRefreshAdObservable.subscribe(new Action1<Boolean>() {
             @Override
             public void call(Boolean aBoolean) {
-                userDao.getAd(3, getUsername(),getPassword());
+                Logger.i("maincall","refresh_ad");
+                getAd();
             }
         });
     }
@@ -328,48 +326,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
 
         String s = getResources().getConfiguration().locale.getCountry();
         Logger.v("语言环境", s);
-        IntentFilter filter1 = new IntentFilter(
-                "com.callba.login");
-        loginReceiver = new LoginReceiver();
-        registerReceiver(loginReceiver, filter1);
-        userDao = new UserDao(this, new UserDao.PostListener() {
-            @Override
-            public void failure(String msg) {
-                //toast(msg);
-            }
 
-            @Override
-            public void start() {
-
-            }
-
-            @Override
-            public void success(String msg) {
-                final ArrayList<Advertisement> list;
-                gson = new Gson();
-                list = gson.fromJson(msg, new TypeToken<ArrayList<Advertisement>>() {
-                }.getType());
-                webImages.clear();
-                for (Advertisement advertisement : list) {
-                    webImages.add(advertisement.getImage());
-                }
-                iv_ad.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
-                    @Override
-                    public void onItemClick(int position) {
-                        Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                        intent1.setData(Uri.parse(list.get(position).getAdurl()));
-                        startActivity(intent1);
-                    }
-                });
-                SimpleHandler.getInstance().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        iv_ad.setViewUrls(webImages);
-                    }
-                }, 500);
-
-            }
-        });
     }
 
 
@@ -944,7 +901,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     @Override
     protected void onDestroy() {
         Logger.i("maincall", "destroy");
-        unregisterReceiver(loginReceiver);
         RxBus.get().unregister("refresh_ad", mRefreshAdObservable);
         super.onDestroy();
         // 取消广播监听
@@ -1183,7 +1139,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     public class LoginReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            userDao.getAd(3, getUsername(),getPassword());
+           getAd();
         }
     }
 
@@ -1218,5 +1174,45 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+    public void getAd(){
+        OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT3)
+                .addParams("loginName", getUsername())
+                .addParams("loginPwd", getPassword())
+                .addParams("softType", "android")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                try {
+                    Logger.i("ad3_result", response);
+                    String[] result = response.split("\\|");
+                    if (result[0].equals("0")) {
+                        final ArrayList<Advertisement> list;
+                        list = gson.fromJson(result[1], new TypeToken<ArrayList<Advertisement>>() {
+                        }.getType());
+                        webImages.clear();
+                        for (Advertisement advertisement : list) {
+                            webImages.add(advertisement.getImage());
+                        }
+                        iv_ad.setViewUrls(webImages);
+                        iv_ad.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
+                            @Override
+                            public void onItemClick(int position) {
+                                Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                                intent1.setData(Uri.parse(list.get(position).getAdurl()));
+                                startActivity(intent1);
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

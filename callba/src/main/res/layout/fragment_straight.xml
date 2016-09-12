@@ -49,40 +49,7 @@
         android:layout_width="fill_parent"
         android:layout_height="2dp"
         android:background="@drawable/shape_line" />
-    <!--  <RadioGroup
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          android:layout_marginTop="20sp"
-          android:id="@+id/group">
-          <RadioButton
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:layout_gravity="center"
-              android:button="@null"
-              android:background="@drawable/price_selector"
-              android:layout_marginLeft="20dp"
-              android:layout_marginRight="20dp"
-              android:id="@+id/price1"
-              android:checked="true"
-              android:textColor="@drawable/price_text_selector"
-              android:gravity="center"
-           />
-          <RadioButton
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:layout_gravity="center"
-              android:button="@null"
-              android:background="@drawable/price_selector"
-              android:layout_marginLeft="20dp"
-              android:layout_marginRight="20dp"
-              android:id="@+id/price2"
-              android:textColor="@drawable/price_text_selector"
-              android:gravity="center"
-              />
-      </RadioGroup>-->
+
     <LinearLayout
         android:id="@+id/linear"
         android:layout_width="match_parent"

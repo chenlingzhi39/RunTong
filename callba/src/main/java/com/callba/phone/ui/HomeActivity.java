@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.MyApplication;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -43,6 +44,7 @@ import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.RxBus;
 import com.callba.phone.util.SPUtils;
+import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -86,7 +88,6 @@ public class HomeActivity extends BaseActivity {
     private ProgressDialog progressDialog;
     private String username;
     private String password;
-    private UserDao userDao2;
     private String date;
     private Gson gson;
     private String[] result;
@@ -125,10 +126,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onBindView(View headerView) {
-          /*      localImages.add(R.drawable.ad4);
-                localImages.add(R.drawable.ad5);
-                localImages.add(R.drawable.ad6);
-                banner.setViewRes(localImages);*/
+
             }
         });
         homeAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
@@ -171,37 +169,6 @@ public class HomeActivity extends BaseActivity {
         gson = new Gson();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");//获取当前时间
         date = formatter.format(new Date(System.currentTimeMillis()));
-        userDao2 = new UserDao(this, new UserDao.PostListener() {
-            @Override
-            public void failure(String msg) {
-                //toast(msg);
-            }
-
-            @Override
-            public void start() {
-
-            }
-
-            @Override
-            public void success(String msg) {
-                final ArrayList<Advertisement> list;
-                list = gson.fromJson(msg, new TypeToken<ArrayList<Advertisement>>() {
-                }.getType());
-                webImages.clear();
-                for (Advertisement advertisement : list) {
-                    webImages.add(advertisement.getImage());
-                }
-                banner.setViewUrls(webImages);
-                banner.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
-                    @Override
-                    public void onItemClick(int position) {
-                        Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                        intent1.setData(Uri.parse(list.get(position).getAdurl()));
-                        startActivity(intent1);
-                    }
-                });
-            }
-        });
         localImages.add(R.drawable.ad4);
         localImages.add(R.drawable.ad5);
         localImages.add(R.drawable.ad6);
@@ -211,7 +178,7 @@ public class HomeActivity extends BaseActivity {
         mRefreshAdObservable.subscribe(new Action1<Boolean>() {
             @Override
             public void call(Boolean aBoolean) {
-                userDao2.getAd(1, getUsername(), getPassword());
+                getAd();
             }
         });
     }
@@ -343,11 +310,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onError(Call call, Exception e, int id) {
-                if (e instanceof UnknownHostException) {
-                    toast(R.string.conn_failed);
-                } else {
-                    toast(R.string.network_error);
-                }
+                showException(e);
                 switchManualLogin();
             }
 
@@ -367,7 +330,7 @@ public class HomeActivity extends BaseActivity {
                                 check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
                             else getActivity();
                         }else getActivity();
-                        userDao2.getAd(1, getUsername(), getPassword());
+                        RxBus.get().post("refresh_ad",true);
                         MobclickAgent.onProfileSignIn(getUsername());
                     } else {
                         toast(resultInfo[1]);
@@ -610,6 +573,46 @@ public class HomeActivity extends BaseActivity {
     public void showActivity() {
 
             getActivity();
+    }
+    public void getAd(){
+        OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT1)
+                .addParams("loginName", getUsername())
+                .addParams("loginPwd", getPassword())
+                .addParams("softType", "android")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                try {
+                    Logger.i("ad_result", response);
+                    String[] result = response.split("\\|");
+                    if (result[0].equals("0")) {
+                        final ArrayList<Advertisement> list;
+                        list = gson.fromJson(result[1], new TypeToken<ArrayList<Advertisement>>() {
+                        }.getType());
+                        webImages.clear();
+                        for (Advertisement advertisement : list) {
+                            webImages.add(advertisement.getImage());
+                        }
+                        banner.setViewUrls(webImages);
+                        banner.setOnBannerItemClickListener(new BannerLayout.OnBannerItemClickListener() {
+                            @Override
+                            public void onItemClick(int position) {
+                                Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                                intent1.setData(Uri.parse(list.get(position).getAdurl()));
+                                startActivity(intent1);
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }
 

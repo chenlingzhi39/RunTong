@@ -136,6 +136,7 @@ public class UserActivity extends BaseActivity {
                                                 int which) {
                                 UserManager.putPassword(UserActivity.this,"");
                                 UserManager.putOriginalPassword(UserActivity.this,"");
+                                UserManager.putUserAvatar(UserActivity.this,"");
                                 LoginController.getInstance().setUserLoginState(false);
                                 Intent intent0 = new Intent("com.callba.location");
                                 intent0.putExtra("action", "logout");

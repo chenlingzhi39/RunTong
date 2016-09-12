@@ -1,9 +1,7 @@
 package com.callba.phone.ui;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -19,7 +17,6 @@ import android.widget.TextView;
 import com.callba.R;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.cfg.Constant;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
 
@@ -104,81 +101,18 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
         //校验用户名是否为空
         if (TextUtils.isEmpty(username)) {
-            /*CalldaToast calldaToast = new CalldaToast();
-            calldaToast.showToast(getApplicationContext(), R.string.input_username);*/
             toast(getString(R.string.input_username));
             return;
         }
 
         //校验密码是否为空
         if (TextUtils.isEmpty(password)) {
-        /*	CalldaToast calldaToast = new CalldaToast();
-			calldaToast.showToast(getApplicationContext(), R.string.input_password);*/
             toast(getString(R.string.input_password));
             return;
         }
-
-     /*   // 加密，生成loginSign
-        String source = username + "," + password;
-        String sign = null;
-        try {
-            sign = DesUtil.encrypt(source, UserManager.getSecretKey(this));
-        } catch (Exception e) {
-            e.printStackTrace();
-			
-			CalldaToast calldaToast = new CalldaToast();
-			calldaToast.showToast(getApplicationContext(), R.string.key_exception);
-            toast(getString(R.string.key_exception));
-            return;
-        }*/
         UserManager.putUsername(this,username);
         UserManager.putOriginalPassword(this,password);
         gotoMainActivity();
-     /*   OkHttpUtils.post().url(Interfaces.Login)
-                .addParams("loginSign", sign)
-                .addParams("loginType", "1")
-                .addParams("softType", "android")
-                .addParams("callType", "all")
-                .build().execute(new StringCallback() {
-            @Override
-            public void onAfter(int id) {
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-            }
-
-            @Override
-            public void onBefore(Request request, int id) {
-                progressDialog = ProgressDialog.show(LoginActivity.this, null,
-                        getString(R.string.logining));
-            }
-
-            @Override
-            public void onError(Call call, Exception e, int id) {
-                if (e instanceof UnknownHostException) {
-                    toast(R.string.conn_failed);
-                } else {
-                    e.printStackTrace();
-                    toast(R.string.network_error);
-                }
-            }
-
-            @Override
-            public void onResponse(String response, int id) {
-                try {
-                    Logger.i("login_result", response);
-                    String[] resultInfo = response.split("\\|");
-                    if (resultInfo[0].equals("0")) {//处理登录成功返回信息
-                        LoginController.getInstance().setUserLoginState(true);
-                        LoginController.parseLoginSuccessResult(LoginActivity.this, username, password, resultInfo);
-                        //转到主页面
-                        gotoMainActivity();
-                    } else toast(resultInfo[1]);
-                } catch (Exception e) {
-                    toast(R.string.getserverdata_exception);
-                }
-            }
-        });*/
     }
 
     /**
@@ -223,20 +157,4 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         return super.onOptionsItemSelected(item);
     }
 
- /*   @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        if(GlobalConfig.getInstance().getContactBeans()!=null)
-        {ArrayList list = new ArrayList();
-        list.add(GlobalConfig.getInstance().getContactBeans());
-        outState.putParcelableArrayList("contact", list);}
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if(savedInstanceState!=null)
-            if(savedInstanceState.getParcelableArrayList("contact")!=null)
-        GlobalConfig.getInstance().setContactBeans((ArrayList<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0));
-    }*/
 }

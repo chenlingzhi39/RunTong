@@ -26,8 +26,11 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.NumberAddressService;
 import com.callba.phone.util.RxBus;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -35,13 +38,15 @@ import java.util.TimerTask;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.Request;
 
 /**
  * Created by PC-20160514 on 2016/5/18.
  */
 @ActivityFragmentInject(
         contentViewId = R.layout.fragment_number)
-public class NumberFragment extends BaseFragment implements UserDao.PostListener {
+public class NumberFragment extends BaseFragment {
     @InjectView(R.id.number)
     TextView number;
     @InjectView(R.id.address)
@@ -54,7 +59,6 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
     LinearLayout change;
     @InjectView(R.id.relative)
     RelativeLayout relative;
-    private UserDao userDao;
     private String address;
 
     public static NumberFragment newInstance() {
@@ -71,7 +75,6 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
                 getUsername(), Constant.DB_PATH,
                 getActivity());
         tv_address.setHint(address);
-        userDao = new UserDao(getActivity(), this);
 
       /*  card.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
@@ -99,24 +102,6 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
         }, 300); //设置300毫秒的时长*/
     }
 
-    @Override
-    public void start() {
-        progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.on_recharge));
-    }
-
-    @Override
-    public void success(String msg) {
-        toast(msg);
-        if (progressDialog != null) progressDialog.dismiss();
-         RxBus.get().post("refresh_ad",true);
-    }
-
-    @Override
-    public void failure(String msg) {
-        toast(msg);
-        if (progressDialog != null) progressDialog.dismiss();
-    }
-
     @OnClick(R.id.relative)
     public void change() {
         showDialog();
@@ -127,7 +112,39 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
         if (card.getText().toString().equals(("")))
             toast(getString(R.string.input_card));
         else
-            userDao.recharge(number.getText().toString(), card.getText().toString(), getUsername());
+        OkHttpUtils.post().url(Interfaces.CALLDA_PAY)
+                .addParams("phoneNumber", number.getText().toString())
+                .addParams("cardNumber", card.getText().toString())
+                .addParams("fromtel",getUsername())
+                .addParams("softType", "android")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onBefore(Request request, int id) {
+                progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.on_recharge));
+            }
+
+            @Override
+            public void onAfter(int id) {
+               progressDialog.dismiss();
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                showException(e);
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+               try{String[] result=response.split("\\|");
+                   if(result[0].equals("0")){
+                       RxBus.get().post("refresh_ad",true);
+                   }
+                 toast(result[1]);
+               }catch (Exception e){
+                   showException(e);
+               }
+            }
+        });
     }
 
 
@@ -135,14 +152,6 @@ public class NumberFragment extends BaseFragment implements UserDao.PostListener
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.inject(this, rootView);
-        return rootView;
     }
 
     @OnClick(R.id.contacts)

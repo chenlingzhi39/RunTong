@@ -145,101 +145,15 @@ public class StraightFragment2 extends BaseFragment {
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
-      /*  final List<Flow> flows =new ArrayList<>();
-        flows.add(new Flow("100M","7.50","9.50","10.0","10.0"));
-        flows.add(new Flow("200M","16.00","19.0","20.0","20.0"));
-        flows.add(new Flow("300M","16.00","19.0","20.0","20.0"));
-        flows.add(new Flow("500M","22.50","28.50","30.0","30.0"));
-        flows.add(new Flow("1000M","37.50","47.50","50.0","50.0"));
-        flows.add(new Flow("2000M","55.00","65.50","70.0","70.0"));
-        flowName.setText(flows.get(0).getName() + "流量包");
-        nowPriceLocal.setText(flows.get(0).getNow_price_local()+"元");
-        pastPriceLocal.setHint(flows.get(0).getPast_price_local()+"元");
-        nowPriceNation.setText(flows.get(0).getNow_price_nation()+"元");
-        pastPriceNation.setHint(flows.get(0).getPast_price_nation()+"元");
-        flowAdapter = new FlowAdapter(getActivity(), flows);*/
         flowList.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-        // flowList.setAdapter(flowAdapter);
-
-    /*    if (getArguments().getString("number") != null) {
-            query(getArguments().getString("number"));
-            number.setText(getArguments().getString("number"));
-        } else {*/
         query(getUsername());
         number.setText(getUsername());
-        // }
-        /*flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
-            @Override
-            public void onClick(int position) {
-                flowName.setText(flows.get(position).getName() + "流量包");
-                nowPriceLocal.setText(flows.get(position).getNow_price_local()+"元");
-                pastPriceLocal.setHint(flows.get(position).getPast_price_local()+"元");
-                nowPriceNation.setText(flows.get(position).getNow_price_nation()+"元");
-                pastPriceNation.setHint(flows.get(position).getPast_price_nation()+"元");
-            }
-        });*/
         pastPriceLocal.getPaint().setAntiAlias(true);//抗锯齿
         pastPriceLocal.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
         pastPriceLocal.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         pastPriceNation.getPaint().setAntiAlias(true);//抗锯齿
         pastPriceNation.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
         pastPriceNation.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-        userDao = new UserDao(getActivity(), new UserDao.PostListener() {
-            @Override
-            public void start() {
-                progressDialog = ProgressDialog.show(getActivity(), null,
-                        "正在验证支付结果");
-            }
-
-            @Override
-            public void success(String msg) {
-                progressDialog.dismiss();
-                try {
-                    String[] result = msg.split("\\|");
-                    if (result[0].equals("0")) {
-                        toast(result[1]);
-               /* getActivity().sendBroadcast(new Intent("com.callba.pay"));
-                getActivity().finish();*/
-                    } else if (result.length > 1) toast(result[1]);
-                } catch (Exception e) {
-                    progressDialog.dismiss();
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("充值失败，请重试");
-                    builder.setPositiveButton("重试",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    userDao.pay(getUsername(), getPassword(), outTradeNo, "success");
-                                }
-                            });
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.setCanceledOnTouchOutside(false);
-                    alertDialog.setCancelable(false);
-                    alertDialog.show();
-                }
-            }
-
-            @Override
-            public void failure(String msg) {
-                progressDialog.dismiss();
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("充值失败，请重试");
-                builder.setPositiveButton("重试",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                userDao.pay(getUsername(), getPassword(), outTradeNo, "success");
-                            }
-                        });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.setCanceledOnTouchOutside(false);
-                alertDialog.setCancelable(false);
-                alertDialog.show();
-                //toast("充值失败，请联系客服");
-            }
-        });
         body = "包月流量";
         gson = new Gson();
         seperateFlows = new ArrayList<>();
@@ -375,15 +289,6 @@ public class StraightFragment2 extends BaseFragment {
         }
 
     }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // TODO: inflate a fragment view
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.inject(this, rootView);
-        return rootView;
-    }
-
 
     public class DialogHelper implements DialogInterface.OnDismissListener {
         private Dialog mDialog;

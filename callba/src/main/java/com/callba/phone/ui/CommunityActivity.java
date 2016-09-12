@@ -25,6 +25,7 @@ import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.bean.Mood;
 import com.callba.phone.bean.UserDao;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.Utils;
 import com.callba.phone.widget.AlphaView;
@@ -32,6 +33,8 @@ import com.callba.phone.widget.DividerItemDecoration;
 import com.callba.phone.widget.refreshlayout.EasyRecyclerView;
 import com.callba.phone.widget.refreshlayout.RefreshLayout;
 import com.google.gson.Gson;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 
@@ -39,6 +42,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Call;
 
 /**
  * Created by PC-20160514 on 2016/5/25.
@@ -47,7 +51,6 @@ public class CommunityActivity extends AppCompatActivity implements UserDao.Post
 
     @InjectView(R.id.list)
     EasyRecyclerView moodList;
-    UserDao userDao;
     int page, pageSize = 30;
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
@@ -142,7 +145,6 @@ public class CommunityActivity extends AppCompatActivity implements UserDao.Post
                 this, DividerItemDecoration.VERTICAL_LIST));
         moodList.setFooterEnabled(false);
         gson = new Gson();
-        userDao = new UserDao(this, this);
         moodAdapter = new MoodAdapter(this);
         headerView = getLayoutInflater().inflate(R.layout.header, null);
         moodAdapter.addHeader(new RecyclerArrayAdapter.ItemView() {
@@ -170,12 +172,12 @@ public class CommunityActivity extends AppCompatActivity implements UserDao.Post
         moodAdapter.setNoMore(R.layout.view_nomore);
         moodList.setAdapter(moodAdapter);
         moodList.showRecycler();
-        userDao.getMoods(UserManager.getUsername(CommunityActivity.this), UserManager.getPassword(CommunityActivity.this), page + "", pageSize + "");
+        getMoods( page + "", pageSize + "");
     }
 
     @Override
     public void onLoadMore() {
-        userDao.getMoods(UserManager.getUsername(CommunityActivity.this), UserManager.getPassword(CommunityActivity.this), page + "", pageSize + "");
+        getMoods(page + "", pageSize + "");
 
     }
 
@@ -186,7 +188,7 @@ public class CommunityActivity extends AppCompatActivity implements UserDao.Post
 
     @Override
     public void onHeaderRefresh() {
-        userDao.getMoods(UserManager.getUsername(CommunityActivity.this), UserManager.getPassword(CommunityActivity.this), "0", pageSize + "");
+       getMoods("0", pageSize + "");
 
     }
 
@@ -258,7 +260,7 @@ public class CommunityActivity extends AppCompatActivity implements UserDao.Post
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == 0) {
-            userDao.getMoods(UserManager.getUsername(CommunityActivity.this), UserManager.getPassword(CommunityActivity.this), "0", pageSize + "");
+          getMoods("0", pageSize + "");
         }
     }
 
@@ -266,5 +268,67 @@ public class CommunityActivity extends AppCompatActivity implements UserDao.Post
     public void onClick() {
         Intent intent = new Intent(CommunityActivity.this, PostActivity.class);
         startActivityForResult(intent, 0);
+    }
+    public void getMoods(String page, String pageSize){
+        OkHttpUtils.post().url(Interfaces.GET_MOODS)
+                .addParams("loginName",getUsername())
+                .addParams("loginPwd",getPassword())
+                .addParams("page", page)
+                .addParams("pagesize",pageSize)
+                .build().execute(new StringCallback() {
+            @Override
+            public void onAfter(int id) {
+                moodList.setHeaderRefreshing(false);
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                moodAdapter.pauseMore();
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                try {
+                    result = response.split("\\|");
+                    if (result[0].equals("0")) {
+                        moods = new ArrayList<>();
+                        try {
+                /*moods = gson.fromJson(result[1], new TypeToken<ArrayList<Mood>>() {
+                }.getType());*/
+                            for (int i = 0; i < 10; i++)
+                                moods.add(new Mood());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Logger.i("size", moods.size() + "");
+                        if (moods.size() == 0)
+                            moodAdapter.stopMore();
+                        if (moods.size() > 0 && moodAdapter.getData().size() == 0) {
+                            moodAdapter.addAll(moods);
+                            moodAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(int position) {
+
+                                }
+                            });
+                        }
+                        if (moods.size() > 0 && moodAdapter.getData().size() > 0) {
+                            moodAdapter.addAll(moods);
+                        }
+                    } else {
+                        moodAdapter.stopMore();
+                    }
+                } catch (Exception e) {
+                    moodAdapter.pauseMore();
+                }
+            }
+        });
+    }
+    public String getUsername() {
+        return UserManager.getUsername(this);
+    }
+
+    public String getPassword() {
+        return UserManager.getPassword(this);
     }
 }

@@ -103,9 +103,7 @@ public class AddContactActivity extends BaseActivity {
 
             @Override
             public void onError(Call call, Exception e, int id) {
-                if (e instanceof UnknownHostException) {
-                    toast(R.string.conn_failed);
-                } else toast(R.string.network_error);
+              showException(e);
             }
 
             @Override
@@ -198,9 +196,7 @@ public class AddContactActivity extends BaseActivity {
                     @Override
                     public void onError(Call call, Exception e, int id) {
                         e.printStackTrace();
-                        if (e instanceof UnknownHostException) {
-                            toast(R.string.conn_failed);
-                        } else toast(R.string.network_error);
+                        showException(e);
                     }
 
                     @Override
