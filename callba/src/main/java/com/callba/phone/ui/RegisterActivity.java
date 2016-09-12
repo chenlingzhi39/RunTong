@@ -487,6 +487,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                         try {
                             phoneNumber2 = DesUtil.encrypt(num, result[1]);
                             Log.i("phoneNumber", phoneNumber2);
+                            key=result[1];
                             getCode(phoneNumber2, result[2]);
                         } catch (Exception e) {
                             e.printStackTrace();
