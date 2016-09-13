@@ -1,2 +1,2 @@
-include ':xUtils_library', ':lib', ':easeui', ':daogenerator', ':standardadapter', ':libs'
+include ':lib', ':daogenerator', ':standardadapter', ':libs'
 include ':callba'

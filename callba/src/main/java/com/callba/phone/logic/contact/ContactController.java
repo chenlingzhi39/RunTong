@@ -1,38 +1,18 @@
 package com.callba.phone.logic.contact;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
-import com.callba.phone.Constant;
-import com.callba.phone.DemoHelper;
 import com.callba.phone.MyApplication;
-import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.ContactMutliNumBean;
-import com.callba.phone.bean.EaseUser;
-import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
-import com.callba.phone.manager.ContactsManager;
-import com.callba.phone.manager.UserManager;
-import com.callba.phone.util.EaseCommonUtils;
-import com.callba.phone.util.FileUtils;
-import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.SPUtils;
-import com.callba.phone.util.StorageUtils;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
-
-import okhttp3.Call;
 
 /**
  * 联系人业务逻辑管理
@@ -52,7 +32,6 @@ public class ContactController {
     private List<ContactMutliNumBean> personEntities;
     //检索的字母、位置索引表
     private Map<String, Integer> letterSearchMap;
-    private UserDao userDao;
     private Gson gson;
     private Context contaxt;
 

@@ -33,18 +33,13 @@ import android.widget.TextView;
 
 import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.SystemNumber;
-import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.RxBus;
 import com.callba.phone.util.SPUtils;
-import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.lidroid.xutils.BitmapUtils;
-import com.lidroid.xutils.ViewUtils;
-import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
 import com.callba.R;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -165,7 +160,6 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         super.onCreate(savedInstanceState);
         init();
         registerRedpointReceiver();
-        ViewUtils.inject(this);
         gson = new Gson();
         mPreferenceUtil = SharedPreferenceUtil.getInstance(this);
 
@@ -334,7 +328,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
     protected void onResume() {
         // 查询通话记录
         calllogService.setQueryLocalCalllogCount(50);
-        calllogService.startQueryCallLog(true);
+        calllogService.startQueryCallLog(false);
         // 刷新余额
 
         // 检测键盘音设置是否改变
@@ -1055,7 +1049,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         @Override
         public void onDeleteCompleted() {
             calllogService.setQueryLocalCalllogCount(50);
-            calllogService.startQueryCallLog(true);
+            calllogService.startQueryCallLog(false);
         }
     }
 
@@ -1068,7 +1062,7 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         @Override
         public void onReceive(Context context, Intent intent) {
             calllogService.setQueryLocalCalllogCount(50);
-            calllogService.startQueryCallLog(true);
+            calllogService.startQueryCallLog(false);
         }
     }
 

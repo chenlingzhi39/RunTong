@@ -11,11 +11,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/callba" />
             <option value="$PROJECT_DIR$/daogenerator" />
-            <option value="$PROJECT_DIR$/easeui" />
             <option value="$PROJECT_DIR$/lib" />
             <option value="$PROJECT_DIR$/libs" />
             <option value="$PROJECT_DIR$/standardadapter" />
-            <option value="$PROJECT_DIR$/xUtils_library" />
           </set>
         </option>
         <option name="myModules">
@@ -23,11 +21,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/callba" />
             <option value="$PROJECT_DIR$/daogenerator" />
-            <option value="$PROJECT_DIR$/easeui" />
             <option value="$PROJECT_DIR$/lib" />
             <option value="$PROJECT_DIR$/libs" />
             <option value="$PROJECT_DIR$/standardadapter" />
-            <option value="$PROJECT_DIR$/xUtils_library" />
           </set>
         </option>
       </GradleProjectSettings>

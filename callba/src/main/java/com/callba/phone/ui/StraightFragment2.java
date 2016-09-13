@@ -34,7 +34,6 @@ import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Coupon;
 import com.callba.phone.bean.Flow;
-import com.callba.phone.bean.UserDao;
 import com.callba.phone.ui.adapter.FlowAdapter;
 import com.callba.phone.ui.adapter.RadioAdapter;
 import com.callba.phone.ui.base.BaseFragment;
@@ -134,7 +133,6 @@ public class StraightFragment2 extends BaseFragment {
     // 支付宝公钥
     public static final String RSA_PUBLIC = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnxj/9qwVfgoUh/y2W89L6BkRAFljhNhgPdyPuBV64bfQNN1PjbCzkIM6qRdKBoLPXmKKMiFYnkd6rAoprih3/PrQEB/VsW8OoM8fxn67UDYuyBTqA23MML9q1+ilIZwBC2AQ2UBVOrFXfFl75p6/B5KsiNG9zpgmLCUYuLkxpLQIDAQAB";
     private static final int SDK_PAY_FLAG = 1;
-    private UserDao userDao;
     private Coupon coupon;
 
     public static StraightFragment2 newInstance() {

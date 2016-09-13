@@ -23,7 +23,6 @@ import com.callba.R;
 import com.callba.phone.ui.adapter.MoodAdapter;
 import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.bean.Mood;
-import com.callba.phone.bean.UserDao;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -47,7 +46,7 @@ import okhttp3.Call;
 /**
  * Created by PC-20160514 on 2016/5/25.
  */
-public class CommunityActivity extends AppCompatActivity implements UserDao.PostListener, RefreshLayout.OnRefreshListener, RecyclerArrayAdapter.OnLoadMoreListener {
+public class CommunityActivity extends AppCompatActivity implements  RefreshLayout.OnRefreshListener, RecyclerArrayAdapter.OnLoadMoreListener {
 
     @InjectView(R.id.list)
     EasyRecyclerView moodList;
@@ -190,56 +189,6 @@ public class CommunityActivity extends AppCompatActivity implements UserDao.Post
     public void onHeaderRefresh() {
        getMoods("0", pageSize + "");
 
-    }
-
-    @Override
-    public void failure(String msg) {
-        moodAdapter.pauseMore();
-        moodList.setHeaderRefreshing(false);
-    }
-
-    @Override
-    public void start() {
-
-    }
-
-    @Override
-    public void success(String msg) {
-        moodList.setHeaderRefreshing(false);
-        try {
-            result = msg.split("\\|");
-            if (result[0].equals("0")) {
-                moods = new ArrayList<>();
-                try {
-                /*moods = gson.fromJson(result[1], new TypeToken<ArrayList<Mood>>() {
-                }.getType());*/
-                    for (int i = 0; i < 10; i++)
-                        moods.add(new Mood());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Logger.i("size", moods.size() + "");
-                if (moods.size() == 0)
-                    moodAdapter.stopMore();
-                if (moods.size() > 0 && moodAdapter.getData().size() == 0) {
-                    moodAdapter.addAll(moods);
-                    moodAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(int position) {
-
-                        }
-                    });
-                }
-                if (moods.size() > 0 && moodAdapter.getData().size() > 0) {
-                    moodAdapter.addAll(moods);
-                }
-            } else {
-                moodAdapter.stopMore();
-            }
-        } catch (Exception e) {
-            moodAdapter.pauseMore();
-            moodList.setHeaderRefreshing(false);
-        }
     }
 
     public void initRefreshLayout() {

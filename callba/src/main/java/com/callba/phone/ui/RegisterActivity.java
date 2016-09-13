@@ -25,7 +25,6 @@ import com.callba.R;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.UserDao;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
@@ -35,7 +34,6 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.lang.ref.WeakReference;
-import java.net.UnknownHostException;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -87,7 +85,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
         getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, c);
     }
 
-    Handler han = new Handler() {
+   /* Handler han = new Handler() {
         @SuppressWarnings("deprecation")
         public void handleMessage(android.os.Message msg) {
             String codestr = null;
@@ -98,10 +96,24 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                 Log.e("yung", "验证码提取失败:" + codestr);
             }
         }
+    };*/
 
-        ;
-    };
-
+private static class Han extends Handler{
+    private final WeakReference<RegisterActivity> mActivity;
+    public Han(RegisterActivity activity) {
+        mActivity = new WeakReference<>(activity);
+    }
+    public void handleMessage(android.os.Message msg) {
+        RegisterActivity activity = mActivity.get();
+        String codestr = null;
+        try {
+            codestr = SmsTools.getsmsyzm(activity);
+            activity.et_yzm.setText(codestr);
+        } catch (Exception e) {
+            Log.e("yung", "验证码提取失败:" + codestr);
+        }
+    }
+}
     @OnClick(R.id.private_clause)
     public void onClick() {
         Intent intent = new Intent(RegisterActivity.this, ClauseActivity.class);
@@ -113,7 +125,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
         static TimeCount time;
 
         public MyHandler(RegisterActivity activity) {
-            mActivity = new WeakReference<RegisterActivity>(activity);
+            mActivity = new WeakReference<>(activity);
 
         }
 
@@ -200,7 +212,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     }
 
     private final MyHandler mHandler = new MyHandler(this);
-
+    private Han han=new Han(this);
     public void getMessage(int code) {
         message = mHandler.obtainMessage();
         message.what = code;
@@ -460,10 +472,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                 .addParams("phoneNumber", num)
                 .addParams("softType", "android")
                 .build().execute(new StringCallback() {
-            @Override
-            public void onAfter(int id) {
-                super.onAfter(id);
-            }
 
             @Override
             public void onBefore(Request request, int id) {
@@ -517,11 +525,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
             public void onBefore(Request request, int id) {
                 Log.i("url", Interfaces.Retrieve_Pass);
                 toast("发送短信请求");
-            }
-
-            @Override
-            public void onAfter(int id) {
-
             }
 
             @Override

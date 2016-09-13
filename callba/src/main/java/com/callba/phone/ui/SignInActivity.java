@@ -16,7 +16,6 @@ import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.MyApplication;
 import com.callba.phone.SocializeConfigDemo;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.UserDao;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -53,7 +52,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import butterknife.ButterKnife;

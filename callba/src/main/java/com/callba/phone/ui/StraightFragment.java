@@ -33,7 +33,6 @@ import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Commodity;
 import com.callba.phone.bean.Coupon;
-import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.ui.adapter.BillAdapter;
 import com.callba.phone.ui.adapter.CouponSelectAdapter;
@@ -52,7 +51,6 @@ import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;

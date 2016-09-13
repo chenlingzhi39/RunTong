@@ -59,7 +59,7 @@ public class GlobalConfig implements Serializable{
 	 */
 	public List<ContactPersonEntity> getContactBeans() {
 		if(contactBeans == null) {
-			contactBeans = new ArrayList<ContactPersonEntity>();
+			contactBeans = new ArrayList<>();
 		}
 		return contactBeans;
 	}

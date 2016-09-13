@@ -18,7 +18,6 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.callba.phone.DemoHelper;
-import com.callba.phone.bean.UserDao;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.logic.contact.QueryContactCallback;
 import com.callba.phone.logic.contact.QueryContacts;
@@ -48,8 +47,7 @@ public class MainService extends Service {
      */
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
-    UserDao userDao;
-    LocationReceiver receiver;
+     LocationReceiver receiver;
     //监听联系人数据的监听对象
     private ContentObserver mObserver = new ContentObserver(
             new Handler()) {
@@ -74,7 +72,6 @@ public class MainService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        userDao = new UserDao();
         Log.i("service", "oncreate");
         IntentFilter filter = new IntentFilter(
                 "com.callba.location");

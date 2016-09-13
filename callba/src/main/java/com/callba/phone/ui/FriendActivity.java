@@ -23,10 +23,6 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.bumptech.glide.Glide;
 import com.callba.R;
-import com.callba.phone.MyApplication;
-import com.callba.phone.bean.ApiService;
-import com.callba.phone.bean.DialAd;
-import com.callba.phone.manager.RetrofitManager;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
@@ -36,15 +32,12 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.bean.NearByUser;
-import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.AlwaysMarqueeTextView;
-import com.callba.phone.view.BannerLayout;
 import com.callba.phone.widget.EaseAlertDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -56,19 +49,10 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import okhttp3.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by PC-20160514 on 2016/5/21.
@@ -78,7 +62,7 @@ import rx.schedulers.Schedulers;
         toolbarTitle = R.string.friend,
         navigationId = R.drawable.press_back
 )
-public class FriendActivity extends BaseActivity implements UserDao.PostListener {
+public class FriendActivity extends BaseActivity {
     @InjectView(R.id.title)
     TextView title;
     @InjectView(R.id.toolbar)
@@ -91,15 +75,12 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
     XRecyclerView userList;
     @InjectView(R.id.progressBar)
     ProgressBar progressBar;
-    private UserDao userDao2;
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
     private NearByUserAdapter nearByUserAdapter;
     private Gson gson;
     List<NearByUser> list;
     private String[] result;
-    private ArrayList<Integer> localImages = new ArrayList<Integer>();
-    private ArrayList<String> webImages = new ArrayList<>();
     private ImageView imageView;
     private View footer;
     private int page = 1;
@@ -114,14 +95,11 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
         //MyApplication.getApplicationComponent().inject(this);
         gson = new Gson();
         location.setTextColor(getResources().getColor(R.color.black_2f));
+        Logger.i("address",UserManager.getAddress(this));
         location.setText(UserManager.getAddress(this));
         userList.setLoadingMoreEnabled(false);
-        final View view = getLayoutInflater().inflate(R.layout.banner, null);
         final View view1 = getLayoutInflater().inflate(R.layout.ad, null);
         imageView = (ImageView) view1.findViewById(R.id.image);
-        for (int position = 1; position <= 3; position++)
-            localImages.add(getResId("ad" + position, R.drawable.class));
-        userDao2 = new UserDao();
         nearByUserAdapter = new NearByUserAdapter(this);
         nearByUserAdapter.setError(R.layout.view_more_error).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,6 +203,8 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                     sb.append("错误信息:" + aMapLocation.getErrorInfo() + "\n");
                     sb.append("错误描述:" + aMapLocation.getLocationDetail() + "\n");
                     Logger.i("error", sb.toString());
+                    progressBar.setVisibility(View.GONE);
+                    location.setVisibility(View.VISIBLE);
                     location.setText("网络错误，点击重试");
                 }
 
@@ -375,68 +355,6 @@ public class FriendActivity extends BaseActivity implements UserDao.PostListener
                 });
         builder.create().show();
     }
-
-    @Override
-    public void failure(String msg) {
-        userList.refreshComplete();
-        toast(msg);
-        if (!is_refresh)
-            nearByUserAdapter.pauseMore();
-    }
-
-    @Override
-    public void start() {
-
-    }
-
-    @Override
-    public void success(String msg) {
-        try {
-            userList.refreshComplete();
-            result = msg.split("\\|");
-            Logger.i("friend_result", msg);
-            if (result[0].equals("0")) {
-                list = new ArrayList<>();
-                try {
-                    list = gson.fromJson(result[1], new TypeToken<ArrayList<NearByUser>>() {
-                    }.getType());
-                } catch (Exception e) {
-
-                }
-                Logger.i("size", list.size() + "");
-                if (list.size() == 0) {
-                } else {
-                    if (is_refresh) {
-                        nearByUserAdapter.clear();
-                        nearByUserAdapter.addAll(list);
-                        page = 1;
-                        nearByUserAdapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
-                            @Override
-                            public boolean onItemClick(int position) {
-                                Logger.i("userlist", "longclick");
-                                showDialog(nearByUserAdapter.getData().get(position - 2));
-                                return true;
-                            }
-                        });
-                    } else {
-                        nearByUserAdapter.addAll(list);
-                        page += 1;
-                    }
-                }
-            } else {
-                toast(result[1]);
-                if (!is_refresh)
-                    nearByUserAdapter.stopMore();
-            }
-        } catch (Exception e) {
-            toast(R.string.getserverdata_exception);
-            userList.refreshComplete();
-            if (!is_refresh)
-                nearByUserAdapter.pauseMore();
-        }
-
-    }
-
 
     @OnClick(R.id.location)
     public void onClick() {

@@ -11,7 +11,6 @@ import com.callba.R;
 import com.callba.phone.ui.base.BaseActivity;
 
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.UserDao;
 import com.callba.phone.util.Interfaces;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -36,7 +35,6 @@ public class BalanceActivity extends BaseActivity {
 
     @InjectView(R.id.recharge)
     Button recharge;
-    UserDao userDao;
     @InjectView(R.id.balance)
     TextView balance;
     ProgressDialog progressDialog;
@@ -79,25 +77,6 @@ public class BalanceActivity extends BaseActivity {
                 }
             }
         });
-      /*  userDao = new UserDao(this, new UserDao.PostListener() {
-            @Override
-            public void start() {
-            progressDialog=ProgressDialog.show(BalanceActivity.this,"","正在查询余额");
-            }
-
-            @Override
-            public void success(String msg) {
-             balance.setText(msg);
-                progressDialog.dismiss();
-            }
-
-            @Override
-            public void failure(String msg) {
-                toast(msg);
-                progressDialog.dismiss();
-            }
-        });
-        userDao.getBalance(getUsername(), getPassword());*/
     }
 
     @OnClick(R.id.recharge)

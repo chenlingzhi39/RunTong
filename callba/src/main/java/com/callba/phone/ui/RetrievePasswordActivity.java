@@ -20,10 +20,8 @@ import android.widget.EditText;
 import com.callba.R;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.UserDao;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
-import com.callba.phone.view.MyProgressDialog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 

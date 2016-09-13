@@ -1,7 +1,9 @@
 package com.callba.phone.logic.contact;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
@@ -16,6 +18,7 @@ import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.PinYinUtil;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * 查询系统联系人

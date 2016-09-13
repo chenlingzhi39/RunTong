@@ -26,9 +26,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.callba.phone.bean.DialAd;
-import com.callba.phone.bean.UserDao;
 import com.callba.phone.cfg.Constant;
-import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SPUtils;
@@ -61,7 +59,6 @@ public class CallbackDisplayActivity extends BaseActivity {
     private CalllogService calllogService;
     private FloatingActionButton cancel, voice;
     private MediaPlayer mp;
-    private UserDao userDao;
     private Gson gson;
     private DialAd dialAd;
     private ImageView background;
@@ -90,7 +87,6 @@ public class CallbackDisplayActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //loadADImage();
         super.onCreate(savedInstanceState);
         tv_name = (TextView) findViewById(R.id.tv_name);
         tv_num = (TextView) findViewById(R.id.tv_num);
@@ -214,7 +210,7 @@ public class CallbackDisplayActivity extends BaseActivity {
                             state = true;
                             //回拨成功，开启自动接听
                             AutoAnswerReceiver.answerPhone(CallbackDisplayActivity.this);
-                            calllogService.saveBackCallLog(name, number);
+                            //calllogService.saveBackCallLog(name, number);
                             if ((boolean) SPUtils.get(CallbackDisplayActivity.this, Constant.SETTINGS, Constant.Callback_Ring, true))
                                 playSound();
                         } else {

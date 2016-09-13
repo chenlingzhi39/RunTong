@@ -11,8 +11,6 @@ import android.widget.Toast;
 import com.callba.R;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.UserDao;
-import com.callba.phone.cfg.Constant;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
@@ -42,7 +40,7 @@ import okhttp3.Request;
         toolbarTitle = R.string.change_password,
         navigationId = R.drawable.press_back
 )
-public class ChangePasswordActivity extends BaseActivity implements UserDao.PostListener {
+public class ChangePasswordActivity extends BaseActivity {
     @InjectView(R.id.old_password)
     EditText oldPassword;
     @InjectView(R.id.new_password)
@@ -53,34 +51,6 @@ public class ChangePasswordActivity extends BaseActivity implements UserDao.Post
     EditText confirmNewPassword;
     private String old_password, new_password,comfirm_new_password;
     private ProgressDialog progressDialog;
-    @Override
-    public void start() {
-      ok.setClickable(false);
-    }
-
-    @Override
-    public void success(String msg) {
-        toast(msg);
-        ok.setClickable(true);
-        UserManager.putOriginalPassword(this,new_password);
-        try {
-            String encryptPwd = DesUtil.encrypt(new_password,
-                    UserManager.getToken(this));
-            UserManager.putPassword(this,encryptPwd);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this,getString(R.string.result_data_error),Toast.LENGTH_SHORT).show();
-            UserManager.putOriginalPassword(this,new_password);
-        }
-        finish();
-    }
-
-    @Override
-    public void failure(String msg) {
-        toast(msg);
-        ok.setClickable(true);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
