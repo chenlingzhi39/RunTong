@@ -328,6 +328,9 @@ public class DemoHelper {
 
                     }
                   }
+                if(message.getFrom().equals("admin"))
+                    return BitmapFactory.decodeResource(appContext.getResources(),
+                            R.drawable.system_message);
                 return BitmapFactory.decodeResource(appContext.getResources(),
                         R.drawable.logo);
             }
