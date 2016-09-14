@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.os.Message;
 import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
@@ -63,7 +62,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     private String code;
     private String language = "";
     String key;
-    private Message message;
     private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
     ContentObserver c;
 
@@ -84,19 +82,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
         };
         getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, c);
     }
-
-   /* Handler han = new Handler() {
-        @SuppressWarnings("deprecation")
-        public void handleMessage(android.os.Message msg) {
-            String codestr = null;
-            try {
-                codestr = SmsTools.getsmsyzm(RegisterActivity.this);
-                et_yzm.setText(codestr);
-            } catch (Exception e) {
-                Log.e("yung", "验证码提取失败:" + codestr);
-            }
-        }
-    };*/
 
 private static class Han extends Handler{
     private final WeakReference<RegisterActivity> mActivity;
@@ -120,7 +105,7 @@ private static class Han extends Handler{
         startActivity(intent);
     }
 
-    private static class MyHandler extends Handler {
+   /* private static class MyHandler extends Handler {
         private final WeakReference<RegisterActivity> mActivity;
         static TimeCount time;
 
@@ -186,37 +171,31 @@ private static class Han extends Handler{
                 activity.send_yzm.setText(millisUntilFinished / 1000 + "秒后重新发送");
             }
         }
-    }
+    }*/
 
     class TimeCount extends CountDownTimer {
-        RegisterActivity activity;
 
         public TimeCount(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
-
         }
 
         @Override
         public void onFinish() {// 计时完毕
-            send_yzm.setBackgroundColor(activity.getResources().getColor(R.color.orange));
-            send_yzm.setText(activity.getString(R.string.send_yzm));
+            send_yzm.setBackgroundColor(getResources().getColor(R.color.orange));
+            send_yzm.setText(getString(R.string.send_yzm));
             send_yzm.setClickable(true);
         }
 
         @Override
         public void onTick(long millisUntilFinished) {// 计时过程
             send_yzm.setClickable(false);//防止重复点击
-            send_yzm.setBackgroundColor(activity.getResources().getColor(R.color.light_black));
+            send_yzm.setBackgroundColor(getResources().getColor(R.color.light_black));
             send_yzm.setText(millisUntilFinished / 1000 + "秒后重新发送");
         }
     }
 
-    private final MyHandler mHandler = new MyHandler(this);
+   //private final MyHandler mHandler = new MyHandler(this);
     private Han han=new Han(this);
-    public void getMessage(int code) {
-        message = mHandler.obtainMessage();
-        message.what = code;
-    }
 
     public void init() {
         Locale locale = getResources().getConfiguration().locale;
@@ -244,9 +223,6 @@ private static class Han extends Handler{
             }
         });
         et_account = (EditText) this.findViewById(R.id.et_mre_account);
-    /*    if (!"".equals(GlobalConfig.getInstance().getUsername())) {
-            et_account.setText(GlobalConfig.getInstance().getUsername());
-        }*/
         et_verification = (EditText) this.findViewById(R.id.et_mre_yzm);
         et_password = (EditText) this.findViewById(R.id.et_mre_password);
 
@@ -254,8 +230,7 @@ private static class Han extends Handler{
         //实例化过滤器并设置要过滤的广播
         IntentFilter intentFilter = new IntentFilter(ACTION);
         intentFilter.setPriority(Integer.MAX_VALUE);
-        //注册广播
-        //registerReceiver(mSMSBroadcastReceiver, intentFilter);
+
     }
 
     @Override

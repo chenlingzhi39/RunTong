@@ -1,9 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.callba"
-    android:versionCode="121"
-    android:versionName="1.2.1">
-
-    <uses-sdk android:minSdkVersion="8" />
+    android:versionCode="121">
 
     <supports-screens
         android:anyDensity="true"
@@ -38,7 +35,9 @@
             </intent-filter>
         </receiver>
 
-
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="${UMENG_CHANNEL_VALUE}" />
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="b4a6afcc1d6426ef0ccd1985898e6ba4" />

@@ -1,15 +1,8 @@
 package com.callba.phone.ui;
 
-import java.lang.ref.WeakReference;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,13 +11,19 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import okhttp3.Call;
 import okhttp3.Request;
 
@@ -35,20 +34,20 @@ import okhttp3.Request;
 )
 public class RetrievePasswordActivity extends BaseActivity implements OnClickListener {
 
-    private Button bn_submit;
-    private EditText et_phoneNum;
-
+    @InjectView(R.id.et_retrpass_phone)
+    EditText et_phoneNum;
+    @InjectView(R.id.bn_retrieve_pass)
+    Button bn_submit;
     private String language = "";
-    private Message message;
-    private final MyHandler mHandler = new MyHandler(this);
+   // private final MyHandler mHandler = new MyHandler(this);
     private TimeCount time;
 
-    private static class MyHandler extends Handler {
+   /* private static class MyHandler extends Handler {
         private final WeakReference<RetrievePasswordActivity> mActivity;
         private TimeCount time;
 
         public MyHandler(RetrievePasswordActivity activity) {
-            mActivity = new WeakReference<RetrievePasswordActivity>(activity);
+            mActivity = new WeakReference<>(activity);
         }
 
         @Override
@@ -107,10 +106,9 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
             }
         }
 
-    }
+    }*/
 
     class TimeCount extends CountDownTimer {
-        RetrievePasswordActivity activity;
 
         public TimeCount(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
@@ -118,25 +116,21 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
 
         @Override
         public void onFinish() {// 计时完毕
-            bn_submit.setBackgroundColor(activity.getResources().getColor(R.color.orange));
-            bn_submit.setText(activity.getString(R.string.send_yzm));
+            bn_submit.setBackgroundColor(getResources().getColor(R.color.orange));
+            bn_submit.setText(getString(R.string.send_yzm));
             bn_submit.setClickable(true);
         }
 
         @Override
         public void onTick(long millisUntilFinished) {// 计时过程
             bn_submit.setClickable(false);//防止重复点击
-            bn_submit.setBackgroundColor(activity.getResources().getColor(R.color.light_black));
+            bn_submit.setBackgroundColor(getResources().getColor(R.color.light_black));
             bn_submit.setText(millisUntilFinished / 1000 + "秒后重新发送");
         }
     }
 
-    public void getMessage(int code) {
-        message = mHandler.obtainMessage();
-        message.what = code;
-    }
-
     public void init() {
+        ButterKnife.inject(this);
         Locale locale = getResources().getConfiguration().locale;
         language = locale.getCountry();
         bn_submit = (Button) this.findViewById(R.id.bn_retrieve_pass);
@@ -174,7 +168,7 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
                 }
                 if (num.length() > 10) {
             /*	String address = NumberAddressService.getAddress(
-						num, Constant.DB_PATH,
+                        num, Constant.DB_PATH,
 						RetrievePasswordActivity.this);
 				if(!address.equals(""))
 				{*/
@@ -256,11 +250,6 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
             public void onBefore(Request request, int id) {
                 Log.i("url", Interfaces.Retrieve_Pass);
                 toast("发送短信请求");
-            }
-
-            @Override
-            public void onAfter(int id) {
-
             }
 
             @Override

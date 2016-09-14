@@ -16,6 +16,26 @@ android {
         minSdkVersion 11
         targetSdkVersion 22
         multiDexEnabled true
+        manifestPlaceholders = [ UMENG_CHANNEL_VALUE:"default_channel" ]
+        versionName "1.2.1"
+    }
+    productFlavors {
+        default_channel{}
+        wandoujia{}
+        _360{}
+        yingyongbao{}
+        xiaomi{}
+        baidu{}
+        huawei{}
+        jifeng{}
+        lenovo{}
+        vivo{}
+        letv{}
+        oppo{}
+    }
+
+    productFlavors.all { flavor ->
+        flavor.manifestPlaceholders = [ UMENG_CHANNEL_VALUE:name ]
     }
     signingConfigs {
         robert {
@@ -33,7 +53,23 @@ android {
         }
         useLibrary "org.apache.http.legacy"
     }
-
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                File outputDirectory = new File(outputFile.parent);
+                def fileName
+                if (variant.buildType.name == "release") {
+//                    fileName = "app_v${defaultConfig.versionName}_${packageTime()}_${variant.productFlavors[0].name}.apk"
+                    fileName = "callba_${defaultConfig.versionName}_${variant.productFlavors[0].name}.apk"
+                } else {
+//                    fileName = "app_v${defaultConfig.versionName}_${packageTime()}_beta.apk"
+                    fileName = "callba_${defaultConfig.versionName}_${variant.productFlavors[0].name}_beta.apk"
+                }
+                output.outputFile = new File(outputDirectory, fileName)
+            }
+        }
+    }
     dependencies {
         compile fileTree(dir: 'libs', include: ['*.jar'])
         compile 'com.android.support:support-v4:23.4.0'
