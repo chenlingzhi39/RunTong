@@ -17,7 +17,7 @@ android {
         targetSdkVersion 22
         multiDexEnabled true
         manifestPlaceholders = [ UMENG_CHANNEL_VALUE:"default_channel" ]
-        versionName "1.2.1"
+        versionName "1.2.2.1"
     }
     productFlavors {
         default_channel{}

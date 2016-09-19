@@ -19,7 +19,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 
-import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -114,7 +114,7 @@ public class ChangePasswordActivity extends BaseActivity {
             public void onError(Call call, Exception e, int id) {
                 e.printStackTrace();
                 if(e instanceof UnknownHostException)toast(R.string.conn_failed);
-                else if(e instanceof SocketException){
+                else if(e instanceof SocketTimeoutException){
                     if(!e.toString().contains("failed to connect to"))
                     {  toast("修改成功");
                     UserManager.putOriginalPassword(ChangePasswordActivity.this,new_password);

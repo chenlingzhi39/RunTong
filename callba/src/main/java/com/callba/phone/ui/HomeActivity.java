@@ -178,11 +178,6 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     // 跳转到起始页
     private void gotoWelcomePage() {
         Intent intent = new Intent();
