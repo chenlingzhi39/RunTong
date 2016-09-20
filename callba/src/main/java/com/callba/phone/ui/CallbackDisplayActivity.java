@@ -67,6 +67,7 @@ public class CallbackDisplayActivity extends BaseActivity {
     TimeCount time;
     private int currentCallbackTime = 0;
     Message msg;
+    private Exception callbackException;
     Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -261,11 +262,13 @@ public class CallbackDisplayActivity extends BaseActivity {
      */
     private void countCallbackFailedData(String errorMsg) {
         String errorTime = TimeFormatUtil.formatTimeRange();
-        Map<String, String> paramsMap = new HashMap<String, String>();
+        Map<String, String> paramsMap = new HashMap<>();
         paramsMap.put("errorMsg", errorMsg);
         paramsMap.put("errorTime", errorTime);
         paramsMap.put("from", getUsername());
         paramsMap.put("to", number);
+        if(callbackException!=null)
+        paramsMap.put("exception",callbackException.toString());
         MobclickAgent.onEvent(this, "callback_failed", paramsMap);
     }
 
@@ -285,6 +288,7 @@ public class CallbackDisplayActivity extends BaseActivity {
 
             @Override
             public void onError(Call call, Exception e, int id) {
+                callbackException=e;
                 if (e instanceof UnknownHostException) {
                     msg.what = Task.TASK_UNKNOWN_HOST;
                 } else if (e instanceof SocketTimeoutException) {

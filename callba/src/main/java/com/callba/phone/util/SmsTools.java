@@ -3,6 +3,7 @@ package com.callba.phone.util;
 import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +30,6 @@ public class SmsTools {
             cur.close();
             return getyzm(body, YZMLENGTH);
         }
-        cur.close();
         return null;
     }
 
