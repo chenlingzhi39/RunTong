@@ -66,79 +66,23 @@ public class CallbackDisplayActivity extends BaseActivity {
     private boolean state = false;
     TimeCount time;
     private int currentCallbackTime = 0;
-    Message msg;
     private Exception callbackException;
-    Handler mHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-
-            if (msg.what == Task.TASK_SUCCESS) {
-                try {
-                    String result = (String) msg.obj;
-                    String[] content = result.split("\\|");
-                    Log.i("dial_result", result);
-                    if ("0".equals(content[0])) {
-                        state = true;
-                        //回拨成功，开启自动接听
-                        AutoAnswerReceiver.answerPhone(CallbackDisplayActivity.this);
-                        //calllogService.saveBackCallLog(name, number);
-                        if ((boolean) SPUtils.get(CallbackDisplayActivity.this, Constant.SETTINGS, Constant.Callback_Ring, true))
-                            playSound();
-                        MobclickAgent.onEvent(CallbackDisplayActivity.this, "callback_success");
-                    } else {
-                        //统计回拨失败数据
-                        countCallbackFailedData(content[1]);
-                        delayFinish();
-                    }
-                    tv_status.setText(content[1]);
-                } catch (Exception e) {
-                    tv_status.setText(R.string.getserverdata_exception);
-                    //统计回拨失败数据
-                    countCallbackFailedData(getString(R.string.server_error));
-                    delayFinish();
-                }
-            } else if (msg.what == Task.TASK_NETWORK_ERROR) {
-                tv_status.setText(R.string.network_error);
-                //统计回拨失败数据
-                countCallbackFailedData(getString(R.string.network_error));
-                delayFinish();
-            } else if (msg.what == Task.TASK_TIMEOUT) {
-                tv_status.setText(R.string.network_error);
-                //统计回拨失败数据
-                countCallbackFailedData(getString(R.string.callback_timeout));
-                delayFinish();
-            } else if (msg.what == Task.TASK_UNKNOWN_HOST) {
-                tv_status.setText(R.string.conn_failed);
-                //统计回拨失败数据
-                countCallbackFailedData(getString(R.string.conn_failed));
-                delayFinish();
-            } else {
-                tv_status.setText(R.string.network_error);
-                //统计回拨失败数据
-                countCallbackFailedData(getString(R.string.network_error));
-
-                delayFinish();
-            }
-        }
-
-        /**
-         * 延迟关闭当前页面
-         * @author zhw
-         */
-        private void delayFinish() {
-            //呼叫失败，延迟关闭
-            time = new TimeCount(10000, 1000);
-            time.start();
-            count_down.setVisibility(View.VISIBLE);
+    /**
+     * 延迟关闭当前页面
+     * @author zhw
+     */
+    private void delayFinish() {
+        //呼叫失败，延迟关闭
+        time = new TimeCount(10000, 1000);
+        time.start();
+        count_down.setVisibility(View.VISIBLE);
              /*   SimpleHandler.getInstance().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         finish();
                     }
                 }, 2000);*/
-        }
-    };
-
+    }
     class TimeCount extends CountDownTimer {
         RegisterActivity activity;
 
@@ -273,7 +217,6 @@ public class CallbackDisplayActivity extends BaseActivity {
     }
 
     private void callback() {
-        msg = mHandler.obtainMessage();
         OkHttpUtils.post().url(Interfaces.DIAL_CALLBACK)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
@@ -281,36 +224,70 @@ public class CallbackDisplayActivity extends BaseActivity {
                 .addParams("caller", getUsername())
                 .addParams("callee", number)
                 .build().execute(new StringCallback() {
-            @Override
-            public void onAfter(int id) {
-                mHandler.sendMessage(msg);
-            }
 
             @Override
             public void onError(Call call, Exception e, int id) {
                 callbackException=e;
                 if (e instanceof UnknownHostException) {
-                    msg.what = Task.TASK_UNKNOWN_HOST;
+                    tv_status.setText(R.string.conn_failed);
+                    //统计回拨失败数据
+                    countCallbackFailedData(getString(R.string.conn_failed));
+                    delayFinish();
                 } else if (e instanceof SocketTimeoutException) {
                     if (!e.toString().contains("failed to connect to")) {
-                        msg.what = Task.TASK_SUCCESS;
-                        msg.obj = "请接听Call吧来电";
+                        state = true;
+                        //回拨成功，开启自动接听
+                        AutoAnswerReceiver.answerPhone(CallbackDisplayActivity.this);
+                        //calllogService.saveBackCallLog(name, number);
+                        if ((boolean) SPUtils.get(CallbackDisplayActivity.this, Constant.SETTINGS, Constant.Callback_Ring, true))
+                            playSound();
+                        tv_status.setText("请接听Call吧来电");
+                        MobclickAgent.onEvent(CallbackDisplayActivity.this, "callback_success");
                     } else {
                         if (currentCallbackTime < 3) {
                             callback();
                             currentCallbackTime++;
                         } else
-                            msg.what = Task.TASK_TIMEOUT;
+                        {  tv_status.setText(R.string.network_error);
+                            //统计回拨失败数据
+                            countCallbackFailedData(getString(R.string.callback_timeout));
+                            delayFinish();}
                     }
                 } else {
-                    msg.what = Task.TASK_FAILED;
+                    tv_status.setText(R.string.network_error);
+                    //统计回拨失败数据
+                    countCallbackFailedData(getString(R.string.network_error));
+
+                    delayFinish();
                 }
             }
 
             @Override
             public void onResponse(String response, int id) {
-                msg.what = Task.TASK_SUCCESS;
-                msg.obj = response.replace("\n", "").replace("\r", "");
+                try {
+                    String result =  response.replace("\n", "").replace("\r", "");
+                    String[] content = result.split("\\|");
+                    if ("0".equals(content[0])) {
+                        state = true;
+                        //回拨成功，开启自动接听
+                        AutoAnswerReceiver.answerPhone(CallbackDisplayActivity.this);
+                        //calllogService.saveBackCallLog(name, number);
+                        if ((boolean) SPUtils.get(CallbackDisplayActivity.this, Constant.SETTINGS, Constant.Callback_Ring, true))
+                            playSound();
+                        MobclickAgent.onEvent(CallbackDisplayActivity.this, "callback_success");
+                    } else {
+                        //统计回拨失败数据
+                        countCallbackFailedData(content[1]);
+                        delayFinish();
+                    }
+                    tv_status.setText(content[1]);
+                } catch (Exception e) {
+                    callbackException=e;
+                    tv_status.setText(R.string.getserverdata_exception);
+                    //统计回拨失败数据
+                    countCallbackFailedData(getString(R.string.server_error));
+                    delayFinish();
+                }
             }
         });
      /*   new Thread() {

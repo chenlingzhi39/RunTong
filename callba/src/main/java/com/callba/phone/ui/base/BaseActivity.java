@@ -203,8 +203,6 @@ public class BaseActivity extends AppCompatActivity {
                 toolbar.setNavigationIcon(navigationId);
             }
             getSupportActionBar().setTitle("");
-
-
         }
     }
 

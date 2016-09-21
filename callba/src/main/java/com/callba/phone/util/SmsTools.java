@@ -27,6 +27,7 @@ public class SmsTools {
             cur.moveToFirst();
             String body = cur.getString(cur.getColumnIndex("body")).replaceAll(
                     "\n", " ");
+            if(Build.VERSION.SDK_INT<14)
             cur.close();
             return getyzm(body, YZMLENGTH);
         }
