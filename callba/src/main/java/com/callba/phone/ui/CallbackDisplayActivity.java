@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.callba.phone.MyApplication;
 import com.callba.phone.bean.DialAd;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.manager.ContactsManager;
@@ -84,7 +85,6 @@ public class CallbackDisplayActivity extends BaseActivity {
                 }, 2000);*/
     }
     class TimeCount extends CountDownTimer {
-        RegisterActivity activity;
 
         public TimeCount(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
@@ -155,7 +155,12 @@ public class CallbackDisplayActivity extends BaseActivity {
         tv_num.setText(number);
         // tv_status.setText(number);
         calllogService = new CalllogService(this, null);
-        callback();
+        if(MyApplication.getInstance().isaBoolean()){
+            callback();
+        }else{
+            tv_status.setText("拨打太频繁，请稍后重试");
+            delayFinish();
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION

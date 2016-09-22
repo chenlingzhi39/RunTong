@@ -19,7 +19,6 @@ import com.callba.R;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.MyApplication;
 import com.callba.phone.bean.Task;
-import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
@@ -27,7 +26,6 @@ import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.HttpUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.NetworkDetector;
 
 
 /** 
@@ -104,7 +102,7 @@ public class LoginController {
 			return;
 		} 
 		
-		if(!NetworkDetector.detect(context)) {
+		if(!MyApplication.getInstance().detect()) {
 			//无网络连接
 			Logger.w(TAG, "LoginController no network conn.");
 			

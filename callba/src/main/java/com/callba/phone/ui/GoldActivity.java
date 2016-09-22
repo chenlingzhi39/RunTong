@@ -101,7 +101,9 @@ public class GoldActivity extends BaseActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ex_gold = Integer.parseInt(helper.getNumber()) * UserManager.getProportion(GoldActivity.this);
+                        if(!helper.getNumber().equals(""))
+                        {
+                            ex_gold = Integer.parseInt(helper.getNumber()) * UserManager.getProportion(GoldActivity.this);
                         OkHttpUtils.post().url(Interfaces.EXCHANGE_BALANCE)
                                 .addParams("loginName", getUsername())
                                 .addParams("loginPwd", getPassword())
@@ -126,7 +128,7 @@ public class GoldActivity extends BaseActivity {
                                 }
                             }
                         });
-                        dialog.dismiss();
+                        dialog.dismiss();}
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override

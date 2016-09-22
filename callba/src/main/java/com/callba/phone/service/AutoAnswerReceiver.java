@@ -10,6 +10,7 @@ import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 
 import com.android.internal.telephony.ITelephony;
+import com.callba.phone.MyApplication;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.ActivityUtil;
@@ -47,6 +48,10 @@ public class AutoAnswerReceiver {
 					}
 					ActivityUtil.finishCallBackDisplayPages();
 					mTelephonyManager.listen(this, PhoneStateListener.LISTEN_NONE);
+					break;
+				case TelephonyManager.CALL_STATE_IDLE:
+					MyApplication.getInstance().setaBoolean(true);
+					MyApplication.getInstance().startCount();
 					break;
 				default:
 					break;

@@ -1,9 +1,4 @@
 package com.callba.phone;
-
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -15,11 +10,11 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.CountDownTimer;
 import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
@@ -27,27 +22,15 @@ import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.callba.BuildConfig;
-import com.callba.phone.cfg.*;
-import com.callba.phone.cfg.Constant;
-import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.ui.WelcomeActivity;
-import com.callba.phone.util.AppVersionChecker;
-import com.callba.phone.util.HttpUtils;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.StorageUtils;
-import com.hyphenate.chat.EMMessage;
 import com.zhy.http.okhttp.OkHttpUtils;
-
-import javax.inject.Inject;
-
 import de.greenrobot.dao.DaoMaster;
 import de.greenrobot.dao.DaoSession;
 import de.greenrobot.dao.query.QueryBuilder;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+
 
 public class MyApplication extends Application {
     /**
@@ -57,14 +40,49 @@ public class MyApplication extends Application {
     public static MyApplication getInstance(){
         return myApplication;
     }
-    public static List<Activity> activities = new ArrayList<Activity>();
+    public static List<Activity> activities = new ArrayList<>();
 //	private PushAgent mPushAgent;
     private long lastRestartTimeMillis = System.currentTimeMillis();
     //实现ConnectionListener接口
     private DaoSession mDaoSession;
     private SQLiteDatabase db;
     private  ApplicationComponent applicationComponent;
+    ConnectivityManager manager;
+    TimeCount timeCount;
+    private boolean aBoolean=true;
+    class TimeCount extends CountDownTimer {
 
+        public TimeCount(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+
+        }
+
+        @Override
+        public void onFinish() {// 计时完毕
+            aBoolean=true;
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {// 计时过程
+            Logger.i("time",millisUntilFinished+"");
+          aBoolean=false;
+        }
+    }
+
+    public boolean isaBoolean() {
+        return aBoolean;
+    }
+
+    public void setaBoolean(boolean aBoolean) {
+        this.aBoolean = aBoolean;
+    }
+
+    public void startCount(){
+        if(aBoolean){
+            timeCount=new TimeCount(10000,1000);
+            timeCount.start();
+        }
+    }
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -74,6 +92,8 @@ public class MyApplication extends Application {
     public void onCreate() {
        // MultiDex.install(this);
         super.onCreate();
+        timeCount=new TimeCount(10000,1000);
+        manager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         myApplication = this;
         //CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/STXIHEI.TTF").setFontAttrId(R.attr.fontPath).build());
        /* EMOptions options = new EMOptions();
@@ -162,5 +182,20 @@ public class MyApplication extends Application {
 
     public static ApplicationComponent getApplicationComponent() {
         return ((MyApplication)myApplication.getApplicationContext()).applicationComponent;
+    }
+    public boolean detect(){
+
+        if(manager == null){
+            return false;
+        }
+        try {
+            NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+            if(networkInfo == null || !networkInfo.isAvailable()){
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }

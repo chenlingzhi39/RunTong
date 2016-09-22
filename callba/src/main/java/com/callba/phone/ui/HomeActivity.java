@@ -287,7 +287,8 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onAfter(int id) {
                 if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
+                    if (!HomeActivity.this.isFinishing()) {
+                    progressDialog.dismiss();}
                 }
             }
 

@@ -2,26 +2,21 @@ package com.callba.phone.ui;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.widget.LinearLayout;
 
 import com.callba.R;
+import com.callba.phone.MyApplication;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.cfg.Constant;
@@ -32,7 +27,6 @@ import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.AppVersionChecker.AppVersionBean;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.NetworkDetector;
 import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.util.ZipUtil;
@@ -123,7 +117,7 @@ public class WelcomeActivity extends BaseActivity {
         String s = getResources().getConfiguration().locale.getCountry();
         Logger.v("语言环境", s);
         Locale.setDefault(new Locale("zh"));
-        isNetworkAvail = NetworkDetector.detect(WelcomeActivity.this);
+        isNetworkAvail = MyApplication.getInstance().detect();
         alertNetWork(isNetworkAvail);
         if (isNetworkAvail) {
             currentGetVersionTime = 0;
@@ -314,38 +308,7 @@ public class WelcomeActivity extends BaseActivity {
 
         }
     }
-    private void insertDummyContactWrapper() {
-        List<String> permissionsNeeded = new ArrayList<String>();
 
-        final List<String> permissionsList = new ArrayList<String>();
-        if (!addPermission(permissionsList, Manifest.permission.ACCESS_FINE_LOCATION))
-            permissionsNeeded.add("GPS");
-        if (!addPermission(permissionsList, Manifest.permission.READ_CONTACTS))
-            permissionsNeeded.add("Read Contacts");
-        if (!addPermission(permissionsList, Manifest.permission.WRITE_CONTACTS))
-            permissionsNeeded.add("Write Contacts");
-
-        if (permissionsList.size() > 0) {
-            if (permissionsNeeded.size() > 0) {
-                // Need Rationale
-                String message = "You need to grant access to " + permissionsNeeded.get(0);
-                for (int i = 1; i < permissionsNeeded.size(); i++)
-                    message = message + ", " + permissionsNeeded.get(i);
-                showMessageOKCancel(message,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ActivityCompat.requestPermissions(WelcomeActivity.this,permissionsList.toArray(new String[permissionsList.size()]),
-                                        124);
-                            }
-                        });
-                return;
-            }
-            ActivityCompat.requestPermissions(WelcomeActivity.this,permissionsList.toArray(new String[permissionsList.size()]),
-                    124);
-            return;
-        }
-    }
     private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(WelcomeActivity.this)
                 .setMessage(message)
@@ -400,7 +363,7 @@ public class WelcomeActivity extends BaseActivity {
             SimpleHandler.getInstance().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    isNetworkAvail = NetworkDetector.detect(WelcomeActivity.this);
+                    isNetworkAvail = MyApplication.getInstance().detect();
                     alertNetWork(isNetworkAvail);
                     if (isNetworkAvail) {
                         currentGetVersionTime = 0;
