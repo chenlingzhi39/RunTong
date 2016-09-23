@@ -155,12 +155,13 @@ public class CallbackDisplayActivity extends BaseActivity {
         tv_num.setText(number);
         // tv_status.setText(number);
         calllogService = new CalllogService(this, null);
-        if(MyApplication.getInstance().isaBoolean()){
+        callback();
+     /*   if(MyApplication.getInstance().isaBoolean()){
             callback();
         }else{
             tv_status.setText("拨打太频繁，请稍后重试");
             delayFinish();
-        }
+        }*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION

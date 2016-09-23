@@ -48,7 +48,7 @@ public class MyApplication extends Application {
     private SQLiteDatabase db;
     private  ApplicationComponent applicationComponent;
     ConnectivityManager manager;
-    TimeCount timeCount;
+   /* TimeCount timeCount;
     private boolean aBoolean=true;
     class TimeCount extends CountDownTimer {
 
@@ -82,7 +82,7 @@ public class MyApplication extends Application {
             timeCount=new TimeCount(10000,1000);
             timeCount.start();
         }
-    }
+    }*/
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -92,7 +92,7 @@ public class MyApplication extends Application {
     public void onCreate() {
        // MultiDex.install(this);
         super.onCreate();
-        timeCount=new TimeCount(10000,1000);
+       // timeCount=new TimeCount(10000,1000);
         manager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         myApplication = this;
         //CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/STXIHEI.TTF").setFontAttrId(R.attr.fontPath).build());

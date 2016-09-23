@@ -49,10 +49,10 @@ public class AutoAnswerReceiver {
 					ActivityUtil.finishCallBackDisplayPages();
 					mTelephonyManager.listen(this, PhoneStateListener.LISTEN_NONE);
 					break;
-				case TelephonyManager.CALL_STATE_IDLE:
+			/*	case TelephonyManager.CALL_STATE_IDLE:
 					MyApplication.getInstance().setaBoolean(true);
 					MyApplication.getInstance().startCount();
-					break;
+					break;*/
 				default:
 					break;
 				}

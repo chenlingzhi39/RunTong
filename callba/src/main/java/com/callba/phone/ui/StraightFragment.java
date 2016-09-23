@@ -582,7 +582,7 @@ public class StraightFragment extends BaseFragment {
             @Override
             public void onError(Call call, Exception e, int id) {
                 linear.setVisibility(View.GONE);
-               showException(e);
+                showException(e);
             }
 
             @Override
