@@ -11,6 +11,10 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
+    packagingOptions {
+        exclude 'META-INF/NOTICE' // will not include NOTICE file
+        exclude 'META-INF/LICENSE' // will not include LICENSE file
+    }
     defaultConfig {
         applicationId "com.callba"
         minSdkVersion 11
