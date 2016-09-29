@@ -286,10 +286,6 @@ public class HomeActivity extends BaseActivity {
                 .build().execute(new StringCallback() {
             @Override
             public void onAfter(int id) {
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    if (!HomeActivity.this.isFinishing()) {
-                    progressDialog.dismiss();}
-                }
             }
 
             @Override
@@ -322,6 +318,7 @@ public class HomeActivity extends BaseActivity {
                         }else getActivity();
                         RxBus.get().post("refresh_ad",true);
                         MobclickAgent.onProfileSignIn(getUsername());
+                        progressDialog.dismiss();
                     } else {
                         toast(resultInfo[1]);
                         switchManualLogin();

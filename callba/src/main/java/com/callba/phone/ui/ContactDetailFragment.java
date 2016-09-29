@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
@@ -68,6 +69,7 @@ public class ContactDetailFragment extends BaseFragment {
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
+        if(Build.VERSION.SDK_INT>=16)
         shadow.setBackground(
                 ScrimUtil.makeCubicGradientScrimDrawable(
                         Color.parseColor("#55000000"), //颜色

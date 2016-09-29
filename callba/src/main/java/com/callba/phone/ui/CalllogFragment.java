@@ -2,6 +2,7 @@ package com.callba.phone.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -50,6 +51,7 @@ public class CalllogFragment extends BaseFragment {
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
+        if(Build.VERSION.SDK_INT>=16)
         shadow.setBackground(
                 ScrimUtil.makeCubicGradientScrimDrawable(
                         Color.parseColor("#55000000"), //颜色

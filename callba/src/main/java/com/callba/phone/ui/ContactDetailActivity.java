@@ -132,7 +132,8 @@ public class ContactDetailActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        shadow.setBackground(
+        if(Build.VERSION.SDK_INT>=16)
+        { shadow.setBackground(
                 ScrimUtil.makeCubicGradientScrimDrawable(
                         Color.parseColor("#aa000000"), //颜色
                         8, //渐变层数
@@ -141,7 +142,7 @@ public class ContactDetailActivity extends BaseActivity {
                 ScrimUtil.makeCubicGradientScrimDrawable(
                         Color.parseColor("#aa000000"), //颜色
                         8, //渐变层数
-                        Gravity.BOTTOM));
+                        Gravity.BOTTOM));}
         displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         width = displayMetrics.widthPixels;

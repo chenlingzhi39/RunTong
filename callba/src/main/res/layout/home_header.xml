@@ -7,7 +7,7 @@
     <com.callba.phone.view.BannerLayout
         android:id="@+id/banner"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="265dp"
         app:autoPlayDuration="5000"
         app:indicatorMargin="10dp"
         app:indicatorShape="oval"
