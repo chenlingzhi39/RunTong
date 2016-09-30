@@ -122,7 +122,7 @@ public class WebContactFragment extends BaseFragment {
         loadingView = LayoutInflater.from(getActivity()).inflate(R.layout.em_layout_loading_data, null);
         contentContainer.addView(loadingView);
         contactsMap = DemoHelper.getInstance().getContactList();
-        contactList = new ArrayList<EaseUser>();
+        contactList = new ArrayList<>();
         query.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 contactListLayout.filter(s);

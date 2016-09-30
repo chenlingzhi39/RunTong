@@ -22,6 +22,7 @@ android {
         multiDexEnabled true
         manifestPlaceholders = [ UMENG_CHANNEL_VALUE:"default_channel" ]
         versionName "1.2.2"
+        versionName "122"
     }
     productFlavors {
         default_channel{}

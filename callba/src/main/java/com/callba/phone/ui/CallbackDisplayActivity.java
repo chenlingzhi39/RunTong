@@ -17,6 +17,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -143,12 +144,12 @@ public class CallbackDisplayActivity extends BaseActivity {
         Bundle bundle = intent.getExtras();
         name = bundle.getString("name");
         number = bundle.getString("number");
-        if (!bundle.getString("id").equals("")) {
+        if (!TextUtils.isEmpty(bundle.getString("id"))) {
             Bitmap bitmap = ContactsManager.getAvatar(this, bundle.getString("id"), true);
             if (bitmap != null)
                 avatar.setImageBitmap(bitmap);
         }
-        if (name.equals(""))
+        if (TextUtils.isEmpty(name))
             tv_name.setText("未知");
         else
             tv_name.setText(name);
