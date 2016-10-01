@@ -7,7 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.Contacts;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -18,9 +18,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.ui.base.BaseSelectContactFragment;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.NumberAddressService;
 import com.callba.phone.util.RxBus;
@@ -41,7 +41,7 @@ import okhttp3.Request;
  */
 @ActivityFragmentInject(
         contentViewId = R.layout.fragment_number)
-public class NumberFragment extends BaseFragment {
+public class NumberFragment extends BaseSelectContactFragment {
     @InjectView(R.id.number)
     TextView number;
     @InjectView(R.id.address)
@@ -151,9 +151,9 @@ public class NumberFragment extends BaseFragment {
 
     @OnClick(R.id.contacts)
     public void onClick() {
-        Uri uri = Uri.parse("content://contacts/people");
-        Intent i = new Intent(Intent.ACTION_PICK,uri);
-        i.setType("vnd.android.cursor.dir/phone");
+        //Uri uri = Uri.parse("content://contacts/people");
+        Intent i = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        //i.setType("vnd.android.cursor.dir/phone");
         startActivityForResult(i, 0);
 
     }
@@ -241,7 +241,7 @@ public class NumberFragment extends BaseFragment {
                 Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
                 cursor.moveToFirst();
 
-                String phone_number = cursor.getString(cursor.getColumnIndexOrThrow(Contacts.Phones.NUMBER));
+                String phone_number = getContactPhone(cursor);
 
 
                 if (phone_number.length() > 10) {

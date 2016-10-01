@@ -7,12 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.Contacts;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,8 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.ui.base.BaseSelectContactFragment;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.RxBus;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -31,7 +29,6 @@ import com.zhy.http.okhttp.callback.StringCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -48,7 +45,7 @@ import okhttp3.Request;
 @ActivityFragmentInject(
         contentViewId = R.layout.fragment_number
 )
-public class NumberFragment2 extends BaseFragment {
+public class NumberFragment2 extends BaseSelectContactFragment {
     @InjectView(R.id.number)
     TextView number;
     @InjectView(R.id.address)
@@ -184,9 +181,9 @@ public class NumberFragment2 extends BaseFragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.contacts:
-                Uri uri = Uri.parse("content://contacts/people");
-                Intent i = new Intent(Intent.ACTION_PICK, uri);
-                i.setType("vnd.android.cursor.dir/phone");
+                //Uri uri = Uri.parse("content://contacts/people");
+                Intent i = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                //i.setType("vnd.android.cursor.dir/phone");
                 startActivityForResult(i, 0);
                 break;
             case R.id.relative:
@@ -307,7 +304,7 @@ public class NumberFragment2 extends BaseFragment {
                 Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
                 cursor.moveToFirst();
 
-                String phone_number = cursor.getString(cursor.getColumnIndexOrThrow(Contacts.Phones.NUMBER));
+                String phone_number = getContactPhone(cursor);
 
 
                 if (phone_number.length() > 10) {

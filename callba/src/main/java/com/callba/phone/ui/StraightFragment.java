@@ -33,7 +33,7 @@ import com.callba.phone.cfg.Constant;
 import com.callba.phone.ui.adapter.BillAdapter;
 import com.callba.phone.ui.adapter.CouponSelectAdapter;
 import com.callba.phone.ui.adapter.RadioAdapter;
-import com.callba.phone.ui.base.BaseFragment;
+import com.callba.phone.ui.base.BaseSelectContactFragment;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.NumberAddressService;
@@ -68,7 +68,7 @@ import okhttp3.Request;
  */
 @ActivityFragmentInject(
         contentViewId = R.layout.fragment_straight)
-public class StraightFragment extends BaseFragment {
+public class StraightFragment extends BaseSelectContactFragment {
     @InjectView(R.id.number)
     TextView number;
     @InjectView(R.id.address)
@@ -281,7 +281,7 @@ public class StraightFragment extends BaseFragment {
                 Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
                 cursor.moveToFirst();
 
-                String phone_number = this.getContactPhone(cursor);
+                String phone_number = getContactPhone(cursor);
 
                 if (phone_number.length() > 10) {
                     number.setText(phone_number);
@@ -698,46 +698,5 @@ public class StraightFragment extends BaseFragment {
         public View getView() {
             return mView;
         }
-    }
-    private String getContactPhone(Cursor cursor) {
-        // TODO Auto-generated method stub
-        int phoneColumn = cursor
-                .getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER);
-        int phoneNum = cursor.getInt(phoneColumn);
-        String result = "";
-        if (phoneNum > 0) {
-            // 获得联系人的ID号
-            int idColumn = cursor.getColumnIndex(ContactsContract.Contacts._ID);
-            String contactId = cursor.getString(idColumn);
-            // 获得联系人电话的cursor
-            Cursor phone = getActivity().getContentResolver().query(
-                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                    null,
-                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "="
-                            + contactId, null, null);
-            if (phone.moveToFirst()) {
-                for (; !phone.isAfterLast(); phone.moveToNext()) {
-                    int index = phone
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-                    int typeindex = phone
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
-                    int phone_type = phone.getInt(typeindex);
-                    String phoneNumber = phone.getString(index);
-                    result = phoneNumber;
-//                  switch (phone_type) {//此处请看下方注释
-//                  case 2:
-//                      result = phoneNumber;
-//                      break;
-//
-//                  default:
-//                      break;
-//                  }
-                }
-                if (!phone.isClosed()) {
-                    phone.close();
-                }
-            }
-        }
-        return result;
     }
 }
