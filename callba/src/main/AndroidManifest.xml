@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.callba">
+    package="com.callba"
+    android:versionCode="122">
 
     <supports-screens
         android:anyDensity="true"

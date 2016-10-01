@@ -319,7 +319,10 @@ public class ChangeInfoActivity extends BaseActivity{
                 if (data == null || data.getData() == null) {
                     return;
                 }
-                cropImg(Uri.fromFile(new File(Utils.getPath(this,data))));
+                try{
+                cropImg(Uri.fromFile(new File(Utils.getPath(this,data))));}catch(Exception e){
+                    toast("无法找到此图片");
+                }
                 break;
             case REQUESTCODE_CAMERA:
                 cropImg(imageUri);

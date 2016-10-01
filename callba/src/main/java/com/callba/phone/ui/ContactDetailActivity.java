@@ -29,7 +29,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -40,13 +39,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.Target;
 import com.callba.R;
-import com.callba.phone.MyApplication;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.ContactMutliNumBean;
 import com.callba.phone.manager.ContactsManager;
@@ -60,13 +55,11 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.util.concurrent.ExecutionException;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import rx.Observable;
-import rx.Scheduler;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -499,7 +492,10 @@ public class ContactDetailActivity extends BaseActivity {
                 if (data == null || data.getData() == null) {
                     return;
                 }
-                cropImg(Uri.fromFile(new File(Utils.getPath(this, data))));
+                try{
+                    cropImg(Uri.fromFile(new File(Utils.getPath(this,data))));}catch(Exception e){
+                    toast("无法找到此图片");
+                }
                 break;
             case REQUESTCODE_CAMERA:
                 cropImg(imageUri);

@@ -9,10 +9,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Paint;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Contacts;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -251,7 +251,7 @@ public class StraightFragment3 extends BaseFragment {
                 Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
                 cursor.moveToFirst();
 
-                String phone_number = cursor.getString(cursor.getColumnIndexOrThrow(Contacts.Phones.NUMBER));
+                String phone_number =  this.getContactPhone(cursor);
 
 
                 if (phone_number.length() > 10) {
@@ -274,9 +274,9 @@ public class StraightFragment3 extends BaseFragment {
                 showDialog();
                 break;
             case R.id.contacts:
-                Uri uri = Uri.parse("content://contacts/people");
-                Intent i = new Intent(Intent.ACTION_PICK, uri);
-                i.setType("vnd.android.cursor.dir/phone");
+                //Uri uri = Uri.parse("content://contacts/people");
+                Intent i = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+                //i.setType("vnd.android.cursor.dir/phone");
                 startActivityForResult(i, 0);
                 break;
             case R.id.bt_coupon:
@@ -584,7 +584,7 @@ public class StraightFragment3 extends BaseFragment {
                 .build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
-                linear.setVisibility(View.GONE);
+                //linear.setVisibility(View.GONE);
                 showException(e);
             }
 
@@ -603,26 +603,26 @@ public class StraightFragment3 extends BaseFragment {
                             }
                         }
 
-                        for(int i=0;i<seperateFlows.size();i++)
-                            if(seperateFlows.get(i).getCoupon().size()>0){
-                                seperateFlows.get(i).getCoupon().add(0,new Coupon("不使用优惠券"));
-                                if(getArguments().getString("cid")!=null)
-                                    for(int j=0;j< seperateFlows.get(i).getCoupon().size();j++)
-                                    {if(seperateFlows.get(i).getCoupon().get(j).getCid()!=null)
-                                        if (seperateFlows.get(i).getCoupon().get(j).getCid().equals(getArguments().getString("cid"))){
-                                            flow_pos=i;
-                                            coupon_pos=j;
-                                        }
+                        for (int i = 0; i < seperateFlows.size(); i++)
+                            if (seperateFlows.get(i).getCoupon().size() > 0) {
+                                seperateFlows.get(i).getCoupon().add(0, new Coupon("不使用优惠券"));
+                                if (getArguments().getString("cid") != null)
+                                    for (int j = 0; j < seperateFlows.get(i).getCoupon().size(); j++) {
+                                        if (seperateFlows.get(i).getCoupon().get(j).getCid() != null)
+                                            if (seperateFlows.get(i).getCoupon().get(j).getCid().equals(getArguments().getString("cid"))) {
+                                                flow_pos = i;
+                                                coupon_pos = j;
+                                            }
                                     }
                             }
-                        flow =  seperateFlows.get(flow_pos);
-                        if (flow.getActivity().size()>0)
+                        flow = seperateFlows.get(flow_pos);
+                        if (flow.getActivity().size() > 0)
                             campaign.setText("活动:" + flow.getActivity().get(0).getContent());
                         coupons = flow.getCoupon();
-                        if (coupons .size()>0) {
+                        if (coupons.size() > 0) {
                             btCoupon.setVisibility(View.VISIBLE);
                             btCoupon.setText(coupons.get(coupon_pos).getTitle());
-                            coupon=coupons.get(coupon_pos);
+                            coupon = coupons.get(coupon_pos);
                         } else btCoupon.setVisibility(View.GONE);
                         nowPriceNation.setText(flow.getPrice() + "元");
                         pastPriceNation.setText(flow.getOldPrice() + "元");
@@ -631,33 +631,35 @@ public class StraightFragment3 extends BaseFragment {
                         list.setLayoutManager(new GridLayoutManager(getActivity(), 3));
                         list.setAdapter(flowAdapter);
                         map.clear();
-                        map.put(flowAdapter.getmSelectedItem(),coupon_pos);
+                        map.put(flowAdapter.getmSelectedItem(), coupon_pos);
                         flowAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
                             @Override
                             public void onClick(int position) {
                                 flow = seperateFlows.get(position);
-                                if (seperateFlows.get(position).getActivity().size()>0)
+                                if (seperateFlows.get(position).getActivity().size() > 0)
                                     campaign.setText("活动:" + seperateFlows.get(position).getActivity().get(0).getContent());
                                 else campaign.setText("");
                                 coupons = seperateFlows.get(position).getCoupon();
-                                if (coupons.size()>0)
-                                {btCoupon.setVisibility(View.VISIBLE);
-                                    if(map.get(position)!=null)
-                                    { coupon=coupons.get(map.get(position));
-                                    btCoupon.setText(coupons.get(map.get(position)).getTitle());}else{
-                                        coupon=coupons.get(0);
+                                if (coupons.size() > 0) {
+                                    btCoupon.setVisibility(View.VISIBLE);
+                                    if (map.get(position) != null) {
+                                        coupon = coupons.get(map.get(position));
+                                        btCoupon.setText(coupons.get(map.get(position)).getTitle());
+                                    } else {
+                                        coupon = coupons.get(0);
                                         btCoupon.setText(coupons.get(0).getTitle());
                                     }
-                              }
-                                else {btCoupon.setVisibility(View.GONE);
-                                coupon=null;
+                                } else {
+                                    btCoupon.setVisibility(View.GONE);
+                                    coupon = null;
                                 }
                                 nowPriceNation.setText(flow.getPrice() + "元");
                                 pastPriceNation.setText(flow.getOldPrice() + "元");
                             }
                         });
                         linear.setVisibility(View.VISIBLE);
-                    } else {toast(result[1]);
+                    } else {
+                        toast(result[1]);
                         linear.setVisibility(View.GONE);
                     }
                 } catch (Exception e) {
@@ -716,4 +718,46 @@ public class StraightFragment3 extends BaseFragment {
             return mView;
         }
     }
+    private String getContactPhone(Cursor cursor) {
+        // TODO Auto-generated method stub
+        int phoneColumn = cursor
+                .getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER);
+        int phoneNum = cursor.getInt(phoneColumn);
+        String result = "";
+        if (phoneNum > 0) {
+            // 获得联系人的ID号
+            int idColumn = cursor.getColumnIndex(ContactsContract.Contacts._ID);
+            String contactId = cursor.getString(idColumn);
+            // 获得联系人电话的cursor
+            Cursor phone = getActivity().getContentResolver().query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                    null,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "="
+                            + contactId, null, null);
+            if (phone.moveToFirst()) {
+                for (; !phone.isAfterLast(); phone.moveToNext()) {
+                    int index = phone
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                    int typeindex = phone
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
+                    int phone_type = phone.getInt(typeindex);
+                    String phoneNumber = phone.getString(index);
+                    result = phoneNumber;
+//                  switch (phone_type) {//此处请看下方注释
+//                  case 2:
+//                      result = phoneNumber;
+//                      break;
+//
+//                  default:
+//                      break;
+//                  }
+                }
+                if (!phone.isClosed()) {
+                    phone.close();
+                }
+            }
+        }
+        return result;
+    }
+
 }
