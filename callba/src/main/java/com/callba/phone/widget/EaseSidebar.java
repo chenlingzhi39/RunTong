@@ -43,7 +43,16 @@ public class EaseSidebar extends View {
 	public void setListView(ListView listView){
 		mListView = listView;
 	}
-	
+
+	public EaseSidebar(Context context) {
+		super(context);
+		this.context = context;
+		init();
+	}
+
+	public EaseSidebar(Context context, AttributeSet attrs, int defStyleAttr) {
+		this(context, attrs);
+	}
 
 	public EaseSidebar(Context context, AttributeSet attrs) {
 		super(context, attrs);
