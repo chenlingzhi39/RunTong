@@ -104,6 +104,18 @@
             android:textSize="18sp" />
     </FrameLayout>
     <Button
+        android:id="@+id/add_friend"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="?attr/colorAccent"
+        android:text="加为好友"
+        android:textColor="@color/white"
+        android:layout_marginTop="10dp"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
+    <Button
         android:id="@+id/send_message"
         android:layout_width="match_parent"
         android:layout_height="50dp"

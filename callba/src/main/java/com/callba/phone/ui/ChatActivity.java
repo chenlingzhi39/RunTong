@@ -825,7 +825,6 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         if(!username.equals(EMClient.getInstance().getCurrentUser())||!username.equals("admin"))
         {Intent intent = new Intent(this, UserInfoActivity.class);
         intent.putExtra("username", username);
-            intent.putExtra("is_group",true);
         startActivity(intent);}
     }
 

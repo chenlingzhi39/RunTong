@@ -935,5 +935,9 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
     	
     }
 
-
+	@Override
+	protected void onResume() {
+		super.onResume();
+		adapter.notifyDataSetChanged();
+	}
 }

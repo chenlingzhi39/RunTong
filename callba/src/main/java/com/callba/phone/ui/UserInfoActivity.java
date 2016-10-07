@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +23,7 @@ import com.callba.phone.bean.EaseUser;
 import com.callba.phone.db.InviteMessgeDao;
 import com.callba.phone.db.UserDao;
 import com.callba.phone.ui.base.BaseActivity;
+import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -32,7 +34,8 @@ import com.hyphenate.chat.EMClient;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -75,14 +78,16 @@ public class UserInfoActivity extends BaseActivity {
     Button sendMessage;
     @InjectView(R.id.frame1)
     FrameLayout frame1;
+    @InjectView(R.id.add_friend)
+    Button addFriend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        if (getIntent().getBooleanExtra("is_group", false))
+        /*if (getIntent().getBooleanExtra("is_group", false))
             sendMessage.setVisibility(View.VISIBLE);
-        else sendMessage.setVisibility(View.GONE);
+        else sendMessage.setVisibility(View.GONE);*/
         userName = getIntent().getStringExtra("username");
         user = EaseUserUtils.getUserInfo(userName);
         if (userName.length() > 10) {
@@ -106,6 +111,7 @@ public class UserInfoActivity extends BaseActivity {
                 }
 
             } else {
+                addFriend.setVisibility(View.VISIBLE);
                 gson = new Gson();
                 OkHttpUtils.post().url(Interfaces.USER_INFO)
                         .addParams("loginName", getUsername())
@@ -125,7 +131,7 @@ public class UserInfoActivity extends BaseActivity {
 
                             @Override
                             public void onError(Call call, Exception e, int id) {
-                              showException(e);
+                                showException(e);
                             }
 
                             @Override
@@ -177,7 +183,7 @@ public class UserInfoActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.set_remark, R.id.clear_chat, R.id.delete_friend, R.id.signature, R.id.send_message})
+    @OnClick({R.id.set_remark, R.id.clear_chat, R.id.delete_friend, R.id.signature, R.id.send_message,R.id.add_friend})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.set_remark:
@@ -255,6 +261,96 @@ public class UserInfoActivity extends BaseActivity {
                 intent.putExtra(Constant.EXTRA_USER_ID, getIntent().getStringExtra("username"));
                 startActivity(intent);
                 break;
+            case R.id.add_friend:
+                OkHttpUtils
+                        .post()
+                        .url(Interfaces.ADD_FRIEND)
+                        .addParams("loginName", getUsername())
+                        .addParams("loginPwd",  getPassword())
+                        .addParams("phoneNumber",userName.substring(0, 11))
+                        .build()
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onError(Call call, Exception e, int id) {
+                                e.printStackTrace();
+                                showException(e);
+                            }
+
+                            @Override
+                            public void onResponse(String response, int id) {
+                                try { Logger.i("add_result",response);
+                                    String[] result=response.split("\\|");
+                                    if(result[0].equals("0")){
+                                        try {
+                                            //demo写死了个reason，实际应该让用户手动填入
+                                            String s = getResources().getString(R.string.Add_a_friend);
+                                            //EMClient.getInstance().contactManager().addContact(toAddUsername+"-callba", s);
+                                            sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+                                            OkHttpUtils
+                                                    .post()
+                                                    .url(Interfaces.GET_FRIENDS)
+                                                    .addParams("loginName", getUsername())
+                                                    .addParams("loginPwd",  getPassword())
+                                                    .build().execute(new StringCallback() {
+                                                @Override
+                                                public void onError(Call call, Exception e, int id) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                @Override
+                                                public void onResponse(String response, int id) {
+                                                    try{ Logger.i("get_result",response);
+                                                        String[] result = response.split("\\|");
+                                                        if (result[0].equals("0")) {
+                                                            ArrayList<BaseUser> list;
+                                                            list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
+                                                            }.getType());
+                                                            List<EaseUser> mList = new ArrayList<EaseUser>();
+                                                            for (BaseUser baseUser : list) {
+                                                                EaseUser user = new EaseUser(baseUser.getPhoneNumber()+"-callba");
+                                                                user.setAvatar(baseUser.getUrl_head());
+                                                                user.setNick(baseUser.getNickname());
+                                                                user.setSign(baseUser.getSign());
+                                                                user.setRemark(baseUser.getRemark());
+                                                                EaseCommonUtils.setUserInitialLetter(user);
+                                                                mList.add(user);
+                                                            }
+                                                            DemoHelper.getInstance().updateContactList(mList);
+                                                            LocalBroadcastManager.getInstance(UserInfoActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+
+                                                        }
+                                                    }catch (Exception e){
+                                                        toast(R.string.getserverdata_exception);
+                                                    }
+                                                }
+                                            });
+                                            addFriend.setVisibility(View.GONE);
+                                            deleteFriend.setVisibility(View.VISIBLE);
+                                            runOnUiThread(new Runnable() {
+                                                public void run() {
+                                                    progressDialog.dismiss();
+                                                    String s1 = "添加成功";
+                                                    Toast.makeText(getApplicationContext(), s1, 1).show();
+                                                }
+                                            });
+                                        } catch (final Exception e) {
+                                            runOnUiThread(new Runnable() {
+                                                public void run() {
+                                                    progressDialog.dismiss();
+                                                    String s2 = getResources().getString(R.string.Request_add_buddy_failure);
+                                                    Toast.makeText(getApplicationContext(), s2 + e.getMessage(), 1).show();
+                                                }
+                                            });
+                                        }
+                                    }else { toast(result[1]);
+                                        progressDialog.dismiss();
+                                    }
+                                }catch (Exception e){
+                                    toast(R.string.getserverdata_exception);
+                                }
+                            }
+                        });
+                break;
         }
     }
 
@@ -278,15 +374,20 @@ public class UserInfoActivity extends BaseActivity {
                     UserDao dao = new UserDao(UserInfoActivity.this);
                     dao.deleteContact(tobeDeleteUser.getUsername());
                     DemoHelper.getInstance().getContactList().remove(tobeDeleteUser.getUsername());
-                    finish();
                 } catch (final Exception e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            pd.dismiss();
                             Toast.makeText(UserInfoActivity.this, st2 + e.getMessage(), 1).show();
                         }
                     });
 
+                }finally {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            addFriend.setVisibility(View.VISIBLE);
+                            deleteFriend.setVisibility(View.GONE);
+                            pd.dismiss();}
+                    });
                 }
 
             }
