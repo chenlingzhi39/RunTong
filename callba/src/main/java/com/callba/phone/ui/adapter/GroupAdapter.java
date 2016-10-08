@@ -70,6 +70,93 @@ public class GroupAdapter extends ArrayAdapter<EMGroup> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+	/*	final ViewHolder holder;
+		if(convertView==null)
+		{holder=new ViewHolder();
+			switch(getItemViewType(position)){
+			case 0:
+				convertView = inflater.inflate(R.layout.em_search_bar_with_padding, null);
+				holder.query=(EditText) convertView.findViewById(R.id.query);
+				holder.clear=(ImageView)convertView.findViewById(R.id.search_clear);
+				break;
+			case 1:
+				convertView = inflater.inflate(R.layout.em_row_add_group, null);
+				holder.name=(TextView) convertView.findViewById(R.id.name);
+				holder.image=(ImageView)convertView.findViewById(R.id.image);
+				break;
+			case 2:
+				convertView = inflater.inflate(R.layout.em_row_add_group, null);
+				holder.name=(TextView) convertView.findViewById(R.id.name);
+				holder.image=(ImageView)convertView.findViewById(R.id.image);
+				break;
+			default:
+				holder.type=(TextView)convertView.findViewById(R.id.type);
+				holder.name=(TextView)convertView.findViewById(R.id.name);
+				holder.header=(TextView) convertView.findViewById(R.id.header);
+				break;
+		}
+		convertView.setTag(holder);
+		}else holder=(ViewHolder)convertView.getTag();
+
+		switch(getItemViewType(position)){
+			case 0:
+				holder.query.addTextChangedListener(new TextWatcher() {
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
+						if (s.length() > 0) {
+							is_filter=true;
+							holder.clear.setVisibility(View.VISIBLE);
+						} else {
+							is_filter=false;
+							holder.clear.setVisibility(View.INVISIBLE);
+						}
+						getFilter().filter(s);
+					}
+
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+					}
+
+					public void afterTextChanged(Editable s) {
+					}
+				});
+				holder.clear.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						holder.query.getText().clear();
+					}
+				});
+				break;
+			case 1:
+				holder.image.setImageResource(R.drawable.em_create_group);
+				holder.name.setText(newGroup);
+				break;
+			case 2:
+				holder.image.setImageResource(R.drawable.em_add_public_group);
+				holder.name.setText(newGroup);
+				break;
+			default:
+				if(is_filter)
+				{
+					holder.type.setVisibility(View.VISIBLE);
+					holder.header.setVisibility(View.GONE);
+					if(getItem(position - 3).getOwner().equals(EMClient.getInstance().getCurrentUser()))
+						holder.type.setText("我创建的");
+					else holder.type.setText("我加入的");}else
+				{holder.type.setVisibility(View.GONE);}
+				if(position==pos+3)
+				{
+					if(!is_filter){holder.header.setVisibility(View.VISIBLE);
+						holder.header.setText("我加入的群("+(getCount()-3-pos)+")");}
+					else holder.header.setVisibility(View.GONE);}
+				if(position==3&&pos>0)
+				{    Logger.i("position",position+"");
+					if(!is_filter){holder.header.setVisibility(View.VISIBLE);
+						holder.header.setText("我创建的群("+pos+")");}
+					else holder.header.setVisibility(View.GONE);
+				}
+				holder.name.setText(getItem(position - 3).getGroupName()
+				);
+				break;
+		}*/
 		if (getItemViewType(position) == 0) {
 			if (convertView == null) {
 				convertView = inflater.inflate(R.layout.em_search_bar_with_padding, null);
@@ -112,33 +199,37 @@ public class GroupAdapter extends ArrayAdapter<EMGroup> {
 			}
 			((ImageView) convertView.findViewById(R.id.avatar)).setImageResource(R.drawable.em_add_public_group);
 			((TextView) convertView.findViewById(R.id.name)).setText(addPublicGroup);
-			//((TextView) convertView.findViewById(R.id.header)).setVisibility(View.VISIBLE);
-
-		} else {
+		} else if (getItemViewType(position) == 3){
 			if (convertView == null) {
 				convertView = inflater.inflate(R.layout.em_row_group, null);
 			}
 			Logger.i("is_filter",is_filter+"");
 			if(is_filter)
-			{convertView.findViewById(R.id.type).setVisibility(View.VISIBLE);
+			{
+				convertView.findViewById(R.id.type).setVisibility(View.VISIBLE);
 				convertView.findViewById(R.id.header).setVisibility(View.GONE);
 				if(getItem(position - 3).getOwner().equals(EMClient.getInstance().getCurrentUser()))
 				((TextView) convertView.findViewById(R.id.type)).setText("我创建的");
             else ((TextView) convertView.findViewById(R.id.type)).setText("我加入的");}else
 			{convertView.findViewById(R.id.type).setVisibility(View.GONE);}
-			if(position==pos+3)
-			{if(!is_filter){(convertView.findViewById(R.id.header)).setVisibility(View.VISIBLE);
+			 if(position==pos+3)
+			{
+				if(!is_filter){
+					(convertView.findViewById(R.id.header)).setVisibility(View.VISIBLE);
 				((TextView) convertView.findViewById(R.id.header)).setText("我加入的群("+(getCount()-3-pos)+")");}
 			else convertView.findViewById(R.id.header).setVisibility(View.GONE);}
-			if(position==3&&pos>0)
-			{if(!is_filter){(convertView.findViewById(R.id.header)).setVisibility(View.VISIBLE);
+			else if(position==3&&pos>0)
+			{
+				if(!is_filter){
+					(convertView.findViewById(R.id.header)).setVisibility(View.VISIBLE);
 				((TextView) convertView.findViewById(R.id.header)).setText("我创建的群("+pos+")");}
 				else convertView.findViewById(R.id.header).setVisibility(View.GONE);
-			}
+			}else{
+				  convertView.findViewById(R.id.header).setVisibility(View.GONE);
+			 }
 			((TextView) convertView.findViewById(R.id.name)).setText(getItem(position - 3).getGroupName()
 			);
 		}
-
 		return convertView;
 	}
 
@@ -146,5 +237,9 @@ public class GroupAdapter extends ArrayAdapter<EMGroup> {
 	public int getCount() {
 		return super.getCount() + 3;
 	}
-
+	public static class ViewHolder {
+		public TextView name,header,type;
+		public ImageView image,clear;
+		public EditText query;
+	}
 }

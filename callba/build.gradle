@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
     dexOptions {
         preDexLibraries = false
         javaMaxHeapSize "4g"   //这个改大
@@ -17,29 +17,29 @@ android {
     }
     defaultConfig {
         applicationId "com.callba"
-        minSdkVersion 11
-        targetSdkVersion 22
+        minSdkVersion 15
+        targetSdkVersion 23
         multiDexEnabled true
-        manifestPlaceholders = [ UMENG_CHANNEL_VALUE:"default_channel" ]
-        versionName "1.2.2"
+        manifestPlaceholders = [UMENG_CHANNEL_VALUE: "default_channel"]
+        versionName "1.2.3"
     }
     productFlavors {
-        default_channel{}
-        wandoujia{}
-        _360{}
-        yingyongbao{}
-        xiaomi{}
-        baidu{}
-        huawei{}
-        jifeng{}
-        lenovo{}
-        vivo{}
-        letv{}
-        oppo{}
+        default_channel {}
+        wandoujia {}
+        _360 {}
+        yingyongbao {}
+        xiaomi {}
+        baidu {}
+        huawei {}
+        jifeng {}
+        lenovo {}
+        vivo {}
+        letv {}
+        oppo {}
     }
 
     productFlavors.all { flavor ->
-        flavor.manifestPlaceholders = [ UMENG_CHANNEL_VALUE:name ]
+        flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
     }
     signingConfigs {
         robert {
@@ -76,15 +76,15 @@ android {
     }
     dependencies {
         compile fileTree(dir: 'libs', include: ['*.jar'])
-        compile 'com.android.support:support-v4:23.4.0'
-        compile 'com.android.support:design:23.4.0'
+        compile 'com.android.support:support-v4:24.2.0'
+        compile 'com.android.support:design:24.2.0'
         compile 'com.jakewharton:butterknife:5.1.1'
-        compile 'com.google.code.gson:gson:2.2.4'
+        compile 'com.google.code.gson:gson:2.4'
         compile 'io.reactivex:rxjava:1.1.3'
         compile 'io.reactivex:rxandroid:1.0.1'
         compile 'com.github.bumptech.glide:glide:3.7.0'
         compile 'de.hdodenhof:circleimageview:1.3.0'
-        compile 'com.android.support:recyclerview-v7:23.4.0'
+        compile 'com.android.support:recyclerview-v7:24.2.0'
         compile 'com.android.support:multidex:1.0.1'
         compile 'com.jzxiang.pickerview:TimePickerDialog:0.9.2'
         compile 'me.iwf.photopicker:PhotoPicker:0.8.1@aar'
@@ -92,7 +92,7 @@ android {
         compile 'com.google.dagger:dagger:2.4'
         apt 'com.google.dagger:dagger-compiler:2.4'
         compile 'org.glassfish:javax.annotation:10.0-b28'
-        compile 'com.android.support:cardview-v7:23.4.0'
+        compile 'com.android.support:cardview-v7:24.2.0'
         compile 'com.jcodecraeer:xrecyclerview:1.2.7'
         compile('de.greenrobot:greendao:2.0.0')
         compile 'com.artemzin.rxjava:proguard-rules:1.1.3.0'
@@ -106,5 +106,6 @@ android {
         compile 'com.squareup.retrofit2:converter-scalars:2.0.0'
         compile 'com.squareup.okhttp3:okhttp:3.3.1'
         compile 'com.umeng.analytics:analytics:latest.integration'
+        compile 'com.yanzhenjie:permission:1.0.3'
     }
 }

@@ -2,6 +2,7 @@ package com.callba.phone.ui.base;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.*;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.SPUtils;
+import com.yanzhenjie.permission.AndPermission;
 
 import java.net.UnknownHostException;
 
@@ -105,5 +107,12 @@ public abstract class BaseFragment extends Fragment {
         } else {
             toast(R.string.network_error);
         }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // 这个Activity中没有Fragment，这句话可以注释。
+        // super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        AndPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 }

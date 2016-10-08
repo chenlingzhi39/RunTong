@@ -542,10 +542,9 @@ public class DemoHelper {
         }
 
         @Override
-        public void onInvitationAccpted(String groupId, String invitee, String reason) {
-            
+        public void onInvitationAccepted(String groupId, String invitee, String reason) {
             new InviteMessgeDao(appContext).deleteMessage(groupId);
-            
+
             // 对方同意加群邀请
             boolean hasGroup = false;
             EMGroup _group = null;
@@ -558,7 +557,7 @@ public class DemoHelper {
             }
             if (!hasGroup)
                 return;
-            
+
             InviteMessage msg = new InviteMessage();
             msg.setFrom(groupId);
             msg.setTime(System.currentTimeMillis());
@@ -570,9 +569,8 @@ public class DemoHelper {
             msg.setStatus(InviteMesageStatus.GROUPINVITATION_ACCEPTED);
             notifyNewIviteMessage(msg);
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
-
         }
-        
+
         @Override
         public void onInvitationDeclined(String groupId, String invitee, String reason) {
             
@@ -620,7 +618,7 @@ public class DemoHelper {
         }
 
         @Override
-        public void onGroupDestroy(String groupId,final String groupName) {
+        public void onGroupDestroyed(String groupId,final String groupName) {
             // 群被解散
             //TODO 提示用户群被解散,demo省略
             EMClient.getInstance().chatManager().deleteConversation(groupName,true);

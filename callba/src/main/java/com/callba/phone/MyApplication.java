@@ -101,8 +101,8 @@ public class MyApplication extends Application {
         options.setAcceptInvitationAlways(false);
         options.setAutoLogin(false);
         EaseUI.getInstance().init(this,options);*/
-        CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(this);
+        //CrashHandler crashHandler = CrashHandler.getInstance();
+       //crashHandler.init(this);
        /* if((boolean)SPUtils.get(this, Constant.SETTINGS,Constant.LOG_KEY,false))
         LogcatHelper.getInstance(this).start();*/
         OkHttpClient okHttpClient = new OkHttpClient.Builder()

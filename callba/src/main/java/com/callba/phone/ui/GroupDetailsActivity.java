@@ -895,18 +895,19 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 		}
 
 		@Override
-		public void onInvitationAccpted(String groupId, String inviter,
-										String reason) {
+		public void onInvitationAccepted(String groupId, String inviter,
+										 String reason) {
 			runOnUiThread(new Runnable(){
 
 				@Override
 				public void run() {
 					refreshMembers();
 				}
-        		
-        	});
-			
+
+			});
+
 		}
+
 
 		@Override
 		public void onInvitationDeclined(String groupId, String invitee,
@@ -922,7 +923,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 		}
 
 		@Override
-		public void onGroupDestroy(String groupId, String groupName) {
+		public void onGroupDestroyed(String groupId, String groupName) {
 			finish();
 			
 		}

@@ -17,6 +17,11 @@ public class ContactItemView extends LinearLayout {
 
     private TextView unreadMsgView;
 
+    public ContactItemView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context, attrs);
+    }
+
     public ContactItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);

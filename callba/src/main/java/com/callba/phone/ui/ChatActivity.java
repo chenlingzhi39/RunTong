@@ -805,7 +805,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         }
 
         @Override
-        public void onGroupDestroy(final String groupId, final String groupName) {
+        public void onGroupDestroyed(final String groupId, final String groupName) {
             // 群组解散正好在此页面，提示群组被解散，并finish此页面
             runOnUiThread(new Runnable() {
                 public void run() {

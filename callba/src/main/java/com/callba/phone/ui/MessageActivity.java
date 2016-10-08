@@ -434,17 +434,17 @@ public class MessageActivity extends BaseActivity {
         protected FilterResults performFiltering(CharSequence prefix) {
             FilterResults results = new FilterResults();
             if (mOriginalList == null) {
-                mOriginalList = new ArrayList<EMConversation>();
+                mOriginalList = new ArrayList<>();
             }
 
 
             if (prefix == null || prefix.length() == 0) {
-                results.values = copyList;
-                results.count = copyList.size();
+                results.values = mOriginalList;
+                results.count = mOriginalList.size();
             } else {
                 String prefixString = prefix.toString();
                 final int count = mOriginalList.size();
-                final ArrayList<EMConversation> newValues = new ArrayList<EMConversation>();
+                final ArrayList<EMConversation> newValues = new ArrayList<>();
                 for (int i = 0; i < count; i++) {
                     final EMConversation conversation = mOriginalList.get(i);
 //                    String username = user.getNick();

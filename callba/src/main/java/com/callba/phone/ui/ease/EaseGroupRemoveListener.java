@@ -33,9 +33,18 @@ public abstract class EaseGroupRemoveListener implements EMGroupChangeListener {
     }
 
     @Override
-    public void onInvitationAccpted(String groupId, String inviter, String reason) {
-        // TODO Auto-generated method stub
-        
+    public void onGroupDestroyed(String s, String s1) {
+
+    }
+
+    @Override
+    public void onInvitationAccepted(String s, String s1, String s2) {
+
+    }
+
+    @Override
+    public void onUserRemoved(String s, String s1) {
+
     }
 
     @Override

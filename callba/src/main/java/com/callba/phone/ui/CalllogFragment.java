@@ -67,6 +67,8 @@ public class CalllogFragment extends BaseFragment {
                         if (numbers.contains(bean.getCallLogNumber()))
                             beans.add(bean);
                     }
+                    try {
+
                     calllogAdapter = new CalllogAdapter(getActivity());
                     calllogAdapter.addAll(sortByDate(beans));
                     calllogList.setAdapter(calllogAdapter);
@@ -81,10 +83,9 @@ public class CalllogFragment extends BaseFragment {
                             startActivity(intent);
                         }
                     });
-                    if (beans.size() == 0) text.setVisibility(View.VISIBLE);
-                } else {
-
-                }
+                    if (beans.size() == 0) text.setVisibility(View.VISIBLE);}catch (Exception e){e.printStackTrace();
+                        text.setVisibility(View.VISIBLE);}
+                }else{text.setVisibility(View.VISIBLE);}
             }
 
             @Override

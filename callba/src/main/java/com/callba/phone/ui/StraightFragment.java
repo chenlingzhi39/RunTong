@@ -570,6 +570,7 @@ public class StraightFragment extends BaseSelectContactFragment {
     }
 
     public void getBills() {
+        try{
         OkHttpUtils.post().url(Interfaces.COMMODITY_INFO)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
@@ -649,7 +650,7 @@ public class StraightFragment extends BaseSelectContactFragment {
                     toast(R.string.getserverdata_exception);
                 }
             }
-        });
+        });}catch(Exception e){e.printStackTrace();}
     }
 
     public void showCouponsDialog(ArrayList<Coupon> coupons) {

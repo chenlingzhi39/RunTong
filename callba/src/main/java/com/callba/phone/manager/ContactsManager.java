@@ -268,12 +268,16 @@ public class ContactsManager {
         Log.w(TAG, "**update end**");
     }
     public static Bitmap getAvatar(Context context,String id,boolean is_high){
+        try {
         ContentResolver cr = context.getContentResolver();
         Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,
                 Long.parseLong(id));
         InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(cr, uri,is_high);
         Bitmap contactPhoto = BitmapFactory.decodeStream(input);
-            return contactPhoto;
+            return contactPhoto;}catch (Exception e){
+            return null;
+        }
+
 
     }
 
