@@ -184,25 +184,22 @@ public class ContactDetailActivity extends BaseActivity {
             public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
                 if (i == 0) {
                     if (mCurrentState != State.EXPANDED) {
-                        shadow.setVisibility(View.VISIBLE);
+                        //shadow.setVisibility(View.VISIBLE);
                         shadowReverse.setVisibility(View.VISIBLE);
                     }
                         mCurrentState = State.EXPANDED;
-
-
                 } else if (Math.abs(i) >= appBarLayout.getTotalScrollRange()) {
                     if (mCurrentState != State.COLLAPSED) {
-                        shadow.setVisibility(View.GONE);
-                        shadowReverse.setVisibility(View.GONE);
+                        //shadow.setVisibility(View.GONE);
+                        //shadowReverse.setVisibility(View.GONE);
                     }
                     mCurrentState = State.COLLAPSED;
                 } else {
                     if (mCurrentState != State.IDLE) {
-                        shadow.setVisibility(View.GONE);
+                        //shadow.setVisibility(View.GONE);
                         shadowReverse.setVisibility(View.GONE);
                     }
                      mCurrentState = State.IDLE;
-
                 }
 
             }
