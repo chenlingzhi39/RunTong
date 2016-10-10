@@ -35,7 +35,7 @@ public class NearByUserViewHolder extends BaseViewHolder<NearByUser> {
         if (!data.getUrl_head().equals(""))
             Glide.with(getContext()).load(data.getUrl_head()).into(userHead);
         else
-            userHead.setImageResource(R.drawable.head);
+            userHead.setImageResource(R.drawable.ease_default_avatar);
          sign.setText(data.getSign());
         int away = Integer.parseInt(data.getDistance().substring(0, data.getDistance().lastIndexOf(".")));
         if (away < 1000)

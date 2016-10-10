@@ -4,15 +4,31 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
+import com.callba.phone.Constant;
+import com.callba.phone.DemoHelper;
 import com.callba.phone.MyApplication;
+import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.ContactMutliNumBean;
+import com.callba.phone.bean.EaseUser;
 import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.manager.UserManager;
+import com.callba.phone.util.EaseCommonUtils;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
+import okhttp3.Call;
 
 /**
  * 联系人业务逻辑管理
@@ -68,16 +84,15 @@ public class ContactController {
      * @return
      */
     public synchronized List<ContactMutliNumBean> getFilterListContactEntitiesNoDuplicate() {
-        personEntities = new ArrayList<ContactMutliNumBean>();
+        personEntities = new ArrayList<>();
         String phoneNumbers = "";
         List<String> contactPhones = new ArrayList<>();
         Logger.i("contact_size", mAllContactPersonEntities.size() + "");
         for (int i = 0; i < mAllContactPersonEntities.size(); i++) {
-                    /*if(!mAllContactPersonEntities.get(i).getDisplayName().equals("Call吧电话"))
-					{
-					phoneNumbers+=mAllContactPersonEntities.get(i).getDisplayName()+",";
-					}*/
-           // phoneNumbers += mAllContactPersonEntities.get(i).getPhoneNumber() + ",";
+            if(i==mAllContactPersonEntities.size())
+                phoneNumbers +=  Pattern.compile("[^0-9]").matcher(mAllContactPersonEntities.get(i).getPhoneNumber()).replaceAll("");
+            else
+            phoneNumbers +=  Pattern.compile("[^0-9]").matcher(mAllContactPersonEntities.get(i).getPhoneNumber()).replaceAll("")+",";
             Logger.i("contact_number", mAllContactPersonEntities.get(i).get_id() + " " + mAllContactPersonEntities.get(i).getPhoneNumber());
             if (i == 0) {
                 personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0)));
@@ -97,7 +112,8 @@ public class ContactController {
 //        Logger.i("phoneNumbers", phoneNumbers);
 //        Logger.i("add_url", Interfaces.ADD_FRIENDS + "?loginName=" + UserManager.getUsername(contaxt) + "&loginPwd=" + UserManager.getPassword(contaxt) + "&phoneNumbers=" + phoneNumbers);
         //FileUtils.writeObjectToFile(StorageUtils.getFilesDirectory(contaxt)+File.separator+"contact.txt",phoneNumbers);
-     /*   OkHttpUtils
+        if(!TextUtils.isEmpty(phoneNumbers))
+        OkHttpUtils
                 .post()
                 .url(Interfaces.ADD_FRIENDS)
                 .addParams("loginName", UserManager.getUsername(contaxt))
@@ -136,7 +152,7 @@ public class ContactController {
                                         ArrayList<BaseUser> list;
                                         list = gson.fromJson(result[1], new TypeToken<List<BaseUser>>() {
                                         }.getType());
-                                        List<EaseUser> mList = new ArrayList<EaseUser>();
+                                        List<EaseUser> mList = new ArrayList<>();
                                         for (BaseUser baseUser : list) {
                                             EaseUser user = new EaseUser(baseUser.getPhoneNumber() + "-callba");
                                             user.setAvatar(baseUser.getUrl_head());
@@ -158,7 +174,7 @@ public class ContactController {
                     e.printStackTrace();
                 }
             }
-        });*/
+        });
 
 		/*for(ContactPersonEntity contactPersonEntity : mAllContactPersonEntities) {
 

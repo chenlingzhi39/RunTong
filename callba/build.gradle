@@ -107,5 +107,7 @@ android {
         compile 'com.squareup.okhttp3:okhttp:3.3.1'
         compile 'com.umeng.analytics:analytics:latest.integration'
         compile 'com.yanzhenjie:permission:1.0.3'
+        compile 'com.cleveroad:slidingtutorial:1.0.5'
+        compile 'com.android.support:percent:24.2.1'
     }
 }

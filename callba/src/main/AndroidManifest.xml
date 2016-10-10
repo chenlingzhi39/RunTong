@@ -89,6 +89,11 @@
         </meta-data>-->
 
         <service android:name=".phone.service.UpdateService" />
+        <activity android:name=".phone.ui.TutorialActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/LauncherAppTheme"
+            />
         <activity
             android:name=".phone.ui.ATypeActivity2"
             android:launchMode="singleTask"
