@@ -101,5 +101,26 @@ public class EaseUserUtils {
             }else textView.setTextColor(Color.parseColor("#000000"));
         }
     }
-    
+    public static String getUserNick(String username){
+            String name=username;
+            if(username.equals(UserManager.getUsername(MyApplication.getInstance())+"-callba")){
+                name=UserManager.getNickname(MyApplication.getInstance());
+
+            }
+            EaseUser user = getUserInfo(username);
+            if(user != null &&!TextUtils.isEmpty(user.getNick())){
+                name=user.getNick();
+
+            }else{
+                if(username.length()>=11)
+                {StringBuffer buffer = new StringBuffer(username.substring(0,11));
+                    name=buffer.toString();
+                }else  name=username;
+                // buffer.replace(3,8,"****");
+
+            }
+            if(user != null &&!TextUtils.isEmpty(user.getRemark()))
+                name=user.getRemark();
+        return name;
+    }
 }

@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.callba.R;
+import com.callba.phone.MyApplication;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.manager.UserManager;
@@ -48,10 +49,6 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
 
         et_username = (CleanableEditText) this.findViewById(R.id.et_login_name);
         et_password = (EditText) this.findViewById(R.id.et_login_password);
-        if (getIntent().getStringExtra("number") != null) {
-            et_username.setText(getIntent().getStringExtra("number"));
-            et_password.setText(getIntent().getStringExtra("password"));
-        }
         username = UserManager.getUsername(this);
         if (!"".equals(username)) {
             et_username.setText(username);
@@ -112,7 +109,9 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         }
         UserManager.putUsername(this,username);
         UserManager.putOriginalPassword(this,password);
+        if(MyApplication.getInstance().detect())
         gotoMainActivity();
+        else toast("请检查您的网络连接");
     }
 
     /**
@@ -156,5 +155,10 @@ public class LoginActivity extends BaseActivity implements OnClickListener {
         }
         return super.onOptionsItemSelected(item);
     }
-
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+       et_username.setText(UserManager.getUsername(this));
+       et_password.setText(UserManager.getOriginalPassword(this));
+    }
 }

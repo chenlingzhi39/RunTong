@@ -115,7 +115,7 @@ public class Constant {
 	/**
 	 * 获取版本信息失败重试次数
 	 */
-	public static final int GETVERSION_RETRY_TIMES = 9;
+	public static final int GETVERSION_RETRY_TIMES = 3;
 	/**
 	 * 登录失败重试次数
 	 */

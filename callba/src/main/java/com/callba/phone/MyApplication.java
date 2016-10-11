@@ -22,8 +22,11 @@ import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.callba.BuildConfig;
+import com.callba.phone.cfg.*;
+import com.callba.phone.ui.UserActivity;
 import com.callba.phone.ui.WelcomeActivity;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.StorageUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import de.greenrobot.dao.DaoMaster;
@@ -169,6 +172,7 @@ public class MyApplication extends Application {
        /* if((boolean)SPUtils.get(this, Constant.SETTINGS,Constant.LOG_KEY,false))
         LogcatHelper.getInstance(this).stop();*/
         super.onTerminate();
+        SPUtils.put(this, com.callba.phone.cfg.Constant.PACKAGE_NAME,"has_login",false);
     }
 
     /**

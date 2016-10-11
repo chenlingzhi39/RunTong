@@ -255,7 +255,6 @@ public  class ContactsAccessPublic {
                         new QueryContacts(new QueryContactCallback() {
                             @Override
                             public void queryCompleted(List<ContactPersonEntity> contacts) {
-                                MainService.system_contact=false;
                                 context.sendBroadcast(new Intent("com.callba.contact"));
                             }
                         }).loadContact(context);

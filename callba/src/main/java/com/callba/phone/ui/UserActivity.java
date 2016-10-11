@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.callba.BuildConfig;
 import com.callba.R;
+import com.callba.phone.cfg.Constant;
 import com.callba.phone.service.UpdateService;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.MyApplication;
@@ -27,6 +28,7 @@ import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.Interfaces;
+import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.SimpleHandler;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -134,6 +136,7 @@ public class UserActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
+                                SPUtils.put(UserActivity.this, Constant.PACKAGE_NAME,"has_login",false);
                                 UserManager.putPassword(UserActivity.this,"");
                                 UserManager.putOriginalPassword(UserActivity.this,"");
                                 UserManager.putUserAvatar(UserActivity.this,"");

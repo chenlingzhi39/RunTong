@@ -35,6 +35,7 @@ import com.callba.R;
 import com.callba.phone.MyApplication;
 import com.callba.phone.SystemBarTintManager;
 import com.callba.phone.bean.ApiService;
+import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.ui.BalanceActivity;
@@ -54,6 +55,8 @@ import com.callba.phone.ui.WelcomeActivity;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.RxBus;
+import com.callba.phone.util.SPUtils;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -64,7 +67,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import rx.Observable;
 import rx.Subscription;
+import rx.functions.Action1;
 
 public class BaseActivity extends AppCompatActivity {
     public static Boolean flag = true;
@@ -101,12 +106,18 @@ public class BaseActivity extends AppCompatActivity {
     }*/
     public Subscription subscription;
     public AlertDialog dialog;
-
+    private Observable<Boolean> networkObservable;
     @SuppressLint("InlinedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        networkObservable= RxBus.get().register("has_network",Boolean.class);
+        networkObservable.subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+              onNetworkChanged(aBoolean);
+            }
+        });
         if (getClass().isAnnotationPresent(ActivityFragmentInject.class)) {
             ActivityFragmentInject annotation = getClass()
                     .getAnnotation(ActivityFragmentInject.class);
@@ -180,6 +191,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        RxBus.get().unregister("has_network", networkObservable);
         if (subscription != null) subscription.unsubscribe();
         MyApplication.activities.remove(this);
 
@@ -511,5 +523,8 @@ public class BaseActivity extends AppCompatActivity {
         } else {
             toast(R.string.network_error);
         }
+    }
+    public void onNetworkChanged(boolean isAvailable){
+
     }
 }

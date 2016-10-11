@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.MyApplication;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.Constant;
@@ -91,7 +92,6 @@ public class MessageActivity extends BaseActivity {
     protected InputMethodManager inputMethodManager;
     protected FrameLayout errorItemContainer;
     protected TextView errorText;
-
     @OnClick(R.id.search_clear)
     public void onClick() {
         query.getText().clear();
@@ -152,16 +152,17 @@ public class MessageActivity extends BaseActivity {
      * 连接断开
      */
     protected void onConnectionDisconnected() {
-        //errorItemContainer.setVisibility(View.VISIBLE);
+        errorItemContainer.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        View errorView = (LinearLayout) View.inflate(this, R.layout.em_chat_neterror_item, null);
+        View errorView =  View.inflate(this, R.layout.em_chat_neterror_item, null);
         errorItemContainer = (FrameLayout) findViewById(R.id.fl_error_item);
         errorText = (TextView) errorView.findViewById(R.id.tv_connect_errormsg);
+            errorItemContainer.setVisibility(MyApplication.getInstance().detect()?View.GONE:View.VISIBLE);
         errorItemContainer.addView(errorView);
         inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         String language = Locale.getDefault().getLanguage();
@@ -295,6 +296,10 @@ public class MessageActivity extends BaseActivity {
         broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
     }
 
+    @Override
+    public void onNetworkChanged(boolean isAvailable) {
+      errorItemContainer.setVisibility(isAvailable?View.GONE:View.VISIBLE);
+    }
 
     /**
      * 获取会话列表

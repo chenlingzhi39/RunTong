@@ -41,7 +41,6 @@ import okhttp3.Call;
 public class MainService extends Service {
     private static final String TAG = MainService.class.getCanonicalName();
 
-    public static boolean system_contact = false;
     /**
      * 存储任务集合
      */
@@ -55,16 +54,13 @@ public class MainService extends Service {
         @Override
         public void onChange(boolean selfChange) {
             // 当联系人表发生变化时进行相应的操作
-            Logger.i("system_contact",system_contact+"");
-            Logger.i("contact","change");
-            if (!system_contact) {
                 new QueryContacts(new QueryContactCallback() {
                     @Override
                     public void queryCompleted(List<ContactPersonEntity> contacts) {
                        sendBroadcast(new Intent("com.callba.contact"));
                     }
                 }).loadContact(getApplicationContext());
-            }
+
         }
     };
 

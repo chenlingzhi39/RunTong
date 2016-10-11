@@ -171,13 +171,21 @@ public class WelcomeActivity extends BaseActivity {
         String s = getResources().getConfiguration().locale.getCountry();
         Logger.v("语言环境", s);
         Locale.setDefault(new Locale("zh"));
+        if(!TextUtils.isEmpty(getUsername())&&!TextUtils.isEmpty(getPassword()))
+        {
+            Intent intent = new Intent(WelcomeActivity.this,
+                    MainTabActivity.class);
+            startActivity(intent);
+            return;
+        }
         isNetworkAvail = MyApplication.getInstance().detect();
-        alertNetWork(isNetworkAvail);
+        gotoActivity();
+        /*alertNetWork(isNetworkAvail);
         if (isNetworkAvail) {
             currentGetVersionTime = 0;
             // 获取版本信息
             sendGetVersionTask();
-        }
+        }*/
 
     }
 

@@ -35,18 +35,22 @@ import com.callba.phone.ui.adapter.HomeAdapter;
 import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.ActivityUtil;
+import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.RxBus;
 import com.callba.phone.util.SPUtils;
+import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.view.BannerLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -95,6 +99,7 @@ public class HomeActivity extends BaseActivity {
     private boolean has_image;
     private String img_url;
     private Observable<Boolean> mRefreshAdObservable;
+    private boolean is_first=true,no_connection=false;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,7 +172,6 @@ public class HomeActivity extends BaseActivity {
         localImages.add(R.drawable.ad5);
         localImages.add(R.drawable.ad6);
         banner.setViewRes(localImages);
-        autoLogin();
         mRefreshAdObservable= RxBus.get().register("refresh_ad", Boolean.class);
         mRefreshAdObservable.subscribe(new Action1<Boolean>() {
             @Override
@@ -175,8 +179,21 @@ public class HomeActivity extends BaseActivity {
                 getAd();
             }
         });
+        if(MyApplication.getInstance().detect())
+        getKey();
+        else no_connection=true;
+        //autoLogin();
     }
 
+    @Override
+    public void onNetworkChanged(boolean isAvailable) {
+       if(isAvailable&&is_first&&no_connection)
+       {getKey();
+       is_first=false;
+           no_connection=false;
+       }
+        else if(!isAvailable)is_first=true;
+    }
 
     // 跳转到起始页
     private void gotoWelcomePage() {
@@ -286,12 +303,19 @@ public class HomeActivity extends BaseActivity {
                 .build().execute(new StringCallback() {
             @Override
             public void onAfter(int id) {
+               progressDialog.dismiss();
             }
 
             @Override
             public void onBefore(Request request, int id) {
-                progressDialog = ProgressDialog.show(HomeActivity.this, null,
-                        getString(R.string.logining));
+              /*  SimpleHandler.getInstance().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog = ProgressDialog.show(HomeActivity.this, null,
+                                getString(R.string.logining));
+                    }
+                });
+*/
             }
 
             @Override
@@ -308,9 +332,8 @@ public class HomeActivity extends BaseActivity {
                     if (resultInfo[0].equals("0")) { //处理登录成功返回信息
                         LoginController.parseLoginSuccessResult(HomeActivity.this, username, password, resultInfo);
                         LoginController.getInstance().setUserLoginState(true);
-                        if ((boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", true))
+                        if ((boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", true)&&!getDate().equals(SPUtils.get(HomeActivity.this, Constant.PACKAGE_NAME, "sign_date", "")))
                             signIn();
-                        // getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
                         if (GlobalConfig.getInstance().getAppVersionBean() != null) {
                             if (GlobalConfig.getInstance().getAppVersionBean().isForceUpgrade() || (boolean) SPUtils.get(HomeActivity.this, "settings", "update_key", true))
                                 check2Upgrade(GlobalConfig.getInstance().getAppVersionBean(), false);
@@ -318,7 +341,7 @@ public class HomeActivity extends BaseActivity {
                         }else getActivity();
                         RxBus.get().post("refresh_ad",true);
                         MobclickAgent.onProfileSignIn(getUsername());
-                        progressDialog.dismiss();
+                        SPUtils.put(HomeActivity.this,Constant.PACKAGE_NAME,"has_login",true);
                     } else {
                         toast(resultInfo[1]);
                         switchManualLogin();
@@ -365,65 +388,6 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-    public void getSystemPhoneNumber(String count) {
-        Logger.i("phoneNumberCount", count);
-        OkHttpUtils.post().url(Interfaces.GET_SYSTEM_PHONE_NUMBER)
-                .addParams("loginName", getUsername())
-                .addParams("loginPwd", getPassword())
-                .addParams("phoneNumberCount", count)
-                .build().execute(new StringCallback() {
-            @Override
-            public void onError(Call call, Exception e, int id) {
-
-            }
-
-            @Override
-            public void onResponse(String response, int id) {
-                try {
-                    Log.i("system_result", response);
-                    result = response.split("\\|");
-                    if (result[0].equals("0")) {
-                        list = new ArrayList<>();
-                        try {
-                            list = gson.fromJson(result[1], new TypeToken<ArrayList<SystemNumber>>() {
-                            }.getType());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        final ArrayList<String> numbers = new ArrayList<>();
-                        final ContactData contactData = new ContactData();
-                        contactData.setContactName("Call吧电话");
-                        for (SystemNumber user : list) {
-                            numbers.add(user.getPhoneNumber());
-                            Logger.i("phonenumber", user.getPhoneNumber());
-                        }
-                        MainService.system_contact = true;
-                        if (ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话").equals("0"))
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
-                                }
-                            }).start();
-                        else {
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ContactsAccessPublic.deleteContact(HomeActivity.this, new ContactsManager(getContentResolver()).getContactID("Call吧电话"));
-                                    ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
-                                }
-                            }).start();
-                        }
-                    } else {
-
-                    }
-                } catch (Exception e) {
-
-                }
-            }
-        });
-    }
-
     public void signIn() {
         OkHttpUtils.post().url(Interfaces.Sign)
                 .addParams("loginName", getUsername())
@@ -454,6 +418,7 @@ public class HomeActivity extends BaseActivity {
                                 }
                                 markDao.insert(mark);
                                 UserManager.putGold(HomeActivity.this, UserManager.getGold(HomeActivity.this) + 3);
+                                SPUtils.put(HomeActivity.this, Constant.PACKAGE_NAME, "sign_date", getDate());
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -507,6 +472,52 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
+public void getKey(){
+    OkHttpUtils.post().url(Interfaces.Version)
+            .tag(this)
+            .addParams("softType", "android")
+            .build().execute(new StringCallback() {
+        @Override
+        public void onBefore(Request request, int id) {
+            progressDialog = ProgressDialog.show(HomeActivity.this, null,
+                    getString(R.string.logining));
+        }
+
+        @Override
+        public void onError(Call call, Exception e, int id) {
+            e.printStackTrace();
+            showException(e);
+            AppVersionChecker.AppVersionBean appVersionBean = new AppVersionChecker.AppVersionBean();
+            checkLoginKey(appVersionBean);
+        }
+        @Override
+        public void onResponse(String response, int id) {
+            AppVersionChecker.AppVersionBean appVersionBean = AppVersionChecker.parseVersionInfo(HomeActivity.this, response);
+            GlobalConfig.getInstance().setAppVersionBean(appVersionBean);
+            checkLoginKey(appVersionBean);
+        }
+    });
+}
+    /**
+     * 检查是否成功获取加密的key
+     *
+     * @author zhw
+     */
+    private void checkLoginKey(AppVersionChecker.AppVersionBean appVersionBean) {
+        // Logger.i(TAG, "getSecretKey() : " +
+        // GlobalConfig.getInstance().getSecretKey());
+        if (!TextUtils.isEmpty(appVersionBean.getSecretKey())) {
+            UserManager.putSecretKey(HomeActivity.this, appVersionBean.getSecretKey());
+            // 成功获取key
+            //check2Upgrade(appVersionBean);
+           autoLogin();
+        } else{
+            //OkHttpUtils.getInstance().cancelTag(this);
+            // 再次发送获取任务
+            switchManualLogin();
+
+        }
+    }
 
     public class DialogHelper implements DialogInterface.OnDismissListener {
         private AlertDialog mDialog;

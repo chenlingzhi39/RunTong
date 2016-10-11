@@ -21,6 +21,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.callba.R;
+import com.callba.phone.MyApplication;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -401,7 +402,8 @@ private static class Han extends Handler{
                         toast(content[1]);
                         UserManager.putUsername(RegisterActivity.this, username);
                         UserManager.putOriginalPassword(RegisterActivity.this, password);
-                        Intent intent = new Intent(RegisterActivity.this, MainTabActivity.class);
+                        if(MyApplication.getInstance().detect())
+                        {Intent intent = new Intent(RegisterActivity.this, MainTabActivity.class);
                         LoginController.getInstance().setUserLoginState(false);
 					/*new Thread(new Runnable() {
 						@Override
@@ -412,7 +414,11 @@ private static class Han extends Handler{
 							}
 						}
 					}).start();*/
-                        startActivity(intent);
+                        startActivity(intent);}else {
+                            Intent intentLogin = new Intent(RegisterActivity.this, LoginActivity.class);
+                            startActivity(intentLogin);
+                            finish();
+                        }
                     } else {
                         toast(content[1]);
                     }
