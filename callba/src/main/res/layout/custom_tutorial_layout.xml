@@ -17,12 +17,12 @@
         android:layout_height="50dp"
         android:layout_gravity="top|center_horizontal">
 
-        <View
+    <!--    <View
             android:id="@+id/separator"
             android:layout_width="match_parent"
             android:layout_height="0.1dp"
             android:background="@android:color/white"/>
-
+-->
         <TextView
             android:id="@+id/tvSkip"
             android:layout_width="wrap_content"

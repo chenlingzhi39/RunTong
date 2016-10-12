@@ -136,7 +136,6 @@ public class UserActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                SPUtils.put(UserActivity.this, Constant.PACKAGE_NAME,"has_login",false);
                                 UserManager.putPassword(UserActivity.this,"");
                                 UserManager.putOriginalPassword(UserActivity.this,"");
                                 UserManager.putUserAvatar(UserActivity.this,"");

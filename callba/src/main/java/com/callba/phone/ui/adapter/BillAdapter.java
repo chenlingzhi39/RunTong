@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import com.callba.R;
 import com.callba.phone.bean.Commodity;
 import com.callba.phone.bean.Flow;
+import com.callba.phone.util.Logger;
+import com.umeng.socom.Log;
 
 import java.util.List;
 
@@ -36,6 +38,7 @@ public class BillAdapter extends RadioAdapter<Commodity> {
     @Override
     public void onBindViewHolder(RadioAdapter.ViewHolder viewHolder, int i) {
         super.onBindViewHolder(viewHolder, i);
+        Logger.i("title",mItems.get(i).getTitle());
         Spannable spannable = new SpannableString(mItems.get(i).getPrice() + "元\n\n" + mItems.get(i).getTitle());
         spannable.setSpan(new AbsoluteSizeSpan(size), 0, (mItems.get(i).getPrice() + "元").length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannable.setSpan(new AbsoluteSizeSpan(size / 2), 4, spannable.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);

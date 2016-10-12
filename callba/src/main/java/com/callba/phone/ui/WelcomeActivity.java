@@ -295,7 +295,7 @@ public class WelcomeActivity extends BaseActivity {
         if (isFirstStart) {
             // 第一次启动，跳转到新功能介绍页面
             Intent intent = new Intent(WelcomeActivity.this,
-                    TutorialActivity.class);
+                    FunIntroduceActivity.class);
             WelcomeActivity.this.startActivity(intent);
             SPUtils.put(this,Constant.PACKAGE_NAME,Constant.ISFRISTSTART, false);
         } else {

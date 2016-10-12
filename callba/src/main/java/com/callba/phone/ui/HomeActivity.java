@@ -341,7 +341,6 @@ public class HomeActivity extends BaseActivity {
                         }else getActivity();
                         RxBus.get().post("refresh_ad",true);
                         MobclickAgent.onProfileSignIn(getUsername());
-                        SPUtils.put(HomeActivity.this,Constant.PACKAGE_NAME,"has_login",true);
                     } else {
                         toast(resultInfo[1]);
                         switchManualLogin();

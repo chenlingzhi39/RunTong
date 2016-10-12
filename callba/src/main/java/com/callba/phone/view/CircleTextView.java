@@ -54,7 +54,14 @@ public class CircleTextView extends TextView{
 
     public void setDensity(int density) {
         this.density = density;
-        switch (density){
+        size=20*density/160;
+        size1=4*density/160;
+        size2=8*density/160;
+        size3=12*density/160;
+        width1=1*density/160;
+        width2=1*density/160;
+        invalidate();
+      /*  switch (density){
             case 120:
                 size=15;
                 size1=3;
@@ -109,7 +116,7 @@ public class CircleTextView extends TextView{
                 width2=4;
                 invalidate();
                 break;
-        }
+        }*/
     }
 
     @Override

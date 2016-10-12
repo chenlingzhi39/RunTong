@@ -172,7 +172,7 @@ public class MyApplication extends Application {
        /* if((boolean)SPUtils.get(this, Constant.SETTINGS,Constant.LOG_KEY,false))
         LogcatHelper.getInstance(this).stop();*/
         super.onTerminate();
-        SPUtils.put(this, com.callba.phone.cfg.Constant.PACKAGE_NAME,"has_login",false);
+
     }
 
     /**

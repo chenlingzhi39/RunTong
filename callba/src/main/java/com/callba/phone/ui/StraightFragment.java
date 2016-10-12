@@ -222,26 +222,7 @@ public class StraightFragment extends BaseSelectContactFragment {
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int mDensity = metrics.densityDpi;
-        switch (mDensity) {
-            case 120:
-                size = 15;
-                break;
-            case 160:
-                size = 20;
-                break;
-            case 240:
-                size = 30;
-                break;
-            case 320:
-                size = 40;
-                break;
-            case 480:
-                size = 60;
-                break;
-            case 640:
-                size = 80;
-                break;
-        }
+        size=20*mDensity/160;
      /*   Spannable spannable = new SpannableString("39元\n\n（包月畅聊）\n原价150元");
         spannable.setSpan(new AbsoluteSizeSpan(size), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannable.setSpan(new AbsoluteSizeSpan(size / 2), 4, spannable.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);

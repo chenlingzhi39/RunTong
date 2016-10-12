@@ -18,6 +18,7 @@ import com.callba.phone.MyApplication;
 import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.ContactMutliNumBean;
 import com.callba.phone.bean.EaseUser;
+import com.callba.phone.bean.Friend;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.EaseCommonUtils;
@@ -87,12 +88,14 @@ public class ContactController {
         personEntities = new ArrayList<>();
         String phoneNumbers = "";
         List<String> contactPhones = new ArrayList<>();
+       // List<Friend> friends=new ArrayList<>();
         Logger.i("contact_size", mAllContactPersonEntities.size() + "");
         for (int i = 0; i < mAllContactPersonEntities.size(); i++) {
-            if(i==mAllContactPersonEntities.size())
+           /* if(i==mAllContactPersonEntities.size())
                 phoneNumbers +=  Pattern.compile("[^0-9]").matcher(mAllContactPersonEntities.get(i).getPhoneNumber()).replaceAll("");
             else
-            phoneNumbers +=  Pattern.compile("[^0-9]").matcher(mAllContactPersonEntities.get(i).getPhoneNumber()).replaceAll("")+",";
+            phoneNumbers +=  Pattern.compile("[^0-9]").matcher(mAllContactPersonEntities.get(i).getPhoneNumber()).replaceAll("")+",";*/
+            //friends.add(new Friend(mAllContactPersonEntities.get(i).getDisplayName(),mAllContactPersonEntities.get(i).getPhoneNumber()));
             Logger.i("contact_number", mAllContactPersonEntities.get(i).get_id() + " " + mAllContactPersonEntities.get(i).getPhoneNumber());
             if (i == 0) {
                 personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0)));
@@ -112,13 +115,13 @@ public class ContactController {
 //        Logger.i("phoneNumbers", phoneNumbers);
 //        Logger.i("add_url", Interfaces.ADD_FRIENDS + "?loginName=" + UserManager.getUsername(contaxt) + "&loginPwd=" + UserManager.getPassword(contaxt) + "&phoneNumbers=" + phoneNumbers);
         //FileUtils.writeObjectToFile(StorageUtils.getFilesDirectory(contaxt)+File.separator+"contact.txt",phoneNumbers);
-        if(!TextUtils.isEmpty(phoneNumbers))
+       /* if(friends.size()>0)
         OkHttpUtils
                 .post()
                 .url(Interfaces.ADD_FRIENDS)
                 .addParams("loginName", UserManager.getUsername(contaxt))
                 .addParams("loginPwd", UserManager.getPassword(contaxt))
-                .addParams("phoneNumbers", phoneNumbers)
+                .addParams("phoneNumbers", gson.toJson(friends))
                 .build().execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
@@ -174,7 +177,7 @@ public class ContactController {
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
 
 		/*for(ContactPersonEntity contactPersonEntity : mAllContactPersonEntities) {
 

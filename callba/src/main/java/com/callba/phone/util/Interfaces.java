@@ -135,7 +135,7 @@ public interface Interfaces {
 	/**
 	 * 添加多个好友
 	 */
-	String ADD_FRIENDS=URL+ "/friend/addfriends.jsp";
+	String ADD_FRIENDS=URL+ "/friend/addfriends2.jsp";
 	/**
 	 * 订单
 	 */
