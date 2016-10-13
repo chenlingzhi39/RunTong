@@ -5,10 +5,10 @@ package com.callba.phone.bean;
  */
 
 public class Friend {
-    private String name,number;
+    private String name,phoneNnumber;
 
     public Friend(String name, String number) {
         this.name = name;
-        this.number = number;
+        this.phoneNnumber = number;
     }
 }

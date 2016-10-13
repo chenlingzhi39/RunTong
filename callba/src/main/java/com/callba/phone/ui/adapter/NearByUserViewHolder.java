@@ -44,6 +44,6 @@ public class NearByUserViewHolder extends BaseViewHolder<NearByUser> {
         if (away < 1000)
             distance.setHint(away + "米以内");
         else distance.setHint((float) (Math.round(away / 10)) / 100 + "公里以内");
-        time.setText(StringUtils.friendly_time(data.getInTime()));
+        time.setHint(StringUtils.friendly_time(data.getInTime()));
     }
 }
