@@ -88,15 +88,15 @@ public class ContactController {
         personEntities = new ArrayList<>();
         String phoneNumbers = "";
         List<String> contactPhones = new ArrayList<>();
-       // List<Friend> friends=new ArrayList<>();
+        List<Friend> friends=new ArrayList<>();
         Logger.i("contact_size", mAllContactPersonEntities.size() + "");
         for (int i = 0; i < mAllContactPersonEntities.size(); i++) {
            /* if(i==mAllContactPersonEntities.size())
                 phoneNumbers +=  Pattern.compile("[^0-9]").matcher(mAllContactPersonEntities.get(i).getPhoneNumber()).replaceAll("");
             else
             phoneNumbers +=  Pattern.compile("[^0-9]").matcher(mAllContactPersonEntities.get(i).getPhoneNumber()).replaceAll("")+",";*/
-            //friends.add(new Friend(mAllContactPersonEntities.get(i).getDisplayName(),mAllContactPersonEntities.get(i).getPhoneNumber()));
-            Logger.i("contact_number", mAllContactPersonEntities.get(i).get_id() + " " + mAllContactPersonEntities.get(i).getPhoneNumber());
+            friends.add(new Friend(mAllContactPersonEntities.get(i).getDisplayName(),Pattern.compile("[^0-9]").matcher(mAllContactPersonEntities.get(i).getPhoneNumber()).replaceAll("")));
+            Logger.i("contact_number", mAllContactPersonEntities.get(i).get_id() + " " + Pattern.compile("[^0-9]").matcher(mAllContactPersonEntities.get(i).getPhoneNumber()).replaceAll(""));
             if (i == 0) {
                 personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0)));
                 contactPhones.add(mAllContactPersonEntities.get(0).getPhoneNumber());
@@ -115,7 +115,9 @@ public class ContactController {
 //        Logger.i("phoneNumbers", phoneNumbers);
 //        Logger.i("add_url", Interfaces.ADD_FRIENDS + "?loginName=" + UserManager.getUsername(contaxt) + "&loginPwd=" + UserManager.getPassword(contaxt) + "&phoneNumbers=" + phoneNumbers);
         //FileUtils.writeObjectToFile(StorageUtils.getFilesDirectory(contaxt)+File.separator+"contact.txt",phoneNumbers);
-       /* if(friends.size()>0)
+        if(friends.size()>0)
+        {
+            Logger.i("friends",gson.toJson(friends));
         OkHttpUtils
                 .post()
                 .url(Interfaces.ADD_FRIENDS)
@@ -177,7 +179,7 @@ public class ContactController {
                     e.printStackTrace();
                 }
             }
-        });*/
+        });}
 
 		/*for(ContactPersonEntity contactPersonEntity : mAllContactPersonEntities) {
 

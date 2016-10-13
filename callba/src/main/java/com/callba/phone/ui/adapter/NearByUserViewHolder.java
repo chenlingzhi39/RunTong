@@ -6,6 +6,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.bean.NearByUser;
+import com.callba.phone.util.StringUtils;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -23,6 +24,8 @@ public class NearByUserViewHolder extends BaseViewHolder<NearByUser> {
     TextView distance;
     @InjectView(R.id.sign)
     TextView sign;
+    @InjectView(R.id.time)
+    TextView time;
 
     public NearByUserViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_nearby_user);
@@ -36,10 +39,11 @@ public class NearByUserViewHolder extends BaseViewHolder<NearByUser> {
             Glide.with(getContext()).load(data.getUrl_head()).into(userHead);
         else
             userHead.setImageResource(R.drawable.ease_default_avatar);
-         sign.setText(data.getSign());
+        sign.setText(data.getSign());
         int away = Integer.parseInt(data.getDistance().substring(0, data.getDistance().lastIndexOf(".")));
         if (away < 1000)
             distance.setHint(away + "米以内");
-        else distance.setHint((float)(Math.round(away/10))/100 + "公里以内");
+        else distance.setHint((float) (Math.round(away / 10)) / 100 + "公里以内");
+        time.setText(StringUtils.friendly_time(data.getInTime()));
     }
 }

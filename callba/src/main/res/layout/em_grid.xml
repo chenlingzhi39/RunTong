@@ -15,14 +15,14 @@
             android:id="@+id/iv_avatar"
             android:layout_width="55dp"
             android:layout_height="55dp"
-            android:src="@drawable/em_smiley_add_btn"
+            android:src="@drawable/ease_default_avatar"
             android:scaleType="fitXY"
             />
         <TextView 
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
+            android:maxLines="1"
             android:ellipsize="end"
             android:textSize="13sp"
             android:layout_margin="3dp"

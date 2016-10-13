@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:text=""
                 android:textColor="#191919"
                 android:textSize="20dip" />
@@ -91,7 +91,7 @@
                         android:id="@+id/app_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:singleLine="true"
+                        android:maxLines="1"
                         android:text=""
                         android:textColor="#191919"
                         android:textSize="16dip" />
@@ -195,7 +195,7 @@
                     android:id="@+id/update_msg1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textColor="#191919"
                     android:textSize="12sp" />
 
@@ -203,7 +203,7 @@
                     android:id="@+id/update_msg2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textColor="#191919"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -372,7 +372,7 @@
                     android:id="@+id/recommend1"
                     android:layout_width="60dip"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:gravity="center"
                     android:text=""
                     android:textColor="#191919"
@@ -435,7 +435,7 @@
                     android:id="@+id/recommend2"
                     android:layout_width="60dip"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:gravity="center"
                     android:text=""
                     android:textColor="#191919"
@@ -498,7 +498,7 @@
                     android:id="@+id/recommend3"
                     android:layout_width="60dip"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:gravity="center"
                     android:text=""
                     android:textColor="#191919"
@@ -561,7 +561,7 @@
                     android:id="@+id/recommend4"
                     android:layout_width="60dip"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:gravity="center"
                     android:text=""
                     android:textColor="#191919"

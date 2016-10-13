@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:ellipsize="middle"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textColor="#000"
                     android:textSize="15sp" />
 

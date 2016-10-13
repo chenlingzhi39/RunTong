@@ -93,6 +93,16 @@
         </meta-data>-->
 
         <service android:name=".phone.service.UpdateService" />
+        <activity android:name=".phone.ui.PickContactNoCheckboxActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            />
+        <activity android:name=".phone.ui.ContextMenuActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyDialogStyleBottom"
+            />
         <activity android:name=".phone.ui.TutorialActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"

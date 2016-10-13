@@ -15,5 +15,5 @@
         android:id="@+id/remark"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:singleLine="true"/>
+        android:maxLines="1"/>
 </LinearLayout>

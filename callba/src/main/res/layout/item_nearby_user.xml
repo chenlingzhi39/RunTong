@@ -36,10 +36,16 @@
                 android:layout_weight="1"
                 android:text="用户名"
                 android:textSize="16sp"
-                android:singleLine="true"/>
+                android:maxLines="1"/>
 
             <TextView
                 android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="距离"
+                android:layout_marginRight="10dp"/>
+            <TextView
+                android:id="@+id/time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="距离"
@@ -53,7 +59,7 @@
             android:layout_toRightOf="@+id/user_head"
             android:layout_alignBottom="@+id/user_head"
             android:layout_marginLeft="20dp"
-            android:singleLine="true"
+            android:maxLines="1"
             />
 
 

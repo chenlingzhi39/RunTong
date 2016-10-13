@@ -745,7 +745,8 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 										@Override
 										public void run() {
 											deleteDialog.dismiss();
-											refreshMembers();
+											adapter.remove(username);
+											adapter.notifyDataSetChanged();
 											title.setText(group.getGroupName() + "("+ group.getAffiliationsCount() + st);
 										}
 									});

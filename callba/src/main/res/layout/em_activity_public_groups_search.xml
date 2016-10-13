@@ -15,7 +15,7 @@
         android:background="@drawable/em_button_normal_shape"
         android:hint="@string/group_id"
         android:paddingLeft="5dp"
-        android:singleLine="true"
+        android:maxLines="1"
         android:textColorHint="#b3b3b3"
         android:textSize="18sp" />
 

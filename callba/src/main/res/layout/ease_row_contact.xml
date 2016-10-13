@@ -53,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="4dp"
                     android:ellipsize="end"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textColor="@color/black"
                     android:textSize="16sp" />
                 <TextView
@@ -62,7 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="4dp"
                     android:ellipsize="end"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:visibility="gone"
@@ -76,7 +76,7 @@
                 android:layout_marginRight="4dp"
                 android:layout_marginTop="4dp"
                 android:ellipsize="end"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:textColor="#888888"
                 android:textSize="13sp"
                 android:visibility="gone" />

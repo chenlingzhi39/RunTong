@@ -22,7 +22,7 @@
 	    android:layout_marginLeft="2dp"
 	    android:layout_marginRight="2dp"
 	    android:text="QQ空间"
-	    android:singleLine="true"
+	    android:maxLines="1"
 	    android:textSize="11sp"
 	    android:gravity="center"/>
 </RelativeLayout>

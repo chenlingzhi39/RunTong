@@ -16,7 +16,7 @@
         android:background="@drawable/em_button_normal_shape"
         android:hint="@string/group_name"
         android:paddingLeft="5dp"
-        android:singleLine="true"
+        android:maxLines="1"
         android:textSize="18sp" />
 
     <EditText

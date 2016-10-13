@@ -149,7 +149,7 @@
                         android:id="@id/tongbu_tv12"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:singleLine="true"
+                        android:maxLines="1"
                         android:text="把手机联系人上传到服务器永久保存"
                         android:textColor="#ff888888"
                         android:textSize="13.0dip" />
@@ -200,7 +200,7 @@
                         android:id="@id/tongbu_tv12"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:singleLine="true"
+                        android:maxLines="1"
                         android:text="@string/ckfwqlxr"
                         android:textColor="#ff888888"
                         android:textSize="13.0dip" />
@@ -251,7 +251,7 @@
                         android:id="@id/tongbu_tv12"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:singleLine="true"
+                        android:maxLines="1"
                         android:text="@string/xzlxrdsj"
                         android:textColor="#ff888888"
                         android:textSize="13.0dip" />

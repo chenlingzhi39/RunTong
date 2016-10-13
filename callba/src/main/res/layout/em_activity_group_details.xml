@@ -298,7 +298,7 @@
                     android:textSize="18sp"
                     android:typeface="serif"
                     android:id="@+id/introduction"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:ellipsize="end"/>
 
                 <TextView

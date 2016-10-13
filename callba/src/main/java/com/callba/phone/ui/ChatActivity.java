@@ -3,6 +3,7 @@ package com.callba.phone.ui;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -13,7 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.ClipboardManager;
+import android.content.ClipboardManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
@@ -54,7 +55,9 @@ import com.callba.phone.widget.chatrow.EaseCustomChatRowProvider;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMGroup;
+import com.hyphenate.chat.EMImageMessageBody;
 import com.hyphenate.chat.EMMessage;
+import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.util.PathUtil;
 
 import java.io.File;
@@ -212,6 +215,10 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         if (chatType != EaseConstant.CHATTYPE_CHATROOM) {
             onConversationInit();
             onMessageListInit();
+            String forward_msg_id = getIntent().getStringExtra("forward_msg_id");
+            if (forward_msg_id != null) {
+                forwardMessage(forward_msg_id);
+            }
         }
     }
 
@@ -360,6 +367,9 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 if (chatFragmentListener != null) {
                     chatFragmentListener.onMessageBubbleLongClick(message);
                 }
+                startActivityForResult((new Intent(ChatActivity.this, ContextMenuActivity.class)).putExtra("message",message)
+                                .putExtra("ischatroom", chatType == EaseConstant.CHATTYPE_CHATROOM),
+                        REQUEST_CODE_CONTEXT_MENU);
             }
 
             @Override
@@ -711,7 +721,27 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
 
         }
         if (resultCode == 5) title.setText(data.getStringExtra("data"));
+        if (requestCode == REQUEST_CODE_CONTEXT_MENU) {
+            switch (resultCode) {
+                case ContextMenuActivity.RESULT_CODE_COPY: // copy
+                    clipboard.setPrimaryClip(ClipData.newPlainText(null,
+                            ((EMTextMessageBody) contextMenuMessage.getBody()).getMessage()));
+                    break;
+                case ContextMenuActivity.RESULT_CODE_DELETE: // delete
+                    conversation.removeMessage(contextMenuMessage.getMsgId());
+                    messageList.refresh();
+                    break;
 
+                case ContextMenuActivity.RESULT_CODE_FORWARD: // forward
+                    Intent intent = new Intent(this, PickContactNoCheckboxActivity.class);
+                    intent.putExtra("forward_msg_id", contextMenuMessage.getMsgId());
+                    startActivity(intent);
+
+                    break;
+
+                default:
+                    break;
+            }}
 
     }
 
@@ -868,5 +898,38 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     public EaseCustomChatRowProvider onSetCustomChatRowProvider() {
         return null;
     }
+    protected void forwardMessage(String forward_msg_id) {
+        final EMMessage forward_msg = EMClient.getInstance().chatManager().getMessage(forward_msg_id);
+        EMMessage.Type type = forward_msg.getType();
+        switch (type) {
+            case TXT:
+                if(forward_msg.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)){
+                    sendBigExpressionMessage(((EMTextMessageBody) forward_msg.getBody()).getMessage(),
+                            forward_msg.getStringAttribute(EaseConstant.MESSAGE_ATTR_EXPRESSION_ID, null));
+                }else{
+                    // get the content and send it
+                    String content = ((EMTextMessageBody) forward_msg.getBody()).getMessage();
+                    sendTextMessage(content);
+                }
+                break;
+            case IMAGE:
+                // send image
+                String filePath = ((EMImageMessageBody) forward_msg.getBody()).getLocalUrl();
+                if (filePath != null) {
+                    File file = new File(filePath);
+                    if (!file.exists()) {
+                        // send thumb nail if original image does not exist
+                        filePath = ((EMImageMessageBody) forward_msg.getBody()).thumbnailLocalPath();
+                    }
+                    sendImageMessage(filePath);
+                }
+                break;
+            default:
+                break;
+        }
 
+        if(forward_msg.getChatType() == EMMessage.ChatType.ChatRoom){
+            EMClient.getInstance().chatroomManager().leaveChatRoom(forward_msg.getTo());
+        }
+    }
 }

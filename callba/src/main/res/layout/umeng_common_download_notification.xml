@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:singleLine="true"
+                android:maxLines="1"
                 android:textSize="14sp" />
         </LinearLayout>
 
@@ -56,7 +56,7 @@
                     android:layout_width="50dp"
                     android:layout_height="25dp"
                     android:background="@drawable/umeng_common_gradient_orange"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textSize="12sp" 
                     android:text="@string/umeng_common_action_pause"/>
 
@@ -67,7 +67,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_marginRight="2dp"
                     android:background="@drawable/umeng_common_gradient_red"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:text="@string/umeng_common_action_cancel"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -88,7 +88,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="2dp"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textSize="18sp" />
 
                 <TextView
@@ -96,7 +96,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="5dp"
-                    android:singleLine="true"
+                    android:maxLines="1"
                     android:textSize="12sp"
                     android:textStyle="italic" />
             </LinearLayout>

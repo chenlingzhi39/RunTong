@@ -1,5 +1,7 @@
 package com.callba.phone.bean;
 
+import java.util.Date;
+
 /**
  * Created by Administrator on 2016/5/21.
  */
@@ -10,7 +12,7 @@ public class NearByUser {
     private String url_head;
     private String distance;
     private String sign;
-
+    private String inTime;
     public String getSign() {
         return sign;
     }
@@ -57,5 +59,13 @@ public class NearByUser {
 
     public void setUrl_head(String url_head) {
         this.url_head = url_head;
+    }
+
+    public String getInTime() {
+        return inTime;
+    }
+
+    public void setInTime(String inTime) {
+        this.inTime = inTime;
     }
 }

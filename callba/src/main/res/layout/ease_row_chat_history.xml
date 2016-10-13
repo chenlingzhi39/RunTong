@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@id/msg_state"
-        android:singleLine="true"
+        android:maxLines="1"
         android:ellipsize="end"
         android:padding="7dp"
         android:textColor="@color/list_itease_secondary_color"

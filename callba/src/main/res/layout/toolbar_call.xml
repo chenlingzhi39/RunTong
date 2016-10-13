@@ -48,7 +48,7 @@
             android:focusableInTouchMode="false"
             android:gravity="center_horizontal|left"
             android:maxLength="21"
-            android:singleLine="true"
+            android:maxLines="1"
             android:textColor="@color/black"
             android:textSize="34.0sp"
             android:layout_weight="3"
@@ -59,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:singleLine="true"
+            android:maxLines="1"
             android:textColor="@color/black_3f"
             android:textSize="14sp"
             android:layout_weight="1"/>

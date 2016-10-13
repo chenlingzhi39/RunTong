@@ -630,7 +630,7 @@ public class SignCalendar extends ViewFlipper implements
         RelativeLayout.LayoutParams params =
             new RelativeLayout.LayoutParams((int) (tb *2), (int) (tb *2));
         //params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        //params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         params.setMargins(0, 0, 1, 1);
         params.addRule(RelativeLayout.CENTER_IN_PARENT);
         ImageView markView = new ImageView(getContext());
