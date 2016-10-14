@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.bean.ContactMutliNumBean;
+import com.callba.phone.bean.ContactMultiNumBean;
 import com.callba.phone.bean.CalllogDetailBean;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.logic.contact.ContactPersonEntity;
@@ -88,7 +88,7 @@ public class CalllogListAdapter extends BaseAdapter {
 		iv_detail.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				ContactMutliNumBean contactMutliNumBean = new ContactMutliNumBean();
+				ContactMultiNumBean contactMultiNumBean = new ContactMultiNumBean();
 				List<String> contactPhones = new ArrayList<String>();
 
 				String contactName = (String) data.get(position).get("name");
@@ -96,34 +96,34 @@ public class CalllogListAdapter extends BaseAdapter {
 						"phoneNum");
 				String location = (String) data.get(position).get(
 						"phoneLocation");
-				contactMutliNumBean.setDisplayName(contactName);
-				contactMutliNumBean.setLocation(location);
+				contactMultiNumBean.setDisplayName(contactName);
+				contactMultiNumBean.setLocation(location);
 
 				if (contactNumber.equals(contactName)
 						|| GlobalConfig.getInstance().getContactBeans() == null) {
 					contactPhones.add(contactNumber);
-					contactMutliNumBean.setContactPhones(contactPhones);
+					contactMultiNumBean.setContactPhones(contactPhones);
 				} else { // 有姓名
 					if (GlobalConfig.getInstance().getContactBeans() != null) {
 						for (ContactPersonEntity bean : GlobalConfig
 								.getInstance().getContactBeans()) {
 							if (contactName.equals(bean.getDisplayName())) {
 								contactPhones.add(bean.getPhoneNumber());
-								contactMutliNumBean.set_id(bean.get_id());
+								contactMultiNumBean.set_id(bean.get_id());
 							}
 						}
 					}
-					contactMutliNumBean.setContactPhones(contactPhones);
+					contactMultiNumBean.setContactPhones(contactPhones);
 				}
 				
 			   CalllogDetailBean currentbean=calldaCalllogBeans.get(position);
 				Intent intent;
-               if(contactMutliNumBean.get_id()!=null)
+               if(contactMultiNumBean.get_id()!=null)
 				   intent = new Intent(context, ContactDetailActivity.class);
 				else {
 				   intent = new Intent(context, CalllogDetailActivity.class);
 			   }
-				intent.putExtra("contact", contactMutliNumBean);
+				intent.putExtra("contact", contactMultiNumBean);
 //				intent.putParcelableArrayListExtra("", currentbean);
 				intent.putExtra("log", currentbean);
 				intent.putExtra("activity", "MainCallActivity");

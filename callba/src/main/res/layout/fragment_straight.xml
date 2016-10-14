@@ -24,15 +24,12 @@
                 android:id="@+id/number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/input_number"
-                android:text="156-5698-8945"
                 android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/address"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="账户绑定号码(江苏移动)" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <ImageView
@@ -50,49 +47,57 @@
         android:layout_height="2dp"
         android:background="@drawable/shape_line" />
 
-    <LinearLayout
-        android:id="@+id/linear"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/bt_coupon"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/flow_button_selected"
-        android:text="选择优惠券"
-        android:textColor="?attr/colorAccent" />
+        <include layout="@layout/state_layout" />
 
-    <Button
-        android:id="@+id/recharge"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:background="?attr/colorAccent"
-        android:text="@string/recharge2"
-        android:textColor="@color/white"
-        android:textSize="18sp" />
+        <LinearLayout
+            android:id="@+id/linear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-    <TextView
-        android:id="@+id/campaign"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:padding="10dp"
-        android:textColor="@color/material_red_600" />
-</LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp" />
+
+            <Button
+                android:id="@+id/bt_coupon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/flow_button_selected"
+                android:text="选择优惠券"
+                android:textColor="?attr/colorAccent" />
+
+            <Button
+                android:id="@+id/recharge"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:background="?attr/colorAccent"
+                android:text="@string/recharge2"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/campaign"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:padding="10dp"
+                android:textColor="@color/material_red_600" />
+        </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>

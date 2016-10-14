@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.callba.R;
 import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
-import com.callba.phone.bean.ContactMutliNumBean;
+import com.callba.phone.bean.ContactMultiNumBean;
 import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.manager.FullyLinearLayoutManager;
@@ -44,13 +44,13 @@ import okhttp3.Call;
  */
 public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
-    private ContactMutliNumBean bean;
+    private ContactMultiNumBean bean;
     private ProgressDialog progressDialog;
     private String userrName, password;
     private Gson gson;
     private ContactNumberAdapter contactNumberAdapter;
 
-    public DetailAdapter(ProgressDialog progressDialog, ContactMutliNumBean bean, Context context, String password, String userrName) {
+    public DetailAdapter(ProgressDialog progressDialog, ContactMultiNumBean bean, Context context, String password, String userrName) {
         this.progressDialog = progressDialog;
         this.bean = bean;
         this.context = context;

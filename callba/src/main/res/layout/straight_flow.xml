@@ -82,6 +82,10 @@
               android:gravity="center"
               />
       </RadioGroup>-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <include layout="@layout/state_layout"/>
     <LinearLayout
         android:id="@+id/linear"
         android:layout_width="match_parent"
@@ -120,7 +124,6 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="20dp"
-
             >
 
             <LinearLayout
@@ -181,4 +184,5 @@
             android:padding="10dp"
             android:textColor="@color/material_red_600" />
     </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>

@@ -16,16 +16,20 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.MyApplication;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.ui.base.BaseSelectContactFragment;
 import com.callba.phone.util.Interfaces;
-import com.callba.phone.util.NumberAddressService;
 import com.callba.phone.util.RxBus;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -54,7 +58,6 @@ public class NumberFragment extends BaseSelectContactFragment {
     LinearLayout change;
     @InjectView(R.id.relative)
     RelativeLayout relative;
-    private String address;
 
     public static NumberFragment newInstance() {
         NumberFragment numberFragment = new NumberFragment();
@@ -66,35 +69,9 @@ public class NumberFragment extends BaseSelectContactFragment {
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
         number.setText(getUsername());
-        String address = NumberAddressService.getAddress(
-                getUsername(), Constant.DB_PATH,
-                getActivity());
-        tv_address.setHint(address);
-
-      /*  card.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    hideKeyboard(v);
-                }
-            }
-
-            private void hideKeyboard(View v) {
-                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm.isActive()) {
-                    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
-                }
-            }
-        });*/
-      /*  card.requestFocus();
-        Timer timer = new Timer(); //设置定时器
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() { //弹出软键盘的代码
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInputFromWindow(card.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
-            }
-        }, 300); //设置300毫秒的时长*/
+        if(MyApplication.getInstance().detect())
+        query(getUsername());
+        else toast(R.string.conn_failed);
     }
 
     @OnClick(R.id.relative)
@@ -151,9 +128,7 @@ public class NumberFragment extends BaseSelectContactFragment {
 
     @OnClick(R.id.contacts)
     public void onClick() {
-        //Uri uri = Uri.parse("content://contacts/people");
         Intent i = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-        //i.setType("vnd.android.cursor.dir/phone");
         startActivityForResult(i, 0);
 
     }
@@ -205,14 +180,8 @@ public class NumberFragment extends BaseSelectContactFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (helper.getNumber().length() > 10) {
-                            address = NumberAddressService.getAddress(
-                                    helper.getNumber(), Constant.DB_PATH,
-                                    getActivity());
-                            //if (!address.equals("")) {
                             number.setText(helper.getNumber());
-                            tv_address.setHint(address);
-                           /* } else
-                                toast("请输入正确的手机号!");*/
+                            query(helper.getNumber());
                         } else
                             toast("请输入正确的手机号!");
                     }
@@ -227,7 +196,47 @@ public class NumberFragment extends BaseSelectContactFragment {
         helper.setDialog(dialog);
         dialog.show();
     }
+    public void query(final String number) {
 
+        OkHttpUtils.get().url("http://apis.juhe.cn/mobile/get")
+                .addParams("phone", number)
+                .addParams("key", "1dfd68c50bbf3f58755f1d537fe817a4")
+                .build().execute(new StringCallback() {
+            @Override
+            public void onBefore(Request request, int id) {
+                progressDialog = ProgressDialog.show(getActivity(), "", "正在查询归属地");
+            }
+
+            @Override
+            public void onAfter(int id) {
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onError(Call call, Exception e, int id) {
+                Toast.makeText(getActivity(), "查询归属地失败", Toast.LENGTH_SHORT).show();
+                tv_address.setHint("");
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                progressDialog.dismiss();
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.getString("resultcode").equals("200")) {
+                        final JSONObject result = new JSONObject(jsonObject.getString("result"));
+                        String address = result.getString("company");
+                        tv_address.setHint(address);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), "查询归属地失败", Toast.LENGTH_SHORT).show();
+                    tv_address.setHint("");
+                }
+
+            }
+        });
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -245,14 +254,8 @@ public class NumberFragment extends BaseSelectContactFragment {
 
 
                 if (phone_number.length() > 10) {
-                    address = NumberAddressService.getAddress(
-                            phone_number, Constant.DB_PATH,
-                            getActivity());
-                    //if (!address.equals("")) {
                     number.setText(phone_number);
-                    tv_address.setHint(address);
-                           /* } else
-                                toast("请输入正确的手机号!");*/
+                    query(phone_number);
                 } else
                     toast("请选择手机号!");
                 break;

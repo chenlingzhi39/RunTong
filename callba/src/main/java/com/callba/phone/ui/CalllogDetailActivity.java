@@ -14,7 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.callba.R;
-import com.callba.phone.bean.ContactMutliNumBean;
+import com.callba.phone.bean.ContactMultiNumBean;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.CalllogDetailBean;
@@ -66,7 +66,7 @@ public class CalllogDetailActivity extends BaseActivity {
         @Override
         public Fragment getItem(int position) {
             Bundle bundle = new Bundle();
-            ContactMutliNumBean bean=new ContactMutliNumBean();
+            ContactMultiNumBean bean=new ContactMultiNumBean();
             ArrayList<String> numbers=new ArrayList<>();
             switch (position) {
 

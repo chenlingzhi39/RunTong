@@ -74,14 +74,13 @@ public class ContactActivity extends BaseActivity {
         public SimpleFragmentPagerAdapter(FragmentManager fm, Context context) {
             super(fm);
             this.context = context;
-
         }
 
         @Override
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return LocalContactFragment.newInstance();
+                    return LocalContactFragment2.newInstance();
 
                 case 1:
                     return WebContactFragment.newInstance();

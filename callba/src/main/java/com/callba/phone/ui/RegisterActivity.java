@@ -1,7 +1,9 @@
 package com.callba.phone.ui;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
@@ -9,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.util.Log;
 import android.view.MenuItem;
@@ -30,6 +33,11 @@ import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.SmsTools;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.PermissionNo;
+import com.yanzhenjie.permission.PermissionYes;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RationaleListener;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -65,13 +73,15 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     String key;
     private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
     ContentObserver c;
+    private RationaleListener rationaleListener = new RationaleListener() {
+        @Override
+        public void showRequestPermissionRationale(int requestCode, final Rationale rationale) {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.inject(this);
-        init();
+        }
+    };
+
+    @PermissionYes(100)
+    private void getSMSYes() {
         c = new ContentObserver(han) {
             @Override
             public void onChange(boolean selfChange) {
@@ -82,6 +92,29 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
             }
         };
         getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, c);
+    }
+
+    @PermissionNo(100)
+    private void getSMSNo() {
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // 只需要调用这一句，剩下的AndPermission自动完成。
+        AndPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.inject(this);
+        AndPermission.with(this)
+                .requestCode(100)
+                .permission(Manifest.permission.READ_SMS)
+                .rationale(rationaleListener)
+                .send();
+
+        init();
     }
 
 private static class Han extends Handler{
@@ -432,6 +465,7 @@ private static class Han extends Handler{
 
     @Override
     protected void onDestroy() {
+        if(c!=null)
         getContentResolver().unregisterContentObserver(c);
         super.onDestroy();
     }
@@ -534,4 +568,5 @@ private static class Han extends Handler{
             }
         });
     }
+
 }

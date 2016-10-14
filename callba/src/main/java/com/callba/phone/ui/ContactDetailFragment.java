@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,9 +20,8 @@ import com.callba.phone.DemoHelper;
 import com.callba.phone.MyApplication;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.BaseUser;
-import com.callba.phone.bean.ContactMutliNumBean;
+import com.callba.phone.bean.ContactMultiNumBean;
 import com.callba.phone.bean.EaseUser;
-import com.callba.phone.manager.UserManager;
 import com.callba.phone.ui.adapter.ContactNumberAdapter;
 import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.ui.base.BaseFragment;
@@ -39,7 +36,6 @@ import com.google.gson.reflect.TypeToken;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +55,7 @@ public class ContactDetailFragment extends BaseFragment {
     RecyclerView lvPhoneNums;
     @InjectView(R.id.shadow)
     View shadow;
-    private ContactMutliNumBean bean;
+    private ContactMultiNumBean bean;
     private ContactNumberAdapter contactNumberAdapter;
     //private DetailAdapter detailAdapter;
     CallUtils callUtils;
@@ -75,7 +71,7 @@ public class ContactDetailFragment extends BaseFragment {
                         Color.parseColor("#55000000"), //颜色
                         8, //渐变层数
                         Gravity.TOP));
-        bean = (ContactMutliNumBean) getArguments().get("contact");
+        bean = (ContactMultiNumBean) getArguments().get("contact");
         setDatatoAdapter();
         gson = new Gson();
        /* detailAdapter=new DetailAdapter(progressDialog,bean,getActivity(),getPassword(),getUsername());

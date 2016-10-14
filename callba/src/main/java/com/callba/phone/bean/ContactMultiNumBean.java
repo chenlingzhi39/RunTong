@@ -13,14 +13,14 @@ import com.callba.phone.logic.contact.ContactPersonEntity;
  * 
  * @author Administrator
  */
-public class ContactMutliNumBean extends ContactPersonEntity{
+public class ContactMultiNumBean extends ContactPersonEntity{
 	private static final long serialVersionUID = 1L;
 
 	private List<String> contactPhones;
 	
-	public ContactMutliNumBean(){}
+	public ContactMultiNumBean(){}
 	
-	public ContactMutliNumBean(ContactPersonEntity contactPersonEntity){
+	public ContactMultiNumBean(ContactPersonEntity contactPersonEntity){
 		this.set_id(contactPersonEntity.get_id());
 		this.setType(contactPersonEntity.getType());
 		this.setTypeName(contactPersonEntity.getTypeName());

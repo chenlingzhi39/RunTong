@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.MyApplication;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.ui.base.BaseSelectContactFragment;
 import com.callba.phone.util.Interfaces;
@@ -64,31 +65,9 @@ public class NumberFragment2 extends BaseSelectContactFragment {
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
         number.setText(getUsername());
+        if(MyApplication.getInstance().detect())
         query(getUsername());
-    /*    card.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    hideKeyboard(v);
-                }
-            }
-
-            private void hideKeyboard(View v) {
-                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm.isActive()) {
-                    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
-                }
-            }
-        });*/
-       /* card.requestFocus();
-        Timer timer = new Timer(); //设置定时器
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() { //弹出软键盘的代码
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInputFromWindow(card.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
-            }
-        }, 300); //设置300毫秒的时长*/
+        else toast(R.string.conn_failed);
     }
 
     public static NumberFragment2 newInstance() {
@@ -294,7 +273,6 @@ public class NumberFragment2 extends BaseSelectContactFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         switch (requestCode) {
             case 0:
                 if (data == null) {
@@ -303,14 +281,12 @@ public class NumberFragment2 extends BaseSelectContactFragment {
                 Uri uri = data.getData();
                 Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
                 cursor.moveToFirst();
-
                 String phone_number = getContactPhone(cursor);
-
-
                 if (phone_number.length() > 10) {
                     number.setText(phone_number);
-                    query(phone_number);
-
+                    if(MyApplication.getInstance().detect())
+                        query(phone_number);
+                    else toast(R.string.conn_failed);
                 } else
                     toast("请选择手机号!");
                 break;

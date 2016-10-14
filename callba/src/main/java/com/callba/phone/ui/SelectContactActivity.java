@@ -16,8 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.callba.R;
+import com.callba.phone.bean.ContactMultiNumBean;
 import com.callba.phone.ui.base.BaseActivity;
-import com.callba.phone.bean.ContactMutliNumBean;
 import com.callba.phone.ui.adapter.NumberAdapter;
 import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -163,10 +163,10 @@ public class SelectContactActivity extends BaseActivity implements View.OnClickL
 //		ContactPersonEntity contactPersonEntity = (ContactPersonEntity) contactEntity;
 //		String name = contactPersonEntity.getDisplayName();
 //
-//		ContactMutliNumBean contactMutliNumBean = new ContactMutliNumBean();
+//		ContactMultiNumBean contactMultiNumBean = new ContactMultiNumBean();
 //		List<String> contactPhones = new ArrayList<String>();
-//		contactMutliNumBean.set_id(contactPersonEntity.get_id());
-//		contactMutliNumBean.setContactName(name);
+//		contactMultiNumBean.set_id(contactPersonEntity.get_id());
+//		contactMultiNumBean.setContactName(name);
 //		for (ContactEntity bean1 : mContactListData) {
 //			if (bean1.getType() == ContactEntity.CONTACT_TYPE_INDEX) {
 //				continue;
@@ -176,18 +176,18 @@ public class SelectContactActivity extends BaseActivity implements View.OnClickL
 //				contactPhones.add(contactEntity1.getPhoneNumber());
 //			}
 //		}
-//		contactMutliNumBean.setContactPhones(contactPhones);
+//		contactMultiNumBean.setContactPhones(contactPhones);
 
         ContactEntity contactEntity = mContactListData.get(position);
         ContactPersonEntity contactPersonEntity = (ContactPersonEntity)contactEntity;
-        ContactMutliNumBean contactMutliNumBean = (ContactMutliNumBean)contactPersonEntity;
-     if(contactMutliNumBean.getContactPhones().size()==1){
+        ContactMultiNumBean contactMultiNumBean = (ContactMultiNumBean)contactPersonEntity;
+     if(contactMultiNumBean.getContactPhones().size()==1){
          Intent intent=new Intent();
-         intent.putExtra("number",contactMutliNumBean.getContactPhones().get(0));
+         intent.putExtra("number", contactMultiNumBean.getContactPhones().get(0));
          setResult(RESULT_OK,intent);
      }
         else{
-         showDialog((ArrayList<String>)contactMutliNumBean.getContactPhones());
+         showDialog((ArrayList<String>) contactMultiNumBean.getContactPhones());
      }
     }
     public class DialogHelper implements DialogInterface.OnDismissListener {
@@ -208,8 +208,8 @@ public class SelectContactActivity extends BaseActivity implements View.OnClickL
                     Intent intent=new Intent();
                     ContactEntity contactEntity = mContactListData.get(position);
                     ContactPersonEntity contactPersonEntity = (ContactPersonEntity)contactEntity;
-                    ContactMutliNumBean contactMutliNumBean = (ContactMutliNumBean)contactPersonEntity;
-                    intent.putExtra("number",contactMutliNumBean.getContactPhones().get(position));
+                    ContactMultiNumBean contactMultiNumBean = (ContactMultiNumBean)contactPersonEntity;
+                    intent.putExtra("number", contactMultiNumBean.getContactPhones().get(position));
                     setResult(RESULT_OK,intent);
                 }
             });

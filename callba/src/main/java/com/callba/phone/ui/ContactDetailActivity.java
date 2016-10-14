@@ -43,7 +43,7 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.ContactMutliNumBean;
+import com.callba.phone.bean.ContactMultiNumBean;
 import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.Logger;
@@ -91,7 +91,7 @@ public class ContactDetailActivity extends BaseActivity {
     View shadow;
     @InjectView(R.id.shadow_reverse)
     View shadowReverse;
-    private ContactMutliNumBean bean;
+    private ContactMultiNumBean bean;
     public Subscription subscription;
     private static final int REQUESTCODE_PICK = 1;
     private static final int REQUESTCODE_CAMERA = 3;
@@ -145,7 +145,7 @@ public class ContactDetailActivity extends BaseActivity {
         image_max_height = width;
         toolbarHeight=Utils.getToolbarHeight(this);
         statusbarHeight=Utils.getStatusBarHeight(this);
-        bean = (ContactMutliNumBean) getIntent()
+        bean = (ContactMultiNumBean) getIntent()
                 .getSerializableExtra("contact");
         initToolbar();
         simpleFragmentPagerAdapter=new SimpleFragmentPagerAdapter(getSupportFragmentManager(),this);

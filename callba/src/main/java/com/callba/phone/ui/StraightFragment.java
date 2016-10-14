@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.ContactsContract;
@@ -16,27 +17,31 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.SparseIntArray;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
 import com.callba.R;
+import com.callba.phone.MyApplication;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Commodity;
 import com.callba.phone.bean.Coupon;
-import com.callba.phone.cfg.Constant;
 import com.callba.phone.ui.adapter.BillAdapter;
 import com.callba.phone.ui.adapter.CouponSelectAdapter;
 import com.callba.phone.ui.adapter.RadioAdapter;
 import com.callba.phone.ui.base.BaseSelectContactFragment;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.NumberAddressService;
 import com.callba.phone.util.PayResult;
 import com.callba.phone.util.SignUtils;
 import com.google.gson.Gson;
@@ -44,6 +49,9 @@ import com.google.gson.reflect.TypeToken;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -87,7 +95,12 @@ public class StraightFragment extends BaseSelectContactFragment {
     Button btCoupon;
     @InjectView(R.id.linear)
     LinearLayout linear;
-    private String address;
+    @InjectView(R.id.progressBar)
+    ProgressBar progressBar;
+    @InjectView(R.id.empty)
+    TextView empty;
+    @InjectView(R.id.error)
+    TextView error;
     private int size;
     private String subject, body, price;
     private String outTradeNo;
@@ -99,7 +112,7 @@ public class StraightFragment extends BaseSelectContactFragment {
     private Gson gson;
     private Dialog dialog;
     private Commodity bill;
-    private HashMap<Integer, Integer> map = new HashMap<>();
+    private SparseIntArray map = new SparseIntArray();
     int bill_pos = 0, coupon_pos = 0;
     // 商户PID
     public static final String PARTNER = "2088221931971814";
@@ -141,9 +154,8 @@ public class StraightFragment extends BaseSelectContactFragment {
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
                         toast("支付成功");
-                        if(map.get(billAdapter.getmSelectedItem())!=null)
                         if (map.get(billAdapter.getmSelectedItem()) != 0 && coupons.size() > 1) {
-                            coupons.remove((int) map.get(billAdapter.getmSelectedItem()));
+                            coupons.remove(map.get(billAdapter.getmSelectedItem()));
                             map.put(billAdapter.getmSelectedItem(), 0);
                             coupon = coupons.get(0);
                             btCoupon.setText(coupon.getTitle());
@@ -180,7 +192,7 @@ public class StraightFragment extends BaseSelectContactFragment {
                                     @Override
                                     public void onResponse(String response, int id) {
                                         try {
-                                            Logger.i("pay_success",response);
+                                            Logger.i("pay_success", response);
                                             String[] result = response.split("\\|");
                                             toast(result[1]);
                                         } catch (Exception e) {
@@ -196,7 +208,7 @@ public class StraightFragment extends BaseSelectContactFragment {
 
                         } else {
                             // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
-                           toast("支付失败");
+                            toast("支付失败");
                         }
                     }
                     break;
@@ -217,29 +229,29 @@ public class StraightFragment extends BaseSelectContactFragment {
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
+
+    }
+
+    @Override
+    protected void lazyLoad() {
         gson = new Gson();
         number.setText(getUsername());
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int mDensity = metrics.densityDpi;
-        size=20*mDensity/160;
-     /*   Spannable spannable = new SpannableString("39元\n\n（包月畅聊）\n原价150元");
-        spannable.setSpan(new AbsoluteSizeSpan(size), 0, 3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable.setSpan(new AbsoluteSizeSpan(size / 2), 4, spannable.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        price1.setText(spannable);
-        Spannable spannable1 = new SpannableString("399元\n\n（包年畅聊）\n原价1500元");
-        spannable1.setSpan(new AbsoluteSizeSpan(size), 0, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannable1.setSpan(new AbsoluteSizeSpan(size / 2), 5, spannable1.toString().length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        price2.setText(spannable1);
-        number.setText(getUsername());*/
-        String address = NumberAddressService.getAddress(
-                getUsername(), Constant.DB_PATH,
-                getActivity());
-        tv_address.setHint(address);
+        size = 20 * mDensity / 160;
         subject = "39元套餐";
         body = "包月畅聊";
         price = "39";
-        getBills();
+        if (MyApplication.getInstance().detect()) {
+            query(getUsername());
+            getBills();
+        } else {
+            toast(R.string.conn_failed);
+            linear.setVisibility(View.GONE);
+            error.setVisibility(View.VISIBLE);
+            empty.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -266,10 +278,7 @@ public class StraightFragment extends BaseSelectContactFragment {
 
                 if (phone_number.length() > 10) {
                     number.setText(phone_number);
-                    String address = NumberAddressService.getAddress(
-                            phone_number, Constant.DB_PATH,
-                            getActivity());
-                    tv_address.setHint(address);
+                    query(phone_number);
                 } else
                     toast("请选择手机号!");
                 break;
@@ -280,16 +289,14 @@ public class StraightFragment extends BaseSelectContactFragment {
     }
 
 
-    @OnClick({R.id.relative, R.id.contacts, R.id.bt_coupon, R.id.recharge})
+    @OnClick({R.id.relative, R.id.contacts, R.id.bt_coupon, R.id.recharge, R.id.error})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.relative:
                 showDialog();
                 break;
             case R.id.contacts:
-                //Uri uri = Uri.parse("content://contacts/people");
                 Intent i = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-                //i.setType("vnd.android.cursor.dir/phone");
                 startActivityForResult(i, 0);
                 break;
             case R.id.bt_coupon:
@@ -347,8 +354,28 @@ public class StraightFragment extends BaseSelectContactFragment {
                             }
                         });
                 break;
+            case R.id.error:
+                if (MyApplication.getInstance().detect()) {
+                    query(number.getText().toString());
+                    getBills();
+                } else {
+                    toast(R.string.conn_failed);
+                    linear.setVisibility(View.GONE);
+                    error.setVisibility(View.VISIBLE);
+                    empty.setVisibility(View.GONE);
+                }
+                break;
         }
     }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // TODO: inflate a fragment view
+        View rootView = super.onCreateView(inflater, container, savedInstanceState);
+        ButterKnife.inject(this, rootView);
+        return rootView;
+    }
+
 
     public class DialogHelper implements DialogInterface.OnDismissListener {
         private Dialog mDialog;
@@ -396,14 +423,8 @@ public class StraightFragment extends BaseSelectContactFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (helper.getNumber().length() > 10) {
-                            address = NumberAddressService.getAddress(
-                                    helper.getNumber(), Constant.DB_PATH,
-                                    getActivity());
-                            //if (!address.equals("")) {
                             number.setText(helper.getNumber());
-                            tv_address.setHint(address);
-                          /*  } else
-                                toast("请输入正确的手机号!");*/
+                                query(helper.getNumber());
                         } else
                             toast("请输入正确的手机号!");
                     }
@@ -550,88 +571,156 @@ public class StraightFragment extends BaseSelectContactFragment {
         return "sign_type=\"RSA\"";
     }
 
-    public void getBills() {
-        try{
-        OkHttpUtils.post().url(Interfaces.COMMODITY_INFO)
-                .addParams("loginName", getUsername())
-                .addParams("loginPwd", getPassword())
-                .addParams("itemType", "0")
+    public void query(final String number) {
+        if(MyApplication.getInstance().detect())
+        OkHttpUtils.get().url("http://apis.juhe.cn/mobile/get")
+                .addParams("phone", number)
+                .addParams("key", "1dfd68c50bbf3f58755f1d537fe817a4")
                 .build().execute(new StringCallback() {
             @Override
+            public void onBefore(Request request, int id) {
+                progressDialog = ProgressDialog.show(getActivity(), "", "正在查询归属地");
+            }
+
+            @Override
+            public void onAfter(int id) {
+                progressDialog.dismiss();
+            }
+
+            @Override
             public void onError(Call call, Exception e, int id) {
-                //linear.setVisibility(View.GONE);
-                //showException(e);
+                Toast.makeText(getActivity(), "查询归属地失败", Toast.LENGTH_SHORT).show();
+                tv_address.setHint("");
             }
 
             @Override
             public void onResponse(String response, int id) {
+                progressDialog.dismiss();
                 try {
-                    Logger.i("bill_result", response);
-                    String[] result = response.split("\\|");
-                    if (result[0].equals("0")) {
-                        bills = gson.fromJson(result[1], new TypeToken<ArrayList<Commodity>>() {
-                        }.getType());
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.getString("resultcode").equals("200")) {
+                        final JSONObject result = new JSONObject(jsonObject.getString("result"));
+                        String address = result.getString("company");
+                        tv_address.setHint(address);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), "查询归属地失败", Toast.LENGTH_SHORT).show();
+                    tv_address.setHint("");
+                }
 
-                        for (int i = 0; i < bills.size(); i++)
-                            if (bills.get(i).getCoupon().size() > 0) {
-                                bills.get(i).getCoupon().add(0, new Coupon("不使用优惠券"));
-                                if (getArguments().getString("cid") != null)
-                                    for (int j = 0; j < bills.get(i).getCoupon().size(); j++) {
-                                        if (bills.get(i).getCoupon().get(j).getCid() != null)
-                                            if (bills.get(i).getCoupon().get(j).getCid().equals(getArguments().getString("cid"))) {
-                                                bill_pos = i;
-                                                coupon_pos = j;
+            }
+        });else toast(R.string.conn_failed);
+    }
+
+    public void getBills() {
+        try {
+            OkHttpUtils.post().url(Interfaces.COMMODITY_INFO)
+                    .addParams("loginName", getUsername())
+                    .addParams("loginPwd", getPassword())
+                    .addParams("itemType", "0")
+                    .build().execute(new StringCallback() {
+                @Override
+                public void onAfter(int id) {
+                    progressBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onBefore(Request request, int id) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    linear.setVisibility(View.GONE);
+                    error.setVisibility(View.GONE);
+                    empty.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onError(Call call, Exception e, int id) {
+                    showException(e);
+                    linear.setVisibility(View.GONE);
+                    error.setVisibility(View.VISIBLE);
+                    empty.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onResponse(String response, int id) {
+                    try {
+                        Logger.i("bill_result", response);
+                        String[] result = response.split("\\|");
+                        if (result[0].equals("0")) {
+                            bills = gson.fromJson(result[1], new TypeToken<ArrayList<Commodity>>() {
+                            }.getType());
+                            if (bills.size() > 0) {
+                                for (int i = 0; i < bills.size(); i++)
+                                    if (bills.get(i).getCoupon().size() > 0) {
+                                        bills.get(i).getCoupon().add(0, new Coupon("不使用优惠券"));
+                                        if (getArguments().getString("cid") != null)
+                                            for (int j = 0; j < bills.get(i).getCoupon().size(); j++) {
+                                                if (bills.get(i).getCoupon().get(j).getCid() != null)
+                                                    if (bills.get(i).getCoupon().get(j).getCid().equals(getArguments().getString("cid"))) {
+                                                        bill_pos = i;
+                                                        coupon_pos = j;
+                                                    }
                                             }
                                     }
-                            }
-                        bill = bills.get(bill_pos);
-                        if (bill.getActivity().size() > 0)
-                            campaign.setText("活动:" + bill.getActivity().get(0).getContent());
-                        coupons = bill.getCoupon();
-                        if (coupons.size() > 0) {
-                            btCoupon.setVisibility(View.VISIBLE);
-                            btCoupon.setText(coupons.get(coupon_pos).getTitle());
-                            coupon = coupons.get(coupon_pos);
-                        } else btCoupon.setVisibility(View.GONE);
-                        billAdapter = new BillAdapter(getActivity(), bills, size);
-                        billAdapter.setmSelectedItem(bill_pos);
-                        list.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-                        list.setAdapter(billAdapter);
-                        map.clear();
-                        map.put(billAdapter.getmSelectedItem(), coupon_pos);
-                        billAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
-                            @Override
-                            public void onClick(int position) {
-                                bill = bills.get(position);
-                                if (bills.get(position).getActivity().size() > 0)
-                                    campaign.setText("活动:" + bills.get(position).getActivity().get(0).getContent());
-                                else campaign.setText("");
-                                coupons = bills.get(position).getCoupon();
+                                bill = bills.get(bill_pos);
+                                if (bill.getActivity().size() > 0)
+                                    campaign.setText("活动:" + bill.getActivity().get(0).getContent());
+                                coupons = bill.getCoupon();
                                 if (coupons.size() > 0) {
                                     btCoupon.setVisibility(View.VISIBLE);
-                                    if (map.get(position) != null) {
-                                        coupon = coupons.get(map.get(position));
-                                        btCoupon.setText(coupons.get(map.get(position)).getTitle());
-                                    } else {
-                                        coupon = coupons.get(0);
-                                        btCoupon.setText(coupons.get(0).getTitle());
+                                    btCoupon.setText(coupons.get(coupon_pos).getTitle());
+                                    coupon = coupons.get(coupon_pos);
+                                } else btCoupon.setVisibility(View.GONE);
+                                billAdapter = new BillAdapter(getActivity(), bills, size);
+                                billAdapter.setmSelectedItem(bill_pos);
+                                list.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+                                list.setAdapter(billAdapter);
+                                map.clear();
+                                map.put(billAdapter.getmSelectedItem(), coupon_pos);
+                                billAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
+                                    @Override
+                                    public void onClick(int position) {
+                                        bill = bills.get(position);
+                                        if (bills.get(position).getActivity().size() > 0)
+                                            campaign.setText("活动:" + bills.get(position).getActivity().get(0).getContent());
+                                        else campaign.setText("");
+                                        coupons = bills.get(position).getCoupon();
+                                        if (coupons.size() > 0) {
+                                            btCoupon.setVisibility(View.VISIBLE);
+                                            coupon = coupons.get(map.get(position));
+                                            btCoupon.setText(coupons.get(map.get(position)).getTitle());
+                                        } else {
+                                            btCoupon.setVisibility(View.GONE);
+                                            coupon = null;
+                                        }
                                     }
-                                } else {btCoupon.setVisibility(View.GONE);
-                                coupon=null;
-                                }
+                                });
+                                linear.setVisibility(View.VISIBLE);
+                                error.setVisibility(View.GONE);
+                                empty.setVisibility(View.GONE);
+                            } else {
+                                empty.setVisibility(View.VISIBLE);
+                                linear.setVisibility(View.GONE);
+                                empty.setVisibility(View.GONE);
                             }
-                        });
-                        linear.setVisibility(View.VISIBLE);
-                    } else {toast(result[1]);
+                        } else {
+                            toast(result[1]);
+                            linear.setVisibility(View.GONE);
+                            error.setVisibility(View.VISIBLE);
+                            empty.setVisibility(View.GONE);
+                        }
+                    } catch (Exception e) {
                         linear.setVisibility(View.GONE);
+                        error.setVisibility(View.VISIBLE);
+                        empty.setVisibility(View.GONE);
+                        e.printStackTrace();
+                        toast(R.string.getserverdata_exception);
                     }
-                } catch (Exception e) {
-                    linear.setVisibility(View.GONE);
-                    e.printStackTrace();
-                    toast(R.string.getserverdata_exception);
                 }
-            }
-        });}catch(Exception e){e.printStackTrace();}
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void showCouponsDialog(ArrayList<Coupon> coupons) {
@@ -653,8 +742,7 @@ public class StraightFragment extends BaseSelectContactFragment {
             mView = getActivity().getLayoutInflater().inflate(R.layout.dialog_list, null);
             list = (RecyclerView) mView.findViewById(R.id.list);
             couponSelectAdapter = new CouponSelectAdapter(getActivity(), coupons);
-            if (map.get(billAdapter.getmSelectedItem()) != null)
-                couponSelectAdapter.setmSelectedItem(map.get(billAdapter.getmSelectedItem()));
+            couponSelectAdapter.setmSelectedItem(map.get(billAdapter.getmSelectedItem()));
             list.setAdapter(couponSelectAdapter);
             couponSelectAdapter.setOnItemClickListener(new RadioAdapter.ItemClickListener() {
                 @Override

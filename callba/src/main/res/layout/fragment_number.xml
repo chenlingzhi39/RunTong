@@ -31,9 +31,7 @@
                 android:id="@+id/number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="156-5698-8945"
                 android:textSize="20sp"
-                android:hint="@string/input_number"
               />
 
             <TextView

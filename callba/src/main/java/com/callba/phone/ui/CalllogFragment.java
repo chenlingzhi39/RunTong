@@ -3,18 +3,15 @@ package com.callba.phone.ui;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.CalldaCalllogBean;
-import com.callba.phone.bean.ContactMutliNumBean;
+import com.callba.phone.bean.ContactMultiNumBean;
 import com.callba.phone.logic.contact.ContactEntity;
 import com.callba.phone.service.CalllogService;
 import com.callba.phone.ui.adapter.CalllogAdapter;
@@ -61,7 +58,7 @@ public class CalllogFragment extends BaseFragment {
             @Override
             public void onQueryCompleted(final List<CalldaCalllogBean> calldaCalllogBeans) {
                 if (calldaCalllogBeans.size() > 0) {
-                    List<String> numbers = ((ContactMutliNumBean) getArguments().get("contact")).getContactPhones();
+                    List<String> numbers = ((ContactMultiNumBean) getArguments().get("contact")).getContactPhones();
                     ArrayList<CalldaCalllogBean> beans = new ArrayList<>();
                     for (CalldaCalllogBean bean : calldaCalllogBeans) {
                         if (numbers.contains(bean.getCallLogNumber()))

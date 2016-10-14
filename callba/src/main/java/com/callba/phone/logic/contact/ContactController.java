@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.content.Context;
@@ -16,7 +15,7 @@ import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.MyApplication;
 import com.callba.phone.bean.BaseUser;
-import com.callba.phone.bean.ContactMutliNumBean;
+import com.callba.phone.bean.ContactMultiNumBean;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.bean.Friend;
 import com.callba.phone.cfg.GlobalConfig;
@@ -46,7 +45,7 @@ public class ContactController {
 
     //所有的联系人集合
     private List<ContactPersonEntity> mAllContactPersonEntities;
-    private List<ContactMutliNumBean> personEntities;
+    private List<ContactMultiNumBean> personEntities;
     //检索的字母、位置索引表
     private Map<String, Integer> letterSearchMap;
     private Gson gson;
@@ -84,7 +83,7 @@ public class ContactController {
      *
      * @return
      */
-    public synchronized List<ContactMutliNumBean> getFilterListContactEntitiesNoDuplicate() {
+    public synchronized List<ContactMultiNumBean> getFilterListContactEntitiesNoDuplicate() {
         personEntities = new ArrayList<>();
         String phoneNumbers = "";
         List<String> contactPhones = new ArrayList<>();
@@ -98,7 +97,7 @@ public class ContactController {
             friends.add(new Friend(mAllContactPersonEntities.get(i).getDisplayName(),Pattern.compile("[^0-9]").matcher(mAllContactPersonEntities.get(i).getPhoneNumber()).replaceAll("")));
 
             if (i == 0) {
-                personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(0)));
+                personEntities.add(new ContactMultiNumBean(mAllContactPersonEntities.get(0)));
                 contactPhones.add(mAllContactPersonEntities.get(0).getPhoneNumber());
                 personEntities.get(0).setContactPhones(contactPhones);
                 continue;
@@ -106,7 +105,7 @@ public class ContactController {
             if (!mAllContactPersonEntities.get(i).get_id().equals(mAllContactPersonEntities.get(i - 1).get_id())) {
                 contactPhones = new ArrayList<>();
                 contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
-                personEntities.add(new ContactMutliNumBean(mAllContactPersonEntities.get(i)));
+                personEntities.add(new ContactMultiNumBean(mAllContactPersonEntities.get(i)));
             } else {
                 contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
             }
@@ -193,7 +192,7 @@ public class ContactController {
 
 			lastName = contactPersonEntity.getDisplayName();
 			
-			personEntities.add(new ContactMutliNumBean(contactPersonEntity));
+			personEntities.add(new ContactMultiNumBean(contactPersonEntity));
 		}*/
         //FileUtils.writeObjectToFile(StorageUtils.getFilesDirectory(contaxt) + File.separator + "contacts.txt", gson.toJson(personEntities));
         return personEntities;

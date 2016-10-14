@@ -40,7 +40,7 @@ public class ContactSerarchWatcher implements TextWatcher {
 		this.mFilterListContactEntities = filterListContactList;
 		this.mQuickSearchBar = quickSearchBar;
 		this.mContactController=contactController;
-		mSearchContactEntities = new ArrayList<ContactEntity>();
+		mSearchContactEntities = new ArrayList<>();
 		mSearchContactEntities.addAll(filterListContactList);
 		
 

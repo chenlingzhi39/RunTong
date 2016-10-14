@@ -46,9 +46,6 @@ import okhttp3.Call;
 
 public class WelcomeActivity extends BaseActivity {
     public static final String TAG = "WelcomeActivity";
-    private boolean isNetworkAvail = false; // 当前是否有可用网络
-    // 记录当前获取key的次数
-    private int currentGetVersionTime = 0;
     ProgressDialog progressDialog;
     // private PushAgent mPushAgent;
     private RationaleListener rationaleListener = new RationaleListener() {
@@ -81,13 +78,11 @@ public class WelcomeActivity extends BaseActivity {
                 .permission(Manifest.permission.READ_CONTACTS
                 ,Manifest.permission.ACCESS_FINE_LOCATION
                 ,Manifest.permission.READ_PHONE_STATE
-                ,Manifest.permission.READ_SMS
                 ,Manifest.permission.READ_EXTERNAL_STORAGE
                 ,Manifest.permission.CAMERA
                 ,Manifest.permission.RECORD_AUDIO)
                 .rationale(rationaleListener)
                 .send();
-
     }
 
     /**
@@ -120,37 +115,12 @@ public class WelcomeActivity extends BaseActivity {
 
 
     public void init() {
-        //insertDummyContactWrapper();
         // 设置用户的登录状态
-
         LoginController.getInstance().setUserLoginState(false);
         startService(new Intent(WelcomeActivity.this, MainService.class));
         // 启动服务
         asyncInitLoginEnvironment();
                 initEnvironment();
-
-		/*rootView=(LinearLayout) findViewById(R.id.root);
-		AlphaAnimation alphaAnimation=new AlphaAnimation(0.0f,1.0f);
-		alphaAnimation.setDuration(2000);
-		alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
-			@Override
-			public void onAnimationStart(Animation animation) {
-
-			}
-
-			@Override
-			public void onAnimationEnd(Animation animation) {
-
-
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-
-			}
-		});
-		rootView.startAnimation(alphaAnimation);*/
-
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -168,120 +138,10 @@ public class WelcomeActivity extends BaseActivity {
         finish();
     }
     private void initEnvironment() {
-        String s = getResources().getConfiguration().locale.getCountry();
-        Logger.v("语言环境", s);
-        Locale.setDefault(new Locale("zh"));
-        if(!TextUtils.isEmpty(getUsername())&&!TextUtils.isEmpty(getPassword()))
-        {
-            Intent intent = new Intent(WelcomeActivity.this,
-                    MainTabActivity.class);
-            startActivity(intent);
-            return;
-        }
-        isNetworkAvail = MyApplication.getInstance().detect();
         gotoActivity();
-        /*alertNetWork(isNetworkAvail);
-        if (isNetworkAvail) {
-            currentGetVersionTime = 0;
-            // 获取版本信息
-            sendGetVersionTask();
-        }*/
-
     }
 
-    /**
-     * 发送获取版本信息任务
-     *
-     * @author zhw
-     */
-    private void sendGetVersionTask() {
-        currentGetVersionTime+=1;
-        Logger.i("retry_time",System.currentTimeMillis()+"");
-        OkHttpUtils.post().url(Interfaces.Version)
-                .tag(this)
-                .addParams("softType", "android")
-                .build().execute(new StringCallback() {
-            @Override
-            public void onError(Call call, Exception e, int id) {
-                e.printStackTrace();
-                AppVersionBean appVersionBean = new AppVersionBean();
-                checkLoginKey(appVersionBean);
-            }
-            @Override
-            public void onResponse(String response, int id) {
-                AppVersionBean appVersionBean = AppVersionChecker.parseVersionInfo(WelcomeActivity.this, response);
-                GlobalConfig.getInstance().setAppVersionBean(appVersionBean);
-                checkLoginKey(appVersionBean);
-            }
-        });
-    }
 
-    /**
-     * 检查是否成功获取加密的key
-     *
-     * @author zhw
-     */
-    private void checkLoginKey(AppVersionBean appVersionBean) {
-        // Logger.i(TAG, "getSecretKey() : " +
-        // GlobalConfig.getInstance().getSecretKey());
-        Logger.i(TAG, "currentGetVersionTime : " + currentGetVersionTime);
-
-        if (!TextUtils.isEmpty(appVersionBean.getSecretKey())) {
-            UserManager.putSecretKey(WelcomeActivity.this, appVersionBean.getSecretKey());
-            // 成功获取key
-            //check2Upgrade(appVersionBean);
-            gotoActivity();
-        } else if (currentGetVersionTime <= Constant.GETVERSION_RETRY_TIMES) {
-            //OkHttpUtils.getInstance().cancelTag(this);
-			// 再次发送获取任务
-                    sendGetVersionTask();
-
-		} else {
-            // 统计获取版本失败次数
-            //MobclickAgent.onEvent(this, "version_timeout");
-            String secretKey = UserManager.getSecretKey(this);
-            if (TextUtils.isEmpty(secretKey)) {
-                // Toast.makeText(this, R.string.getversionfailed,
-                // Toast.LENGTH_SHORT).show();
-                // 提示用户获取失败
-                alertUserGetVersionFailed();
-            } else {
-                //check2Upgrade(appVersionBean);
-                        gotoActivity();
-            }
-        }
-    }
-
-    /**
-     * 提示用户获取版本失败
-     *
-     * @author zhw
-     */
-    private void alertUserGetVersionFailed() {
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.dialog_title);
-        builder.setMessage(R.string.net_error_getdata_fail);
-        builder.setPositiveButton(R.string.retry,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        sendGetVersionTask();
-                        dialog.dismiss();
-                    }
-                });
-        builder.setNegativeButton(R.string.exit,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.setCancelable(false);
-        alertDialog.show();
-    }
 
     /**
      * 页面跳转
@@ -329,125 +189,4 @@ public class WelcomeActivity extends BaseActivity {
         finish();
     }
 
-    /**
-     * 判断网络连接
-     */
-    private void alertNetWork(boolean isAvail) {
-        if (!isAvail) {
-            AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .setTitle(R.string.networksetup)
-                    .setMessage(R.string.networksetupinfo)
-                    .setPositiveButton(R.string.setup,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                                    int which) {
-                                    try {
-                                        startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
-                                        dialog.dismiss();
-                                    } catch (Exception e) {
-                                        // TODO: handle exception
-                                    }
-                                }
-                            })
-                    .setNegativeButton(R.string.exit,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog,
-                                                    int which) {
-                                    WelcomeActivity.this.finish();
-                                    // gotoActivity();
-                                }
-                            }).create();
-
-            alertDialog.setCanceledOnTouchOutside(false);
-            alertDialog.setCancelable(false);
-            try {
-                alertDialog.show();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(WelcomeActivity.this)
-                .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
-                .create()
-                .show();
-    }
-    private boolean addPermission(List<String> permissionsList, String permission) {
-        if (ActivityCompat.checkSelfPermission(WelcomeActivity.this,permission) != PackageManager.PERMISSION_GRANTED) {
-            permissionsList.add(permission);
-            // Check for Rationale Option
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(WelcomeActivity.this,permission))
-                return false;
-        }
-        return true;
-    }
- /*   @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case 124:
-            {
-                Map<String, Integer> perms = new HashMap<String, Integer>();
-                // Initial
-                perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.READ_CONTACTS, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.WRITE_CONTACTS, PackageManager.PERMISSION_GRANTED);
-                // Fill with results
-                for (int i = 0; i < permissions.length; i++)
-                    perms.put(permissions[i], grantResults[i]);
-                // Check for ACCESS_FINE_LOCATION
-                if (perms.get(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                        && perms.get(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
-                        && perms.get(Manifest.permission.WRITE_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-                    // All Permissions Granted
-
-                } else {
-                    // Permission Denied
-                   toast( "Some Permission is Denied");
-                }
-            }
-            break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }*/
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_CANCELED && requestCode == 0) {
-
-            SimpleHandler.getInstance().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    isNetworkAvail = MyApplication.getInstance().detect();
-                    alertNetWork(isNetworkAvail);
-                    if (isNetworkAvail) {
-                        currentGetVersionTime = 0;
-                        // 获取版本信息
-                        sendGetVersionTask();
-                    }
-                }
-            },2000);
-        }
-
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 }
