@@ -308,14 +308,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onBefore(Request request, int id) {
-              /*  SimpleHandler.getInstance().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDialog = ProgressDialog.show(HomeActivity.this, null,
-                                getString(R.string.logining));
-                    }
-                });
-*/
+
             }
 
             @Override

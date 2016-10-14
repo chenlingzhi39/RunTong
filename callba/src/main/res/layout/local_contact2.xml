@@ -25,7 +25,7 @@
 
         <com.callba.phone.widget.SideBar
             android:id="@+id/contact_sidebar"
-            android:layout_width="15dp"
+            android:layout_width="30dp"
             android:layout_height="fill_parent"
             android:layout_gravity="right|center"
             android:layout_marginRight="3dp" />

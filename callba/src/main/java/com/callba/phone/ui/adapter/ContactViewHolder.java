@@ -8,6 +8,7 @@ import com.callba.R;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.manager.ContactsManager;
 
+import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -23,6 +24,7 @@ public class ContactViewHolder extends BaseViewHolder<ContactPersonEntity> {
 
     public ContactViewHolder(ViewGroup parent) {
         super(parent, R.layout.contact_listitem);
+        ButterKnife.inject(this,itemView);
     }
 
     @Override

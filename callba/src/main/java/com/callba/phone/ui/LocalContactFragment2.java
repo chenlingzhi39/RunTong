@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.TextView;
 
@@ -98,7 +99,7 @@ public class LocalContactFragment2 extends BaseFragment {
             public void onTouchingLetterChanged(String s) {
                 int position = contactAdapter.getPositionForSection(s.charAt(0));
                 if (position != -1) {
-                    mRecyclerView.getLayoutManager().scrollToPosition(position);
+                    ((LinearLayoutManager)mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(position,mRecyclerView.getLayoutManager().getChildCount());
                 }
 
             }
@@ -128,7 +129,7 @@ public class LocalContactFragment2 extends BaseFragment {
                     @Override
                     public void onItemClick(int position) {
                         Intent intent = new Intent(getActivity(), ContactDetailActivity.class);
-                        intent.putExtra("contact", contactAdapter.getItems().get(position));
+                        intent.putExtra("contact", contactAdapter.getData().get(position));
                         startActivity(intent);
                     }
                 });
@@ -139,7 +140,11 @@ public class LocalContactFragment2 extends BaseFragment {
                 mRecyclerView.setAdapter(contactAdapter);
                 final StickyRecyclerHeadersDecoration headersDecor = new StickyRecyclerHeadersDecoration(contactAdapter);
                 mRecyclerView.addItemDecoration(headersDecor);
-                mRecyclerView.addItemDecoration(new DividerDecoration(getActivity()));
+                DisplayMetrics metrics = new DisplayMetrics();
+                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                int mDensity = metrics.densityDpi;
+                Logger.i("density",mDensity+"");
+                mRecyclerView.addItemDecoration(new DividerDecoration(getActivity(),mDensity/160*50));
 
                 //   setTouchHelper();
                 contactAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
