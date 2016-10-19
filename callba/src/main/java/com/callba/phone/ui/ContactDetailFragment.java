@@ -284,7 +284,7 @@ public class ContactDetailFragment extends BaseFragment {
         contactNumberAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                String phoneNum = contactNumberAdapter.getData().get(position);
+                String phoneNum = contactNumberAdapter.getItem(position);
                 Intent intent = new Intent(getActivity(), SelectDialPopupWindow.class);
                 intent.putExtra("name", bean.getDisplayName());
                 intent.putExtra("number", phoneNum);

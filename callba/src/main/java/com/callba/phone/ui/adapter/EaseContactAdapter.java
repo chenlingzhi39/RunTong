@@ -184,7 +184,11 @@ public class EaseContactAdapter extends ArrayAdapter<EaseUser> implements Sectio
 //                        username = user.getNick();
                     String username = user.getUsername();
                     String nick=user.getNick();
-                    if(nick.startsWith(prefixString)){
+                    String remark=user.getRemark();
+                    if(nick.contains(prefixString)){
+                        newValues.add(user);
+                    }
+                    if(remark.contains(prefixString)){
                         newValues.add(user);
                     }
                     else{

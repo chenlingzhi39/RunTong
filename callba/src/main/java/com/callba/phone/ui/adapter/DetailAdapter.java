@@ -204,7 +204,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             contactNumberAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(int position) {
-                    String phoneNum = contactNumberAdapter.getData().get(position);
+                    String phoneNum = contactNumberAdapter.getItem(position);
                     Intent intent = new Intent(context, SelectDialPopupWindow.class);
                     intent.putExtra("name", bean.getDisplayName());
                     intent.putExtra("number", phoneNum);

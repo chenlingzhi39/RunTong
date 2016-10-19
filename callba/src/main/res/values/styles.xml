@@ -5,6 +5,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
          <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>
+        <item name="backgroundColor">@color/background_color</item>
+        <item name="itemBackgroundColor">@color/item_color</item>
         <!--<item name="android:textAppearance">@style/TextAppearance.FontPath</item>-->
     </style>
     <style name="DetailTheme" parent="Theme.AppCompat.Light.NoActionBar">

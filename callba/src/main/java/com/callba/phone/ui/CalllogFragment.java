@@ -75,8 +75,8 @@ public class CalllogFragment extends BaseFragment {
                         @Override
                         public void onItemClick(int position) {
                             Intent intent = new Intent(getActivity(), SelectDialPopupWindow.class);
-                            intent.putExtra("name", calllogAdapter.getData().get(position).getDisplayName());
-                            intent.putExtra("number", calllogAdapter.getData().get(position).getCallLogNumber());
+                            intent.putExtra("name", calllogAdapter.getItem(position).getDisplayName());
+                            intent.putExtra("number", calllogAdapter.getItem(position).getCallLogNumber());
                             startActivity(intent);
                         }
                     });

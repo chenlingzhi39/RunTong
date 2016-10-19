@@ -7,10 +7,4 @@
         android:icon="@drawable/ic_search_orange_24dp"
         app:showAsAction="ifRoom"
         />
-    <item
-        android:id="@+id/add"
-        android:title="@string/add"
-        android:icon="@drawable/ic_add_orange_24dp"
-        app:showAsAction="always"
-        />
 </menu>

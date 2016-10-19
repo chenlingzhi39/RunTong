@@ -98,11 +98,13 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     private void getSMSNo() {
 
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         // 只需要调用这一句，剩下的AndPermission自动完成。
         AndPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,22 +119,25 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
         init();
     }
 
-private static class Han extends Handler{
-    private final WeakReference<RegisterActivity> mActivity;
-    public Han(RegisterActivity activity) {
-        mActivity = new WeakReference<>(activity);
-    }
-    public void handleMessage(android.os.Message msg) {
-        RegisterActivity activity = mActivity.get();
-        String codestr = null;
-        try {
-            codestr = SmsTools.getsmsyzm(activity);
-            activity.et_yzm.setText(codestr);
-        } catch (Exception e) {
-            Log.e("yung", "验证码提取失败:" + codestr);
+    private static class Han extends Handler {
+        private final WeakReference<RegisterActivity> mActivity;
+
+        public Han(RegisterActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        public void handleMessage(android.os.Message msg) {
+            RegisterActivity activity = mActivity.get();
+            String codestr = null;
+            try {
+                codestr = SmsTools.getsmsyzm(activity);
+                activity.et_yzm.setText(codestr);
+            } catch (Exception e) {
+                Log.e("yung", "验证码提取失败:" + codestr);
+            }
         }
     }
-}
+
     @OnClick(R.id.private_clause)
     public void onClick() {
         Intent intent = new Intent(RegisterActivity.this, ClauseActivity.class);
@@ -228,8 +233,8 @@ private static class Han extends Handler{
         }
     }
 
-   //private final MyHandler mHandler = new MyHandler(this);
-    private Han han=new Han(this);
+    //private final MyHandler mHandler = new MyHandler(this);
+    private Han han = new Han(this);
 
     public void init() {
         Locale locale = getResources().getConfiguration().locale;
@@ -286,7 +291,7 @@ private static class Han extends Handler{
                     //userDao.getRegisterKey(searchNumber);
                     getRegisterKey(searchNumber);
                 /*}
-					else
+                    else
 				toast("请输入正确的手机号!");*/
                 } else
                     toast("请输入正确的手机号!");
@@ -435,9 +440,9 @@ private static class Han extends Handler{
                         toast(content[1]);
                         UserManager.putUsername(RegisterActivity.this, username);
                         UserManager.putOriginalPassword(RegisterActivity.this, password);
-                        if(MyApplication.getInstance().detect())
-                        {Intent intent = new Intent(RegisterActivity.this, MainTabActivity.class);
-                        LoginController.getInstance().setUserLoginState(false);
+                        if (MyApplication.getInstance().detect()) {
+                            Intent intent = new Intent(RegisterActivity.this, MainTabActivity.class);
+                            LoginController.getInstance().setUserLoginState(false);
 					/*new Thread(new Runnable() {
 						@Override
 						public void run() {
@@ -447,7 +452,8 @@ private static class Han extends Handler{
 							}
 						}
 					}).start();*/
-                        startActivity(intent);}else {
+                            startActivity(intent);
+                        } else {
                             Intent intentLogin = new Intent(RegisterActivity.this, LoginActivity.class);
                             startActivity(intentLogin);
                             finish();
@@ -465,8 +471,8 @@ private static class Han extends Handler{
 
     @Override
     protected void onDestroy() {
-        if(c!=null)
-        getContentResolver().unregisterContentObserver(c);
+        if (c != null)
+            getContentResolver().unregisterContentObserver(c);
         super.onDestroy();
     }
 
@@ -510,7 +516,7 @@ private static class Han extends Handler{
                         try {
                             phoneNumber2 = DesUtil.encrypt(num, result[1]);
                             Log.i("phoneNumber", phoneNumber2);
-                            key=result[1];
+                            key = result[1];
                             getCode(phoneNumber2, result[2]);
                         } catch (Exception e) {
                             e.printStackTrace();

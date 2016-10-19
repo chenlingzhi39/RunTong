@@ -8,15 +8,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -24,25 +28,27 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
-import com.callba.phone.MyApplication;
-import com.callba.phone.bean.EaseUser;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.Constant;
+import com.callba.phone.MyApplication;
+import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.bean.EaseUser;
+import com.callba.phone.listener.InputWindowListener;
 import com.callba.phone.ui.adapter.ConversationAdapter;
 import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
-import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.EaseUserUtils;
+import com.callba.phone.util.InitiateSearch;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.SPUtils;
+import com.callba.phone.util.RxBus;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.widget.DividerItemDecoration;
+import com.callba.phone.widget.IMMListenerRelativeLayout;
 import com.hyphenate.EMConnectionListener;
 import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
@@ -57,11 +63,9 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
@@ -70,19 +74,28 @@ import rx.schedulers.Schedulers;
  */
 @ActivityFragmentInject(
         contentViewId = R.layout.tab_message,
-        toolbarTitle = R.string.message
+        toolbarTitle = R.string.message,
+        menuId = R.menu.message
 )
 
 public class MessageActivity extends BaseActivity {
     @InjectView(R.id.conversation_list)
     RecyclerView conversationListview;
     //EaseConversationList conversationListView;
-    @InjectView(R.id.query)
-    EditText query;
-    @InjectView(R.id.search_clear)
-    ImageButton clearSearch;
     @InjectView(R.id.refresh)
     SwipeRefreshLayout refresh;
+    @InjectView(R.id.view_search)
+    IMMListenerRelativeLayout viewSearch;
+    @InjectView(R.id.image_search_back)
+    ImageView imageSearchBack;
+    @InjectView(R.id.edit_text_search)
+    EditText editTextSearch;
+    @InjectView(R.id.clearSearch)
+    ImageView clearSearch;
+    @InjectView(R.id.line_divider)
+    View lineDivider;
+    @InjectView(R.id.card_search)
+    CardView cardSearch;
     private ConversationAdapter adapter;
     private ChatReceiver chatReceiver;
     private int index = -1;
@@ -92,13 +105,7 @@ public class MessageActivity extends BaseActivity {
     protected InputMethodManager inputMethodManager;
     protected FrameLayout errorItemContainer;
     protected TextView errorText;
-    @OnClick(R.id.search_clear)
-    public void onClick() {
-        query.getText().clear();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(query.getWindowToken(), 0);
-    }
-
+    private MyFilter filter;
     public interface EaseConversationListItemClickListener {
         /**
          * 会话listview item点击事件
@@ -110,7 +117,7 @@ public class MessageActivity extends BaseActivity {
 
     private EaseConversationListItemClickListener listItemClickListener;
     protected Handler handler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
+        public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
                     onConnectionDisconnected();
@@ -159,10 +166,10 @@ public class MessageActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.inject(this);
-        View errorView =  View.inflate(this, R.layout.em_chat_neterror_item, null);
+        View errorView = View.inflate(this, R.layout.em_chat_neterror_item, null);
         errorItemContainer = (FrameLayout) findViewById(R.id.fl_error_item);
         errorText = (TextView) errorView.findViewById(R.id.tv_connect_errormsg);
-            errorItemContainer.setVisibility(MyApplication.getInstance().detect()?View.GONE:View.VISIBLE);
+        errorItemContainer.setVisibility(MyApplication.getInstance().detect() ? View.GONE : View.VISIBLE);
         errorItemContainer.addView(errorView);
         inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         String language = Locale.getDefault().getLanguage();
@@ -173,7 +180,7 @@ public class MessageActivity extends BaseActivity {
                 this, DividerItemDecoration.VERTICAL_LIST));
         conversationListview.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ConversationAdapter(this);
-        subscription = rx.Observable.create(new rx.Observable.OnSubscribe<List<EMConversation>>() {
+        subscription = Observable.create(new Observable.OnSubscribe<List<EMConversation>>() {
             @Override
             public void call(Subscriber<? super List<EMConversation>> subscriber) {
                 List<EMConversation> emConversations = loadConversationList();
@@ -183,12 +190,13 @@ public class MessageActivity extends BaseActivity {
             @Override
             public void call(List<EMConversation> emConversations) {
                 adapter.addAll(emConversations);
+                filter=new MyFilter(emConversations);
             }
         });
         adapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                adapter.getData().get(position).markAllMessagesAsRead();
+                adapter.getItem(position).markAllMessagesAsRead();
                 adapter.notifyItemChanged(position);
                 EMConversation conversation = adapter.getItem(position);
                 String username = conversation.getUserName();
@@ -215,7 +223,7 @@ public class MessageActivity extends BaseActivity {
         adapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemClick(int position) {
-                showDeleteDialog(adapter.getData().get(position));
+                showDeleteDialog(adapter.getItem(position));
                 return false;
             }
         });
@@ -230,30 +238,7 @@ public class MessageActivity extends BaseActivity {
                 "com.callba.chat");
         chatReceiver = new ChatReceiver();
         registerReceiver(chatReceiver, filter);
-        query.addTextChangedListener(new TextWatcher() {
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                new MyFilter(copyList).filter(s);
-                if (s.length() > 0) {
-                    clearSearch.setVisibility(View.VISIBLE);
-                } else {
-                    clearSearch.setVisibility(View.INVISIBLE);
 
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void afterTextChanged(Editable s) {
-            }
-        });
-        clearSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                query.getText().clear();
-                hideSoftKeyboard();
-            }
-        });
 
         conversationListview.setOnTouchListener(new View.OnTouchListener() {
 
@@ -268,7 +253,7 @@ public class MessageActivity extends BaseActivity {
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                subscription = rx.Observable.create(new rx.Observable.OnSubscribe<List<EMConversation>>() {
+                subscription = Observable.create(new Observable.OnSubscribe<List<EMConversation>>() {
                     @Override
                     public void call(Subscriber<? super List<EMConversation>> subscriber) {
                         List<EMConversation> emConversations = loadConversationList();
@@ -294,11 +279,66 @@ public class MessageActivity extends BaseActivity {
         };
         broadcastManager = LocalBroadcastManager.getInstance(this);
         broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
+        InitiateSearch();
+        HandleSearch();
     }
+    private void InitiateSearch() {
+        viewSearch.setListener(new InputWindowListener() {
+            @Override
+            public void show() {
 
+            }
+
+            @Override
+            public void hide() {
+                Log.i("input", "hide");
+                if (cardSearch.getVisibility() == View.VISIBLE)
+                    InitiateSearch.handleToolBar1(MessageActivity.this, cardSearch, viewSearch, editTextSearch, lineDivider);
+            }
+        });
+        editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filter.filter(s);
+                if (editTextSearch.getText().toString().length() == 0) {
+                    clearSearch.setVisibility(View.GONE);
+                } else {
+                    clearSearch.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        clearSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editTextSearch.setText("");
+                ((InputMethodManager) MessageActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
+        });
+
+    }
+    private void HandleSearch() {
+        imageSearchBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("search", "back");
+                InitiateSearch.handleToolBar(MessageActivity.this, cardSearch, viewSearch, editTextSearch, lineDivider);
+            }
+        });
+        editTextSearch.requestFocus();
+    }
     @Override
     public void onNetworkChanged(boolean isAvailable) {
-      errorItemContainer.setVisibility(isAvailable?View.GONE:View.VISIBLE);
+        errorItemContainer.setVisibility(isAvailable ? View.GONE : View.VISIBLE);
     }
 
     /**
@@ -379,7 +419,7 @@ public class MessageActivity extends BaseActivity {
                 SimpleHandler.getInstance().post(new Runnable() {
                     @Override
                     public void run() {
-                        subscription = rx.Observable.create(new rx.Observable.OnSubscribe<List<EMConversation>>() {
+                        subscription = Observable.create(new Observable.OnSubscribe<List<EMConversation>>() {
                             @Override
                             public void call(Subscriber<? super List<EMConversation>> subscriber) {
                                 List<EMConversation> emConversations = loadConversationList();
@@ -390,6 +430,10 @@ public class MessageActivity extends BaseActivity {
                             public void call(List<EMConversation> emConversations) {
                                 adapter.clear();
                                 adapter.addAll(emConversations);
+                                filter=new MyFilter(emConversations);
+                                if(!TextUtils.isEmpty(editTextSearch.getText().toString())){
+                                    filter.filter(editTextSearch.getText().toString());
+                                }
                             }
                         });
                     }
@@ -531,5 +575,13 @@ public class MessageActivity extends BaseActivity {
         builder.create().show();
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.search:
+                InitiateSearch.handleToolBar(MessageActivity.this, cardSearch, viewSearch, editTextSearch, lineDivider);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

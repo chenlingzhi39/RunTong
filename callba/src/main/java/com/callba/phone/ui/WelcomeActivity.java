@@ -159,8 +159,7 @@ public class WelcomeActivity extends BaseActivity {
             WelcomeActivity.this.startActivity(intent);
             SPUtils.put(this,Constant.PACKAGE_NAME,Constant.ISFRISTSTART, false);
         } else {
-            String username = getUsername();
-            if (TextUtils.isEmpty(username)) {
+            if (TextUtils.isEmpty(getUsername())) {
                 Intent intent = new Intent(WelcomeActivity.this,
                         GuideActivity.class);
                 startActivity(intent);

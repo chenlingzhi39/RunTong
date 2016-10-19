@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -37,6 +38,7 @@ import com.callba.phone.db.UserDao;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.RxBus;
 import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.widget.ContactItemView;
 import com.callba.phone.widget.EaseContactList;
@@ -59,6 +61,8 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import okhttp3.Call;
+import rx.Observable;
+import rx.functions.Action1;
 
 /**
  * Created by PC-20160514 on 2016/6/21.
@@ -69,10 +73,6 @@ import okhttp3.Call;
 public class WebContactFragment extends BaseFragment {
     @InjectView(R.id.contact_list)
     EaseContactList contactListLayout;
-    @InjectView(R.id.query)
-    EditText query;
-    @InjectView(R.id.search_clear)
-    ImageButton clearSearch;
     @InjectView(R.id.content_container)
     FrameLayout contentContainer;
     protected ListView listView;
@@ -95,7 +95,8 @@ public class WebContactFragment extends BaseFragment {
     private Gson gson;
     private static final String TAG = WebContactFragment.class.getSimpleName();
     private boolean hidden;
-
+    private Observable<CharSequence> mSearchObservable;
+    private CharSequence record;
     public static WebContactFragment newInstance() {
         WebContactFragment webContactFragment = new WebContactFragment();
         return webContactFragment;
@@ -123,31 +124,7 @@ public class WebContactFragment extends BaseFragment {
         contentContainer.addView(loadingView);
         contactsMap = DemoHelper.getInstance().getContactList();
         contactList = new ArrayList<>();
-        query.addTextChangedListener(new TextWatcher() {
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                contactListLayout.filter(s);
-                if (s.length() > 0) {
-                    clearSearch.setVisibility(View.VISIBLE);
-                } else {
-                    clearSearch.setVisibility(View.INVISIBLE);
-
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void afterTextChanged(Editable s) {
-            }
-        });
-        clearSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                query.getText().clear();
-                hideSoftKeyboard();
-            }
-        });
-
+        mSearchObservable= RxBus.get().register("search_contact",CharSequence.class);
         listView.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -181,14 +158,7 @@ public class WebContactFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
-        //refresh();
-        clearSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                query.getText().clear();
-                hideSoftKeyboard();
-            }
-        });
+
 
         listView.setOnTouchListener(new View.OnTouchListener() {
 
@@ -249,12 +219,19 @@ public class WebContactFragment extends BaseFragment {
                 });
             }
         });
-
+        contactListLayout.init(contactList);
+        mSearchObservable.subscribe(new Action1<CharSequence>() {
+            @Override
+            public void call(CharSequence s) {
+                record=s;
+                contactListLayout.filter(s);
+            }
+        });
     }
 
     @Override
     protected void lazyLoad() {
-        contactListLayout.init(contactList);
+
     }
 
     @Override
@@ -335,7 +312,10 @@ public class WebContactFragment extends BaseFragment {
                     @Override
                     public void run() {
                         if (contactListLayout != null)
-                            contactListLayout.refresh();
+                        {contactListLayout.refresh();
+                        if (!TextUtils.isEmpty(record))
+                            contactListLayout.filter(record);
+                        }
                     }
                 });
             }
@@ -629,6 +609,8 @@ public class WebContactFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if(mSearchObservable!=null)
+            RxBus.get().unregister("search_contact",mSearchObservable);
         if (contactSyncListener != null) {
             DemoHelper.getInstance().removeSyncContactListener(contactSyncListener);
             contactSyncListener = null;

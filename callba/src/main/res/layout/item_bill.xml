@@ -11,9 +11,7 @@
         android:background="@drawable/flow_button"
         android:button="@null"
         android:gravity="center"
-        android:text="100M"
         android:textColor="@drawable/price_text_selector"
-        android:textSize="20sp"
         android:layout_margin="10dp"
         android:padding="10dp"/>
     <ImageView

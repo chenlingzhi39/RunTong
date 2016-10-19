@@ -51,12 +51,12 @@ public class EaseUserUtils {
         if(user!=null){
             if(!TextUtils.isEmpty(user.getAvatar())){
                 Glide.with(context).load(user.getAvatar()).into(imageView);
-            }
+            } else Glide.with(context).load(R.drawable.ease_default_avatar).into(imageView);
         }else {
             if(username.equals("admin")){
                 Glide.with(context).load(R.drawable.system_message).into(imageView);
             }
-            else Glide.with(context).load(R.drawable.logo).into(imageView);}
+            else Glide.with(context).load(R.drawable.ease_default_avatar).into(imageView);}
 
        /* if(user != null && user.getAvatar() != null){
             try {

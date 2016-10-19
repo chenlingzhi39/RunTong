@@ -1,14 +1,18 @@
 package com.callba.phone.ui;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.Filter;
 import android.widget.TextView;
 
 import com.callba.R;
@@ -31,9 +35,11 @@ import com.callba.phone.pinyin.PinyinComparator;
 import com.callba.phone.ui.adapter.ContactAdapter;
 import com.callba.phone.ui.adapter.expandRecyclerviewadapter.StickyRecyclerHeadersDecoration;
 import com.callba.phone.ui.base.BaseFragment;
+import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.RxBus;
 import com.callba.phone.util.SPUtils;
 import com.callba.phone.widget.DividerDecoration;
 import com.callba.phone.widget.SideBar;
@@ -50,6 +56,7 @@ import java.util.regex.Pattern;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import okhttp3.Call;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -70,9 +77,10 @@ public class LocalContactFragment2 extends BaseFragment {
     private boolean first = true;
     private ContactAdapter contactAdapter;
     private ContactBroadcastReceiver broadcastReceiver;
-    private CharacterParser characterParser;
     private PinyinComparator pinyinComparator;
-
+    private Observable<CharSequence> mSearchObservable;
+    private MyFilter filter;
+    private CharSequence record;
     class ContactBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -91,8 +99,11 @@ public class LocalContactFragment2 extends BaseFragment {
     protected void initView(View fragmentRootView) {
         ButterKnife.inject(this, fragmentRootView);
         mSidebar.setTextView(mUserdialog);
-        characterParser = CharacterParser.getInstance();
         pinyinComparator = new PinyinComparator();
+
+        mSearchObservable= RxBus.get().register("search_contact",CharSequence.class);
+
+
         mSidebar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
 
             @Override
@@ -129,11 +140,26 @@ public class LocalContactFragment2 extends BaseFragment {
                     @Override
                     public void onItemClick(int position) {
                         Intent intent = new Intent(getActivity(), ContactDetailActivity.class);
-                        intent.putExtra("contact", contactAdapter.getData().get(position));
+                        intent.putExtra("contact", contactAdapter.getItem(position));
                         startActivity(intent);
                     }
                 });
+                contactAdapter.setOnItemLongClickListener(new ContactAdapter.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemClick(int position) {
+                        showDeleteDialog(contactAdapter.getItem(position));
+                        return false;
+                    }
+                });
+                filter=new MyFilter(s);
                 contactAdapter.addAll(s);
+                mSearchObservable.subscribe(new Action1<CharSequence>() {
+                    @Override
+                    public void call(CharSequence s) {
+                        record=s;
+                        filter.filter(s);
+                    }
+                });
                 final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
                 layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                 mRecyclerView.setLayoutManager(layoutManager);
@@ -162,7 +188,72 @@ public class LocalContactFragment2 extends BaseFragment {
         getActivity().registerReceiver(broadcastReceiver, intentFilter);
         Logger.i("local", "init");
     }
+    public class MyFilter extends Filter {
+        List<ContactMultiNumBean> mOriginalList;
 
+        public MyFilter(List<ContactMultiNumBean> messages) {
+            this.mOriginalList = messages;
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence prefix) {
+            FilterResults results = new FilterResults();
+            if (mOriginalList == null) {
+                mOriginalList = new ArrayList<>();
+            }
+
+
+            if (prefix == null || prefix.length() == 0) {
+                results.values = mOriginalList;
+                results.count = mOriginalList.size();
+            } else {
+                String prefixString = prefix.toString();
+                final ArrayList<ContactMultiNumBean> newValues = new ArrayList<>();
+                for (ContactMultiNumBean contactMultiNumBean:mOriginalList) {
+                    final String string = contactMultiNumBean.getDisplayName();
+
+
+                    if (string.contains(prefixString)) {
+                        newValues.add(contactMultiNumBean);
+                    } else {
+                        final String[] words = string.split(" ");
+                        final int wordCount = words.length;
+
+                        // Start at index 0, in case valueText starts with space(s)
+                        for (int k = 0; k < wordCount; k++) {
+                            if (words[k].contains(prefixString)) {
+                                newValues.add(contactMultiNumBean);
+                                break;
+                            }
+                        }
+                    }
+                    if (CharacterParser.getInstance().getSelling(string).contains(prefixString)) {
+                        newValues.add(contactMultiNumBean);
+                    } else {
+                        final String[] words = string.split(" ");
+                        final int wordCount = words.length;
+
+                        // Start at index 0, in case valueText starts with space(s)
+                        for (int k = 0; k < wordCount; k++) {
+                            if (CharacterParser.getInstance().getSelling(words[k]).contains(prefixString)) {
+                                newValues.add(contactMultiNumBean);
+                                break;
+                            }
+                        }
+                    }
+                }
+                results.values = newValues;
+                results.count = newValues.size();
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            contactAdapter.clear();
+            contactAdapter.addAll((ArrayList<ContactMultiNumBean>) results.values);
+        }
+    }
     private void initContactListView() {
         gson = new Gson();
         subscription = rx.Observable.create(new rx.Observable.OnSubscribe<List<ContactMultiNumBean>>() {
@@ -180,7 +271,10 @@ public class LocalContactFragment2 extends BaseFragment {
             @Override
             public void call(List<ContactMultiNumBean> s) {
                 contactAdapter.clear();
+                filter=new MyFilter(s);
                 contactAdapter.addAll(s);
+                if(!TextUtils.isEmpty(record))
+                    filter.filter(record);
             }
         });
     }
@@ -281,10 +375,30 @@ public class LocalContactFragment2 extends BaseFragment {
             });
         return personEntities;
     }
+    private void showDeleteDialog(final ContactMultiNumBean entity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(entity.getDisplayName());
+        builder.setItems(new String[]{getString(R.string.delete_contact)},
+                new DialogInterface.OnClickListener() {
 
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        switch (which) {
+                            case 0:
+                                ContactsAccessPublic.deleteContact(getActivity(), entity.get_id());
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
+        builder.create().show();
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if(mSearchObservable!=null)
+        RxBus.get().unregister("search_contact",mSearchObservable);
         ButterKnife.reset(this);
     }
 }

@@ -66,7 +66,7 @@ public class TeamFragment extends BaseFragment {
         teamAdapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemClick(int position) {
-                showDialog(teamAdapter.getData().get(position));
+                showDialog(teamAdapter.getItem(position));
                 return false;
             }
         });

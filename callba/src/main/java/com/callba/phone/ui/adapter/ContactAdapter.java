@@ -39,7 +39,7 @@ public class ContactAdapter extends RecyclerArrayAdapter<ContactMultiNumBean>imp
     @Override
     public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
         TextView textView = (TextView) holder.itemView;
-        String showValue = String.valueOf(getData().get(position).getTypeName().charAt(0));
+        String showValue = String.valueOf(getItem(position).getTypeName().charAt(0));
         textView.setText(showValue);
     }
 
@@ -52,7 +52,7 @@ public class ContactAdapter extends RecyclerArrayAdapter<ContactMultiNumBean>imp
     }
 
     public long getHeaderId(int position) {
-        return getData().get(position).getTypeName().charAt(0);
+        return getItem(position).getTypeName().charAt(0);
     }
 
 

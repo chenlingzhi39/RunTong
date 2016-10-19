@@ -45,13 +45,13 @@ public class CalllogService {
 	private int localCalllogCount = DEFAULT_LOCAL_CALLLOG_COUNT;
 
 	public CalllogService(Context context,
-			CalldaCalllogListener _calldaCalllogListener) {
+			CalldaCalllogListener calldaCalllogListener) {
 		if (mDBopenHelper == null) {
 			mDBopenHelper = new DBopenHelper(context, DBopenHelper.BACK_CALL_DB_NAME,DBopenHelper.BACK_CALL_TABLE_NAME);
 		}
 
 		this.mContext = context;
-		this.calldaCalllogListener = _calldaCalllogListener;
+		this.calldaCalllogListener = calldaCalllogListener;
 	}
 
 	final Handler mHandler = new Handler() {
