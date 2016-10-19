@@ -234,10 +234,10 @@ public class MessageActivity extends BaseActivity {
             }
         }, 0);
 
-        IntentFilter filter = new IntentFilter(
+        final IntentFilter intentFilter = new IntentFilter(
                 "com.callba.chat");
         chatReceiver = new ChatReceiver();
-        registerReceiver(chatReceiver, filter);
+        registerReceiver(chatReceiver, intentFilter);
 
 
         conversationListview.setOnTouchListener(new View.OnTouchListener() {
@@ -264,6 +264,7 @@ public class MessageActivity extends BaseActivity {
                     public void call(List<EMConversation> emConversations) {
                         adapter.clear();
                         adapter.addAll(emConversations);
+                        filter.filter(editTextSearch.getText().toString());
                         refresh.setRefreshing(false);
                     }
                 });

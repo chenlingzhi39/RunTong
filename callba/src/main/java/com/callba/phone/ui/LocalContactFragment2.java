@@ -227,7 +227,7 @@ public class LocalContactFragment2 extends BaseFragment {
                             }
                         }
                     }
-                    if (CharacterParser.getInstance().getSelling(string).contains(prefixString)) {
+                    if (CharacterParser.getInstance().getSelling(string).contains(prefixString)&& !newValues.contains(string)) {
                         newValues.add(contactMultiNumBean);
                     } else {
                         final String[] words = string.split(" ");
@@ -235,7 +235,7 @@ public class LocalContactFragment2 extends BaseFragment {
 
                         // Start at index 0, in case valueText starts with space(s)
                         for (int k = 0; k < wordCount; k++) {
-                            if (CharacterParser.getInstance().getSelling(words[k]).contains(prefixString)) {
+                            if (CharacterParser.getInstance().getSelling(words[k]).contains(prefixString)&& !newValues.contains(string)) {
                                 newValues.add(contactMultiNumBean);
                                 break;
                             }
