@@ -46,7 +46,7 @@ public class SmsTools {
         // (?<![a-zA-Z0-9])负向断言([0-9]{YZMLENGTH})前面不能有数字
         // (?![a-zA-Z0-9])断言([0-9]{YZMLENGTH})后面不能有数字出现
         Pattern p = Pattern
-                .compile("(?<![a-zA-Z0-9])([a-zA-Z0-9]{" + YZMLENGTH + "})(?![a-zA-Z0-9])");
+                .compile("(?<![0-9])([0-9]{" + YZMLENGTH + "})(?![0-9])");
         Matcher m = p.matcher(body);
         if (m.find()) {
             System.out.println(m.group());

@@ -304,6 +304,7 @@ public class MessageActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(filter!=null)
                 filter.filter(s);
                 if (editTextSearch.getText().toString().length() == 0) {
                     clearSearch.setVisibility(View.GONE);
