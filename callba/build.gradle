@@ -110,5 +110,6 @@ android {
         compile 'com.yanzhenjie:permission:1.0.3'
         compile 'com.cleveroad:slidingtutorial:1.0.5'
         compile 'com.android.support:percent:24.2.1'
+        compile 'me.henrytao:smooth-app-bar-layout:0.2.1'
     }
 }

@@ -31,4 +31,6 @@
     <dimen name="indicator_size">10dp</dimen>
     <dimen name="indicator_spacing">2dp</dimen>
     <dimen name="card_view_margin">4dp</dimen>
+    <dimen name="home_header_height">201dp</dimen>
+    <dimen name="normal_list_padding_bottom">36dp</dimen>
 </resources>

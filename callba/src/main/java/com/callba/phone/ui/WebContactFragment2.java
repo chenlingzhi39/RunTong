@@ -80,10 +80,6 @@ public class WebContactFragment2 extends BaseFragment {
     private Observable<CharSequence> mSearchObservable;
     CharSequence record;
     private MyFilter filter;
-    private ArrayList<RecyclerArrayAdapter.ItemView> itemViews;
-    private ArrayList<View> headers;
-    private int[] strings={R.string.Application_and_notify,R.string.blacklist,R.string.community,R.string.friend,R.string.group_chat};
-    private int[] drawables={R.drawable.em_new_friends_icon,R.drawable.black_list,R.drawable.circle,R.drawable.position,R.drawable.em_group_icon};
     public static WebContactFragment2 newInstance() {
         WebContactFragment2 webContactFragment = new WebContactFragment2();
         return webContactFragment;
@@ -104,22 +100,6 @@ public class WebContactFragment2 extends BaseFragment {
             }
         });
         webContactAdapter = new WebContactAdapter(getActivity());
-        for (int i=0;i<5;i++){
-            itemViews.add(new RecyclerArrayAdapter.ItemView() {
-                @Override
-                public View onCreateView(ViewGroup parent) {
-                    return getActivity().getLayoutInflater().inflate(R.layout.item_contact_header,null);
-                }
-
-                @Override
-                public void onBindView(View headerView) {
-                    ((ImageView)headerView.findViewById(R.id.avatar)).setImageResource(drawables[itemViews.size()]);
-                    ((TextView)headerView.findViewById(R.id.name)).setText(strings[itemViews.size()]);
-                }
-            });
-
-        }
-        webContactAdapter.addHeaders(itemViews);
         webContactAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {

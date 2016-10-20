@@ -195,10 +195,6 @@ abstract public class RecyclerArrayAdapter<T> extends RecyclerView.Adapter<BaseV
         if (mEventDelegate == null)throw new NullPointerException("You should invoking setLoadMore() first");
         mEventDelegate.resumeLoadMore();
     }
-    public void addHeaders(ArrayList<ItemView> views){
-        if (views==null||views.size()>0)throw new NullPointerException("ItemView can't be null");
-        headers.addAll(views);
-    }
 
     public void addHeader(ItemView view){
         if (view==null)throw new NullPointerException("ItemView can't be null");
