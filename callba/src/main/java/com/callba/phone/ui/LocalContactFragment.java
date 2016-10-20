@@ -6,35 +6,54 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
+import android.widget.Filter;
+import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.bean.ContactMultiNumBean;
-import com.callba.phone.cfg.Constant;
-import com.callba.phone.ui.base.BaseFragment;
+import com.callba.phone.DemoHelper;
+import com.callba.phone.MyApplication;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.logic.contact.ContactController;
-import com.callba.phone.logic.contact.ContactEntity;
-import com.callba.phone.logic.contact.ContactListAdapter;
+import com.callba.phone.bean.BaseUser;
+import com.callba.phone.bean.ContactMultiNumBean;
+import com.callba.phone.bean.EaseUser;
+import com.callba.phone.bean.Friend;
+import com.callba.phone.cfg.Constant;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.logic.contact.ContactPersonEntity;
-import com.callba.phone.logic.contact.ContactSerarchWatcher;
+import com.callba.phone.manager.UserManager;
+import com.callba.phone.pinyin.CharacterParser;
+import com.callba.phone.pinyin.PinyinComparator;
+import com.callba.phone.ui.adapter.ContactAdapter;
+import com.callba.phone.ui.adapter.expandRecyclerviewadapter.StickyRecyclerHeadersDecoration;
+import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.util.ContactsAccessPublic;
+import com.callba.phone.util.EaseCommonUtils;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.RxBus;
 import com.callba.phone.util.SPUtils;
-import com.callba.phone.view.QuickSearchBar;
+import com.callba.phone.widget.DividerDecoration;
+import com.callba.phone.widget.SideBar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
+import okhttp3.Call;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -42,94 +61,23 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
- * Created by PC-20160514 on 2016/6/21.
+ * Created by PC-20160514 on 2016/10/14.
  */
-@ActivityFragmentInject(
-        contentViewId = R.layout.local_contact
-)
-public class LocalContactFragment extends BaseFragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
-    @InjectView(R.id.et_contact_search)
-    EditText et_search;
-    @InjectView(R.id.lv_contact_contacts)
-    ListView mListView;
-    @InjectView(R.id.qsb_contact)
-    QuickSearchBar mQuickSearchBar;
-    @InjectView(R.id.tab_contact_ll)
-    LinearLayout tabContactLl;
-    @InjectView(R.id.progressBar)
-    ProgressBar progressBar;
-    private List<ContactEntity> mContactListData; // 填充ListView的数据
-    private ContactListAdapter mContactListAdapter;    //联系人适配器
+@ActivityFragmentInject(contentViewId = R.layout.local_contact)
+public class LocalContactFragment extends BaseFragment {
+    @BindView(R.id.contact_member)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.contact_dialog)
+    TextView mUserdialog;
+    @BindView(R.id.contact_sidebar)
+    SideBar mSidebar;
+    private boolean first = true;
+    private ContactAdapter contactAdapter;
     private ContactBroadcastReceiver broadcastReceiver;
-    private Gson gson;
-    private boolean first=true;
-    private ContactController contactController;
-    public static LocalContactFragment newInstance() {
-        LocalContactFragment localContactFragment = new LocalContactFragment();
-        return localContactFragment;
-    }
-
-    @Override
-    protected void initView(View fragmentRootView) {
-        ButterKnife.inject(this, fragmentRootView);
-        contactController = new ContactController();
-        gson = new Gson();
-        subscription = rx.Observable.create(new rx.Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                String string = (String) SPUtils.get(getActivity(), Constant.PACKAGE_NAME, "contacts", "");
-                //String string = (String) FileUtils.readObjectFromFile(StorageUtils.getFilesDirectory(getActivity()) + File.separator + "contacts.txt");
-                subscriber.onNext(string);
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(Schedulers.newThread()).map(new Func1<String, List<ContactEntity>>() {
-            @Override
-            public List<ContactEntity> call(String s) {
-
-                final List<ContactMultiNumBean> personEntities = gson.fromJson(s, new TypeToken<ArrayList<ContactMultiNumBean>>() {
-                }.getType());
-                final List<ContactEntity> allContactEntities = contactController.sortContactByLetter(personEntities);
-                return allContactEntities;
-            }
-        }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<ContactEntity>>() {
-            @Override
-            public void call(List<ContactEntity> s) {
-                if (mContactListData == null) {
-                    mContactListData = new ArrayList<>();
-                }
-                mContactListData.addAll(s);
-
-                mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
-                mListView.setAdapter(mContactListAdapter);
-                mListView.setOnItemClickListener(LocalContactFragment.this);
-                mListView.setOnItemLongClickListener(LocalContactFragment.this);
-                mQuickSearchBar.setListView(mListView);
-                mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
-
-                et_search.addTextChangedListener(new ContactSerarchWatcher(
-                        mContactListAdapter, mContactListData, mQuickSearchBar,contactController));
-                progressBar.setVisibility(View.GONE);
-                    initContactListView();
-            }
-        });
-
-        IntentFilter intentFilter = new IntentFilter("com.callba.contact");
-        broadcastReceiver = new ContactBroadcastReceiver();
-        getActivity().registerReceiver(broadcastReceiver, intentFilter);
-        Logger.i("local", "init");
-
-    }
-
-    @Override
-    protected void lazyLoad() {
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.reset(this);
-    }
-
+    private PinyinComparator pinyinComparator;
+    private Observable<CharSequence> mSearchObservable;
+    private MyFilter filter;
+    private CharSequence record;
     class ContactBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -138,85 +86,258 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
             initContactListView();
         }
     }
+    public static LocalContactFragment newInstance() {
+        LocalContactFragment localContactFragment = new LocalContactFragment();
+        return localContactFragment;
+    }
+    private Gson gson;
 
+    @Override
+    protected void initView(View fragmentRootView) {
+        ButterKnife.bind(this, fragmentRootView);
+        mSidebar.setTextView(mUserdialog);
+        pinyinComparator = new PinyinComparator();
+
+        mSearchObservable= RxBus.get().register("search_contact",CharSequence.class);
+
+
+        mSidebar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
+
+            @Override
+            public void onTouchingLetterChanged(String s) {
+                int position = contactAdapter.getPositionForSection(s.charAt(0));
+                if (position != -1) {
+                    ((LinearLayoutManager)mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(position,mRecyclerView.getLayoutManager().getChildCount());
+                }
+
+            }
+        });
+        gson = new Gson();
+        subscription = rx.Observable.create(new rx.Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                String string = (String) SPUtils.get(getActivity(), Constant.PACKAGE_NAME, "contacts", "");
+                //String string = (String) FileUtils.readObjectFromFile(StorageUtils.getFilesDirectory(getActivity()) + File.separator + "contacts.txt");
+                subscriber.onNext(string);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(Schedulers.newThread()).map(new Func1<String, List<ContactMultiNumBean>>() {
+            @Override
+            public List<ContactMultiNumBean> call(String s) {
+
+                final List<ContactMultiNumBean> personEntities = gson.fromJson(s, new TypeToken<ArrayList<ContactMultiNumBean>>() {
+                }.getType());
+                Collections.sort(personEntities, pinyinComparator);
+                return personEntities;
+            }
+        }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<ContactMultiNumBean>>() {
+            @Override
+            public void call(List<ContactMultiNumBean> s) {
+                contactAdapter = new ContactAdapter(getActivity());
+                contactAdapter.setOnItemClickListener(new ContactAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        Intent intent = new Intent(getActivity(), ContactDetailActivity.class);
+                        intent.putExtra("contact", contactAdapter.getItem(position));
+                        startActivity(intent);
+                    }
+                });
+                contactAdapter.setOnItemLongClickListener(new ContactAdapter.OnItemLongClickListener() {
+                    @Override
+                    public boolean onItemClick(int position) {
+                        showDeleteDialog(contactAdapter.getItem(position));
+                        return false;
+                    }
+                });
+                filter=new MyFilter(s);
+                contactAdapter.addAll(s);
+                mSearchObservable.subscribe(new Action1<CharSequence>() {
+                    @Override
+                    public void call(CharSequence s) {
+                        record=s;
+                        filter.filter(s);
+                    }
+                });
+                final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                mRecyclerView.setLayoutManager(layoutManager);
+                mRecyclerView.setAdapter(contactAdapter);
+                final StickyRecyclerHeadersDecoration headersDecor = new StickyRecyclerHeadersDecoration(contactAdapter);
+                mRecyclerView.addItemDecoration(headersDecor);
+                DisplayMetrics metrics = new DisplayMetrics();
+                getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                int mDensity = metrics.densityDpi;
+                Logger.i("density",mDensity+"");
+                mRecyclerView.addItemDecoration(new DividerDecoration(getActivity(),mDensity*50/160));
+
+                //   setTouchHelper();
+                contactAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                    @Override
+                    public void onChanged() {
+                        headersDecor.invalidateHeaders();
+                    }
+                });
+                initContactListView();
+            }
+        });
+
+        IntentFilter intentFilter = new IntentFilter("com.callba.contact");
+        broadcastReceiver = new ContactBroadcastReceiver();
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
+        Logger.i("local", "init");
+    }
+    public class MyFilter extends Filter {
+        List<ContactMultiNumBean> mOriginalList;
+
+        public MyFilter(List<ContactMultiNumBean> messages) {
+            this.mOriginalList = messages;
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence prefix) {
+            FilterResults results = new FilterResults();
+            if (mOriginalList == null) {
+                mOriginalList = new ArrayList<>();
+            }
+
+
+            if (prefix == null || prefix.length() == 0) {
+                results.values = mOriginalList;
+                results.count = mOriginalList.size();
+            } else {
+                String prefixString = prefix.toString();
+                final ArrayList<ContactMultiNumBean> newValues = new ArrayList<>();
+                for (ContactMultiNumBean contactMultiNumBean:mOriginalList) {
+                    final String string = contactMultiNumBean.getDisplayName();
+                    if (string.contains(prefixString)||CharacterParser.getInstance().getSelling(string).contains(prefixString)) {
+                        newValues.add(contactMultiNumBean);
+                    }
+                }
+                results.values = newValues;
+                results.count = newValues.size();
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            contactAdapter.clear();
+            contactAdapter.addAll((ArrayList<ContactMultiNumBean>) results.values);
+        }
+    }
     private void initContactListView() {
         gson = new Gson();
-        contactController = new ContactController();
         subscription = rx.Observable.create(new rx.Observable.OnSubscribe<List<ContactMultiNumBean>>() {
             @Override
             public void call(Subscriber<? super List<ContactMultiNumBean>> subscriber) {
-                List<ContactMultiNumBean> allContactEntities = contactController.getFilterListContactEntitiesNoDuplicate();
-                if(first)
-                {SPUtils.put(getActivity(),Constant.PACKAGE_NAME,"contacts",gson.toJson(allContactEntities));
-                first=false;}
+                List<ContactMultiNumBean> allContactEntities = getContacts();
+                if (first) {
+                    SPUtils.put(getActivity(), Constant.PACKAGE_NAME, "contacts", gson.toJson(allContactEntities));
+                    first = false;
+                }
+                Collections.sort(allContactEntities, pinyinComparator);
                 subscriber.onNext(allContactEntities);
             }
-        }).subscribeOn(Schedulers.io()).observeOn(Schedulers.newThread()).map(new Func1<List<ContactMultiNumBean>, List<ContactEntity>>() {
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<ContactMultiNumBean>>() {
             @Override
-            public List<ContactEntity> call(List<ContactMultiNumBean> contactMutliNumBeen) {
-                return contactController.sortContactByLetter(contactMutliNumBeen);
-            }
-        }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<ContactEntity>>() {
-            @Override
-            public void call(List<ContactEntity> s) {
-                mContactListData.clear();
-                mContactListData.addAll(s);
-                mContactListAdapter.notifyDataSetChanged();
-              /*  mContactListAdapter = new ContactListAdapter(getActivity(), mContactListData);
-                mListView.setAdapter(mContactListAdapter);
-
-                mQuickSearchBar.setListView(mListView);*/
-                mQuickSearchBar.setListSearchMap(contactController.getSearchMap());
-
-                et_search.addTextChangedListener(new ContactSerarchWatcher(
-                        mContactListAdapter, mContactListData, mQuickSearchBar,contactController));
-                if(!et_search.getText().toString().equals(""))
-                { et_search.setText(et_search.getText().toString());
-                    et_search.setSelection(et_search.getText().toString().length());}
-                progressBar.setVisibility(View.GONE);
+            public void call(List<ContactMultiNumBean> s) {
+                contactAdapter.clear();
+                filter=new MyFilter(s);
+                contactAdapter.addAll(s);
+                if(!TextUtils.isEmpty(record))
+                    filter.filter(record);
             }
         });
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        ContactEntity contactEntity = mContactListData.get(position);
-        ContactPersonEntity contactPersonEntity = (ContactPersonEntity) contactEntity;
-        ContactMultiNumBean contactMultiNumBean = (ContactMultiNumBean) contactPersonEntity;
-        Intent intent = new Intent(getActivity(), ContactDetailActivity.class);
-        intent.putExtra("contact", contactMultiNumBean);
-      /*  if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {try {
-            ActivityOptions options=  ActivityOptions
-                    .makeSceneTransitionAnimation(getActivity(),
-                          view.findViewById(R.id.avatar), "photo");
-            getActivity().startActivity(intent, options.toBundle());
-        }catch (Exception e){
-            e.printStackTrace();
+    private List<ContactMultiNumBean> getContacts() {
+        List<ContactPersonEntity> mAllContactPersonEntities = GlobalConfig.getInstance().getContactBeans();
+        List<ContactMultiNumBean> personEntities = new ArrayList<>();
+        List<String> contactPhones = new ArrayList<>();
+        List<Friend> friends = new ArrayList<>();
+        Logger.i("contact_size", mAllContactPersonEntities.size() + "");
+        for (int i = 0; i < mAllContactPersonEntities.size(); i++) {
+            friends.add(new Friend(mAllContactPersonEntities.get(i).getDisplayName().replace("%",""), Pattern.compile("[^0-9]").matcher(mAllContactPersonEntities.get(i).getPhoneNumber()).replaceAll("")));
+            if (i == 0) {
+                personEntities.add(new ContactMultiNumBean(mAllContactPersonEntities.get(0)));
+                contactPhones.add(mAllContactPersonEntities.get(0).getPhoneNumber());
+                personEntities.get(0).setContactPhones(contactPhones);
+                continue;
+            }
+            if (!mAllContactPersonEntities.get(i).get_id().equals(mAllContactPersonEntities.get(i - 1).get_id())) {
+                contactPhones = new ArrayList<>();
+                contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
+                personEntities.add(new ContactMultiNumBean(mAllContactPersonEntities.get(i)));
+            } else {
+                contactPhones.add(mAllContactPersonEntities.get(i).getPhoneNumber());
+            }
+            personEntities.get(personEntities.size() - 1).setContactPhones(contactPhones);
         }
+        if (friends.size() > 0)
+            OkHttpUtils
+                    .post()
+                    .url(Interfaces.ADD_FRIENDS)
+                    .addParams("loginName", UserManager.getUsername(getActivity()))
+                    .addParams("loginPwd", UserManager.getPassword(getActivity()))
+                    .addParams("phoneNumbers", gson.toJson(friends))
+                    .build().execute(new StringCallback() {
+                @Override
+                public void onError(Call call, Exception e, int id) {
+                    e.printStackTrace();
+                }
 
-        } else {
-            //让新的Activity从一个小的范围扩大到全屏
-            ActivityOptionsCompat options = ActivityOptionsCompat
-                    .makeScaleUpAnimation(view, view.getWidth() / 2,
-                            view.getHeight() / 2, 0, 0);
-            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
-        }*/
-        startActivity(intent);
+                @Override
+                public void onResponse(String response, int id) {
+                    try {
+                        Logger.i("add_results", response);
+                        String[] result = response.split("\\|");
+                        if (result[0].equals("0")) {
+                            OkHttpUtils
+                                    .post()
+                                    .url(Interfaces.GET_FRIENDS)
+                                    .addParams("loginName", UserManager.getUsername(getActivity()))
+                                    .addParams("loginPwd", UserManager.getPassword(getActivity()))
+                                    .build().execute(new StringCallback() {
+                                @Override
+                                public void onError(Call call, Exception e, int id) {
+                                    e.printStackTrace();
+                                }
+
+                                @Override
+                                public void onResponse(String response, int id) {
+                                    try {
+                                        Logger.i("get_result", response);
+                                        String[] result = response.split("\\|");
+                                        if (result[0].equals("0")) {
+                                            DemoHelper.getInstance().getContactList();
+                                            ArrayList<BaseUser> list;
+                                            list = gson.fromJson(result[1], new TypeToken<List<BaseUser>>() {
+                                            }.getType());
+                                            List<EaseUser> mList = new ArrayList<>();
+                                            for (BaseUser baseUser : list) {
+                                                EaseUser user = new EaseUser(baseUser.getPhoneNumber() + "-callba");
+                                                user.setAvatar(baseUser.getUrl_head());
+                                                user.setNick(baseUser.getNickname());
+                                                user.setSign(baseUser.getSign());
+                                                EaseCommonUtils.setUserInitialLetter(user);
+                                                mList.add(user);
+                                            }
+                                            DemoHelper.getInstance().updateContactList(mList);
+                                            LocalBroadcastManager.getInstance(MyApplication.getInstance()).sendBroadcast(new Intent(com.callba.phone.Constant.ACTION_CONTACT_CHANAGED));
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        return personEntities;
     }
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        showDeleteDialog((ContactPersonEntity) mContactListData.get(position));
-        return true;
-    }
-
-    @Override
-    public void onDestroy() {
-        getActivity().unregisterReceiver(broadcastReceiver);
-        super.onDestroy();
-    }
-
-    private void showDeleteDialog(final ContactPersonEntity entity) {
+    private void showDeleteDialog(final ContactMultiNumBean entity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(entity.getDisplayName());
         builder.setItems(new String[]{getString(R.string.delete_contact)},
@@ -235,5 +356,10 @@ public class LocalContactFragment extends BaseFragment implements AdapterView.On
                 });
         builder.create().show();
     }
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(mSearchObservable!=null)
+        RxBus.get().unregister("search_contact",mSearchObservable);
+    }
 }

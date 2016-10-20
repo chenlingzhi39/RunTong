@@ -45,7 +45,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -61,17 +61,17 @@ import okhttp3.Request;
         menuId =R.menu.menu_save
 )
 public class ChangeInfoActivity extends BaseActivity{
-    @InjectView(R.id.head)
+    @BindView(R.id.head)
     CircleImageView head;
-    @InjectView(R.id.change_head)
+    @BindView(R.id.change_head)
     RelativeLayout changeHead;
-    @InjectView(R.id.nick_name)
+    @BindView(R.id.nick_name)
     TextView nickName;
-    @InjectView(R.id.change_nickname)
+    @BindView(R.id.change_nickname)
     RelativeLayout changeNickname;
-    @InjectView(R.id.signature)
+    @BindView(R.id.signature)
     TextView signature;
-    @InjectView(R.id.change_signature)
+    @BindView(R.id.change_signature)
     RelativeLayout changeSignature;
     private File f;
     private ProgressDialog dialog;
@@ -83,7 +83,7 @@ public class ChangeInfoActivity extends BaseActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         if(!UserManager.getUserAvatar(this).equals("")){
             Glide.with(this).load(UserManager.getUserAvatar(this)).into(head);
         }

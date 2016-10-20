@@ -8,9 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,9 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -59,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import okhttp3.Call;
 import rx.Observable;
 import rx.functions.Action1;
@@ -71,9 +67,9 @@ import rx.functions.Action1;
         contentViewId = R.layout.web_contact
 )
 public class WebContactFragment extends BaseFragment {
-    @InjectView(R.id.contact_list)
+    @BindView(R.id.contact_list)
     EaseContactList contactListLayout;
-    @InjectView(R.id.content_container)
+    @BindView(R.id.content_container)
     FrameLayout contentContainer;
     protected ListView listView;
     protected List<EaseUser> contactList;
@@ -105,7 +101,7 @@ public class WebContactFragment extends BaseFragment {
 
     @Override
     protected void initView(View fragmentRootView) {
-        ButterKnife.inject(this, fragmentRootView);
+        ButterKnife.bind(this, fragmentRootView);
         inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         View headerView = LayoutInflater.from(getActivity()).inflate(R.layout.em_contacts_header, null);
         HeaderItemClickListener clickListener = new HeaderItemClickListener();
@@ -192,23 +188,33 @@ public class WebContactFragment extends BaseFragment {
                     @Override
                     public void onResponse(String response, int id) {
                         try { Logger.i("get_result", response);
-                            String[] result = response.split("\\|");
+                            final String[] result = response.split("\\|");
                             if (result[0].equals("0")) {
-                                ArrayList<BaseUser> list;
-                                list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
-                                }.getType());
-                                List<EaseUser> mList = new ArrayList<EaseUser>();
-                                for (BaseUser baseUser : list) {
-                                    EaseUser user = new EaseUser(baseUser.getPhoneNumber() + "-callba");
-                                    user.setAvatar(baseUser.getUrl_head());
-                                    user.setNick(baseUser.getNickname());
-                                    user.setSign(baseUser.getSign());
-                                    user.setRemark(baseUser.getRemark());
-                                    EaseCommonUtils.setUserInitialLetter(user);
-                                    mList.add(user);
-                                }
-                                DemoHelper.getInstance().updateContactList(mList);
-                                refresh();
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ArrayList<BaseUser> list;
+                                        list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
+                                        }.getType());
+                                        List<EaseUser> mList = new ArrayList<EaseUser>();
+                                        for (BaseUser baseUser : list) {
+                                            EaseUser user = new EaseUser(baseUser.getPhoneNumber() + "-callba");
+                                            user.setAvatar(baseUser.getUrl_head());
+                                            user.setNick(baseUser.getNickname());
+                                            user.setSign(baseUser.getSign());
+                                            user.setRemark(baseUser.getRemark());
+                                            EaseCommonUtils.setUserInitialLetter(user);
+                                            mList.add(user);
+                                        }
+                                        DemoHelper.getInstance().updateContactList(mList);
+                                        SimpleHandler.getInstance().post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                           refresh();
+                                            }
+                                        });
+                                    }
+                                }).start();
                             } else {
                                 toast(result[1]);
                             }
@@ -372,8 +378,6 @@ public class WebContactFragment extends BaseFragment {
 
             }
         });
-
-
     }
 
     protected class HeaderItemClickListener implements View.OnClickListener {
@@ -415,14 +419,6 @@ public class WebContactFragment extends BaseFragment {
             }
         }
 
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        //unregisterBroadcastReceiver();
-        unregisterForContextMenu(listView);
-        ButterKnife.reset(this);
     }
 
     /**
@@ -477,7 +473,7 @@ public class WebContactFragment extends BaseFragment {
                 refresh();
             } else {
                 String s1 = getActivity().getResources().getString(R.string.get_failed_please_check);
-                Toast.makeText(getActivity(), s1, 1).show();
+                Toast.makeText(getActivity(), s1, Toast.LENGTH_SHORT).show();
                 SimpleHandler.getInstance().post(new Runnable() {
                     @Override
                     public void run() {
@@ -528,7 +524,7 @@ public class WebContactFragment extends BaseFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
                             pd.dismiss();
-                            Toast.makeText(getActivity(), st2, 0).show();
+                            Toast.makeText(getActivity(), st2, Toast.LENGTH_SHORT).show();
                             refresh();
                         }
                     });
@@ -537,7 +533,7 @@ public class WebContactFragment extends BaseFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
                             pd.dismiss();
-                            Toast.makeText(getActivity(), st3, 0).show();
+                            Toast.makeText(getActivity(), st3, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

@@ -21,7 +21,7 @@ import com.callba.phone.util.Interfaces;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/6/11.
@@ -32,11 +32,11 @@ import butterknife.InjectView;
         toolbarTitle = R.string.help
 )
 public class HelpActivity extends BaseActivity {
-    @InjectView(R.id.list)
+    @BindView(R.id.list)
     ExpandableListView list;
-    @InjectView(R.id.webView)
+    @BindView(R.id.webView)
     WebView mWebView;
-    @InjectView(R.id.pb_loading_precent)
+    @BindView(R.id.pb_loading_precent)
     ProgressBar mProgressBar;
     private HelpAdapter helpAdapter;
     private HelpListAdapter helpListAdapter;
@@ -45,7 +45,7 @@ public class HelpActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
       /*  helpListAdapter=new HelpListAdapter(this);
         list.setGroupIndicator(null);
         list.setAdapter(helpListAdapter);

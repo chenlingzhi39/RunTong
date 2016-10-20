@@ -16,7 +16,7 @@ import com.callba.R;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import me.iwf.photopicker.PhotoPickerActivity;
 import me.iwf.photopicker.adapter.PhotoPagerAdapter;
 
@@ -24,9 +24,9 @@ import me.iwf.photopicker.adapter.PhotoPagerAdapter;
  * Created by PC-20160514 on 2016/6/6.
  */
 public class PhotoActivity extends AppCompatActivity {
-    @InjectView(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @InjectView(R.id.vp_photos)
+    @BindView(R.id.vp_photos)
     ViewPager mViewPager;
     private PhotoPagerAdapter mPagerAdapter;
     private ArrayList<String> paths;
@@ -35,7 +35,7 @@ public class PhotoActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.photo);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         paths=getIntent().getStringArrayListExtra("path");
         mPagerAdapter=new PhotoPagerAdapter(Glide.with(this), paths);
         mViewPager.setAdapter(mPagerAdapter);

@@ -18,13 +18,13 @@ import android.widget.EditText;
 
 public class InitiateSearch {
 
-    public static void handleToolBar(final Context context, final CardView search, final View view, final EditText editText, final View line_divider) {
+    public static void handleToolBar(final Context context, final CardView search, final EditText editText,int centerX) {
         final Animation fade_in = AnimationUtils.loadAnimation(context.getApplicationContext(), android.R.anim.fade_in);
         final Animation fade_out = AnimationUtils.loadAnimation(context.getApplicationContext(), android.R.anim.fade_out);
         if (search.getVisibility() == View.VISIBLE) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 final Animator animatorHide = ViewAnimationUtils.createCircularReveal(search,
-                    search.getWidth() - (int) convertDpToPixel(56, context),
+                    search.getWidth() - (int) convertDpToPixel(centerX, context),
                     (int) convertDpToPixel(23, context),
                     (float) Math.hypot(search.getWidth(), search.getHeight()),
                     0);
@@ -36,10 +36,8 @@ public class InitiateSearch {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        view.startAnimation(fade_out);
-                        view.setVisibility(View.INVISIBLE);
                         search.setVisibility(View.GONE);
-                        ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search.getWindowToken(), 0);
                     }
 
                     @Override
@@ -55,9 +53,7 @@ public class InitiateSearch {
                 animatorHide.setDuration(300);
                 animatorHide.start();
             } else {
-                ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), 0);
-                view.startAnimation(fade_out);
-                view.setVisibility(View.INVISIBLE);
+                ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search.getWindowToken(), 0);
                 search.setVisibility(View.GONE);
             }
             editText.setText("");
@@ -73,7 +69,7 @@ public class InitiateSearch {
             editText.requestFocus();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 final Animator animator = ViewAnimationUtils.createCircularReveal(search,
-                    search.getWidth() - (int) convertDpToPixel(56, context),
+                    search.getWidth() - (int) convertDpToPixel(centerX, context),
                     (int) convertDpToPixel(23, context),
                     0,
                     (float) Math.hypot(search.getWidth(), search.getHeight()));
@@ -84,8 +80,6 @@ public class InitiateSearch {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        view.setVisibility(View.VISIBLE);
-                        view.startAnimation(fade_in);
                         ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
                     }
 
@@ -128,7 +122,7 @@ public class InitiateSearch {
             }
         }
     }
-    public static void handleToolBar1(final Context context, final CardView search, final View view, final EditText editText, final View line_divider) {
+    public static void handleToolBar1(final Context context, final CardView search, final EditText editText) {
         final Animation fade_in = AnimationUtils.loadAnimation(context.getApplicationContext(), android.R.anim.fade_in);
         final Animation fade_out = AnimationUtils.loadAnimation(context.getApplicationContext(), android.R.anim.fade_out);
         fade_in.setAnimationListener(new Animation.AnimationListener() {
@@ -158,10 +152,8 @@ public class InitiateSearch {
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    view.startAnimation(fade_out);
-                    view.setVisibility(View.INVISIBLE);
                     search.setVisibility(View.GONE);
-                    ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search.getWindowToken(), 0);
 
                 }
 
@@ -175,8 +167,6 @@ public class InitiateSearch {
             search.setVisibility(View.VISIBLE);
             search.setEnabled(true);
             editText.requestFocus();
-            view.setVisibility(View.VISIBLE);
-            view.startAnimation(fade_in);
             ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
         }
     }

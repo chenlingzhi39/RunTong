@@ -12,7 +12,7 @@ import butterknife.ButterKnife;
 public class NumberViewHolder extends BaseViewHolder<String>{
     public NumberViewHolder(ViewGroup parent) {
         super(parent, R.layout.contact_detail_lv_item);
-        ButterKnife.inject(this,itemView);
+        ButterKnife.bind(this,itemView);
     }
 
     @Override

@@ -76,23 +76,18 @@
             android:enabled="true"
             android:exported="false"
             />
-        <!--   <meta-data
-               android:name="UMENG_APPKEY"
-               android:value="5371aef356240bac320264f5" />-->
+
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="576b786be0f55a6321000048" />
-        <!-- 友盟发布渠道 -->
-        <!-- 应用发布渠道 -->
-        <!-- <meta-data
-             android:name="UMENG_CHANNEL"
-             android:value="runtong" />-->
-        <!--<meta-data
-            android:name="UMENG_MESSAGE_SECRET"
-            android:value="c2c0420b2f48ef7fa0e69e8d1d0cc17f" >
-        </meta-data>-->
 
         <service android:name=".phone.service.UpdateService" />
+        <activity android:name=".phone.ui.GroupsActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="adjustPan"
+            />
         <activity android:name=".phone.ui.PickContactNoCheckboxActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
@@ -253,12 +248,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
-        <activity
-            android:name=".phone.ui.GroupsActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".phone.ui.SettingsActivity"
             android:launchMode="singleTop"

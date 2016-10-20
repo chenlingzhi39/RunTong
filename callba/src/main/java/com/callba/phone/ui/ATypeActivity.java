@@ -25,7 +25,7 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;
@@ -39,23 +39,23 @@ import okhttp3.Request;
         navigationId = R.drawable.press_back
 )
 public class ATypeActivity extends BaseActivity {
-    @InjectView(R.id.layout_tab)
+    @BindView(R.id.layout_tab)
     TabLayout layoutTab;
-    @InjectView(R.id.viewpager)
+    @BindView(R.id.viewpager)
     ViewPager viewpager;
     ArrayList<ArrayList<Team>> teams;
-    @InjectView(R.id.progressBar)
+    @BindView(R.id.progressBar)
     ProgressBar progressBar;
-    @InjectView(R.id.retry)
+    @BindView(R.id.retry)
     TextView retry;
-    @InjectView(R.id.hint)
+    @BindView(R.id.hint)
     TextView hint;
     private Gson gson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         gson = new Gson();
         teams = new ArrayList<>();
         getATypes();

@@ -19,7 +19,7 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.widget.BadgeView;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/5/18.
@@ -30,15 +30,15 @@ import butterknife.InjectView;
         navigationId=R.drawable.press_back
 )
 public class RechargeActivity extends BaseActivity{
-    @InjectView(R.id.layout_tab)
+    @BindView(R.id.layout_tab)
     TabLayout layoutTab;
-    @InjectView(R.id.viewpager)
+    @BindView(R.id.viewpager)
     ViewPager viewpager;
     private String tabTitles[] = new String[]{"卡号充值", "畅聊套餐"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
         layoutTab.setupWithViewPager(viewpager);
         viewpager.setCurrentItem(getIntent().getIntExtra("index",0));

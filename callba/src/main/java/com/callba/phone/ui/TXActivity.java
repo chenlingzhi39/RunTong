@@ -14,7 +14,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;
@@ -29,11 +29,11 @@ import okhttp3.Request;
 )
 public class TXActivity extends BaseActivity {
 
-    @InjectView(R.id.commission)
+    @BindView(R.id.commission)
     EditText commission;
-    @InjectView(R.id.account)
+    @BindView(R.id.account)
     EditText account;
-    @InjectView(R.id.name)
+    @BindView(R.id.name)
     EditText name;
     ProgressDialog progressDialog;
 
@@ -41,7 +41,7 @@ public class TXActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
     }
 
     @OnClick(R.id.ok)

@@ -179,25 +179,11 @@ public class EaseContactAdapter extends ArrayAdapter<EaseUser> implements Sectio
                 final ArrayList<EaseUser> newValues = new ArrayList<EaseUser>();
                 for(int i=0;i<count;i++){
                     final EaseUser user = mOriginalList.get(i);
-//                    String username = user.getNick();
-//                    if(username == null)
-//                        username = user.getNick();
                     String username = user.getUsername();
                     String nick=user.getNick();
-                    if(nick.contains(prefixString)){
+                    String remark=user.getRemark();
+                    if(nick.contains(prefixString)||remark.contains(prefixString)||username.contains(prefixString)){
                         newValues.add(user);
-                    }
-                    else{
-                         final String[] words = username.split(" ");
-                         final int wordCount = words.length;
-    
-                         // Start at index 0, in case valueText starts with space(s)
-                         for (int k = 0; k < wordCount; k++) {
-                             if (words[k].startsWith(prefixString)) {
-                                 newValues.add(user);
-                                 break;
-                             }
-                         }
                     }
                 }
                 results.values=newValues;

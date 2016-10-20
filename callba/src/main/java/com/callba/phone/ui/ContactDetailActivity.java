@@ -57,7 +57,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
 import rx.Subscriber;
@@ -73,23 +73,23 @@ import rx.schedulers.Schedulers;
         contentViewId = R.layout.contact_detail2
 )
 public class ContactDetailActivity extends BaseActivity {
-    @InjectView(R.id.header)
+    @BindView(R.id.header)
     ImageView image;
-    @InjectView(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @InjectView(R.id.tabs)
+    @BindView(R.id.tabs)
     TabLayout tabs;
-    @InjectView(R.id.collapsing_toolbar)
+    @BindView(R.id.collapsing_toolbar)
     CollapsingToolbarLayout content;
-    @InjectView(R.id.appbar)
+    @BindView(R.id.appbar)
     AppBarLayout appbar;
-    @InjectView(R.id.viewpager)
+    @BindView(R.id.viewpager)
     ViewPager viewpager;
-    @InjectView(R.id.main_content)
+    @BindView(R.id.main_content)
     CoordinatorLayout mainContent;
-    @InjectView(R.id.shadow)
+    @BindView(R.id.shadow)
     View shadow;
-    @InjectView(R.id.shadow_reverse)
+    @BindView(R.id.shadow_reverse)
     View shadowReverse;
     private ContactMultiNumBean bean;
     public Subscription subscription;
@@ -124,7 +124,7 @@ public class ContactDetailActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         if(Build.VERSION.SDK_INT>=16)
         { shadow.setBackground(
                 ScrimUtil.makeCubicGradientScrimDrawable(

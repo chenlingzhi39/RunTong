@@ -29,7 +29,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -44,22 +44,22 @@ import okhttp3.Request;
         navigationId = R.drawable.press_back
 )
 public class AccountActivity extends BaseActivity {
-    @InjectView(R.id.head)
+    @BindView(R.id.head)
     CircleImageView head;
-    @InjectView(R.id.account)
+    @BindView(R.id.account)
     TextView account;
-    @InjectView(R.id.calllog_search)
+    @BindView(R.id.calllog_search)
     RelativeLayout calllogSearch;
-    @InjectView(R.id.meal_search)
+    @BindView(R.id.meal_search)
     RelativeLayout mealSearch;
-    @InjectView(R.id.commission)
+    @BindView(R.id.commission)
     Button commission;
     ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         account.setHint(getUsername());
         if (!UserManager.getUserAvatar(this).equals(""))
             Glide.with(this).load(UserManager.getUserAvatar(this)).into(head);

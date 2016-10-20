@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import okhttp3.Call;
 
 /**
@@ -44,16 +44,16 @@ import okhttp3.Call;
         contentViewId = R.layout.fragment_order
 )
 public class TeamFragment extends BaseFragment {
-    @InjectView(R.id.list)
+    @BindView(R.id.list)
     RecyclerView list;
-    @InjectView(R.id.hint)
+    @BindView(R.id.hint)
     TextView hint;
     ArrayList<Team> teams;
     TeamAdapter teamAdapter;
 
     @Override
     protected void initView(View fragmentRootView) {
-        ButterKnife.inject(this,fragmentRootView);
+        ButterKnife.bind(this,fragmentRootView);
         teamAdapter = new TeamAdapter(getActivity());
         teams = (ArrayList<Team>) getArguments().getParcelableArrayList("list").get(0);
         Logger.i("team_size",teams.size()+"");
@@ -195,9 +195,4 @@ public class TeamFragment extends BaseFragment {
         builder.create().show();
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.reset(this);
-    }
 }

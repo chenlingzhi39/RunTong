@@ -7,18 +7,18 @@ import com.bumptech.glide.Glide;
 import com.callba.R;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/6/10.
  */
 public class ImageViewHolder extends BaseViewHolder<String> {
-    @InjectView(R.id.image)
+    @BindView(R.id.image)
     ImageView image;
 
     public ImageViewHolder(ViewGroup parent) {
         super(parent, R.layout.image);
-        ButterKnife.inject(this,itemView);
+        ButterKnife.bind(this,itemView);
     }
 
     @Override

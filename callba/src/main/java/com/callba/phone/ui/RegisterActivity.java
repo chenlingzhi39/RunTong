@@ -109,7 +109,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         AndPermission.with(this)
                 .requestCode(100)
                 .permission(Manifest.permission.READ_SMS)

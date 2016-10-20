@@ -29,7 +29,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import me.iwf.photopicker.PhotoPickerActivity;
 import me.iwf.photopicker.utils.PhotoPickerIntent;
 import okhttp3.Call;
@@ -45,13 +45,13 @@ import okhttp3.Request;
         menuId = R.menu.menu_post
 )
 public class PostActivity extends BaseActivity{
-    @InjectView(R.id.content)
+    @BindView(R.id.content)
     EditText content;
-    @InjectView(R.id.photos)
+    @BindView(R.id.photos)
     RecyclerView photos;
-    @InjectView(R.id.location)
+    @BindView(R.id.location)
     TextView location;
-    @InjectView(R.id.is_located)
+    @BindView(R.id.is_located)
     CheckBox isLocated;
     private PhotoAdapter photoAdapter;
     private View footerView;
@@ -61,7 +61,7 @@ public class PostActivity extends BaseActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         location.setText(UserManager.getAddress(this));
         footerView = getLayoutInflater().inflate(R.layout.add_photo, null);
         DisplayMetrics metrics = new DisplayMetrics();

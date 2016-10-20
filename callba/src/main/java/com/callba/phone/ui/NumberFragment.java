@@ -35,7 +35,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;
@@ -46,17 +46,17 @@ import okhttp3.Request;
 @ActivityFragmentInject(
         contentViewId = R.layout.fragment_number)
 public class NumberFragment extends BaseSelectContactFragment {
-    @InjectView(R.id.number)
+    @BindView(R.id.number)
     TextView number;
-    @InjectView(R.id.address)
+    @BindView(R.id.address)
     TextView tv_address;
-    @InjectView(R.id.card)
+    @BindView(R.id.card)
     EditText card;
-    @InjectView(R.id.recharge)
+    @BindView(R.id.recharge)
     Button recharge;
-    @InjectView(R.id.change_number)
+    @BindView(R.id.change_number)
     LinearLayout change;
-    @InjectView(R.id.relative)
+    @BindView(R.id.relative)
     RelativeLayout relative;
 
     public static NumberFragment newInstance() {
@@ -67,7 +67,7 @@ public class NumberFragment extends BaseSelectContactFragment {
 
     @Override
     protected void initView(View fragmentRootView) {
-        ButterKnife.inject(this, fragmentRootView);
+        ButterKnife.bind(this, fragmentRootView);
         number.setText(getUsername());
         if(MyApplication.getInstance().detect())
         query(getUsername());
@@ -117,13 +117,6 @@ public class NumberFragment extends BaseSelectContactFragment {
                }
             }
         });
-    }
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.reset(this);
     }
 
     @OnClick(R.id.contacts)

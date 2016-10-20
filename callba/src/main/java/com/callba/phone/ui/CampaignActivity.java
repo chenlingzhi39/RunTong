@@ -9,21 +9,21 @@ import com.bumptech.glide.Glide;
 import com.callba.R;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
  * Created by PC-20160514 on 2016/9/5.
  */
 public class CampaignActivity extends Activity {
-    @InjectView(R.id.image)
+    @BindView(R.id.image)
     ImageView image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.campaign);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         if(!TextUtils.isEmpty(getIntent().getStringExtra("image")))
        Glide.with(this).load(getIntent().getStringExtra("image")).into(image);
     }

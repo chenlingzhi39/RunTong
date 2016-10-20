@@ -1,103 +1,120 @@
-/**
- * Copyright (C) 2016 Hyphenate Inc. All rights reserved.
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.callba.phone.ui;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
-import android.view.MotionEvent;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnTouchListener;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.ImageView;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.Constant;
-import com.callba.phone.ui.adapter.GroupAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.util.EaseUserUtils;
+import com.callba.phone.bean.SeparatedEMGroup;
+import com.callba.phone.pinyin.CharacterParser;
+import com.callba.phone.pinyin.GroupComparator;
+import com.callba.phone.ui.adapter.GroupAdapter;
+import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
+import com.callba.phone.ui.adapter.expandRecyclerviewadapter.StickyRecyclerHeadersDecoration;
+import com.callba.phone.ui.base.BaseActivity;
+import com.callba.phone.util.InitiateSearch;
+import com.callba.phone.util.SimpleHandler;
+import com.callba.phone.widget.DividerItemDecoration;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
 import com.hyphenate.exceptions.HyphenateException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+/**
+ * Created by PC-20160514 on 2016/10/20.
+ */
 @ActivityFragmentInject(
-        contentViewId = R.layout.em_fragment_groups,
+        contentViewId = R.layout.activity_groups,
+        toolbarTitle = R.string.group_chat,
         navigationId = R.drawable.press_back,
-        toolbarTitle = R.string.group_chat
+        menuId = R.menu.groups
 )
 public class GroupsActivity extends BaseActivity {
-    public static final String TAG = "GroupsActivity";
-    private ListView groupListView;
-    protected List<EMGroup> grouplist,myGroupList,joinGroupList,allGroupList;
+
+    @BindView(R.id.group_list)
+    RecyclerView groupList;
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout refreshLayout;
+    @BindView(R.id.image_search_back)
+    ImageView imageSearchBack;
+    @BindView(R.id.edit_text_search)
+    EditText editTextSearch;
+    @BindView(R.id.clearSearch)
+    ImageView clearSearch;
+    @BindView(R.id.card_search)
+    CardView cardSearch;
+    private ArrayList<SeparatedEMGroup> separatedEMGroups;
     private GroupAdapter groupAdapter;
-    private InputMethodManager inputMethodManager;
-    public static GroupsActivity instance;
-    private View progressBar;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private LocalBroadcastManager broadcastManager;
-    private BroadcastReceiver broadcastReceiver;
-    Handler handler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
-            swipeRefreshLayout.setRefreshing(false);
-            switch (msg.what) {
-                case 0:
-                    refresh();
-                    break;
-                case 1:
-                    Toast.makeText(GroupsActivity.this, R.string.Failed_to_get_group_chat_information, Toast.LENGTH_LONG).show();
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        ;
-    };
-
+    private MyFilter filter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        instance = this;
-        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        grouplist =EMClient.getInstance().groupManager().getAllGroups();
-        groupListView = (ListView) findViewById(R.id.list);
-        //show group list
-        sortGroupList();
-        groupAdapter = new GroupAdapter(this, 1, allGroupList,myGroupList.size());
-        groupListView.setAdapter(groupAdapter);
-
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
-        swipeRefreshLayout.setColorSchemeResources(R.color.holo_blue_bright, R.color.holo_green_light,
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+        InitiateSearch();
+        HandleSearch();
+        separatedEMGroups = new ArrayList<>();
+        for (EMGroup emGroup : EMClient.getInstance().groupManager().getAllGroups()) {
+            if (emGroup.getOwner().equals(EMClient.getInstance().getCurrentUser()))
+                separatedEMGroups.add(new SeparatedEMGroup(emGroup, "0"));
+            else separatedEMGroups.add(new SeparatedEMGroup(emGroup, "1"));
+        }
+        Collections.sort(separatedEMGroups, new GroupComparator());
+        filter = new MyFilter(separatedEMGroups);
+        groupAdapter = new GroupAdapter(this);
+        groupAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                // 进入群聊
+                Intent intent = new Intent(GroupsActivity.this, ChatActivity.class);
+                // it is group chat
+                intent.putExtra("chatType", Constant.CHATTYPE_GROUP);
+                intent.putExtra("userId", groupAdapter.getItem(position).getEmGroup().getGroupId()
+                );
+                startActivityForResult(intent, 0);
+            }
+        });
+        groupAdapter.addAll(separatedEMGroups);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        groupList.setLayoutManager(layoutManager);
+        groupList.setAdapter(groupAdapter);
+        final StickyRecyclerHeadersDecoration headersDecor = new StickyRecyclerHeadersDecoration(groupAdapter);
+        groupList.addItemDecoration(headersDecor);
+        groupList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        groupAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                headersDecor.invalidateHeaders();
+            }
+        });
+        refreshLayout.setColorSchemeResources(R.color.holo_blue_bright, R.color.holo_green_light,
                 R.color.holo_orange_light, R.color.holo_red_light);
         //下拉刷新
-        swipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
             public void onRefresh() {
@@ -106,112 +123,134 @@ public class GroupsActivity extends BaseActivity {
                     public void run() {
                         try {
                             EMClient.getInstance().groupManager().getJoinedGroupsFromServer();
-                            handler.sendEmptyMessage(0);
+                            SimpleHandler.getInstance().post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    refresh();
+                                    refreshLayout.setRefreshing(false);
+                                }
+                            });
                         } catch (HyphenateException e) {
                             e.printStackTrace();
-                            handler.sendEmptyMessage(1);
+                            SimpleHandler.getInstance().post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    toast(R.string.Failed_to_get_group_chat_information);
+                                    refreshLayout.setRefreshing(false);
+                                }
+                            });
                         }
                     }
                 }.start();
             }
         });
+    }
 
-        groupListView.setOnItemClickListener(new OnItemClickListener() {
+    public void refresh() {
+        separatedEMGroups = new ArrayList<>();
+        for (EMGroup emGroup : EMClient.getInstance().groupManager().getAllGroups()) {
+            if (emGroup.getOwner().equals(EMClient.getInstance().getCurrentUser()))
+                separatedEMGroups.add(new SeparatedEMGroup(emGroup, "0"));
+            else separatedEMGroups.add(new SeparatedEMGroup(emGroup, "1"));
+        }
+        Collections.sort(separatedEMGroups, new GroupComparator());
+        filter = new MyFilter(separatedEMGroups);
+        groupAdapter.clear();
+        groupAdapter.addAll(separatedEMGroups);
+        if (!TextUtils.isEmpty(editTextSearch.getText().toString()))
+            filter.filter(editTextSearch.getText().toString());
+    }
+
+    private void InitiateSearch() {
+        editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 1) {
-                    // 新建群聊
-                    startActivityForResult(new Intent(GroupsActivity.this, NewGroupActivity.class), 0);
-                } else if (position == 2) {
-                    // 添加公开群
-                    Intent intent=new Intent(GroupsActivity.this, PublicGroupsActivity.class);
-                    ArrayList<String> groupIds=new ArrayList<String>();
-                    for (EMGroup group:grouplist){
-                        groupIds.add(group.getGroupId());
-                    }
-                    intent.putStringArrayListExtra("groupIds",groupIds);
-                    startActivityForResult(intent, 0);
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filter.filter(s);
+                if (editTextSearch.getText().toString().length() == 0) {
+                    clearSearch.setVisibility(View.GONE);
                 } else {
-                    // 进入群聊
-                    Intent intent = new Intent(GroupsActivity.this, ChatActivity.class);
-                    // it is group chat
-                    intent.putExtra("chatType", Constant.CHATTYPE_GROUP);
-                    intent.putExtra("userId", groupAdapter.getItem(position - 3).getGroupId());
-                    startActivityForResult(intent, 0);
+                    clearSearch.setVisibility(View.VISIBLE);
                 }
             }
 
-        });
-        groupListView.setOnTouchListener(new OnTouchListener() {
-
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (getWindow().getAttributes().softInputMode != WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN) {
-                    if (getCurrentFocus() != null)
-                        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-                                InputMethodManager.HIDE_NOT_ALWAYS);
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        clearSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editTextSearch.setText("");
+                ((InputMethodManager) GroupsActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
+        });
+
+    }
+
+    private void HandleSearch() {
+        imageSearchBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("search", "back");
+                InitiateSearch.handleToolBar(GroupsActivity.this, cardSearch, editTextSearch, 56);
+            }
+        });
+        editTextSearch.requestFocus();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.search:
+                InitiateSearch.handleToolBar(GroupsActivity.this, cardSearch, editTextSearch, 56);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public class MyFilter extends Filter {
+        List<SeparatedEMGroup> mOriginalList;
+
+        public MyFilter(List<SeparatedEMGroup> separatedEMGroups) {
+            this.mOriginalList = separatedEMGroups;
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence prefix) {
+            FilterResults results = new FilterResults();
+            if (mOriginalList == null) {
+                mOriginalList = new ArrayList<>();
+            }
+
+
+            if (prefix == null || prefix.length() == 0) {
+                results.values = mOriginalList;
+                results.count = mOriginalList.size();
+            } else {
+                String prefixString = prefix.toString();
+                final ArrayList<SeparatedEMGroup> newValues = new ArrayList<>();
+                for (SeparatedEMGroup separatedEMGroup : mOriginalList) {
+                    final String string = separatedEMGroup.getEmGroup().getGroupName();
+                    if (string.contains(prefixString) || CharacterParser.getInstance().getSelling(string).contains(prefixString)) {
+                        newValues.add(separatedEMGroup);
+                    }
                 }
-                return false;
+                results.values = newValues;
+                results.count = newValues.size();
             }
-        });
-        IntentFilter intentFilter = new IntentFilter();
-        //intentFilter.addAction(Constant.ACTION_CONTACT_CHANAGED);
-        intentFilter.addAction(Constant.ACTION_GROUP_CHANAGED);
-        broadcastManager = LocalBroadcastManager.getInstance(this);
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                refresh();
-            }
-        };
-        broadcastManager.registerReceiver(broadcastReceiver, intentFilter);
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            groupAdapter.clear();
+            groupAdapter.addAll((ArrayList<SeparatedEMGroup>) results.values);
+        }
     }
-
-    /**
-     * 进入公开群聊列表
-     */
-    public void onPublicGroups(View view) {
-        startActivity(new Intent(this, PublicGroupsActivity.class));
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onResume() {
-        refresh();
-        super.onResume();
-    }
-
-    private void refresh() {
-        grouplist = EMClient.getInstance().groupManager().getAllGroups();
-        sortGroupList();
-        groupAdapter = new GroupAdapter(this, 1, allGroupList,myGroupList.size());
-        groupListView.setAdapter(groupAdapter);
-        groupAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    protected void onDestroy() {
-        broadcastManager.unregisterReceiver(broadcastReceiver);
-        super.onDestroy();
-        instance = null;
-    }
-  private void sortGroupList(){
-      myGroupList=new ArrayList<>();
-      joinGroupList=new ArrayList<>();
-      allGroupList=new ArrayList<>();
-      for(EMGroup emGroup:grouplist){
-          if(emGroup.getOwner().equals(EMClient.getInstance().getCurrentUser()))
-              myGroupList.add(emGroup);
-              else joinGroupList.add(emGroup);
-      }
-      allGroupList.addAll(myGroupList);
-      allGroupList.addAll(joinGroupList);
-  }
-
-
 }

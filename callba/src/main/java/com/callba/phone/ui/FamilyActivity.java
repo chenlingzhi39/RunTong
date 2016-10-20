@@ -19,7 +19,7 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import org.json.JSONObject;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -34,32 +34,32 @@ import okhttp3.Call;
 )
 public class FamilyActivity extends BaseActivity {
 
-    @InjectView(R.id.avatar)
+    @BindView(R.id.avatar)
     CircleImageView avatar;
-    @InjectView(R.id.name)
+    @BindView(R.id.name)
     TextView name;
-    @InjectView(R.id.my_commission)
+    @BindView(R.id.my_commission)
     TextView myCommission;
-    @InjectView(R.id.get_commission)
+    @BindView(R.id.get_commission)
     Button getCommission;
-    @InjectView(R.id.btn_commission)
+    @BindView(R.id.btn_commission)
     TextView btnCommission;
-    @InjectView(R.id.order)
+    @BindView(R.id.order)
     TextView order;
-    @InjectView(R.id.commission_detail)
+    @BindView(R.id.commission_detail)
     TextView commissionDetail;
-    @InjectView(R.id.team)
+    @BindView(R.id.team)
     TextView team;
-    @InjectView(R.id.type)
+    @BindView(R.id.type)
     TextView type;
-    @InjectView(R.id.qr_code)
+    @BindView(R.id.qr_code)
     TextView qrCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         if (!UserManager.getUserAvatar(this).equals(""))
             Glide.with(this).load(UserManager.getUserAvatar(this)).into(avatar);
         name.setText(getUsername());

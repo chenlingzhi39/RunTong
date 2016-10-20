@@ -66,7 +66,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;
@@ -77,29 +77,29 @@ import okhttp3.Request;
 @ActivityFragmentInject(
         contentViewId = R.layout.fragment_straight)
 public class StraightFragment extends BaseSelectContactFragment {
-    @InjectView(R.id.number)
+    @BindView(R.id.number)
     TextView number;
-    @InjectView(R.id.address)
+    @BindView(R.id.address)
     TextView tv_address;
-    @InjectView(R.id.recharge)
+    @BindView(R.id.recharge)
     Button recharge;
-    @InjectView(R.id.change_number)
+    @BindView(R.id.change_number)
     LinearLayout change;
-    @InjectView(R.id.relative)
+    @BindView(R.id.relative)
     RelativeLayout relative;
-    @InjectView(R.id.list)
+    @BindView(R.id.list)
     RecyclerView list;
-    @InjectView(R.id.campaign)
+    @BindView(R.id.campaign)
     TextView campaign;
-    @InjectView(R.id.bt_coupon)
+    @BindView(R.id.bt_coupon)
     Button btCoupon;
-    @InjectView(R.id.linear)
+    @BindView(R.id.linear)
     LinearLayout linear;
-    @InjectView(R.id.progressBar)
+    @BindView(R.id.progressBar)
     ProgressBar progressBar;
-    @InjectView(R.id.empty)
+    @BindView(R.id.empty)
     TextView empty;
-    @InjectView(R.id.error)
+    @BindView(R.id.error)
     TextView error;
     private int size;
     private String subject, body, price;
@@ -228,7 +228,7 @@ public class StraightFragment extends BaseSelectContactFragment {
 
     @Override
     protected void initView(View fragmentRootView) {
-        ButterKnife.inject(this, fragmentRootView);
+        ButterKnife.bind(this, fragmentRootView);
 
     }
 
@@ -253,13 +253,6 @@ public class StraightFragment extends BaseSelectContactFragment {
             empty.setVisibility(View.GONE);
         }
     }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.reset(this);
-    }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -372,7 +365,7 @@ public class StraightFragment extends BaseSelectContactFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // TODO: inflate a fragment view
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.inject(this, rootView);
+        ButterKnife.bind(this, rootView);
         return rootView;
     }
 

@@ -9,23 +9,23 @@ import com.callba.R;
 import com.callba.phone.bean.HomeItem;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/9/5.
  */
 public class HomeViewHolder extends BaseViewHolder<HomeItem> {
 
-    @InjectView(R.id.image)
+    @BindView(R.id.image)
     ImageView image;
-    @InjectView(R.id.text)
+    @BindView(R.id.text)
     TextView text;
-    @InjectView(R.id.is_discount)
+    @BindView(R.id.is_discount)
     ImageView isDiscount;
 
     public HomeViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_home);
-        ButterKnife.inject(this, itemView);
+        ButterKnife.bind(this, itemView);
     }
 
     @Override

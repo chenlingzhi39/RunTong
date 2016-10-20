@@ -62,7 +62,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -79,29 +79,23 @@ import rx.schedulers.Schedulers;
 )
 
 public class MessageActivity extends BaseActivity {
-    @InjectView(R.id.conversation_list)
+    @BindView(R.id.conversation_list)
     RecyclerView conversationListview;
-    //EaseConversationList conversationListView;
-    @InjectView(R.id.refresh)
+    @BindView(R.id.refresh)
     SwipeRefreshLayout refresh;
-    @InjectView(R.id.view_search)
-    IMMListenerRelativeLayout viewSearch;
-    @InjectView(R.id.image_search_back)
+    @BindView(R.id.image_search_back)
     ImageView imageSearchBack;
-    @InjectView(R.id.edit_text_search)
+    @BindView(R.id.edit_text_search)
     EditText editTextSearch;
-    @InjectView(R.id.clearSearch)
+    @BindView(R.id.clearSearch)
     ImageView clearSearch;
-    @InjectView(R.id.line_divider)
-    View lineDivider;
-    @InjectView(R.id.card_search)
+    @BindView(R.id.card_search)
     CardView cardSearch;
     private ConversationAdapter adapter;
     private ChatReceiver chatReceiver;
     private int index = -1;
     private BroadcastReceiver broadcastReceiver;
     private LocalBroadcastManager broadcastManager;
-    private List<EMConversation> copyList;
     protected InputMethodManager inputMethodManager;
     protected FrameLayout errorItemContainer;
     protected TextView errorText;
@@ -165,7 +159,7 @@ public class MessageActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         View errorView = View.inflate(this, R.layout.em_chat_neterror_item, null);
         errorItemContainer = (FrameLayout) findViewById(R.id.fl_error_item);
         errorText = (TextView) errorView.findViewById(R.id.tv_connect_errormsg);
@@ -201,7 +195,7 @@ public class MessageActivity extends BaseActivity {
                 EMConversation conversation = adapter.getItem(position);
                 String username = conversation.getUserName();
                 if (username.equals(EMClient.getInstance().getCurrentUser()))
-                    Toast.makeText(MessageActivity.this, R.string.Cant_chat_with_yourself, 0).show();
+                    Toast.makeText(MessageActivity.this, R.string.Cant_chat_with_yourself, Toast.LENGTH_SHORT).show();
                 else {
                     // 进入聊天页面
                     Intent intent = new Intent(MessageActivity.this, ChatActivity.class);
@@ -284,19 +278,6 @@ public class MessageActivity extends BaseActivity {
         HandleSearch();
     }
     private void InitiateSearch() {
-        viewSearch.setListener(new InputWindowListener() {
-            @Override
-            public void show() {
-
-            }
-
-            @Override
-            public void hide() {
-                Log.i("input", "hide");
-                if (cardSearch.getVisibility() == View.VISIBLE)
-                    InitiateSearch.handleToolBar1(MessageActivity.this, cardSearch, viewSearch, editTextSearch, lineDivider);
-            }
-        });
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -333,7 +314,7 @@ public class MessageActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Log.i("search", "back");
-                InitiateSearch.handleToolBar(MessageActivity.this, cardSearch, viewSearch, editTextSearch, lineDivider);
+                InitiateSearch.handleToolBar(MessageActivity.this, cardSearch,editTextSearch, 20);
             }
         });
         editTextSearch.requestFocus();
@@ -380,7 +361,6 @@ public class MessageActivity extends BaseActivity {
         for (Pair<Long, EMConversation> sortItem : sortList) {
             list.add(sortItem.second);
         }
-        copyList = list;
         return list;
     }
 
@@ -515,19 +495,8 @@ public class MessageActivity extends BaseActivity {
                         if (conversation.getUserName().equals("admin"))
                             username = "系统消息";
                     }
-                    if (username.startsWith(prefixString)) {
+                    if (username.contains(prefixString)) {
                         newValues.add(conversation);
-                    } else {
-                        final String[] words = username.split(" ");
-                        final int wordCount = words.length;
-
-                        // Start at index 0, in case valueText starts with space(s)
-                        for (int k = 0; k < wordCount; k++) {
-                            if (words[k].startsWith(prefixString)) {
-                                newValues.add(conversation);
-                                break;
-                            }
-                        }
                     }
                 }
                 results.values = newValues;
@@ -581,7 +550,7 @@ public class MessageActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.search:
-                InitiateSearch.handleToolBar(MessageActivity.this, cardSearch, viewSearch, editTextSearch, lineDivider);
+                InitiateSearch.handleToolBar(MessageActivity.this, cardSearch, editTextSearch, 20);
                 break;
         }
         return super.onOptionsItemSelected(item);

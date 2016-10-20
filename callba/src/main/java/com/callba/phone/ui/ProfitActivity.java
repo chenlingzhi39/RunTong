@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;
@@ -38,13 +38,13 @@ import okhttp3.Request;
 )
 public class ProfitActivity extends BaseActivity {
 
-    @InjectView(R.id.list)
+    @BindView(R.id.list)
     RecyclerView list;
-    @InjectView(R.id.progressBar)
+    @BindView(R.id.progressBar)
     ProgressBar progressBar;
-    @InjectView(R.id.hint)
+    @BindView(R.id.hint)
     TextView hint;
-    @InjectView(R.id.retry)
+    @BindView(R.id.retry)
     TextView retry;
     private Gson gson = new Gson();
     private List<Profit> profits;
@@ -54,7 +54,7 @@ public class ProfitActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         profitAdapter = new ProfitAdapter(this);
         getProfits();
     }

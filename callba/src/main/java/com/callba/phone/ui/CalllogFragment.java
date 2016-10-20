@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by Administrator on 2016/7/6.
@@ -35,19 +35,19 @@ import butterknife.InjectView;
         contentViewId = R.layout.fragment_calllog
 )
 public class CalllogFragment extends BaseFragment {
-    @InjectView(R.id.calllog_list)
+    @BindView(R.id.calllog_list)
     RecyclerView calllogList;
     ArrayList<CalldaCalllogBean> beans;
     CalllogService calllogService;
     CalllogAdapter calllogAdapter;
-    @InjectView(R.id.text)
+    @BindView(R.id.text)
     TextView text;
-    @InjectView(R.id.shadow)
+    @BindView(R.id.shadow)
     View shadow;
 
     @Override
     protected void initView(View fragmentRootView) {
-        ButterKnife.inject(this, fragmentRootView);
+        ButterKnife.bind(this, fragmentRootView);
         if(Build.VERSION.SDK_INT>=16)
         shadow.setBackground(
                 ScrimUtil.makeCubicGradientScrimDrawable(
@@ -91,13 +91,6 @@ public class CalllogFragment extends BaseFragment {
             }
         });
         calllogService.startQueryCallLog(false);
-    }
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.reset(this);
     }
 
     public ArrayList<CalldaCalllogBean> sortByDate(ArrayList<CalldaCalllogBean> beans) {

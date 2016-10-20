@@ -22,7 +22,7 @@ import java.io.File;
 
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import rx.Subscription;
 import rx.Observable;
 import rx.Subscriber;
@@ -33,9 +33,9 @@ import rx.schedulers.Schedulers;
  * Created by PC-20160514 on 2016/6/8.
  */
 public class CropActivity extends AppCompatActivity {
-    @InjectView(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @InjectView(R.id.cropImageView)
+    @BindView(R.id.cropImageView)
     CropImageView cropImageView;
     Uri uri;
     public Subscription subscription;
@@ -44,7 +44,7 @@ public class CropActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.crop);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("裁剪图片");

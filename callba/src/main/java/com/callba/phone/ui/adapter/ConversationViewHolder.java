@@ -22,38 +22,32 @@ import com.hyphenate.util.DateUtils;
 import java.util.Date;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by PC-20160514 on 2016/5/26.
  */
 public class ConversationViewHolder extends BaseViewHolder<EMConversation> {
-    @InjectView(R.id.avatar)
+    @BindView(R.id.avatar)
     CircleImageView avatar;
-    @InjectView(R.id.unread_msg_number)
+    @BindView(R.id.unread_msg_number)
     TextView unreadLabel;
-    @InjectView(R.id.avatar_container)
+    @BindView(R.id.avatar_container)
     RelativeLayout avatarContainer;
-    @InjectView(R.id.name)
+    @BindView(R.id.name)
     TextView name;
-    @InjectView(R.id.time)
+    @BindView(R.id.time)
     TextView time;
-    @InjectView(R.id.msg_state)
+    @BindView(R.id.msg_state)
     ImageView msgState;
-    @InjectView(R.id.message)
+    @BindView(R.id.message)
     TextView message;
-    @InjectView(R.id.list_itease_layout)
+    @BindView(R.id.list_itease_layout)
     RelativeLayout listIteaseLayout;
-    protected int primaryColor;
-    protected int secondaryColor;
-    protected int timeColor;
-    protected int primarySize;
-    protected int secondarySize;
-    protected float timeSize;
     public ConversationViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_conversation);
-        ButterKnife.inject(this, itemView);
+        ButterKnife.bind(this, itemView);
     }
 
     @Override

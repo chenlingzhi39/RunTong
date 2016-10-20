@@ -9,27 +9,27 @@ import com.callba.phone.bean.NearByUser;
 import com.callba.phone.util.StringUtils;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by PC-20160514 on 2016/5/24.
  */
 public class NearByUserViewHolder extends BaseViewHolder<NearByUser> {
-    @InjectView(R.id.user_head)
+    @BindView(R.id.user_head)
     CircleImageView userHead;
-    @InjectView(R.id.user_name)
+    @BindView(R.id.user_name)
     TextView userName;
-    @InjectView(R.id.distance)
+    @BindView(R.id.distance)
     TextView distance;
-    @InjectView(R.id.sign)
+    @BindView(R.id.sign)
     TextView sign;
-    @InjectView(R.id.time)
+    @BindView(R.id.time)
     TextView time;
 
     public NearByUserViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_nearby_user);
-        ButterKnife.inject(this, itemView);
+        ButterKnife.bind(this, itemView);
     }
 
     @Override

@@ -9,7 +9,7 @@ import com.callba.R;
 import com.callba.phone.util.CallUtils;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -21,7 +21,7 @@ public class SelectDialPopupWindow extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_dial);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         callUtils=new CallUtils();
     }
 

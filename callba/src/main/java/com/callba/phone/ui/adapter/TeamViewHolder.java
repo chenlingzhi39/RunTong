@@ -10,24 +10,24 @@ import com.callba.R;
 import com.callba.phone.bean.Team;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/7/15.
  */
 public class TeamViewHolder extends BaseViewHolder<Team> {
-    @InjectView(R.id.image)
+    @BindView(R.id.image)
     ImageView image;
-    @InjectView(R.id.name)
+    @BindView(R.id.name)
     TextView name;
-    @InjectView(R.id.time)
+    @BindView(R.id.time)
     TextView time;
-    @InjectView(R.id.meal)
+    @BindView(R.id.meal)
     TextView meal;
 
     public TeamViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_team);
-        ButterKnife.inject(this,itemView);
+        ButterKnife.bind(this,itemView);
     }
 
     @Override

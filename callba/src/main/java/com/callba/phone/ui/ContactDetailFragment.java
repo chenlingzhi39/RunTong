@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import okhttp3.Call;
 import okhttp3.Request;
 
@@ -51,9 +51,9 @@ import okhttp3.Request;
         contentViewId = R.layout.fragment_contact_detail
 )
 public class ContactDetailFragment extends BaseFragment {
-    @InjectView(R.id.lv_phone_nums)
+    @BindView(R.id.lv_phone_nums)
     RecyclerView lvPhoneNums;
-    @InjectView(R.id.shadow)
+    @BindView(R.id.shadow)
     View shadow;
     private ContactMultiNumBean bean;
     private ContactNumberAdapter contactNumberAdapter;
@@ -64,7 +64,7 @@ public class ContactDetailFragment extends BaseFragment {
 
     @Override
     protected void initView(View fragmentRootView) {
-        ButterKnife.inject(this, fragmentRootView);
+        ButterKnife.bind(this, fragmentRootView);
         if(Build.VERSION.SDK_INT>=16)
         shadow.setBackground(
                 ScrimUtil.makeCubicGradientScrimDrawable(
@@ -302,12 +302,6 @@ public class ContactDetailFragment extends BaseFragment {
             s += phoneNumber + ",";
         }
         return s;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.reset(this);
     }
 
 }

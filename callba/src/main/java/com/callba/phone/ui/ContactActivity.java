@@ -10,9 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.GridLayoutManager;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -20,25 +18,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Filter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.listener.InputWindowListener;
-import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.InitiateSearch;
 import com.callba.phone.util.RxBus;
-import com.callba.phone.widget.IMMListenerRelativeLayout;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/6/21.
@@ -49,32 +39,25 @@ import butterknife.InjectView;
         menuId = R.menu.menu_contact
 )
 public class ContactActivity extends BaseActivity {
-    @InjectView(R.id.layout_tab)
+    @BindView(R.id.layout_tab)
     TabLayout layoutTab;
-    @InjectView(R.id.viewpager)
+    @BindView(R.id.viewpager)
     ViewPager viewpager;
-    @InjectView(R.id.view_search)
-    IMMListenerRelativeLayout viewSearch;
-    @InjectView(R.id.image_search_back)
+    @BindView(R.id.image_search_back)
     ImageView imageSearchBack;
-    @InjectView(R.id.edit_text_search)
+    @BindView(R.id.edit_text_search)
     EditText editTextSearch;
-    @InjectView(R.id.clearSearch)
+    @BindView(R.id.clearSearch)
     ImageView clearSearch;
-    @InjectView(R.id.linearLayout_search)
-    LinearLayout linearLayoutSearch;
-    @InjectView(R.id.line_divider)
-    View lineDivider;
-    @InjectView(R.id.card_search)
+    @BindView(R.id.card_search)
     CardView cardSearch;
-    private InitiateSearch initiateSearch;
     private int index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
         layoutTab.setupWithViewPager(viewpager);
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -101,19 +84,6 @@ public class ContactActivity extends BaseActivity {
         HandleSearch();
     }
     private void InitiateSearch() {
-        viewSearch.setListener(new InputWindowListener() {
-            @Override
-            public void show() {
-
-            }
-
-            @Override
-            public void hide() {
-                Log.i("input", "hide");
-                if (cardSearch.getVisibility() == View.VISIBLE)
-                    InitiateSearch.handleToolBar1(ContactActivity.this, cardSearch, viewSearch, editTextSearch, lineDivider);
-            }
-        });
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -149,7 +119,7 @@ public class ContactActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Log.i("search", "back");
-                initiateSearch.handleToolBar(ContactActivity.this, cardSearch, viewSearch, editTextSearch, lineDivider);
+                InitiateSearch.handleToolBar(ContactActivity.this, cardSearch, editTextSearch,56);
             }
         });
         editTextSearch.requestFocus();
@@ -171,10 +141,10 @@ public class ContactActivity extends BaseActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return LocalContactFragment2.newInstance();
+                    return LocalContactFragment.newInstance();
 
                 case 1:
-                    return WebContactFragment.newInstance();
+                    return WebContactFragment2.newInstance();
 
                 default:
                     return null;
@@ -226,7 +196,7 @@ public class ContactActivity extends BaseActivity {
                 }
                 break;
             case R.id.search:
-                initiateSearch.handleToolBar(ContactActivity.this, cardSearch, viewSearch, editTextSearch, lineDivider);
+                InitiateSearch.handleToolBar(ContactActivity.this, cardSearch, editTextSearch, 56);
                 break;
         }
         return super.onOptionsItemSelected(item);

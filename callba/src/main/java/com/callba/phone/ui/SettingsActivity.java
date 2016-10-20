@@ -12,7 +12,7 @@ import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/7/2.
@@ -23,13 +23,13 @@ import butterknife.InjectView;
         navigationId = R.drawable.press_back
 )
 public class SettingsActivity extends BaseActivity {
-    @InjectView(R.id.fragment)
+    @BindView(R.id.fragment)
     FrameLayout fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         FragmentManager fragmentManager = getFragmentManager();
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();

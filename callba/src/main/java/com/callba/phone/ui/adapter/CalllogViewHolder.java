@@ -11,24 +11,24 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by Administrator on 2016/7/6.
  */
 public class CalllogViewHolder extends BaseViewHolder<CalldaCalllogBean> {
-    @InjectView(R.id.image_state)
+    @BindView(R.id.image_state)
     ImageView imageState;
-    @InjectView(R.id.time)
+    @BindView(R.id.time)
     TextView time;
-    @InjectView(R.id.state)
+    @BindView(R.id.state)
     TextView state;
-    @InjectView(R.id.number)
+    @BindView(R.id.number)
     TextView number;
 
     public CalllogViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_calllog);
-        ButterKnife.inject(this, itemView);
+        ButterKnife.bind(this, itemView);
     }
 
     @Override

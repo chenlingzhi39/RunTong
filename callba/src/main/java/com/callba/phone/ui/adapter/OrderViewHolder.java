@@ -9,24 +9,24 @@ import com.callba.R;
 import com.callba.phone.bean.Order;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/7/15.
  */
 public class OrderViewHolder extends BaseViewHolder<Order> {
-    @InjectView(R.id.image)
+    @BindView(R.id.image)
     ImageView image;
-    @InjectView(R.id.name)
+    @BindView(R.id.name)
     TextView name;
-    @InjectView(R.id.time)
+    @BindView(R.id.time)
     TextView time;
-    @InjectView(R.id.state)
+    @BindView(R.id.state)
     TextView state;
 
     public OrderViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_order);
-        ButterKnife.inject(this,itemView);
+        ButterKnife.bind(this,itemView);
     }
 
     @Override

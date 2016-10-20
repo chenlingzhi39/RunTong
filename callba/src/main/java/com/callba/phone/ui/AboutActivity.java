@@ -14,7 +14,7 @@ import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -26,19 +26,19 @@ import butterknife.OnClick;
         navigationId = R.drawable.press_back
 )
 public class AboutActivity extends BaseActivity {
-    @InjectView(R.id.logo)
+    @BindView(R.id.logo)
     ImageView logo;
-    @InjectView(R.id.version_code)
+    @BindView(R.id.version_code)
     TextView versionCode;
-    @InjectView(R.id.invite)
+    @BindView(R.id.invite)
     TextView invite;
-    @InjectView(R.id.url)
+    @BindView(R.id.url)
     TextView url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         versionCode.setText("版本号:" + BuildConfig.VERSION_NAME);
 
     }

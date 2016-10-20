@@ -18,7 +18,7 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import java.net.UnknownHostException;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;
@@ -33,16 +33,16 @@ import okhttp3.Request;
 )
 public class BalanceActivity extends BaseActivity {
 
-    @InjectView(R.id.recharge)
+    @BindView(R.id.recharge)
     Button recharge;
-    @InjectView(R.id.balance)
+    @BindView(R.id.balance)
     TextView balance;
     ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         OkHttpUtils.post().url(Interfaces.Query_Balance)
                 .addParams("loginName",getUsername())
                 .addParams("loginPwd",getPassword())

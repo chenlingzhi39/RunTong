@@ -58,7 +58,7 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.dao.Mark;
 import de.greenrobot.dao.MarkDao;
@@ -78,7 +78,7 @@ import rx.functions.Action1;
 )
 public class HomeActivity extends BaseActivity {
     BannerLayout banner;
-    @InjectView(R.id.list)
+    @BindView(R.id.list)
     RecyclerView homeList;
     private String yue;
     private ArrayList<Integer> localImages = new ArrayList<Integer>();
@@ -103,7 +103,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         homeItems = new ArrayList<>();
         homeItems.add(new HomeItem(getString(R.string.recharge), R.drawable.recharge));
         homeItems.add(new HomeItem(getString(R.string.flow), R.drawable.flow));
@@ -205,22 +205,22 @@ public class HomeActivity extends BaseActivity {
     }
 
     public class YueDialogHelper implements DialogInterface.OnDismissListener {
-        @InjectView(R.id.recharge)
+        @BindView(R.id.recharge)
         Button recharge;
-        @InjectView(R.id.exchange)
+        @BindView(R.id.exchange)
         Button exchange;
-        @InjectView(R.id.number)
+        @BindView(R.id.number)
         TextView number;
-        @InjectView(R.id.yue)
+        @BindView(R.id.yue)
         TextView tv_yue;
-        @InjectView(R.id.gold)
+        @BindView(R.id.gold)
         TextView gold;
         private View mView;
         private Dialog mDialog;
 
         public YueDialogHelper() {
             mView = getLayoutInflater().inflate(R.layout.dialog_yue, null);
-            ButterKnife.inject(this, mView);
+            ButterKnife.bind(this, mView);
             number.setText(number.getText().toString() + "   " + getUsername());
             if (!yue.equals(""))
                 tv_yue.setText(tv_yue.getText().toString() + "   " + yue);

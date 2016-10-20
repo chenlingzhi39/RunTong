@@ -23,7 +23,7 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import okhttp3.Call;
 import okhttp3.Request;
 
@@ -36,24 +36,24 @@ import okhttp3.Request;
         toolbarTitle = R.string.discount
 )
 public class CouponActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener{
-    @InjectView(R.id.coupon_list)
+    @BindView(R.id.coupon_list)
     RecyclerView couponList;
     CouponAdapter couponAdapter;
-    @InjectView(R.id.progressBar)
+    @BindView(R.id.progressBar)
     ProgressBar progressBar;
-    @InjectView(R.id.retry)
+    @BindView(R.id.retry)
     TextView retry;
-    @InjectView(R.id.hint)
+    @BindView(R.id.hint)
     TextView hint;
     Gson gson;
     ArrayList<Coupon> coupons;
-    @InjectView(R.id.refresh)
+    @BindView(R.id.refresh)
     SwipeRefreshLayout refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         couponAdapter = new CouponAdapter(this);
         gson = new Gson();
         getCoupon();

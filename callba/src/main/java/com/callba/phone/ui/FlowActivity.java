@@ -16,7 +16,7 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Coupon;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/7/25.
@@ -28,15 +28,15 @@ import butterknife.InjectView;
 )
 public class FlowActivity extends BaseActivity {
 
-    @InjectView(R.id.layout_tab)
+    @BindView(R.id.layout_tab)
     TabLayout layoutTab;
-    @InjectView(R.id.viewpager)
+    @BindView(R.id.viewpager)
     ViewPager viewpager;
     private Coupon coupon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         coupon=(Coupon) getIntent().getSerializableExtra("coupon");
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
         layoutTab.setupWithViewPager(viewpager);

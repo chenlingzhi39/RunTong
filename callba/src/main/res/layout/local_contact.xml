@@ -1,54 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tab_contact_ll"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/tab_contact_ll"
-    android:background="@color/background"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/contact_member"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        <com.callba.phone.widget.SideBar
+            android:id="@+id/contact_sidebar"
+            android:layout_width="20dp"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
-        <EditText
-            android:id="@+id/et_contact_search"
-            android:layout_width="fill_parent"
-            android:layout_height="35dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="25dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/contact_search_bg"
-            android:drawableLeft="@drawable/search_icon" />
+    <TextView
+        android:id="@+id/contact_dialog"
+        android:layout_width="80.0dip"
+        android:layout_height="80.0dip"
+        android:layout_gravity="center"
+        android:background="?attr/colorAccent"
+        android:gravity="center"
+        android:textColor="#ffffffff"
+        android:textSize="30.0dip"
+        android:visibility="invisible" />
 
-        <ListView
-            android:id="@+id/lv_contact_contacts"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/et_contact_search"
-            android:listSelector="?attr/selectableItemBackground"
-            android:drawSelectorOnTop="false"
-            android:fadingEdge="none"
-            android:fastScrollEnabled="false"
-            android:scrollbars="none"
-            android:cacheColorHint="@android:color/transparent"
-            android:divider="@null"/>
-
-        <com.callba.phone.view.QuickSearchBar
-            android:id="@+id/qsb_contact"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-        </com.callba.phone.view.QuickSearchBar>
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone"
-            />
-    </RelativeLayout>
-</LinearLayout>
+</FrameLayout>

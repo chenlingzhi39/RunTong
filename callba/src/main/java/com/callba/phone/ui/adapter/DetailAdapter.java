@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import okhttp3.Call;
 
 /**
@@ -216,24 +216,24 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     class ViewHolder0 extends RecyclerView.ViewHolder {
-        @InjectView(R.id.add_friend)
+        @BindView(R.id.add_friend)
         Button addFriend;
-        @InjectView(R.id.invite_friend)
+        @BindView(R.id.invite_friend)
         LinearLayout inviteFriend;
 
         public ViewHolder0(View itemView) {
             super(itemView);
-            ButterKnife.inject(this, itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 
     class ViewHolder1 extends RecyclerView.ViewHolder {
-        @InjectView(R.id.number_list)
+        @BindView(R.id.number_list)
         RecyclerView numberList;
 
         public ViewHolder1(View itemView) {
             super(itemView);
-            ButterKnife.inject(this, itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

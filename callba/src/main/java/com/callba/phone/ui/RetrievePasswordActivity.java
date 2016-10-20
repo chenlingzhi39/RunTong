@@ -23,7 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import okhttp3.Call;
 import okhttp3.Request;
 
@@ -34,9 +34,9 @@ import okhttp3.Request;
 )
 public class RetrievePasswordActivity extends BaseActivity implements OnClickListener {
 
-    @InjectView(R.id.et_retrpass_phone)
+    @BindView(R.id.et_retrpass_phone)
     EditText et_phoneNum;
-    @InjectView(R.id.bn_retrieve_pass)
+    @BindView(R.id.bn_retrieve_pass)
     Button bn_submit;
     private String language = "";
    // private final MyHandler mHandler = new MyHandler(this);
@@ -130,7 +130,7 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
     }
 
     public void init() {
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         Locale locale = getResources().getConfiguration().locale;
         language = locale.getCountry();
         bn_submit = (Button) this.findViewById(R.id.bn_retrieve_pass);

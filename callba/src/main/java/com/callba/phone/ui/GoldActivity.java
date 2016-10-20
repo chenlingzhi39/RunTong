@@ -23,7 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 
@@ -36,16 +36,16 @@ import okhttp3.Call;
         navigationId = R.drawable.press_back
 )
 public class GoldActivity extends BaseActivity {
-    @InjectView(R.id.gold)
+    @BindView(R.id.gold)
     TextView gold;
-    @InjectView(R.id.exchange)
+    @BindView(R.id.exchange)
     Button exchange;
     int ex_gold;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         gold.setText(UserManager.getGold(this) + "");
     }
 

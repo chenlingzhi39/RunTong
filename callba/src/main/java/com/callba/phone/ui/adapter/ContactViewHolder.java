@@ -9,7 +9,7 @@ import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.manager.ContactsManager;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -17,14 +17,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class ContactViewHolder extends BaseViewHolder<ContactPersonEntity> {
-    @InjectView(R.id.avatar)
+    @BindView(R.id.avatar)
     CircleImageView avatar;
-    @InjectView(R.id.tv_displayname)
+    @BindView(R.id.name)
     TextView name;
 
     public ContactViewHolder(ViewGroup parent) {
-        super(parent, R.layout.contact_listitem);
-        ButterKnife.inject(this,itemView);
+        super(parent, R.layout.item_contact);
+        ButterKnife.bind(this,itemView);
     }
 
     @Override

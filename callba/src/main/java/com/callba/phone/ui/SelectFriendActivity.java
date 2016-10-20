@@ -30,7 +30,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import okhttp3.Call;
 import okhttp3.Request;
 
@@ -43,11 +43,11 @@ import okhttp3.Request;
         navigationId = R.drawable.press_back
 )
 public class SelectFriendActivity extends BaseActivity {
-    @InjectView(R.id.list)
+    @BindView(R.id.list)
     ListView list;
-    @InjectView(R.id.sidebar)
+    @BindView(R.id.sidebar)
     EaseSidebar sidebar;
-    @InjectView(R.id.floating_header)
+    @BindView(R.id.floating_header)
     TextView floatingHeader;
     private Coupon coupon;
     private ProgressDialog progressDialog;
@@ -60,7 +60,7 @@ public class SelectFriendActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         coupon = (Coupon) getIntent().getSerializableExtra("coupon");
         final List<EaseUser> alluserList = new ArrayList<>();
         for (EaseUser user : DemoHelper.getInstance().getContactList().values()) {

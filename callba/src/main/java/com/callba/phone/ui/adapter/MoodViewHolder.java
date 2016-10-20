@@ -10,7 +10,7 @@ import com.callba.phone.bean.Mood;
 import com.callba.phone.util.StringUtils;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -18,24 +18,24 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class MoodViewHolder extends BaseViewHolder<Mood> {
 
-    @InjectView(R.id.user_head)
+    @BindView(R.id.user_head)
     CircleImageView userHead;
-    @InjectView(R.id.user_name)
+    @BindView(R.id.user_name)
     TextView userName;
-    @InjectView(R.id.content)
+    @BindView(R.id.content)
     TextView content;
-    @InjectView(R.id.images)
+    @BindView(R.id.images)
     RecyclerView images;
-    @InjectView(R.id.time)
+    @BindView(R.id.time)
     TextView time;
-    @InjectView(R.id.praise)
+    @BindView(R.id.praise)
     TextView praise;
-    @InjectView(R.id.comment)
+    @BindView(R.id.comment)
     TextView comment;
     ImageAdapter imageAdapter;
     public MoodViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_mood);
-        ButterKnife.inject(this,itemView);
+        ButterKnife.bind(this,itemView);
     }
 
     @Override

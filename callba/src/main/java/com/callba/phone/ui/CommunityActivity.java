@@ -38,7 +38,7 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -48,12 +48,12 @@ import okhttp3.Call;
  */
 public class CommunityActivity extends AppCompatActivity implements  RefreshLayout.OnRefreshListener, RecyclerArrayAdapter.OnLoadMoreListener {
 
-    @InjectView(R.id.list)
+    @BindView(R.id.list)
     EasyRecyclerView moodList;
     int page, pageSize = 30;
-    @InjectView(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @InjectView(R.id.toolbar_background)
+    @BindView(R.id.toolbar_background)
     AlphaView toolbarBackground;
     private ArrayList<Mood> moods;
     private Gson gson;
@@ -83,7 +83,7 @@ public class CommunityActivity extends AppCompatActivity implements  RefreshLayo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.community);
         // TODO: add setContentView(...) invocation
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getString(R.string.community));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

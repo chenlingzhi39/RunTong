@@ -26,7 +26,7 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import java.io.File;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;
@@ -41,20 +41,20 @@ import okhttp3.Request;
         menuId = R.menu.menu_image_qr
 )
 public class ImageQRActivity extends BaseActivity {
-    @InjectView(R.id.image)
+    @BindView(R.id.image)
     ImageView image;
-    @InjectView(R.id.progressBar)
+    @BindView(R.id.progressBar)
     ProgressBar progressBar;
-    @InjectView(R.id.retry)
+    @BindView(R.id.retry)
     TextView retry;
-    @InjectView(R.id.hint)
+    @BindView(R.id.hint)
     TextView hint;
     File f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         getImage();
     }
 

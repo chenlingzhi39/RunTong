@@ -65,7 +65,7 @@ import java.util.List;
 import java.util.Locale;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/5/27.
@@ -75,11 +75,11 @@ import butterknife.InjectView;
         navigationId = R.drawable.press_back
 )
 public class ChatActivity extends BaseActivity implements EaseChatFragmentListener {
-    @InjectView(R.id.title)
+    @BindView(R.id.title)
     TextView title;
-    @InjectView(R.id.input_menu)
+    @BindView(R.id.input_menu)
     EaseChatInputMenu inputMenu;
-    @InjectView(R.id.message_list)
+    @BindView(R.id.message_list)
     EaseChatMessageList messageList;
     protected ListView listView;
     protected SwipeRefreshLayout swipeRefreshLayout;
@@ -121,7 +121,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activityInstance = this;
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         init();
     }
 

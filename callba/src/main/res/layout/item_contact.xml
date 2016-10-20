@@ -13,22 +13,13 @@
 		android:layout_margin="10dp"
 		android:id="@+id/avatar"
 		android:transitionName="photo"/>
-	<RelativeLayout
-		android:layout_width="match_parent"
-		android:layout_height="match_parent">
 	<TextView
-	    android:id="@+id/tv_displayname"
+	    android:id="@+id/name"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:paddingTop="11dp"
-	    android:paddingBottom="11dp"
+	    android:paddingTop="10dp"
+	    android:paddingBottom="10dp"
 	    android:textSize="16sp"
 	    android:textColor="@color/black_3f"
 		android:layout_centerInParent="true"/>
-	<!--	<View
-			android:layout_width="match_parent"
-			android:layout_height="1px"
-			android:background="@color/light_black"
-			android:layout_alignParentBottom="true"/>-->
-	</RelativeLayout>
 </LinearLayout>

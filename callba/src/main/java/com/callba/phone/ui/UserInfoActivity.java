@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;
@@ -52,39 +52,39 @@ import okhttp3.Request;
         navigationId = R.drawable.press_back
 )
 public class UserInfoActivity extends BaseActivity {
-    @InjectView(R.id.avatar)
+    @BindView(R.id.avatar)
     ImageView avatar;
-    @InjectView(R.id.remark)
+    @BindView(R.id.remark)
     TextView tv_remark;
-    @InjectView(R.id.number)
+    @BindView(R.id.number)
     TextView number;
-    @InjectView(R.id.nick_name)
+    @BindView(R.id.nick_name)
     TextView nickName;
     String userName;
     EaseUser user;
-    @InjectView(R.id.set_remark)
+    @BindView(R.id.set_remark)
     Button setRemark;
-    @InjectView(R.id.frame)
+    @BindView(R.id.frame)
     FrameLayout frame;
     Gson gson;
     ProgressDialog progressDialog;
-    @InjectView(R.id.clear_chat)
+    @BindView(R.id.clear_chat)
     Button clearChat;
-    @InjectView(R.id.delete_friend)
+    @BindView(R.id.delete_friend)
     Button deleteFriend;
-    @InjectView(R.id.signature)
+    @BindView(R.id.signature)
     Button signature;
-    @InjectView(R.id.send_message)
+    @BindView(R.id.send_message)
     Button sendMessage;
-    @InjectView(R.id.frame1)
+    @BindView(R.id.frame1)
     FrameLayout frame1;
-    @InjectView(R.id.add_friend)
+    @BindView(R.id.add_friend)
     Button addFriend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         /*if (getIntent().getBooleanExtra("is_group", false))
             sendMessage.setVisibility(View.VISIBLE);
         else sendMessage.setVisibility(View.GONE);*/

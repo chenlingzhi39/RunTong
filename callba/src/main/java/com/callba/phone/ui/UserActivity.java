@@ -40,7 +40,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -55,35 +55,35 @@ import okhttp3.Request;
         menuId = R.menu.menu_user
 )
 public class UserActivity extends BaseActivity {
-    @InjectView(R.id.user_head)
+    @BindView(R.id.user_head)
     CircleImageView userHead;
-    @InjectView(R.id.number)
+    @BindView(R.id.number)
     TextView number;
-    @InjectView(R.id.word)
+    @BindView(R.id.word)
     TextView word;
-    @InjectView(R.id.account)
+    @BindView(R.id.account)
     RelativeLayout account;
-    @InjectView(R.id.change_info)
+    @BindView(R.id.change_info)
     RelativeLayout changeInfo;
-    @InjectView(R.id.change_password)
+    @BindView(R.id.change_password)
     RelativeLayout changePassword;
-    @InjectView(R.id.retrieve)
+    @BindView(R.id.retrieve)
     RelativeLayout retrieve;
-    @InjectView(R.id.about)
+    @BindView(R.id.about)
     RelativeLayout about;
-    @InjectView(R.id.help)
+    @BindView(R.id.help)
     RelativeLayout help;
-    @InjectView(R.id.update)
+    @BindView(R.id.update)
     RelativeLayout update;
-    @InjectView(R.id.logout)
+    @BindView(R.id.logout)
     RelativeLayout logout;
-    @InjectView(R.id.version_code)
+    @BindView(R.id.version_code)
     TextView versionCode;
     private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         if(UserManager.getNickname(this).equals(""))
         number.setText(getUsername());
         else number.setText(UserManager.getNickname(this));

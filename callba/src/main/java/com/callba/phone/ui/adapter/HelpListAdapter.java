@@ -12,13 +12,13 @@ import android.widget.TextView;
 import com.callba.R;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by Administrator on 2016/6/11.
  */
 public class HelpListAdapter implements ExpandableListAdapter {
-    @InjectView(R.id.answer)
+    @BindView(R.id.answer)
     TextView answer;
     private LayoutInflater mInflater;
 
@@ -145,20 +145,20 @@ public class HelpListAdapter implements ExpandableListAdapter {
     }
 
     static class GroupViewHolder {
-        @InjectView(R.id.ask)
+        @BindView(R.id.ask)
         TextView ask;
-        @InjectView(R.id.indicator)
+        @BindView(R.id.indicator)
         ImageView imageView;
         GroupViewHolder(View view) {
-            ButterKnife.inject(this, view);
+            ButterKnife.bind(this, view);
         }
     }
     static class ChildViewHolder {
-        @InjectView(R.id.answer)
+        @BindView(R.id.answer)
         TextView answer;
 
         ChildViewHolder(View view) {
-            ButterKnife.inject(this, view);
+            ButterKnife.bind(this, view);
         }
     }
 }

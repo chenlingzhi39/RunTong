@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import okhttp3.Call;
 import okhttp3.Request;
 
@@ -51,15 +51,15 @@ import okhttp3.Request;
         menuId = R.menu.menu_add_contact
 )
 public class AddContactActivity extends BaseActivity {
-    @InjectView(R.id.edit_note)
+    @BindView(R.id.edit_note)
     EditText editText;
-    @InjectView(R.id.avatar)
+    @BindView(R.id.avatar)
     ImageView avatar;
-    @InjectView(R.id.name)
+    @BindView(R.id.name)
     TextView nameText;
-    @InjectView(R.id.indicator)
+    @BindView(R.id.indicator)
     Button indicator;
-    @InjectView(R.id.ll_user)
+    @BindView(R.id.ll_user)
     LinearLayout searchedUserLayout;
     String toAddUsername;
     ProgressDialog progressDialog;
@@ -69,7 +69,7 @@ public class AddContactActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
     }
     /**
      * 查找contact

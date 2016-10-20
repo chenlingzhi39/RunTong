@@ -9,7 +9,7 @@ import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/6/16.
@@ -21,13 +21,13 @@ import butterknife.InjectView;
 )
 public class ClauseActivity extends BaseActivity {
 
-    @InjectView(R.id.page)
+    @BindView(R.id.page)
     LinearLayout page;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         TextView textView2=new TextView(this);
         textView2.setText("一．CALL吧服务提供发话人与受话人之间的私人语音或语音信息的传送。语音通信秘密受法律保护。我们绝不会公开、编辑或透露用户的语音或语音信息内容，除非有法律许可及国家有关公安、安全部门等要求。");
         textView2.setTextSize(15);

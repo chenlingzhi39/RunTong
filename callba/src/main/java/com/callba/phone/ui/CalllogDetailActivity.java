@@ -22,7 +22,7 @@ import com.callba.phone.bean.CalllogDetailBean;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by Administrator on 2016/7/10.
@@ -34,18 +34,18 @@ import butterknife.InjectView;
 )
 public class CalllogDetailActivity extends BaseActivity {
 
-    @InjectView(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @InjectView(R.id.layout_tab)
+    @BindView(R.id.layout_tab)
     TabLayout tabs;
-    @InjectView(R.id.viewpager)
+    @BindView(R.id.viewpager)
     ViewPager viewpager;
    private CalllogDetailBean calllogBean;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         calllogBean=(CalllogDetailBean) getIntent().getExtras().get("log");
         getSupportActionBar().setTitle(calllogBean.getCallLogNumber());
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));

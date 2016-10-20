@@ -10,22 +10,22 @@ import android.widget.TextView;
 import com.callba.R;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/7/6.
  */
 public class ContactNumberViewHolder extends BaseViewHolder<String> {
 
-    @InjectView(R.id.tv_phonelist_number)
+    @BindView(R.id.tv_phonelist_number)
     TextView tvPhonelistNumber;
-    @InjectView(R.id.send_message)
+    @BindView(R.id.send_message)
     Button sendMessage;
 
 
     public ContactNumberViewHolder(ViewGroup parent) {
         super(parent, R.layout.contact_detail_lv_item);
-        ButterKnife.inject(this, itemView);
+        ButterKnife.bind(this, itemView);
     }
 
     @Override

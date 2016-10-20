@@ -11,18 +11,18 @@ import java.util.Calendar;
 import java.util.Date;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by Administrator on 2016/7/6.
  */
 public class TimeViewHolder extends BaseViewHolder<CalldaCalllogBean> {
-    @InjectView(R.id.time)
+    @BindView(R.id.time)
     TextView time;
 
     public TimeViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_time);
-        ButterKnife.inject(this,itemView);
+        ButterKnife.bind(this,itemView);
     }
 
     @Override

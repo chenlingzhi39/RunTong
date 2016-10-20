@@ -7,24 +7,24 @@ import com.callba.R;
 import com.callba.phone.bean.Meal;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/6/10.
  */
 public class MealViewHolder extends BaseViewHolder<Meal> {
-    @InjectView(R.id.meal_name)
+    @BindView(R.id.meal_name)
     TextView mealName;
-    @InjectView(R.id.meal_time)
+    @BindView(R.id.meal_time)
     TextView mealTime;
-    @InjectView(R.id.rest_time)
+    @BindView(R.id.rest_time)
     TextView restTime;
-    @InjectView(R.id.max_time)
+    @BindView(R.id.max_time)
     TextView maxTime;
 
     public MealViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_meal);
-        ButterKnife.inject(this, itemView);
+        ButterKnife.bind(this, itemView);
     }
 
     @Override

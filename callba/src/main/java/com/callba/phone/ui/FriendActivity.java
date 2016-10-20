@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 
@@ -63,17 +63,17 @@ import okhttp3.Call;
         navigationId = R.drawable.press_back
 )
 public class FriendActivity extends BaseActivity {
-    @InjectView(R.id.title)
+    @BindView(R.id.title)
     TextView title;
-    @InjectView(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @InjectView(R.id.mToolbarContainer)
+    @BindView(R.id.mToolbarContainer)
     AppBarLayout mToolbarContainer;
-    @InjectView(R.id.location)
+    @BindView(R.id.location)
     AlwaysMarqueeTextView location;
-    @InjectView(R.id.list)
+    @BindView(R.id.list)
     XRecyclerView userList;
-    @InjectView(R.id.progressBar)
+    @BindView(R.id.progressBar)
     ProgressBar progressBar;
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
@@ -91,7 +91,7 @@ public class FriendActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         //MyApplication.getApplicationComponent().inject(this);
         gson = new Gson();
         location.setTextColor(getResources().getColor(R.color.black_2f));

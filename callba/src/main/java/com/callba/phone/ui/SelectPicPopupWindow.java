@@ -19,18 +19,18 @@ import com.callba.phone.util.Utils;
 import java.io.File;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
  * Created by Administrator on 2015/10/23.
  */
 public class SelectPicPopupWindow extends Activity {
-    @InjectView(R.id.photo)
+    @BindView(R.id.photo)
     Button photo;
-    @InjectView(R.id.album)
+    @BindView(R.id.album)
     Button album;
-    @InjectView(R.id.cancel)
+    @BindView(R.id.cancel)
     Button cancel;
     String file_path;
 boolean isCrop;
@@ -38,7 +38,7 @@ boolean isCrop;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alert_dialog);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         isCrop=getIntent().getBooleanExtra("isCrop",true);
     }
 

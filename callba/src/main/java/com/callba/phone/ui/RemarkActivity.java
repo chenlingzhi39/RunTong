@@ -20,7 +20,7 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import java.net.UnknownHostException;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import okhttp3.Call;
 import okhttp3.Request;
 
@@ -34,14 +34,14 @@ import okhttp3.Request;
         menuId = R.menu.remark
 )
 public class RemarkActivity extends BaseActivity {
-    @InjectView(R.id.remark)
+    @BindView(R.id.remark)
     EditText remark;
     EaseUser user;
     ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         user= EaseUserUtils.getUserInfo(getIntent().getStringExtra("username"));
         if(user.getRemark()!=null)
         {remark.setText(user.getRemark());

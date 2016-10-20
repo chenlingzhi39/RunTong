@@ -16,26 +16,26 @@ import com.callba.phone.ui.RechargeActivity;
 import com.callba.phone.ui.SelectFriendActivity;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/7/30.
  */
 public class CouponViewHolder extends BaseViewHolder<Coupon> {
-    @InjectView(R.id.image)
+    @BindView(R.id.image)
     ImageView image;
-    @InjectView(R.id.content)
+    @BindView(R.id.content)
     TextView content;
-    @InjectView(R.id.get_flow)
+    @BindView(R.id.get_flow)
     Button getFlow;
-    @InjectView(R.id.give_flow)
+    @BindView(R.id.give_flow)
     Button giveFlow;
-    @InjectView(R.id.title)
+    @BindView(R.id.title)
     TextView title;
 
     public CouponViewHolder(ViewGroup parent) {
         super(parent, R.layout.item_coupon);
-        ButterKnife.inject(this, itemView);
+        ButterKnife.bind(this, itemView);
     }
 
     @Override

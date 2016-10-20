@@ -19,7 +19,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import okhttp3.Call;
 import okhttp3.Request;
 
@@ -34,13 +34,13 @@ import okhttp3.Request;
         menuId = R.menu.opinion
 )
 public class OpinionActivity extends BaseActivity {
-    @InjectView(R.id.opinion)
+    @BindView(R.id.opinion)
     TextView opinion;
     ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         Timer timer = new Timer(); //设置定时器
         timer.schedule(new TimerTask() {
             @Override

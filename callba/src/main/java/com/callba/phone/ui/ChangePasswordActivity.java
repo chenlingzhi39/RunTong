@@ -27,7 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;
@@ -41,13 +41,13 @@ import okhttp3.Request;
         navigationId = R.drawable.press_back
 )
 public class ChangePasswordActivity extends BaseActivity {
-    @InjectView(R.id.old_password)
+    @BindView(R.id.old_password)
     EditText oldPassword;
-    @InjectView(R.id.new_password)
+    @BindView(R.id.new_password)
     EditText newPassword;
-    @InjectView(R.id.ok)
+    @BindView(R.id.ok)
     Button ok;
-    @InjectView(R.id.confirm_new_password)
+    @BindView(R.id.confirm_new_password)
     EditText confirmNewPassword;
     private String old_password, new_password,comfirm_new_password;
     private ProgressDialog progressDialog;
@@ -55,7 +55,7 @@ public class ChangePasswordActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         oldPassword.requestFocus();
         Timer timer = new Timer(); //设置定时器
         timer.schedule(new TimerTask() {

@@ -22,7 +22,7 @@ import com.hyphenate.chat.EMMessage;
 import java.io.File;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -35,11 +35,11 @@ import butterknife.OnClick;
 )
 public class PostMessageActivity extends BaseActivity {
 
-    @InjectView(R.id.number)
+    @BindView(R.id.number)
     EditText number;
-    @InjectView(R.id.content)
+    @BindView(R.id.content)
     EditText content;
-    @InjectView(R.id.submit)
+    @BindView(R.id.submit)
     ImageButton submit;
     protected File cameraFile;
     protected static final int REQUEST_CODE_CAMERA = 2;
@@ -48,7 +48,7 @@ public class PostMessageActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
     }
 
     @OnClick({R.id.submit, R.id.submit_image})

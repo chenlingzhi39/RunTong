@@ -15,22 +15,22 @@ import com.callba.phone.widget.DividerItemDecoration;
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 
 /**
  * Created by PC-20160514 on 2016/7/15.
  */
 @ActivityFragmentInject(contentViewId = R.layout.fragment_order)
 public class OrderFragment extends BaseFragment {
-    @InjectView(R.id.list)
+    @BindView(R.id.list)
     RecyclerView orderList;
-    @InjectView(R.id.hint)
+    @BindView(R.id.hint)
     TextView hint;
     private OrderAdapter orderAdapter;
     private ArrayList<Order> orders;
     @Override
     protected void initView(View fragmentRootView) {
-        ButterKnife.inject(this, fragmentRootView);
+        ButterKnife.bind(this, fragmentRootView);
         orders=(ArrayList<Order>)getArguments().getParcelableArrayList("list").get(0);
         orderAdapter=new OrderAdapter(getActivity());
         orderAdapter.addAll(orders);
@@ -48,9 +48,4 @@ public class OrderFragment extends BaseFragment {
         });
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.reset(this);
-    }
 }

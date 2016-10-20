@@ -55,7 +55,7 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.BindView;
 import butterknife.OnClick;
 import de.greenrobot.dao.Mark;
 import de.greenrobot.dao.MarkDao;
@@ -72,21 +72,21 @@ import okhttp3.Request;
         menuId = R.menu.menu_sign
 )
 public class SignInActivity extends BaseActivity{
-    @InjectView(R.id.circle)
+    @BindView(R.id.circle)
     CircleTextView circle;
-    @InjectView(R.id.popupwindow_calendar)
+    @BindView(R.id.popupwindow_calendar)
     SignCalendar calendar;
-    @InjectView(R.id.popupwindow_calendar_month)
+    @BindView(R.id.popupwindow_calendar_month)
     TextView popupwindow_calendar_month;
-    @InjectView(R.id.btn_signIn)
+    @BindView(R.id.btn_signIn)
     Button btn_signIn;
-    @InjectView(R.id.gold)
+    @BindView(R.id.gold)
     TextView gold;
-    @InjectView(R.id.to_play)
+    @BindView(R.id.to_play)
     Button toPlay;
-    @InjectView(R.id.to_recharge)
+    @BindView(R.id.to_recharge)
     Button toRecharge;
-    @InjectView(R.id.to_share)
+    @BindView(R.id.to_share)
     Button toShare;
     private String date = null;// 设置默认选中的日期  格式为 “2014-04-05” 标准DATE格式
     private List<String> list = new ArrayList<String>(); //设置标记列表
@@ -106,7 +106,7 @@ public class SignInActivity extends BaseActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
         // 初始化DBManager
         // dbManager = new DBManager(this);
         configSso();
