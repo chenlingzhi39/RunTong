@@ -144,7 +144,7 @@ public class ContactActivity extends BaseActivity {
                     return LocalContactFragment.newInstance();
 
                 case 1:
-                    return WebContactFragment2.newInstance();
+                    return WebContactFragment.newInstance();
 
                 default:
                     return null;

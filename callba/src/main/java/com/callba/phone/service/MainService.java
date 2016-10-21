@@ -11,12 +11,14 @@ import android.database.ContentObserver;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.ContactsContract;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.logic.contact.QueryContactCallback;
@@ -39,8 +41,7 @@ import okhttp3.Call;
  * @author Zhang
  */
 public class MainService extends Service {
-    private static final String TAG = MainService.class.getCanonicalName();
-
+    private static boolean refresh_contact=true;
     /**
      * 存储任务集合
      */
@@ -129,7 +130,8 @@ public class MainService extends Service {
                         EMClient.getInstance().groupManager().loadAllGroups();
                         EMClient.getInstance().chatManager().loadAllConversations();
                         Log.d("main", "登录聊天服务器成功！");
-                        sendBroadcast(new Intent(("message_num")));
+                        LocalBroadcastManager.getInstance(MainService.this).sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
+                        LocalBroadcastManager.getInstance(MainService.this).sendBroadcast(new Intent((Constant.ACTION_MESSAGE_CHANGED)));
                         //DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
                     }
 

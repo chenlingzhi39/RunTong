@@ -606,7 +606,7 @@ public class DemoHelper {
         public void onUserRemoved(String groupId,final String groupName) {
             //TODO 提示用户被T了，demo省略此步骤
             EMClient.getInstance().chatManager().deleteConversation(groupName,true);
-            appContext.sendBroadcast(new Intent("message_num"));
+            broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
             SimpleHandler.getInstance().post(new Runnable() {
                 @Override
@@ -622,7 +622,7 @@ public class DemoHelper {
             // 群被解散
             //TODO 提示用户群被解散,demo省略
             EMClient.getInstance().chatManager().deleteConversation(groupName,true);
-            appContext.sendBroadcast(new Intent("message_num"));
+            broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
             SimpleHandler.getInstance().post(new Runnable() {
                 @Override
@@ -725,7 +725,7 @@ public class DemoHelper {
             // 提醒新消息
             //getNotifier().viberateAndPlayTone(msg);
             getNotifier().onNewMsg(msg);
-            appContext.sendBroadcast(new Intent("message_num"));
+            broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
         }
 
@@ -755,7 +755,7 @@ public class DemoHelper {
             EMLog.d(TAG, "onAutoAcceptInvitationFromGroup groupId:" + groupId);
             //发送local广播
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
-            appContext.sendBroadcast(new Intent("message_num"));
+            broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
         }
     }
     /***
@@ -844,13 +844,13 @@ public class DemoHelper {
             localUsers.remove(username);
             userDao.deleteContact(username);
             inviteMessgeDao.deleteMessage(username);
-            EMClient.getInstance().chatManager().deleteConversation(username,false);
-            appContext.sendBroadcast(new Intent("message_num"));
+            EMClient.getInstance().chatManager().deleteConversation(username,true);
+            broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
             Intent intent=new Intent(Constant.ACTION_CONTACT_CHANAGED);
             intent.putExtra("username",username);
             //发送好友变动广播
             broadcastManager.sendBroadcast(intent);
-
+            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
         }
 
         @Override
@@ -964,10 +964,8 @@ public class DemoHelper {
 			public void onMessageReceived(List<EMMessage> messages) {
 			    for (EMMessage message : messages) {
 			        EMLog.d(TAG, "onMessageReceived id : " + message.getMsgId());
-                    Intent intent = new Intent("com.callba.chat");
-                    intent.putExtra("message",message);
-                    appContext.sendBroadcast(intent);
-                    appContext.sendBroadcast(new Intent("message_num"));
+                    broadcastManager.sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED).putExtra("message",message));
+                    broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
 			        //应用在后台，不需要刷新UI,通知栏提示新消息
 			        if(!easeUI.hasForegroundActivies()){
 			            getNotifier().onNewMsg(message);
@@ -1270,7 +1268,7 @@ public class DemoHelper {
                        isGroupsSyncedWithServer = false;
                        isSyncingGroupsWithServer = false;
                        //通知listener同步群组完毕
-                       noitifyGroupSyncListeners(false);
+                       notifyGroupSyncListeners(false);
                        return;
                    }
                    
@@ -1280,7 +1278,7 @@ public class DemoHelper {
                    isSyncingGroupsWithServer = false;
                    
                    //通知listener同步群组完毕
-                   noitifyGroupSyncListeners(true);
+                   notifyGroupSyncListeners(true);
                    if(isContactsSyncedWithServer()){
                        notifyForRecevingEvents();
                    }
@@ -1291,7 +1289,7 @@ public class DemoHelper {
                    demoModel.setGroupsSynced(false);
                    isGroupsSyncedWithServer = false;
                    isSyncingGroupsWithServer = false;
-                   noitifyGroupSyncListeners(false);
+                   notifyGroupSyncListeners(false);
                    if(callback != null){
                        callback.onError(e.getErrorCode(), e.toString());
                    }
@@ -1301,7 +1299,7 @@ public class DemoHelper {
        }.start();
    }
 
-   public void noitifyGroupSyncListeners(boolean success){
+   public void notifyGroupSyncListeners(boolean success){
        for (DataSyncListener listener : syncGroupsListeners) {
            listener.onSyncComplete(success);
        }

@@ -16,6 +16,7 @@ package com.callba.phone.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.Constant;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.widget.EaseAlertDialog;
@@ -117,8 +119,8 @@ public class NewGroupActivity extends BaseActivity {
                         EMClient.getInstance().groupManager().createGroup(groupName, desc, members, reason, option);
 						runOnUiThread(new Runnable() {
 							public void run() {
+								LocalBroadcastManager.getInstance(NewGroupActivity.this).sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
 								progressDialog.dismiss();
-								setResult(RESULT_OK);
 								finish();
 							}
 						});

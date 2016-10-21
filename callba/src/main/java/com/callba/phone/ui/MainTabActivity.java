@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
@@ -68,8 +69,10 @@ public class MainTabActivity extends TabActivity {
     NotificationManager mNotificationManager;
     private static final int FLING_MIN_DISTANCE = 100;
     private static final int FLING_MIN_VELOCITY = 0;
-    BroadcastReceiver payReceiver,numReceiver,tabReceiver;
+    BroadcastReceiver tabReceiver;
     private BadgeView badgeView;
+    private LocalBroadcastManager broadcastManager;
+    private BroadcastReceiver broadcastReceiver;
    /* @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -202,29 +205,12 @@ public class MainTabActivity extends TabActivity {
         } else if (getIntent().getBooleanExtra(Constant.ACCOUNT_REMOVED, false) && !isAccountRemovedDialogShow) {
             showAccountRemovedDialog();
         }
-        payReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                mTabhost.setCurrentTab(0);
-            }
-        };
-        registerReceiver(payReceiver, new IntentFilter("com.callba.pay"));
         TabWidget tabs = (TabWidget) findViewById(android.R.id.tabs);
         badgeView=new BadgeView(this,tabs,3);
         int num=EMClient.getInstance().chatManager().getUnreadMsgsCount();
         if(num==0)badgeView.hide();
         else{badgeView.setText(num+"");
         badgeView.show();}
-        numReceiver=new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int i=EMClient.getInstance().chatManager().getUnreadMsgsCount();
-                if(i==0)badgeView.hide();
-                else {badgeView.setText(i+"");
-                    badgeView.show();}
-            }
-        };
-        registerReceiver(numReceiver,new IntentFilter("message_num"));
         tabReceiver=new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -235,7 +221,18 @@ public class MainTabActivity extends TabActivity {
             }
         };
         registerReceiver(tabReceiver,new IntentFilter("toggle_tab"));
-
+       broadcastManager=LocalBroadcastManager.getInstance(this);
+        broadcastReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int i=EMClient.getInstance().chatManager().getUnreadMsgsCount();
+                if(i==0)badgeView.hide();
+                else {badgeView.setText(i+"");
+                    badgeView.show();
+            }
+        }
+        };
+        broadcastManager.registerReceiver(broadcastReceiver,new IntentFilter(Constant.ACTION_MESSAGR_NUM_CHANGED));
     }
 
 
@@ -298,7 +295,6 @@ public class MainTabActivity extends TabActivity {
         if (mNotificationManager != null)
             mNotificationManager.cancel(10);
         unregisterReceiver(payReceiver);
-        unregisterReceiver(numReceiver);
         unregisterReceiver(tabReceiver);
         super.onDestroy();
     }

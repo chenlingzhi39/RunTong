@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.callba"
-    android:versionCode="124">
+    android:versionCode="125">
 
     <supports-screens
         android:anyDensity="true"
@@ -370,12 +370,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
-        <activity
-            android:name=".phone.ui.PostMessageActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".phone.ui.PostActivity"
             android:launchMode="singleTop"

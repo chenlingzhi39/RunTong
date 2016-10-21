@@ -1,8 +1,11 @@
 package com.callba.phone.ui;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -68,7 +71,8 @@ public class GroupsActivity extends BaseActivity {
     private ArrayList<SeparatedEMGroup> separatedEMGroups;
     private GroupAdapter groupAdapter;
     private MyFilter filter;
-
+    private BroadcastReceiver broadcastReceiver;
+    private LocalBroadcastManager broadcastManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,13 +81,6 @@ public class GroupsActivity extends BaseActivity {
         InitiateSearch();
         HandleSearch();
         separatedEMGroups = new ArrayList<>();
-        for (EMGroup emGroup : EMClient.getInstance().groupManager().getAllGroups()) {
-            if (emGroup.getOwner().equals(EMClient.getInstance().getCurrentUser()))
-                separatedEMGroups.add(new SeparatedEMGroup(emGroup, "0"));
-            else separatedEMGroups.add(new SeparatedEMGroup(emGroup, "1"));
-        }
-        Collections.sort(separatedEMGroups, new GroupComparator());
-        filter = new MyFilter(separatedEMGroups);
         groupAdapter = new GroupAdapter(this);
         groupAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
@@ -144,10 +141,19 @@ public class GroupsActivity extends BaseActivity {
                 }.start();
             }
         });
+        refresh();
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                refresh();
+            }
+        };
+        broadcastManager = LocalBroadcastManager.getInstance(this);
+        broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
     }
 
     public void refresh() {
-        separatedEMGroups = new ArrayList<>();
+        separatedEMGroups.clear();
         for (EMGroup emGroup : EMClient.getInstance().groupManager().getAllGroups()) {
             if (emGroup.getOwner().equals(EMClient.getInstance().getCurrentUser()))
                 separatedEMGroups.add(new SeparatedEMGroup(emGroup, "0"));
@@ -155,9 +161,9 @@ public class GroupsActivity extends BaseActivity {
         }
         Collections.sort(separatedEMGroups, new GroupComparator());
         filter = new MyFilter(separatedEMGroups);
-        groupAdapter.clear();
-        groupAdapter.addAll(separatedEMGroups);
-        if (!TextUtils.isEmpty(editTextSearch.getText().toString()))
+        if(TextUtils.isEmpty(editTextSearch.getText().toString()))
+        {groupAdapter.clear();
+            groupAdapter.addAll(separatedEMGroups);}else
             filter.filter(editTextSearch.getText().toString());
     }
 
@@ -252,5 +258,11 @@ public class GroupsActivity extends BaseActivity {
             groupAdapter.clear();
             groupAdapter.addAll((ArrayList<SeparatedEMGroup>) results.values);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        broadcastManager.unregisterReceiver(broadcastReceiver);
     }
 }

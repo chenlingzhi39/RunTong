@@ -10,7 +10,7 @@
         android:id="@+id/application_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:contactItemImage="@drawable/em_new_friends_icon"
+        app:contactItemImage="@drawable/ic_notifications_active_orange_700_36dp"
         app:contactItemName="@string/Application_and_notify" />
     <View
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
         android:id="@+id/black_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:contactItemImage="@drawable/black_list"
+        app:contactItemImage="@drawable/ic_do_not_disturb_alt_grey_700_36dp"
         app:contactItemName="@string/blacklist" />
     <View
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
         android:id="@+id/community_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:contactItemImage="@drawable/circle"
+        app:contactItemImage="@drawable/ic_camera_green_700_36dp"
         app:contactItemName="@string/community" />
     <View
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
         android:id="@+id/nearby_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:contactItemImage="@drawable/position"
+        app:contactItemImage="@drawable/ic_location_on_red_700_36dp"
         app:contactItemName="@string/friend" />
     <View
         android:layout_width="match_parent"
@@ -50,7 +50,7 @@
         android:id="@+id/group_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:contactItemImage="@drawable/em_groups_icon"
+        app:contactItemImage="@drawable/ic_group_blue_700_36dp"
         app:contactItemName="@string/group_chat" />
     <View
         android:layout_width="match_parent"

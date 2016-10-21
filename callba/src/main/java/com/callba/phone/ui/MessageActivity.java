@@ -92,24 +92,13 @@ public class MessageActivity extends BaseActivity {
     @BindView(R.id.card_search)
     CardView cardSearch;
     private ConversationAdapter adapter;
-    private ChatReceiver chatReceiver;
     private int index = -1;
-    private BroadcastReceiver broadcastReceiver;
+    private BroadcastReceiver broadcastReceiver, broadcastReceiver1;
     private LocalBroadcastManager broadcastManager;
     protected InputMethodManager inputMethodManager;
     protected FrameLayout errorItemContainer;
     protected TextView errorText;
     private MyFilter filter;
-    public interface EaseConversationListItemClickListener {
-        /**
-         * 会话listview item点击事件
-         *
-         * @param conversation 被点击item所对应的会话
-         */
-        void onListItemClicked(EMConversation conversation);
-    }
-
-    private EaseConversationListItemClickListener listItemClickListener;
     protected Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -160,6 +149,7 @@ public class MessageActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
+        broadcastManager = LocalBroadcastManager.getInstance(this);
         View errorView = View.inflate(this, R.layout.em_chat_neterror_item, null);
         errorItemContainer = (FrameLayout) findViewById(R.id.fl_error_item);
         errorText = (TextView) errorView.findViewById(R.id.tv_connect_errormsg);
@@ -174,19 +164,7 @@ public class MessageActivity extends BaseActivity {
                 this, DividerItemDecoration.VERTICAL_LIST));
         conversationListview.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ConversationAdapter(this);
-        subscription = Observable.create(new Observable.OnSubscribe<List<EMConversation>>() {
-            @Override
-            public void call(Subscriber<? super List<EMConversation>> subscriber) {
-                List<EMConversation> emConversations = loadConversationList();
-                subscriber.onNext(emConversations);
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMConversation>>() {
-            @Override
-            public void call(List<EMConversation> emConversations) {
-                adapter.addAll(emConversations);
-                filter=new MyFilter(emConversations);
-            }
-        });
+        refresh();
         adapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -228,11 +206,6 @@ public class MessageActivity extends BaseActivity {
             }
         }, 0);
 
-        final IntentFilter intentFilter = new IntentFilter(
-                "com.callba.chat");
-        chatReceiver = new ChatReceiver();
-        registerReceiver(chatReceiver, intentFilter);
-
 
         conversationListview.setOnTouchListener(new View.OnTouchListener() {
 
@@ -247,22 +220,8 @@ public class MessageActivity extends BaseActivity {
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                subscription = Observable.create(new Observable.OnSubscribe<List<EMConversation>>() {
-                    @Override
-                    public void call(Subscriber<? super List<EMConversation>> subscriber) {
-                        List<EMConversation> emConversations = loadConversationList();
-                        subscriber.onNext(emConversations);
-                    }
-                }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMConversation>>() {
-                    @Override
-                    public void call(List<EMConversation> emConversations) {
-                        adapter.clear();
-                        adapter.addAll(emConversations);
-                        filter.filter(editTextSearch.getText().toString());
-                        refresh.setRefreshing(false);
-                    }
-                });
-
+                refresh();
+                refresh.setRefreshing(false);
             }
         });
         EMClient.getInstance().addConnectionListener(connectionListener);
@@ -272,11 +231,18 @@ public class MessageActivity extends BaseActivity {
                 refresh();
             }
         };
-        broadcastManager = LocalBroadcastManager.getInstance(this);
+        broadcastReceiver1 = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                refresh();
+            }
+        };
         broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
+        broadcastManager.registerReceiver(broadcastReceiver1, new IntentFilter(Constant.ACTION_MESSAGE_CHANGED));
         InitiateSearch();
         HandleSearch();
     }
+
     private void InitiateSearch() {
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -286,8 +252,8 @@ public class MessageActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(filter!=null)
-                filter.filter(s);
+                if (filter != null)
+                    filter.filter(s);
                 if (editTextSearch.getText().toString().length() == 0) {
                     clearSearch.setVisibility(View.GONE);
                 } else {
@@ -309,16 +275,18 @@ public class MessageActivity extends BaseActivity {
         });
 
     }
+
     private void HandleSearch() {
         imageSearchBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i("search", "back");
-                InitiateSearch.handleToolBar(MessageActivity.this, cardSearch,editTextSearch, 20);
+                InitiateSearch.handleToolBar(MessageActivity.this, cardSearch, editTextSearch, 20);
             }
         });
         editTextSearch.requestFocus();
     }
+
     @Override
     public void onNetworkChanged(boolean isAvailable) {
         errorItemContainer.setVisibility(isAvailable ? View.GONE : View.VISIBLE);
@@ -366,8 +334,8 @@ public class MessageActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(chatReceiver);
         broadcastManager.unregisterReceiver(broadcastReceiver);
+        broadcastManager.unregisterReceiver(broadcastReceiver1);
         EMClient.getInstance().removeConnectionListener(connectionListener);
         super.onDestroy();
     }
@@ -395,49 +363,30 @@ public class MessageActivity extends BaseActivity {
     }
 
     public void refresh() {
-        new Thread(new Runnable() {
+        subscription = Observable.create(new Observable.OnSubscribe<List<EMConversation>>() {
             @Override
-            public void run() {
-                SimpleHandler.getInstance().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        subscription = Observable.create(new Observable.OnSubscribe<List<EMConversation>>() {
-                            @Override
-                            public void call(Subscriber<? super List<EMConversation>> subscriber) {
-                                List<EMConversation> emConversations = loadConversationList();
-                                subscriber.onNext(emConversations);
-                            }
-                        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMConversation>>() {
-                            @Override
-                            public void call(List<EMConversation> emConversations) {
-                                adapter.clear();
-                                adapter.addAll(emConversations);
-                                filter=new MyFilter(emConversations);
-                                if(!TextUtils.isEmpty(editTextSearch.getText().toString())){
-                                    filter.filter(editTextSearch.getText().toString());
-                                }
-                            }
-                        });
-                    }
-                });
-
+            public void call(Subscriber<? super List<EMConversation>> subscriber) {
+                List<EMConversation> emConversations = loadConversationList();
+                subscriber.onNext(emConversations);
             }
-        }).start();
-
-    }
-
-    class ChatReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            refresh();
-        }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMConversation>>() {
+            @Override
+            public void call(List<EMConversation> emConversations) {
+                filter = new MyFilter(emConversations);
+                if(TextUtils.isEmpty(editTextSearch.getText().toString()))
+                {adapter.clear();
+                adapter.addAll(emConversations);}else
+                {
+                filter.filter(editTextSearch.getText().toString());
+                }
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Locale.setDefault(new Locale("zh"));
-        refresh();
     }
 
     /**
@@ -530,12 +479,12 @@ public class MessageActivity extends BaseActivity {
                         switch (which) {
                             case 0:
                                 EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(), false);
-                                sendBroadcast(new Intent("message_num"));
+                                broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
                                 adapter.remove(entity);
                                 break;
                             case 1:
                                 EMClient.getInstance().chatManager().deleteConversation(entity.getUserName(), true);
-                                sendBroadcast(new Intent("message_num"));
+                                broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
                                 adapter.remove(entity);
                                 break;
                             default:

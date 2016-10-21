@@ -164,13 +164,12 @@ public class WebContactFragment2 extends BaseFragment {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EaseUser>>() {
             @Override
             public void call(List<EaseUser> easeUsers) {
-                webContactAdapter.clear();
-                Logger.i("ease_size",easeUsers.size()+"");
-                webContactAdapter.addAll(easeUsers);
-                filter=new MyFilter(easeUsers);
-                refreshLayout.setRefreshing(false);
-                if (!TextUtils.isEmpty(record))
+                filter = new MyFilter(easeUsers);
+                if(TextUtils.isEmpty(record))
+                {webContactAdapter.clear();
+                    webContactAdapter.addAll(easeUsers);}else
                     filter.filter(record);
+
             }
         });
     }

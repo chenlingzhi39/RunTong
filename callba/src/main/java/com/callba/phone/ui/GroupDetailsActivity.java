@@ -17,6 +17,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -207,12 +208,12 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 			case REQUEST_CODE_EXIT: // 退出群
 				progressDialog.setMessage(st2);
 				progressDialog.show();
-				exitGrop();
+				exitGroup();
 				break;
 			case REQUEST_CODE_EXIT_DELETE: // 解散群
 				progressDialog.setMessage(st3);
 				progressDialog.show();
-				deleteGrop();
+				deleteGroup();
 				break;
 
 			case REQUEST_CODE_EDIT_GROUPNAME: //修改群名称
@@ -347,7 +348,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 	 * 
 	 * @param groupId
 	 */
-	private void exitGrop() {
+	private void exitGroup() {
 		String st1 = getResources().getString(R.string.Exit_the_group_chat_failure);
 		new Thread(new Runnable() {
 			public void run() {
@@ -355,8 +356,8 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 					EMClient.getInstance().groupManager().leaveGroup(groupId);
 					runOnUiThread(new Runnable() {
 						public void run() {
+							LocalBroadcastManager.getInstance(GroupDetailsActivity.this).sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
 							progressDialog.dismiss();
-							setResult(RESULT_OK);
 							finish();
 							if(ChatActivity.activityInstance != null)
 							    ChatActivity.activityInstance.finish();
@@ -379,7 +380,7 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 	 * 
 	 * @param groupId
 	 */
-	private void deleteGrop() {
+	private void deleteGroup() {
 		final String st5 = getResources().getString(R.string.Dissolve_group_chat_tofail);
 		new Thread(new Runnable() {
 			public void run() {
@@ -387,8 +388,8 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 					EMClient.getInstance().groupManager().destroyGroup(groupId);
 					runOnUiThread(new Runnable() {
 						public void run() {
+							LocalBroadcastManager.getInstance(GroupDetailsActivity.this).sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
 							progressDialog.dismiss();
-							setResult(RESULT_OK);
 							finish();
 							if(ChatActivity.activityInstance != null)
 							    ChatActivity.activityInstance.finish();

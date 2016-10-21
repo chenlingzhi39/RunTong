@@ -40,6 +40,7 @@ import com.callba.phone.util.Logger;
 import com.callba.phone.util.SimpleHandler;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMCursorResult;
+import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMGroupInfo;
 import com.hyphenate.exceptions.HyphenateException;
 
@@ -71,8 +72,13 @@ public class PublicGroupsActivity extends BaseActivity {
 
         pb = (ProgressBar) findViewById(R.id.progressBar);
         listView = (ListView) findViewById(R.id.list);
-        groupsList = new ArrayList<EMGroupInfo>();
-        groupIds=getIntent().getStringArrayListExtra("groupIds");
+        groupsList = new ArrayList<>();
+        ArrayList<EMGroup> emGroups=new ArrayList<>();
+        groupIds=new ArrayList<>();
+        emGroups.addAll(EMClient.getInstance().groupManager().getAllGroups());
+        for(EMGroup emGroup:emGroups){
+            groupIds.add(emGroup.getGroupId());
+        }
         View footView = getLayoutInflater().inflate(R.layout.em_listview_footer_view, null);
         footLoadingLayout = (LinearLayout) footView.findViewById(R.id.loading_layout);
         footLoadingPB = (ProgressBar)footView.findViewById(R.id.loading_bar);

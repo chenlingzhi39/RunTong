@@ -153,7 +153,9 @@ public class EaseContactAdapter extends ArrayAdapter<EaseUser> implements Sectio
         }
         return myFilter;
     }
-    
+    public void setFilter(List<EaseUser> easeUsers){
+        myFilter=new MyFilter(easeUsers);
+    }
     protected class  MyFilter extends Filter {
         List<EaseUser> mOriginalList = null;
         

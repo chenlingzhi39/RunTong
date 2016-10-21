@@ -130,7 +130,10 @@ public class EaseContactList extends RelativeLayout {
         if(adapter!=null)
         adapter.getFilter().filter(str);
     }
-    
+    public void setFilter(List<EaseUser> easeUsers){
+        if(adapter!=null)
+        adapter.setFilter(easeUsers);
+    }
     public ListView getListView(){
         return listView;
     }

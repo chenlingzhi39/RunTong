@@ -240,10 +240,10 @@ public class LocalContactFragment extends BaseFragment {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<ContactMultiNumBean>>() {
             @Override
             public void call(List<ContactMultiNumBean> s) {
-                contactAdapter.clear();
-                filter=new MyFilter(s);
-                contactAdapter.addAll(s);
-                if(!TextUtils.isEmpty(record))
+                filter = new MyFilter(s);
+                if(TextUtils.isEmpty(record))
+                {contactAdapter.clear();
+                    contactAdapter.addAll(s);}else
                     filter.filter(record);
             }
         });

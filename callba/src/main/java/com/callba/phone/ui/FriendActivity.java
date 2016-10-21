@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -326,6 +327,7 @@ public class FriendActivity extends BaseActivity {
                                                                     progressDialog.dismiss();
                                                                     String s1 = "添加成功";
                                                                     Toast.makeText(getApplicationContext(), s1, 1).show();
+                                                                    LocalBroadcastManager.getInstance(FriendActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
                                                                 }
                                                             });
                                                         } catch (final Exception e) {

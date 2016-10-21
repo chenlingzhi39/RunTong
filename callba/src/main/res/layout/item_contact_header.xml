@@ -41,6 +41,7 @@
             android:src="@drawable/ic_do_not_disturb_alt_grey_700_36dp"
             android:layout_margin="10dp"
             android:transitionName="photo"/>
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -49,7 +50,8 @@
             android:textSize="16sp"
             android:layout_weight="1"
             android:text="@string/blacklist"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center_vertical"
+            android:id="@+id/textView2" />
     </LinearLayout>
     <View
         android:layout_width="match_parent"

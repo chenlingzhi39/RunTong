@@ -93,6 +93,7 @@ public class WebContactFragment extends BaseFragment {
     private boolean hidden;
     private Observable<CharSequence> mSearchObservable;
     private CharSequence record;
+
     public static WebContactFragment newInstance() {
         WebContactFragment webContactFragment = new WebContactFragment();
         return webContactFragment;
@@ -120,7 +121,7 @@ public class WebContactFragment extends BaseFragment {
         contentContainer.addView(loadingView);
         contactsMap = DemoHelper.getInstance().getContactList();
         contactList = new ArrayList<>();
-        mSearchObservable= RxBus.get().register("search_contact",CharSequence.class);
+        mSearchObservable = RxBus.get().register("search_contact", CharSequence.class);
         listView.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -154,8 +155,13 @@ public class WebContactFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
-
-
+        refreshByWeb();
+        contactListLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+         @Override
+         public void onRefresh() {
+             refreshByWeb();
+         }
+     });
         listView.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -166,9 +172,19 @@ public class WebContactFragment extends BaseFragment {
             }
         });
         gson = new Gson();
-        contactListLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+        contactListLayout.init(contactList);
+        mSearchObservable.subscribe(new Action1<CharSequence>() {
             @Override
-            public void onRefresh() {
+            public void call(CharSequence s) {
+                record = s;
+                contactListLayout.filter(s);
+            }
+        });
+        registerBroadcastReceiver();
+    }
+    public void refreshByWeb(){
+
                 OkHttpUtils
                         .post()
                         .url(Interfaces.GET_FRIENDS)
@@ -187,7 +203,8 @@ public class WebContactFragment extends BaseFragment {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        try { Logger.i("get_result", response);
+                        try {
+                            Logger.i("get_result", response);
                             final String[] result = response.split("\\|");
                             if (result[0].equals("0")) {
                                 new Thread(new Runnable() {
@@ -210,7 +227,7 @@ public class WebContactFragment extends BaseFragment {
                                         SimpleHandler.getInstance().post(new Runnable() {
                                             @Override
                                             public void run() {
-                                           refresh();
+                                                refresh();
                                             }
                                         });
                                     }
@@ -218,23 +235,14 @@ public class WebContactFragment extends BaseFragment {
                             } else {
                                 toast(result[1]);
                             }
-                        }catch(Exception e){
+                        } catch (Exception e) {
                             toast(R.string.getserverdata_exception);
                         }
                     }
                 });
-            }
-        });
-        contactListLayout.init(contactList);
-        mSearchObservable.subscribe(new Action1<CharSequence>() {
-            @Override
-            public void call(CharSequence s) {
-                record=s;
-                contactListLayout.filter(s);
-            }
-        });
-    }
 
+
+    }
     @Override
     protected void lazyLoad() {
 
@@ -277,7 +285,7 @@ public class WebContactFragment extends BaseFragment {
                         } else {
                             toast("删除失败");
                         }
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         toast(R.string.getserverdata_exception);
                     }
                 }
@@ -288,9 +296,9 @@ public class WebContactFragment extends BaseFragment {
         } else if (item.getItemId() == R.id.add_to_blacklist) {
             moveToBlacklist(toBeProcessUsername);
             return true;
-        }else if(item.getItemId()==R.id.change_remark){
-            Intent intent=new Intent(getActivity(),RemarkActivity.class);
-            intent.putExtra("username",toBeProcessUsername);
+        } else if (item.getItemId() == R.id.change_remark) {
+            Intent intent = new Intent(getActivity(), RemarkActivity.class);
+            intent.putExtra("username", toBeProcessUsername);
             startActivity(intent);
         }
         return super.onContextItemSelected(item);
@@ -317,10 +325,13 @@ public class WebContactFragment extends BaseFragment {
                 SimpleHandler.getInstance().post(new Runnable() {
                     @Override
                     public void run() {
-                        if (contactListLayout != null)
-                        {contactListLayout.refresh();
-                        if (!TextUtils.isEmpty(record))
-                            contactListLayout.filter(record);
+                        if (contactListLayout != null) {
+                            if(TextUtils.isEmpty(record)) {
+                                contactListLayout.refresh();
+                            }else{
+                               contactListLayout.setFilter(contactList);
+                                contactListLayout.filter(record);
+                            }
                         }
                     }
                 });
@@ -388,7 +399,7 @@ public class WebContactFragment extends BaseFragment {
                 case R.id.application_item:
                     // 进入申请与通知页面
                     startActivity(new Intent(getActivity(), NewFriendsMsgActivity.class));
-                    NotificationManager notificationManager = (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                    NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
                     notificationManager.cancel(0526);
                     break;
                 case R.id.black_item:
@@ -446,7 +457,7 @@ public class WebContactFragment extends BaseFragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Logger.i("webContact", Constant.ACTION_CONTACT_CHANAGED);
-                refresh();
+                refreshByWeb();
 
             }
         };
@@ -584,6 +595,7 @@ public class WebContactFragment extends BaseFragment {
         }).start();
 
     }
+/*
 
     @Override
     public void onHiddenChanged(boolean hidden) {
@@ -601,12 +613,14 @@ public class WebContactFragment extends BaseFragment {
             refresh();
         }
     }
+*/
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mSearchObservable!=null)
-            RxBus.get().unregister("search_contact",mSearchObservable);
+        if (mSearchObservable != null)
+            RxBus.get().unregister("search_contact", mSearchObservable);
+        unregisterBroadcastReceiver();
         if (contactSyncListener != null) {
             DemoHelper.getInstance().removeSyncContactListener(contactSyncListener);
             contactSyncListener = null;

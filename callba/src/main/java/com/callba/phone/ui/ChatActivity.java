@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.content.ClipboardManager;
 import android.text.TextUtils;
@@ -84,7 +85,6 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     protected ListView listView;
     protected SwipeRefreshLayout swipeRefreshLayout;
     private String userName;
-    private ChatReceiver chatReceiver;
     protected File cameraFile;
     static final int ITEM_TAKE_PICTURE = 1;
     static final int ITEM_PICTURE = 2;
@@ -117,6 +117,8 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     private GroupListener groupListener;
     public static ChatActivity activityInstance;
     private NotificationManager notificationManager;
+    private BroadcastReceiver broadcastReceiver;
+    private LocalBroadcastManager broadcastManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,6 +128,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     }
 
     protected void init() {
+        broadcastManager=LocalBroadcastManager.getInstance(this);
         Locale.setDefault(new Locale("zh"));
         chatFragmentListener = this;
         chatType = getIntent().getIntExtra("chatType", 1);
@@ -165,16 +168,9 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
             }
 
         }
-         /* if(DemoHelper.getInstance().getContactList().get(userName)!=null)
-              title.setText(DemoHelper.getInstance().getContactList().get(userName).getNick());
-          else  title.setText(userName);*/
-        IntentFilter filter = new IntentFilter(
-                "com.callba.chat");
-        chatReceiver = new ChatReceiver();
-        registerReceiver(chatReceiver, filter);
         if (EMClient.getInstance().chatManager().getConversation(userName) != null)
             EMClient.getInstance().chatManager().getConversation(userName).markAllMessagesAsRead();
-        sendBroadcast(new Intent(("message_num")));
+
         extendMenuItemClickListener = new MyItemClickListener();
         registerExtendMenuItem();
         inputMenu.init(null);
@@ -220,6 +216,46 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 forwardMessage(forward_msg_id);
             }
         }
+
+        broadcastReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //messages = (ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
+              /*  chatAdapter.clear();
+                chatAdapter.addAll(messages);
+                list.scrollToPosition(messages.size() - 1);*/
+                Logger.i("chatActivity", "receive");
+                if(intent.getExtras()!=null){
+                EMMessage message = (EMMessage) intent.getExtras().get("message");
+                if(message!=null){
+                String username = null;
+                // 群组消息
+                if (message.getChatType() == EMMessage.ChatType.GroupChat || message.getChatType() == EMMessage.ChatType.ChatRoom) {
+                    username = message.getTo();
+                } else {
+                    // 单聊消息
+                    username = message.getFrom();
+                }
+
+                // 如果是当前会话的消息，刷新聊天页面
+                if (username.equals(toChatUsername)) {
+                    messageList.refreshSelectLast();
+                    // 声音和震动提示有新消息
+                    EaseUI.getInstance().getNotifier().viberateAndPlayTone(message);
+                } else {
+                    // 如果消息不是和当前聊天ID的消息
+                    EaseUI.getInstance().getNotifier().onNewMsg(message);
+                }
+                SimpleHandler.getInstance().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
+                    }
+                }, 100);
+            }}}
+        };
+        broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
+        broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_MESSAGE_CHANGED));
     }
 
     @Override
@@ -248,9 +284,9 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(chatReceiver);
         if (groupListener != null)
             EMClient.getInstance().groupManager().removeGroupChangeListener(groupListener);
+        broadcastManager.unregisterReceiver(broadcastReceiver);
         super.onDestroy();
     }
 
@@ -564,59 +600,6 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         sendFileMessage(filePath);
     }
 
-
-
-
-  /*  @OnClick(R.id.btn_send)
-    public void onClick() {
-        Log.i("submit", userName);
-        if (content.getText().toString().equals(""))
-            return;
-        EMMessage message = EMMessage.createTxtSendMessage(content.getText().toString(), userName);
-        //发送消息
-        EMClient.getInstance().chatManager().sendMessage(message);
-        chatAdapter.addAll(message);
-        chatAdapter.notifyItemChanged(chatAdapter.getCount() - 1);
-        list.scrollToPosition(chatAdapter.getCount() - 1);
-
-
-    }*/
-
-    class ChatReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //messages = (ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
-              /*  chatAdapter.clear();
-                chatAdapter.addAll(messages);
-                list.scrollToPosition(messages.size() - 1);*/
-            Logger.i("chatActivity", "receive");
-            EMMessage message = (EMMessage) intent.getExtras().get("message");
-            String username = null;
-            // 群组消息
-            if (message.getChatType() == EMMessage.ChatType.GroupChat || message.getChatType() == EMMessage.ChatType.ChatRoom) {
-                username = message.getTo();
-            } else {
-                // 单聊消息
-                username = message.getFrom();
-            }
-
-            // 如果是当前会话的消息，刷新聊天页面
-            if (username.equals(toChatUsername)) {
-                messageList.refreshSelectLast();
-                // 声音和震动提示有新消息
-                EaseUI.getInstance().getNotifier().viberateAndPlayTone(message);
-            } else {
-                // 如果消息不是和当前聊天ID的消息
-                EaseUI.getInstance().getNotifier().onNewMsg(message);
-            }
-            SimpleHandler.getInstance().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    sendBroadcast(new Intent("message_num"));
-                }
-            }, 100);
-        }
-    }
 
     /**
      * 注册底部菜单扩展栏item; 覆盖此方法时如果不覆盖已有item，item的id需大于3
