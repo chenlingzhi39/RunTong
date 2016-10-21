@@ -504,4 +504,12 @@ public class MessageActivity extends BaseActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(cardSearch.getWindowToken(), 0);
+        if(cardSearch.getVisibility()==View.VISIBLE&&TextUtils.isEmpty(editTextSearch.getText().toString()))
+            InitiateSearch.handleToolBar(MessageActivity.this, cardSearch, editTextSearch, 20);
+    }
 }

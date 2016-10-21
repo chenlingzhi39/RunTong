@@ -162,15 +162,6 @@ public class WebContactFragment extends BaseFragment {
              refreshByWeb();
          }
      });
-        listView.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                // 隐藏软键盘
-                hideSoftKeyboard();
-                return false;
-            }
-        });
         gson = new Gson();
 
         contactListLayout.init(contactList);
@@ -595,25 +586,7 @@ public class WebContactFragment extends BaseFragment {
         }).start();
 
     }
-/*
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        this.hidden = hidden;
-        if (!hidden) {
-            refresh();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!hidden) {
-            refresh();
-        }
-    }
-*/
 
     @Override
     public void onDestroy() {

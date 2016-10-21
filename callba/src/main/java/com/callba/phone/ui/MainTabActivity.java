@@ -221,7 +221,7 @@ public class MainTabActivity extends TabActivity {
             }
         };
         registerReceiver(tabReceiver,new IntentFilter("toggle_tab"));
-       broadcastManager=LocalBroadcastManager.getInstance(this);
+        broadcastManager=LocalBroadcastManager.getInstance(this);
         broadcastReceiver=new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {

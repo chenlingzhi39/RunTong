@@ -265,4 +265,11 @@ public class GroupsActivity extends BaseActivity {
         super.onDestroy();
         broadcastManager.unregisterReceiver(broadcastReceiver);
     }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(cardSearch.getWindowToken(), 0);
+        if(cardSearch.getVisibility()==View.VISIBLE&&TextUtils.isEmpty(editTextSearch.getText().toString()))
+            InitiateSearch.handleToolBar(GroupsActivity.this, cardSearch, editTextSearch, 56);
+    }
 }

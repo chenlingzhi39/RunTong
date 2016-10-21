@@ -37,7 +37,7 @@ public class InitiateSearch {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         search.setVisibility(View.GONE);
-                        ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search.getWindowToken(), 0);
+
                     }
 
                     @Override
@@ -52,6 +52,7 @@ public class InitiateSearch {
                 });
                 animatorHide.setDuration(300);
                 animatorHide.start();
+                ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search.getWindowToken(), 0);
             } else {
                 ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search.getWindowToken(), 0);
                 search.setVisibility(View.GONE);

@@ -11,14 +11,17 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -26,6 +29,8 @@ import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.InitiateSearch;
 import com.callba.phone.util.RxBus;
+
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.BindView;
@@ -219,5 +224,11 @@ public class ContactActivity extends BaseActivity {
         }
         return false;
     }
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(cardSearch.getWindowToken(), 0);
+        if(cardSearch.getVisibility()==View.VISIBLE&&TextUtils.isEmpty(editTextSearch.getText().toString()))
+            InitiateSearch.handleToolBar(ContactActivity.this, cardSearch, editTextSearch, 56);
+    }
 }

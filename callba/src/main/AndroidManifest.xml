@@ -86,7 +86,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan"
+            android:windowSoftInputMode="stateHidden"
             />
         <activity android:name=".phone.ui.PickContactNoCheckboxActivity"
             android:launchMode="singleTask"
@@ -290,7 +290,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
         <activity
             android:name=".phone.ui.ChatActivity"
             android:launchMode="singleTop"
@@ -311,10 +311,11 @@
         <!-- 显示下载大图页面 -->
         <activity
             android:name=".phone.ui.ContactActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+           />
         <activity
             android:name=".phone.ui.ClauseActivity"
             android:launchMode="singleTop"
@@ -418,10 +419,10 @@
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.MessageActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
         <activity
             android:name=".phone.ui.UserActivity"
             android:launchMode="singleTop"
@@ -455,7 +456,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
         <activity
             android:name=".phone.ui.MainCallActivity"
             android:launchMode="singleTop"
