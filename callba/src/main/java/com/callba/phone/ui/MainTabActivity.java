@@ -294,7 +294,6 @@ public class MainTabActivity extends TabActivity {
         MyApplication.activities.remove(this);
         if (mNotificationManager != null)
             mNotificationManager.cancel(10);
-        unregisterReceiver(payReceiver);
         unregisterReceiver(tabReceiver);
         super.onDestroy();
     }
