@@ -59,7 +59,6 @@ import okhttp3.Request;
         navigationId = R.drawable.press_cancel
 )
 public class RegisterActivity extends BaseActivity implements OnClickListener {
-    private Button bn_back, bn_ok_register;
     private Button bn_register;
     private ProgressDialog progressDialog;
     private EditText et_account, et_verification, et_password, et_yzm;
@@ -239,10 +238,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     public void init() {
         Locale locale = getResources().getConfiguration().locale;
         language = locale.getCountry();
-        bn_back = (Button) this.findViewById(R.id.bn_mre_back);
-        bn_ok_register = (Button) this.findViewById(R.id.bn_mre_yijianzhuce);
-        bn_back.setOnClickListener(this);
-        bn_ok_register.setOnClickListener(this);
         et_yzm = (EditText) findViewById(R.id.et_yzm);
         send_yzm = (Button) findViewById(R.id.send_yzm);
         send_yzm.setOnClickListener(this);
@@ -296,9 +291,6 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
                 } else
                     toast("请输入正确的手机号!");
 
-                break;
-            case R.id.bn_mre_back:
-                this.finish();
                 break;
 
 

@@ -82,7 +82,7 @@
             android:value="576b786be0f55a6321000048" />
 
         <service android:name=".phone.service.UpdateService" />
-        <activity android:name=".phone.ui.PublicGroupsActivity2"
+        <activity android:name=".phone.ui.PublicGroupsActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
@@ -228,18 +228,6 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".phone.ui.GroupSimpleDetailActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan" />
-        <activity
-            android:name=".phone.ui.PublicGroupsSeachActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan" />
-        <activity
-            android:name=".phone.ui.PublicGroupsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
@@ -526,49 +514,6 @@
             android:name=".phone.ui.CallbackDisplayActivity"
             android:launchMode="singleTop"
             android:theme="@style/BaseAppTheme.AppTheme" />
-
-        <activity
-            android:name=".phone.ui.CallChooserActivity"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:taskAffinity="com.runtong.call"
-            android:theme="@style/dialog_no_title">
-            <!--  <intent-filter>
-                   <action android:name="android.intent.action.CALL_BUTTON" />
-
-                   <category android:name="android.intent.category.DEFAULT" />
-               </intent-filter>
-               <intent-filter>
-                   <action android:name="android.intent.action.CALL_PRIVILEGED" />
-
-                   <category android:name="android.intent.category.DEFAULT" />
-                   <category android:name="android.intent.category.BROWSABLE" />
-
-                   <data android:scheme="tel" />
-               </intent-filter>
-               <intent-filter>
-                   <action android:name="android.intent.action.CALL" />
-
-                   <category android:name="android.intent.category.DEFAULT" />
-
-                   <data android:scheme="tel" />
-               </intent-filter>
-               <intent-filter>
-                   <action android:name="android.intent.action.DIAL" />
-
-                   <category android:name="android.intent.category.DEFAULT" />
-               </intent-filter>
-               <intent-filter>
-                   <action android:name="android.intent.action.VIEW" />
-                   <action android:name="android.intent.action.DIAL" />
-
-                   <category android:name="android.intent.category.DEFAULT" />
-                   <category android:name="android.intent.category.BROWSABLE" />
-
-                   <data android:scheme="tel" />
-               </intent-filter>-->
-        </activity>
 
         <!-- <receiver android:name="com.callba.phone.ui.CallChooserBroadCast">
              <intent-filter android:priority="2147483647">

@@ -164,15 +164,13 @@ public class GroupsActivity extends BaseActivity {
             @Override
             public void call(final List<EMGroup> emGroups) {
                 if (first) {
-                    if (emGroups == null)
-                    {error.setVisibility(View.VISIBLE);
-                    return;
-                    }
-                    else if (emGroups.size() == 0)
-                    {empty.setVisibility(View.VISIBLE);
-                    return;
-                    }
-                    else {
+                    if (emGroups == null) {
+                        error.setVisibility(View.VISIBLE);
+                        return;
+                    } else if (emGroups.size() == 0) {
+                        empty.setVisibility(View.VISIBLE);
+                        return;
+                    } else {
                         error.setVisibility(View.GONE);
                         empty.setVisibility(View.GONE);
                     }

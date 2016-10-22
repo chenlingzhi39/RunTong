@@ -12,13 +12,8 @@ import android.widget.ProgressBar;
 
 import com.callba.R;
 import com.callba.phone.ui.base.BaseActivity;
-import com.callba.phone.ui.adapter.HelpAdapter;
-import com.callba.phone.ui.adapter.HelpListAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.Help;
 import com.callba.phone.util.Interfaces;
-
-import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.BindView;
@@ -38,9 +33,6 @@ public class HelpActivity extends BaseActivity {
     WebView mWebView;
     @BindView(R.id.pb_loading_precent)
     ProgressBar mProgressBar;
-    private HelpAdapter helpAdapter;
-    private HelpListAdapter helpListAdapter;
-    ArrayList<Help> helps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

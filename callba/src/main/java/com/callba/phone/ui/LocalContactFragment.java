@@ -113,7 +113,7 @@ public class LocalContactFragment extends BaseFragment {
             }
         });
         gson = new Gson();
-        subscription = rx.Observable.create(new rx.Observable.OnSubscribe<String>() {
+        subscription = Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 String string = (String) SPUtils.get(getActivity(), Constant.PACKAGE_NAME, "contacts", "");
@@ -232,7 +232,7 @@ public class LocalContactFragment extends BaseFragment {
     }
     private void initContactListView() {
         gson = new Gson();
-        subscription = rx.Observable.create(new rx.Observable.OnSubscribe<List<ContactMultiNumBean>>() {
+        subscription = Observable.create(new Observable.OnSubscribe<List<ContactMultiNumBean>>() {
             @Override
             public void call(Subscriber<? super List<ContactMultiNumBean>> subscriber) {
                 List<ContactMultiNumBean> allContactEntities = getContacts();
@@ -240,7 +240,11 @@ public class LocalContactFragment extends BaseFragment {
                     SPUtils.put(getActivity(), Constant.PACKAGE_NAME, "contacts", gson.toJson(allContactEntities));
                     first = false;
                 }
-                Collections.sort(allContactEntities, pinyinComparator);
+                try {
+                    Collections.sort(allContactEntities, pinyinComparator);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 subscriber.onNext(allContactEntities);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<ContactMultiNumBean>>() {

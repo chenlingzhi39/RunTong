@@ -1,43 +1,37 @@
-/**
- * Copyright (C) 2016 Hyphenate Inc. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *     http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.callba.phone.ui;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.Constant;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.pinyin.CharacterParser;
+import com.callba.phone.ui.adapter.GroupInfoAdapter;
+import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
+import com.callba.phone.ui.base.BaseActivity;
+import com.callba.phone.util.InitiateSearch;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.SimpleHandler;
+import com.callba.phone.widget.DividerItemDecoration;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMCursorResult;
 import com.hyphenate.chat.EMGroup;
@@ -46,190 +40,297 @@ import com.hyphenate.exceptions.HyphenateException;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
+
+/**
+ * Created by PC-20160514 on 2016/10/22.
+ */
 @ActivityFragmentInject(
-        contentViewId = R.layout.em_activity_public_groups,
+        contentViewId = R.layout.public_groups,
         navigationId = R.drawable.press_back,
         toolbarTitle = R.string.Open_group_chat,
-        menuId=R.menu.menu_search
+        menuId = R.menu.message
 )
 public class PublicGroupsActivity extends BaseActivity {
-	private ProgressBar pb;
-	private ListView listView;
-	private GroupsAdapter adapter;
-	private List<EMGroupInfo> groupsList;
-	private boolean isLoading;
-	private boolean isFirstLoading = true;
-	private boolean hasMoreData = true;
-	private String cursor;
-	private final int pagesize = 20;
-    private LinearLayout footLoadingLayout;
-    private ProgressBar footLoadingPB;
-    private TextView footLoadingText;
+
+    @BindView(R.id.group_list)
+    RecyclerView groupList;
+    @BindView(R.id.image_search_back)
+    ImageView imageSearchBack;
+    @BindView(R.id.edit_text_search)
+    EditText editTextSearch;
+    @BindView(R.id.clearSearch)
+    ImageView clearSearch;
+    @BindView(R.id.card_search)
+    CardView cardSearch;
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout refreshLayout;
+    @BindView(R.id.empty)
+    TextView empty;
+    @BindView(R.id.error)
+    TextView error;
+    private GroupInfoAdapter groupInfoAdapter;
+    private int pageSize = 5;
+    private int currentSize = 0;
+    private String cursor, preCursor = "";
+    private boolean first = true;
+    private Filter filter;
+    private ArrayList<EMGroupInfo> groupInfos, allGroupInfos;
     private ArrayList<String> groupIds;
+    private BroadcastReceiver broadcastReceiver;
+    private LocalBroadcastManager broadcastManager;
+
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
-        pb = (ProgressBar) findViewById(R.id.progressBar);
-        listView = (ListView) findViewById(R.id.list);
-        groupsList = new ArrayList<>();
-        ArrayList<EMGroup> emGroups=new ArrayList<>();
-        groupIds=new ArrayList<>();
-        emGroups.addAll(EMClient.getInstance().groupManager().getAllGroups());
-        for(EMGroup emGroup:emGroups){
-            groupIds.add(emGroup.getGroupId());
-        }
-        View footView = getLayoutInflater().inflate(R.layout.em_listview_footer_view, null);
-        footLoadingLayout = (LinearLayout) footView.findViewById(R.id.loading_layout);
-        footLoadingPB = (ProgressBar)footView.findViewById(R.id.loading_bar);
-        footLoadingText = (TextView) footView.findViewById(R.id.loading_text);
-        listView.addFooterView(footView, null, false);
-        footLoadingLayout.setVisibility(View.GONE);
-
-        //获取及显示数据
-        loadAndShowData();
-
-        //设置item点击事件
-        listView.setOnItemClickListener(new OnItemClickListener() {
-
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ButterKnife.bind(this);
+        broadcastManager = LocalBroadcastManager.getInstance(this);
+        groupInfoAdapter = new GroupInfoAdapter(this);
+        groupInfoAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(int position) {
                 startActivity(new Intent(PublicGroupsActivity.this, GroupSimpleDetailActivity.class).
-                        putExtra("groupinfo", adapter.getItem(position)));
+                        putExtra("groupinfo", groupInfoAdapter.getItem(position)));
             }
         });
-        listView.setOnScrollListener(new OnScrollListener() {
+        groupList.setAdapter(groupInfoAdapter);
+        groupList.setLayoutManager(new LinearLayoutManager(this));
+        groupList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+        groupIds = new ArrayList<>();
+        groupInfos = new ArrayList<>();
+        allGroupInfos = new ArrayList<>();
+        InitiateSearch();
+        HandleSearch();
+        refresh();
+        refreshLayout.setColorSchemeResources(R.color.holo_blue_bright, R.color.holo_green_light,
+                R.color.holo_orange_light, R.color.holo_red_light);
+        //下拉刷新
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                        if(scrollState == OnScrollListener.SCROLL_STATE_IDLE){
-                    if(listView.getCount() != 0){
-                        int lasPos = view.getLastVisiblePosition();
-                        if(hasMoreData && !isLoading && lasPos == listView.getCount()-1){
-                            loadAndShowData();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
+            public void onRefresh() {
+                groupInfoAdapter.clear();
+                allGroupInfos.clear();
+                cursor = "";
+                currentSize = 0;
+                refresh();
             }
         });
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                groupInfoAdapter.clear();
+                allGroupInfos.clear();
+                cursor = "";
+                currentSize = 0;
+                refresh();
+            }
+        };
+        broadcastManager = LocalBroadcastManager.getInstance(this);
+        broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
     }
 
-    /**
-     * 搜索
-     * @param view
-     */
-    public void search(){
-        startActivity(new Intent(this, PublicGroupsSeachActivity.class));
-    }
-
-    private void loadAndShowData(){
-        new Thread(new Runnable() {
-
-            public void run() {
+    private void refresh() {
+        subscription = Observable.create(new Observable.OnSubscribe<List<EMGroupInfo>>() {
+            @Override
+            public void call(Subscriber<? super List<EMGroupInfo>> subscriber) {
                 try {
-                    isLoading = true;
-                    final EMCursorResult<EMGroupInfo> result = EMClient.getInstance().groupManager().getPublicGroupsFromServer(pagesize, cursor);
-                    //获取group list
-                    final List<EMGroupInfo> returnGroups = result.getData();
-                    runOnUiThread(new Runnable() {
+                    EMCursorResult<EMGroupInfo> result = EMClient.getInstance().groupManager().getPublicGroupsFromServer(pageSize, cursor);
+                    groupIds.clear();
+                    groupInfos.clear();
+                    preCursor = cursor;
+                    cursor = result.getCursor();
+                    Logger.i("cursor", cursor);
+                    for (EMGroup emGroup : EMClient.getInstance().groupManager().getJoinedGroupsFromServer()) {
+                        groupIds.add(emGroup.getGroupId());
+                    }
+                    currentSize = result.getData().size();
+                    Logger.i("current_size", currentSize + "");
+                    for (EMGroupInfo emGroupInfo : result.getData()) {
+                        if (!groupIds.contains(emGroupInfo.getGroupId()))
+                            groupInfos.add(emGroupInfo);
+                    }
+                    Logger.i("group_info", groupInfos.size() + "");
 
-                        public void run() {
-                            //searchBtn.setVisibility(View.VISIBLE);
-                            groupsList.addAll(filterInfos(returnGroups));
-                            if(returnGroups.size() != 0){
-                                //获取cursor
-                                cursor = result.getCursor();
-                                Logger.i("cursor",cursor);
-                                if(returnGroups.size() == pagesize)
-                                    footLoadingLayout.setVisibility(View.VISIBLE);
-                            }
-                            if(isFirstLoading){
-                               // pb.setVisibility(View.INVISIBLE);
-                                isFirstLoading = false;
-                                //设置adapter
-                                adapter = new GroupsAdapter(PublicGroupsActivity.this, 1, groupsList);
-                                listView.setAdapter(adapter);
-                                if(returnGroups.size() < pagesize){
-                                    hasMoreData = false;
-                                    footLoadingLayout.setVisibility(View.VISIBLE);
-                                    footLoadingPB.setVisibility(View.GONE);
-                                    footLoadingText.setText("没有更多了");}
-                            }else{
-                                if(returnGroups.size() < pagesize){
-                                    hasMoreData = false;
-                                    footLoadingLayout.setVisibility(View.VISIBLE);
-                                    footLoadingPB.setVisibility(View.GONE);
-                                    footLoadingText.setText("没有更多了");
-                                }
-                                adapter.notifyDataSetChanged();
-                            }
-                            isLoading = false;
-                        }
-                    });
+                    subscriber.onNext(groupInfos);
                 } catch (HyphenateException e) {
                     e.printStackTrace();
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            isLoading = false;
-                           // pb.setVisibility(View.INVISIBLE);
-                            footLoadingLayout.setVisibility(View.GONE);
-                            Toast.makeText(PublicGroupsActivity.this, "加载数据失败，请检查网络或稍后重试", 0).show();
-                        }
-                    });
+                    subscriber.onNext(null);
+                    refreshLayout.setRefreshing(false);
                 }
             }
-        }).start();
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMGroupInfo>>() {
+            @Override
+            public void call(final List<EMGroupInfo> emGroupInfos) {
+                refreshLayout.setRefreshing(false);
+                if (emGroupInfos == null) {
+                    error.setVisibility(View.VISIBLE);
+                    return;
+                } else if (emGroupInfos.size() == 0) {
+                    empty.setVisibility(View.VISIBLE);
+                    return;
+                } else {
+                    error.setVisibility(View.GONE);
+                    empty.setVisibility(View.GONE);
+                }
+                if (first) {
+                    if (currentSize == pageSize) {
+                        groupInfoAdapter.setError(R.layout.view_more_error).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                groupInfoAdapter.resumeMore();
+                            }
+                        });
+                        groupInfoAdapter.setMore(R.layout.view_more, new RecyclerArrayAdapter.OnLoadMoreListener() {
+                            @Override
+                            public void onLoadMore() {
+                                try{
+                                if (!TextUtils.isEmpty(preCursor)) {
+                                    if (!TextUtils.isEmpty(cursor))
+                                        refresh();
+                                    else groupInfoAdapter.stopMore();
+                                } else {
+                                    refresh();
+                                }}catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                        groupInfoAdapter.setNoMore(R.layout.view_nomore);
+                    }
+                    first = false;
+                } else {
+                    if (currentSize < pageSize) {
+                        groupInfoAdapter.stopMore();
+                    }
+                }
+                allGroupInfos.addAll(emGroupInfos);
+                filter = new MyFilter(allGroupInfos);
+                if (!TextUtils.isEmpty(editTextSearch.getText().toString()))
+                    filter.filter(editTextSearch.getText().toString());
+                else groupInfoAdapter.addAll(emGroupInfos);
+            }
+        });
     }
-    /**
-     * adapter
-     *
-     */
-    private class GroupsAdapter extends ArrayAdapter<EMGroupInfo> {
 
-        private LayoutInflater inflater;
+    private void InitiateSearch() {
+        editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        public GroupsAdapter(Context context, int res, List<EMGroupInfo> groups) {
-            super(context, res, groups);
-            this.inflater = LayoutInflater.from(context);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (filter != null)
+                    filter.filter(s);
+                if (editTextSearch.getText().toString().length() == 0) {
+                    clearSearch.setVisibility(View.GONE);
+                } else {
+                    clearSearch.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        clearSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editTextSearch.setText("");
+                ((InputMethodManager) PublicGroupsActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+            }
+        });
+
+    }
+
+    private void HandleSearch() {
+        imageSearchBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("search", "back");
+                InitiateSearch.handleToolBar(PublicGroupsActivity.this, cardSearch, editTextSearch, 20);
+            }
+        });
+        editTextSearch.requestFocus();
+    }
+
+    @OnClick(R.id.error)
+    public void onClick() {
+        refresh();
+    }
+
+    public class MyFilter extends Filter {
+        List<EMGroupInfo> mOriginalList;
+
+        public MyFilter(List<EMGroupInfo> separatedEMGroups) {
+            this.mOriginalList = separatedEMGroups;
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = inflater.inflate(R.layout.em_row_group, null);
+        protected FilterResults performFiltering(CharSequence prefix) {
+            FilterResults results = new FilterResults();
+            if (mOriginalList == null) {
+                mOriginalList = new ArrayList<>();
             }
 
-            ((TextView) convertView.findViewById(R.id.name)).setText(getItem(position).getGroupName());
 
-            return convertView;
+            if (prefix == null || prefix.length() == 0) {
+                results.values = mOriginalList;
+                results.count = mOriginalList.size();
+            } else {
+                String prefixString = prefix.toString();
+                final ArrayList<EMGroupInfo> newValues = new ArrayList<>();
+                for (EMGroupInfo emGroupInfo : mOriginalList) {
+                    final String string = emGroupInfo.getGroupName();
+                    if (string.contains(prefixString) || CharacterParser.getInstance().getSelling(string).contains(prefixString) || emGroupInfo.getGroupId().contains(prefixString)) {
+                        newValues.add(emGroupInfo);
+                    }
+                }
+                results.values = newValues;
+                results.count = newValues.size();
+            }
+            return results;
         }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            groupInfoAdapter.clear();
+            groupInfoAdapter.addAll((ArrayList<EMGroupInfo>) results.values);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(cardSearch.getWindowToken(), 0);
+        if (cardSearch.getVisibility() == View.VISIBLE && TextUtils.isEmpty(editTextSearch.getText().toString()))
+            InitiateSearch.handleToolBar(PublicGroupsActivity.this, cardSearch, editTextSearch, 20);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.search:
-                search();
+                InitiateSearch.handleToolBar(PublicGroupsActivity.this, cardSearch, editTextSearch, 20);
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
-   public ArrayList<EMGroupInfo> filterInfos(List<EMGroupInfo> groupInfos){
-       ArrayList<EMGroupInfo> infos=new ArrayList<>();
-       for(EMGroupInfo emGroupInfo:groupInfos){
-           if(!groupIds.contains(emGroupInfo.getGroupId()))
-               infos.add(emGroupInfo);
-       }
-       return  infos;
-   }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        broadcastManager.unregisterReceiver(broadcastReceiver);
     }
 }

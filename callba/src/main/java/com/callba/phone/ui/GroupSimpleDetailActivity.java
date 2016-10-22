@@ -59,7 +59,6 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 	private TextView tv_need_apply;
 	private EMGroup group;
 	private String groupid;
-	private ProgressBar progressBar;
     private String apply;
 	private LinearLayout introduction;
 
@@ -87,17 +86,8 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 		});
 		EMGroupInfo groupInfo = (EMGroupInfo) getIntent().getSerializableExtra("groupinfo");
 		String groupname = null;
-		if(groupInfo != null){
 		    groupname = groupInfo.getGroupName();
 		    groupid = groupInfo.getGroupId();
-		}else{
-		    group = PublicGroupsSeachActivity.searchedGroup;
-		    if(group == null)
-		        return;
-		    groupname = group.getGroupName();
-		    groupid = group.getGroupId();
-		}
-		
 		tv_name.setText(groupname);
 		tv_id.setText(groupid);
 		if(group != null){
