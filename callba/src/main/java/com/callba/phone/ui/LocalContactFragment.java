@@ -119,14 +119,20 @@ public class LocalContactFragment extends BaseFragment {
                 String string = (String) SPUtils.get(getActivity(), Constant.PACKAGE_NAME, "contacts", "");
                 //String string = (String) FileUtils.readObjectFromFile(StorageUtils.getFilesDirectory(getActivity()) + File.separator + "contacts.txt");
                 subscriber.onNext(string);
+
             }
-        }).subscribeOn(Schedulers.io()).observeOn(Schedulers.newThread()).map(new Func1<String, List<ContactMultiNumBean>>() {
+
+        }).subscribeOn(Schedulers.io()).observeOn(Schedulers.computation()).map(new Func1<String, List<ContactMultiNumBean>>() {
             @Override
             public List<ContactMultiNumBean> call(String s) {
 
                 final List<ContactMultiNumBean> personEntities = gson.fromJson(s, new TypeToken<ArrayList<ContactMultiNumBean>>() {
                 }.getType());
-                Collections.sort(personEntities, pinyinComparator);
+                try {
+                    Collections.sort(personEntities, pinyinComparator);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 return personEntities;
             }
         }).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<ContactMultiNumBean>>() {
