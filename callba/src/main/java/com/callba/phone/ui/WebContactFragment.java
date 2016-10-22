@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -155,7 +156,6 @@ public class WebContactFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
-        refreshByWeb();
         contactListLayout.setRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
          @Override
          public void onRefresh() {
@@ -173,6 +173,7 @@ public class WebContactFragment extends BaseFragment {
             }
         });
         registerBroadcastReceiver();
+        refresh();
     }
     public void refreshByWeb(){
 
@@ -448,7 +449,7 @@ public class WebContactFragment extends BaseFragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Logger.i("webContact", Constant.ACTION_CONTACT_CHANAGED);
-                refreshByWeb();
+                refresh();
 
             }
         };
@@ -463,27 +464,6 @@ public class WebContactFragment extends BaseFragment {
         @Override
         public void onSyncComplete(final boolean success) {
             EMLog.d(TAG, "on contact list sync success:" + success);
-
-            if (success) {
-                SimpleHandler.getInstance().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadingView.setVisibility(View.GONE);
-                    }
-                });
-
-                refresh();
-            } else {
-                String s1 = getActivity().getResources().getString(R.string.get_failed_please_check);
-                Toast.makeText(getActivity(), s1, Toast.LENGTH_SHORT).show();
-                SimpleHandler.getInstance().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadingView.setVisibility(View.GONE);
-                    }
-                });
-            }
-
         }
     }
 

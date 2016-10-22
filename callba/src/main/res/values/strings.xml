@@ -998,4 +998,6 @@
     <string name="network_unstable">网络不稳定</string>
     <string name="no_call_data">没有通话数据</string>
     <string name="skip">跳过</string>
+    <string name="group_hint">请输入群名称或群号</string>
+    <string name="no_group">你暂未创建或加入群组！</string>
 </resources>

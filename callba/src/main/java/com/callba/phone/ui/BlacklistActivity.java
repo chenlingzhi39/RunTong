@@ -2,7 +2,9 @@ package com.callba.phone.ui;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.Constant;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.util.EaseUserUtils;
@@ -36,7 +39,7 @@ import java.util.List;
 )
 public class BlacklistActivity extends BaseActivity {
 	private ListView listView;
-	private BlacklistAdapater adapter;
+	private BlacklistAdapter adapter;
 
 
 	@Override
@@ -51,7 +54,7 @@ public class BlacklistActivity extends BaseActivity {
 		// 显示黑名单列表
 		if (blacklist != null) {
 			Collections.sort(blacklist);
-			adapter = new BlacklistAdapater(this, 1, blacklist);
+			adapter = new BlacklistAdapter(this, 1, blacklist);
 			listView.setAdapter(adapter);
 		}
 
@@ -96,6 +99,7 @@ public class BlacklistActivity extends BaseActivity {
                         public void run() {
                             pd.dismiss();
                             adapter.remove(tobeRemoveUser);
+							LocalBroadcastManager.getInstance(BlacklistActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
                         }
                     });
                 } catch (HyphenateException e) {
@@ -115,9 +119,9 @@ public class BlacklistActivity extends BaseActivity {
 	 * adapter
 	 * 
 	 */
-	private class BlacklistAdapater extends ArrayAdapter<String> {
+	private class BlacklistAdapter extends ArrayAdapter<String> {
 
-		public BlacklistAdapater(Context context, int textViewResourceId, List<String> objects) {
+		public BlacklistAdapter(Context context, int textViewResourceId, List<String> objects) {
 			super(context, textViewResourceId, objects);
 		}
 

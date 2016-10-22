@@ -10,6 +10,7 @@ import android.view.View;
 import com.callba.R;
 import com.callba.phone.ui.NewGroupActivity;
 import com.callba.phone.ui.PublicGroupsActivity;
+import com.callba.phone.ui.PublicGroupsActivity2;
 
 /**
  * Created by PC-20160514 on 2016/10/20.
@@ -44,7 +45,7 @@ public class GroupsActionProvider extends ActionProvider {
                 .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        context.startActivity(new Intent(context, PublicGroupsActivity.class));
+                        context.startActivity(new Intent(context, PublicGroupsActivity2.class));
                         return true;
                     }
                 });

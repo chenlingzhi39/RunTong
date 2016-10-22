@@ -144,6 +144,7 @@ public class PublicGroupsActivity extends BaseActivity {
                             if(returnGroups.size() != 0){
                                 //获取cursor
                                 cursor = result.getCursor();
+                                Logger.i("cursor",cursor);
                                 if(returnGroups.size() == pagesize)
                                     footLoadingLayout.setVisibility(View.VISIBLE);
                             }

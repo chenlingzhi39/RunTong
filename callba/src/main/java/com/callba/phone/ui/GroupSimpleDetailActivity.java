@@ -18,7 +18,9 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.view.View;
@@ -31,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.Constant;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.util.EaseUserUtils;
@@ -156,6 +159,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 						});
 					}else{
 					    EMClient.getInstance().groupManager().joinGroup(groupid);
+						LocalBroadcastManager.getInstance(GroupSimpleDetailActivity.this).sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
 					}
 					runOnUiThread(new Runnable() {
 						public void run() {
@@ -229,7 +233,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 	public void showDialog() {
 		final DialogHelper helper = new DialogHelper();
 		Dialog dialog = new AlertDialog.Builder(this)
-				.setView(helper.getView()).setTitle(getString(R.string.input_number))
+				.setView(helper.getView())
 				.setTitle("请输入验证信息")
 				.setOnDismissListener(helper)
 				.setPositiveButton("确定", new DialogInterface.OnClickListener() {

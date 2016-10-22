@@ -122,7 +122,7 @@ public class UserProfileManager {
                         ArrayList<BaseUser> list;
                         list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
                         }.getType());
-                        List<EaseUser> mList = new ArrayList<EaseUser>();
+                        List<EaseUser> mList = new ArrayList<>();
                         for (BaseUser baseUser : list) {
                             EaseUser user = new EaseUser(baseUser.getPhoneNumber() + "-callba");
                             user.setAvatar(baseUser.getUrl_head());
@@ -172,45 +172,6 @@ public class UserProfileManager {
         return currentUser;
     }
 
-    public void asyncGetCurrentUserInfo() {
-        OkHttpUtils
-                .post()
-                .url(Interfaces.GET_FRIENDS)
-                .addParams("loginName", UserManager.getUsername(appContext))
-                .addParams("loginPwd", UserManager.getPassword(appContext))
-                .build().execute(new StringCallback() {
-            @Override
-            public void onError(Call call, Exception e, int id) {
-
-            }
-
-            @Override
-            public void onResponse(String response, int id) {
-                try {
-                    Logger.i("get_result", response);
-                    String[] result = response.split("\\|");
-                    if (result[0].equals("0")) {
-                        ArrayList<BaseUser> list;
-                        list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
-                        }.getType());
-                        List<EaseUser> mList = new ArrayList<EaseUser>();
-                        for (BaseUser baseUser : list) {
-                            EaseUser user = new EaseUser(baseUser.getPhoneNumber() + "-callba");
-                            user.setAvatar(baseUser.getUrl_head());
-                            user.setNick(baseUser.getNickname());
-                            user.setSign(baseUser.getSign());
-                            user.setRemark(baseUser.getRemark());
-                            EaseCommonUtils.setUserInitialLetter(user);
-                            mList.add(user);
-                        }
-
-                    }
-                } catch (Exception e) {
-                }
-            }
-        });
-
-    }
 
     public void setCurrentUserNick(String nickname) {
         getCurrentUserInfo().setNick(nickname);

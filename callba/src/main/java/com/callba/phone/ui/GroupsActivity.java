@@ -14,12 +14,16 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.Constant;
@@ -32,18 +36,24 @@ import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.ui.adapter.expandRecyclerviewadapter.StickyRecyclerHeadersDecoration;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.InitiateSearch;
-import com.callba.phone.util.SimpleHandler;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
-import com.hyphenate.exceptions.HyphenateException;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by PC-20160514 on 2016/10/20.
@@ -68,16 +78,24 @@ public class GroupsActivity extends BaseActivity {
     ImageView clearSearch;
     @BindView(R.id.card_search)
     CardView cardSearch;
+    @BindView(R.id.empty)
+    TextView empty;
+    @BindView(R.id.error)
+    TextView error;
     private ArrayList<SeparatedEMGroup> separatedEMGroups;
     private GroupAdapter groupAdapter;
     private MyFilter filter;
     private BroadcastReceiver broadcastReceiver;
     private LocalBroadcastManager broadcastManager;
+    private boolean first = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.bind(this);
+        empty.setHint(getString(R.string.no_group));
+        setOverflowShowingAlways();
         InitiateSearch();
         HandleSearch();
         separatedEMGroups = new ArrayList<>();
@@ -115,30 +133,7 @@ public class GroupsActivity extends BaseActivity {
 
             @Override
             public void onRefresh() {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            EMClient.getInstance().groupManager().getJoinedGroupsFromServer();
-                            SimpleHandler.getInstance().post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    refresh();
-                                    refreshLayout.setRefreshing(false);
-                                }
-                            });
-                        } catch (HyphenateException e) {
-                            e.printStackTrace();
-                            SimpleHandler.getInstance().post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    toast(R.string.Failed_to_get_group_chat_information);
-                                    refreshLayout.setRefreshing(false);
-                                }
-                            });
-                        }
-                    }
-                }.start();
+                refresh();
             }
         });
         refresh();
@@ -153,18 +148,52 @@ public class GroupsActivity extends BaseActivity {
     }
 
     public void refresh() {
-        separatedEMGroups.clear();
-        for (EMGroup emGroup : EMClient.getInstance().groupManager().getAllGroups()) {
-            if (emGroup.getOwner().equals(EMClient.getInstance().getCurrentUser()))
-                separatedEMGroups.add(new SeparatedEMGroup(emGroup, "0"));
-            else separatedEMGroups.add(new SeparatedEMGroup(emGroup, "1"));
-        }
-        Collections.sort(separatedEMGroups, new GroupComparator());
-        filter = new MyFilter(separatedEMGroups);
-        if(TextUtils.isEmpty(editTextSearch.getText().toString()))
-        {groupAdapter.clear();
-            groupAdapter.addAll(separatedEMGroups);}else
-            filter.filter(editTextSearch.getText().toString());
+        refreshLayout.setRefreshing(true);
+        subscription = Observable.create(new Observable.OnSubscribe<List<EMGroup>>() {
+            @Override
+            public void call(Subscriber<? super List<EMGroup>> subscriber) {
+                try {
+                    subscriber.onNext(EMClient.getInstance().groupManager().getJoinedGroupsFromServer());
+                } catch (Exception e) {
+                    refreshLayout.setRefreshing(false);
+                    subscriber.onNext(null);
+                    e.printStackTrace();
+                }
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMGroup>>() {
+            @Override
+            public void call(final List<EMGroup> emGroups) {
+                if (first) {
+                    if (emGroups == null)
+                    {error.setVisibility(View.VISIBLE);
+                    return;
+                    }
+                    else if (emGroups.size() == 0)
+                    {empty.setVisibility(View.VISIBLE);
+                    return;
+                    }
+                    else {
+                        error.setVisibility(View.GONE);
+                        empty.setVisibility(View.GONE);
+                    }
+                }
+                separatedEMGroups.clear();
+                for (EMGroup emGroup : emGroups) {
+                    if (emGroup.getOwner().equals(EMClient.getInstance().getCurrentUser()))
+                        separatedEMGroups.add(new SeparatedEMGroup(emGroup, "0"));
+                    else separatedEMGroups.add(new SeparatedEMGroup(emGroup, "1"));
+                }
+                Collections.sort(separatedEMGroups, new GroupComparator());
+                filter = new MyFilter(separatedEMGroups);
+                if (TextUtils.isEmpty(editTextSearch.getText().toString())) {
+                    groupAdapter.clear();
+                    groupAdapter.addAll(separatedEMGroups);
+                } else
+                    filter.filter(editTextSearch.getText().toString());
+                refreshLayout.setRefreshing(false);
+            }
+        });
+
     }
 
     private void InitiateSearch() {
@@ -176,7 +205,8 @@ public class GroupsActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filter.filter(s);
+                if (filter != null)
+                    filter.filter(s);
                 if (editTextSearch.getText().toString().length() == 0) {
                     clearSearch.setVisibility(View.GONE);
                 } else {
@@ -220,6 +250,11 @@ public class GroupsActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @OnClick(R.id.error)
+    public void onClick() {
+        refresh();
+    }
+
     public class MyFilter extends Filter {
         List<SeparatedEMGroup> mOriginalList;
 
@@ -243,7 +278,7 @@ public class GroupsActivity extends BaseActivity {
                 final ArrayList<SeparatedEMGroup> newValues = new ArrayList<>();
                 for (SeparatedEMGroup separatedEMGroup : mOriginalList) {
                     final String string = separatedEMGroup.getEmGroup().getGroupName();
-                    if (string.contains(prefixString) || CharacterParser.getInstance().getSelling(string).contains(prefixString)) {
+                    if (string.contains(prefixString) || CharacterParser.getInstance().getSelling(string).contains(prefixString) || separatedEMGroup.getEmGroup().getGroupId().contains(prefixString)) {
                         newValues.add(separatedEMGroup);
                     }
                 }
@@ -265,11 +300,40 @@ public class GroupsActivity extends BaseActivity {
         super.onDestroy();
         broadcastManager.unregisterReceiver(broadcastReceiver);
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(cardSearch.getWindowToken(), 0);
-        if(cardSearch.getVisibility()==View.VISIBLE&&TextUtils.isEmpty(editTextSearch.getText().toString()))
+        if (cardSearch.getVisibility() == View.VISIBLE && TextUtils.isEmpty(editTextSearch.getText().toString()))
             InitiateSearch.handleToolBar(GroupsActivity.this, cardSearch, editTextSearch, 56);
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        if (featureId == Window.FEATURE_ACTION_BAR && menu != null) {
+            if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
+                try {
+                    Method m = menu.getClass().getDeclaredMethod(
+                            "setOptionalIconsVisible", Boolean.TYPE);
+                    m.setAccessible(true);
+                    m.invoke(menu, true);
+                } catch (Exception e) {
+                }
+            }
+        }
+        return super.onMenuOpened(featureId, menu);
+    }
+
+    private void setOverflowShowingAlways() {
+        try {
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class
+                    .getDeclaredField("sHasPermanentMenuKey");
+            menuKeyField.setAccessible(true);
+            menuKeyField.setBoolean(config, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
