@@ -1,9 +1,10 @@
 package com.callba.phone.bean;
+
+import android.text.TextUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import android.text.TextUtils;
 /**
  * 拼音/号码检索key
  * @author zhw

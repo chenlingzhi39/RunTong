@@ -1,7 +1,6 @@
 package com.callba.phone.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +9,7 @@ import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.bean.ContactMultiNumBean;
-import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.ui.adapter.expandRecyclerviewadapter.StickyRecyclerHeadersAdapter;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by PC-20160514 on 2016/10/14.

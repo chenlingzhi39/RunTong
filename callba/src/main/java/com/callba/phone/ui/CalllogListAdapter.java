@@ -1,9 +1,5 @@
 package com.callba.phone.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
@@ -14,11 +10,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.bean.ContactMultiNumBean;
 import com.callba.phone.bean.CalllogDetailBean;
+import com.callba.phone.bean.ContactMultiNumBean;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.util.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 通话记录 list 适配器

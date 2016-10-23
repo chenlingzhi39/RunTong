@@ -1,12 +1,5 @@
 package com.callba.phone.util;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -18,6 +11,13 @@ import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.service.CalllogService;
 import com.callba.phone.service.CalllogService.CalldaCalllogListener;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DataAnalysis {
 	private TimeFormatUtil timeFormatUtil;

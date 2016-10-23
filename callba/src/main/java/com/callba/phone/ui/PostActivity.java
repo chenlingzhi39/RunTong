@@ -15,11 +15,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
-import com.callba.phone.ui.adapter.PhotoAdapter;
-import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.ui.adapter.PhotoAdapter;
+import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.Interfaces;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.builder.PostFormBuilder;
@@ -28,8 +28,8 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import java.io.File;
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import me.iwf.photopicker.PhotoPickerActivity;
 import me.iwf.photopicker.utils.PhotoPickerIntent;
 import okhttp3.Call;

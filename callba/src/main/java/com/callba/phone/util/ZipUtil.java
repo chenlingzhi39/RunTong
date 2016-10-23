@@ -1,5 +1,9 @@
 package com.callba.phone.util;
 
+import android.content.Context;
+
+import com.callba.phone.cfg.Constant;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,10 +13,6 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-
-import android.content.Context;
-
-import com.callba.phone.cfg.Constant;
 
 public class ZipUtil {
 	private static final int BUFF_SIZE = 1024 * 1024; // 1M Byte

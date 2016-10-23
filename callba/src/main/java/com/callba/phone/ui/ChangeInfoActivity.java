@@ -26,15 +26,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.Utils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
-
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -44,8 +43,8 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;

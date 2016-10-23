@@ -5,11 +5,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.ui.base.BaseActivity;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by PC-20160514 on 2016/6/16.

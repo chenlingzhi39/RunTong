@@ -6,8 +6,8 @@ import android.widget.TextView;
 import com.callba.R;
 import com.callba.phone.bean.TxRecord;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by PC-20160514 on 2016/7/18.

@@ -12,10 +12,9 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-
 import com.callba.R;
-import com.callba.phone.ui.adapter.EaseContactAdapter;
 import com.callba.phone.bean.EaseUser;
+import com.callba.phone.ui.adapter.EaseContactAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

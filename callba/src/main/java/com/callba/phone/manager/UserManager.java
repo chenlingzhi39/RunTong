@@ -2,9 +2,7 @@ package com.callba.phone.manager;
 
 import android.content.Context;
 
-import com.callba.phone.bean.Contact;
 import com.callba.phone.cfg.Constant;
-import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.SPUtils;
 
 /**

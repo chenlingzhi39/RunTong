@@ -1,13 +1,13 @@
 package com.callba.phone.util;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.callba.R;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /** 
  * 时间格式化工具类

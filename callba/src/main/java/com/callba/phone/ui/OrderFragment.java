@@ -5,17 +5,17 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseFragment;
-import com.callba.phone.ui.adapter.OrderAdapter;
-import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Order;
+import com.callba.phone.ui.adapter.OrderAdapter;
+import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
+import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.widget.DividerItemDecoration;
 
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by PC-20160514 on 2016/7/15.

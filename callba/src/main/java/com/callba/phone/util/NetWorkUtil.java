@@ -1,9 +1,5 @@
 package com.callba.phone.util;
 
-import java.util.HashMap;
-
-import org.apache.http.HttpHost;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.database.Cursor;
@@ -16,6 +12,10 @@ import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
+
+import org.apache.http.HttpHost;
+
+import java.util.HashMap;
 
 public class NetWorkUtil {
 	/**

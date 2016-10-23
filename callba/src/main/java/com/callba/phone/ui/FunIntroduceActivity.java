@@ -1,9 +1,5 @@
 package com.callba.phone.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,9 +17,11 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.callba.R;
-import com.callba.phone.ui.adapter.ImagePagerAdapter;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.ui.base.BaseActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ActivityFragmentInject(
 		contentViewId = R.layout.whats_new

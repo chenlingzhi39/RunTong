@@ -16,12 +16,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -32,12 +32,11 @@ import com.hyphenate.chat.EMClient;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Request;
 

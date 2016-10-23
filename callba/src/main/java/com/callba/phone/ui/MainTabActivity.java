@@ -20,7 +20,6 @@ import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,13 +33,12 @@ import android.widget.TabWidget;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
-
+import com.callba.phone.Constant;
 import com.callba.phone.MyApplication;
 import com.callba.phone.cfg.GlobalConfig;
-import com.callba.phone.Constant;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.widget.BadgeView;
 import com.hyphenate.EMCallBack;

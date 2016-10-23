@@ -3,8 +3,8 @@ package com.callba.phone.ui;
 import android.view.View;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.ui.base.BaseFragment;
 
 /**
  * Created by PC-20160514 on 2016/7/6.

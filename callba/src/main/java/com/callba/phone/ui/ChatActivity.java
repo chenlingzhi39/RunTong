@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -15,7 +16,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.content.ClipboardManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
@@ -29,16 +29,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
-import com.callba.phone.bean.EaseUser;
-import com.callba.phone.cfg.GlobalConfig;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.EaseConstant;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.EaseEmojicon;
+import com.callba.phone.bean.EaseUser;
+import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.controller.EaseUI;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.ui.ease.EaseChatFragmentListener;
 import com.callba.phone.ui.ease.EaseGroupRemoveListener;
 import com.callba.phone.util.EaseCommonUtils;
@@ -65,8 +65,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by PC-20160514 on 2016/5/27.

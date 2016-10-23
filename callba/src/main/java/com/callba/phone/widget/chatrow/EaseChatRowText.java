@@ -13,7 +13,6 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMMessage.ChatType;
 import com.hyphenate.chat.EMTextMessageBody;
-
 import com.hyphenate.exceptions.HyphenateException;
 
 public class EaseChatRowText extends EaseChatRow{

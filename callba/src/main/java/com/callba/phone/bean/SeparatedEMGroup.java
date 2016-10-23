@@ -1,7 +1,6 @@
 package com.callba.phone.bean;
 
 import com.hyphenate.chat.EMGroup;
-import com.hyphenate.chat.adapter.EMAGroup;
 
 /**
  * Created by PC-20160514 on 2016/10/20.

@@ -4,23 +4,20 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
-import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
-import com.callba.phone.ui.adapter.TeamAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.bean.Team;
+import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
+import com.callba.phone.ui.adapter.TeamAdapter;
+import com.callba.phone.ui.base.BaseFragment;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -33,8 +30,8 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import okhttp3.Call;
 
 /**

@@ -1,7 +1,5 @@
 package com.callba.phone.util;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -11,17 +9,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.RawContacts;
-import android.provider.ContactsContract.Data;
-import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.CommonDataKinds.StructuredName;
+import android.provider.ContactsContract.Data;
+import android.provider.ContactsContract.RawContacts;
 import android.text.TextUtils;
 
 import com.callba.phone.bean.ContactData;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.logic.contact.QueryContactCallback;
 import com.callba.phone.logic.contact.QueryContacts;
-import com.callba.phone.service.MainService;
 
 import java.util.ArrayList;
 import java.util.List;

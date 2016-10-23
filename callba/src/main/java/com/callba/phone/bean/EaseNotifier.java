@@ -11,7 +11,6 @@
  */
 package com.callba.phone.bean;
 
-import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -19,7 +18,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -28,15 +26,12 @@ import android.os.Build;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 
-import com.callba.R;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.controller.EaseUI;
-import com.callba.phone.controller.EaseUI.*;
+import com.callba.phone.controller.EaseUI.EaseSettingsProvider;
 import com.callba.phone.util.ActivityUtil;
-import com.callba.phone.util.Logger;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
-
 import com.hyphenate.util.EMLog;
 import com.hyphenate.util.EasyUtils;
 

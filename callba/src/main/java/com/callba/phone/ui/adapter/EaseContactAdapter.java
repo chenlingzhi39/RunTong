@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
-
 import com.callba.R;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.util.EaseUserUtils;

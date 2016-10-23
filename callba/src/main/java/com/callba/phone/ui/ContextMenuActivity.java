@@ -15,13 +15,11 @@ package com.callba.phone.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.callba.R;
 import com.callba.phone.Constant;
-import com.callba.phone.ui.base.BaseActivity;
 import com.hyphenate.chat.EMMessage;
 
 public class ContextMenuActivity extends Activity {

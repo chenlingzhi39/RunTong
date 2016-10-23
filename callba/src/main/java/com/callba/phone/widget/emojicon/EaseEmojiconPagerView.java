@@ -9,13 +9,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
-
 import com.callba.R;
+import com.callba.phone.bean.EaseEmojicon;
+import com.callba.phone.bean.EaseEmojicon.Type;
+import com.callba.phone.bean.EaseEmojiconGroupEntity;
 import com.callba.phone.ui.adapter.EmojiconGridAdapter;
 import com.callba.phone.ui.adapter.EmojiconPagerAdapter;
-import com.callba.phone.bean.EaseEmojicon;
-import com.callba.phone.bean.EaseEmojiconGroupEntity;
-import com.callba.phone.bean.EaseEmojicon.Type;
 import com.callba.phone.util.EaseSmileUtils;
 
 import java.util.ArrayList;

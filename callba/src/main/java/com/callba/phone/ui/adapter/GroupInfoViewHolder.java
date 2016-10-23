@@ -4,7 +4,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMGroupInfo;
 
 import butterknife.BindView;

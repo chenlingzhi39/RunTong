@@ -8,8 +8,8 @@ import com.callba.R;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.manager.ContactsManager;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**

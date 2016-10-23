@@ -15,7 +15,6 @@ package com.callba.phone.db;
 
 import android.content.Context;
 
-
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.domain.RobotUser;
 

@@ -28,7 +28,6 @@ import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.ui.adapter.EaseContactAdapter;
 import com.callba.phone.ui.base.BaseActivity;
-import com.callba.phone.util.Logger;
 import com.callba.phone.widget.EaseAlertDialog;
 import com.callba.phone.widget.EaseSidebar;
 

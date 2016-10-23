@@ -9,8 +9,6 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import org.apache.commons.logging.Log;
-
 
 /**
  * Created by PC-20160514 on 2016/5/20.

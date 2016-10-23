@@ -8,8 +8,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.ui.base.BaseActivity;
 
 @ActivityFragmentInject(
 		contentViewId = R.layout.em_activity_edit,

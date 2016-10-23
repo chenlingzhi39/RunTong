@@ -1,12 +1,5 @@
 package com.callba.phone.ui;
 
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -14,11 +7,8 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,25 +16,30 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.callba.phone.MyApplication;
+import com.callba.R;
+import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.DialAd;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.manager.ContactsManager;
-import com.callba.phone.util.Logger;
-import com.callba.phone.util.SPUtils;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
-import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.bean.Task;
 import com.callba.phone.service.AutoAnswerReceiver;
 import com.callba.phone.service.CalllogService;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.Interfaces;
+import com.callba.phone.util.Logger;
+import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.TimeFormatUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;

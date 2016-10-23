@@ -5,7 +5,6 @@ import android.app.Application;
 
 import com.callba.phone.bean.ApiService;
 import com.callba.phone.util.Logger;
-import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

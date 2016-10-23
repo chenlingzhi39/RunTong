@@ -5,10 +5,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
-
 import com.callba.phone.Constant;
 import com.callba.phone.MyApplication;
 import com.callba.phone.bean.EaseUser;
+import com.callba.phone.db.InviteMessage.InviteMesageStatus;
 import com.callba.phone.domain.RobotUser;
 import com.callba.phone.util.EaseCommonUtils;
 import com.hyphenate.util.HanziToPinyin;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import com.callba.phone.db.InviteMessage.*;
 public class DemoDBManager {
     static private DemoDBManager dbMgr = new DemoDBManager();
     private DbOpenHelper dbHelper;

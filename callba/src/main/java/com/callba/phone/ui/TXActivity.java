@@ -5,16 +5,16 @@ import android.os.Bundle;
 import android.widget.EditText;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;

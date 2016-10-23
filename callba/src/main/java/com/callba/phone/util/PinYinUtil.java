@@ -1,16 +1,17 @@
 package com.callba.phone.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.text.TextUtils;
+
+import com.callba.phone.bean.SearchSortKeyBean;
 
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
-import android.text.TextUtils;
 
-import com.callba.phone.bean.SearchSortKeyBean;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PinYinUtil {
 

@@ -10,8 +10,8 @@ import com.callba.phone.bean.CalldaCalllogBean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Administrator on 2016/7/6.

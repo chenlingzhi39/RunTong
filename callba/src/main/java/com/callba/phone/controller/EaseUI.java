@@ -13,7 +13,6 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMOptions;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

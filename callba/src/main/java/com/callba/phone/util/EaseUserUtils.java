@@ -7,11 +7,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.callba.R;
 import com.callba.phone.MyApplication;
 import com.callba.phone.bean.EaseUser;
-import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.controller.EaseUI;
 import com.callba.phone.controller.EaseUI.EaseUserProfileProvider;
 import com.callba.phone.manager.UserManager;

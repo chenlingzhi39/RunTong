@@ -2,8 +2,8 @@ package com.callba.phone.util;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBopenHelper extends SQLiteOpenHelper {
 	private static final int DEFAULT_DB_VERSION = 1;// 当前数据库版本

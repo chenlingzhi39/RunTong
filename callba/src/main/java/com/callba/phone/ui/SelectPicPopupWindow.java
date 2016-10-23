@@ -10,7 +10,6 @@ import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.Toast;
 
-
 import com.callba.R;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.util.BitmapUtil;
@@ -18,8 +17,8 @@ import com.callba.phone.util.Utils;
 
 import java.io.File;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**

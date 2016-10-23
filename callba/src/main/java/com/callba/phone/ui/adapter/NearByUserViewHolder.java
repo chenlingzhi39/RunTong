@@ -8,8 +8,8 @@ import com.callba.R;
 import com.callba.phone.bean.NearByUser;
 import com.callba.phone.util.StringUtils;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**

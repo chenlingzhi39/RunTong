@@ -1,11 +1,5 @@
 package com.callba.phone;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import android.content.Context;
 
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -13,6 +7,12 @@ import com.umeng.socialize.bean.SocializeConfig;
 import com.umeng.socialize.controller.RequestType;
 import com.umeng.socialize.controller.UMServiceFactory;
 import com.umeng.socialize.controller.UMSocialService;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @功能描述 : 

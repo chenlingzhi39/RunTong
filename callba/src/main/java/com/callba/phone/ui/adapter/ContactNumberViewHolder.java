@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import com.callba.R;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by PC-20160514 on 2016/7/6.

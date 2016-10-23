@@ -12,9 +12,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Team;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.google.gson.Gson;
@@ -24,8 +24,8 @@ import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;

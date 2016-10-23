@@ -6,7 +6,6 @@ import android.media.AudioManager;
 import android.media.ToneGenerator;
 
 import com.callba.phone.cfg.Constant;
-import com.callba.phone.cfg.GlobalConfig;
 
 public class KeyboardUtil {
 	private static final int TONE_RELATIVE_VOLUME = 80;

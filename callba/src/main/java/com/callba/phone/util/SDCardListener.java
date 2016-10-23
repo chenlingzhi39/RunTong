@@ -1,11 +1,11 @@
 package com.callba.phone.util;
 
-import java.io.File;
-import java.util.Date;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import java.io.File;
+import java.util.Date;
 
 public class SDCardListener extends BroadcastReceiver{
 	private static boolean sdcardAvailable;  

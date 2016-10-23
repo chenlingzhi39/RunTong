@@ -1,25 +1,23 @@
 package com.callba.phone.util;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.ActivityManager.*;
 import android.app.Service;
 import android.content.Context;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.callba.phone.MyApplication;
-import com.callba.phone.ui.GuideActivity;
-import com.callba.phone.ui.MainTabActivity;
 import com.callba.phone.ui.CallbackDisplayActivity;
+import com.callba.phone.ui.GuideActivity;
 import com.callba.phone.ui.LoginActivity;
+import com.callba.phone.ui.MainTabActivity;
 import com.callba.phone.ui.RegisterActivity;
-import android.util.Log;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Locale;
 /**
  * Activity操作工具类
  * 

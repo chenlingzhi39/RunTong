@@ -1,9 +1,9 @@
 package com.callba.phone.logic.contact;
 
 
-import java.io.Serializable;
-
 import com.callba.phone.bean.SearchSortKeyBean;
+
+import java.io.Serializable;
 
 /**
  * 联系人

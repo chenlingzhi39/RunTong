@@ -3,13 +3,11 @@ package com.callba.phone.ui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 
 import com.callba.R;
 import com.callba.phone.util.CallUtils;
 
 import butterknife.ButterKnife;
-import butterknife.BindView;
 import butterknife.OnClick;
 
 /**

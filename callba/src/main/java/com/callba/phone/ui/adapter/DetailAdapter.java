@@ -17,8 +17,8 @@ import android.widget.Toast;
 import com.callba.R;
 import com.callba.phone.Constant;
 import com.callba.phone.DemoHelper;
-import com.callba.phone.bean.ContactMultiNumBean;
 import com.callba.phone.bean.BaseUser;
+import com.callba.phone.bean.ContactMultiNumBean;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.manager.FullyLinearLayoutManager;
 import com.callba.phone.manager.UserManager;
@@ -35,8 +35,8 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import okhttp3.Call;
 
 /**

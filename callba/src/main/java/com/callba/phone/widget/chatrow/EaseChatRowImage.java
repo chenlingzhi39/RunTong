@@ -20,7 +20,6 @@ import com.hyphenate.chat.EMImageMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMMessage.ChatType;
 
-
 import java.io.File;
 
 public class EaseChatRowImage extends EaseChatRowFile{

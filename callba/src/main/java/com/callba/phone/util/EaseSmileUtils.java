@@ -19,10 +19,8 @@ import android.text.Spannable;
 import android.text.Spannable.Factory;
 import android.text.style.ImageSpan;
 
-
 import com.callba.phone.bean.EaseDefaultEmojiconDatas;
 import com.callba.phone.bean.EaseEmojicon;
-
 import com.callba.phone.controller.EaseUI;
 import com.callba.phone.controller.EaseUI.EaseEmojiconInfoProvider;
 

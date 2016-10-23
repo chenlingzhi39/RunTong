@@ -1,5 +1,18 @@
 package com.callba.phone.service;
 
+import android.os.Handler;
+import android.text.TextUtils;
+
+import com.callba.phone.bean.CalldaCalllogBean;
+import com.callba.phone.bean.QuickQueryContactBean;
+import com.callba.phone.cfg.Constant;
+import com.callba.phone.cfg.GlobalConfig;
+import com.callba.phone.logic.contact.ContactPersonEntity;
+import com.callba.phone.util.Logger;
+import com.callba.phone.util.PinYinUtil;
+import com.callba.phone.util.QuickSearchContactFromComparator;
+import com.callba.phone.util.QuickSearchContactIndexComparator;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,19 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-
-import android.os.Handler;
-import android.text.TextUtils;
-
-import com.callba.phone.bean.CalldaCalllogBean;
-import com.callba.phone.bean.QuickQueryContactBean;
-import com.callba.phone.cfg.GlobalConfig;
-import com.callba.phone.cfg.Constant;
-import com.callba.phone.logic.contact.ContactPersonEntity;
-import com.callba.phone.util.Logger;
-import com.callba.phone.util.PinYinUtil;
-import com.callba.phone.util.QuickSearchContactFromComparator;
-import com.callba.phone.util.QuickSearchContactIndexComparator;
 
 /**
  * 九宫格键盘快速检索联系人功能

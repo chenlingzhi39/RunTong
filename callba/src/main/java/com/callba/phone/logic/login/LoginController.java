@@ -1,11 +1,5 @@
 package com.callba.phone.logic.login;
 
-import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.http.conn.ConnectTimeoutException;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +20,12 @@ import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.HttpUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
+
+import org.apache.http.conn.ConnectTimeoutException;
+
+import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /** 

@@ -12,12 +12,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.DemoHelper;
-import com.callba.phone.ui.adapter.EaseContactAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Coupon;
 import com.callba.phone.bean.EaseUser;
+import com.callba.phone.ui.adapter.EaseContactAdapter;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.widget.EaseSidebar;
@@ -29,8 +29,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Request;
 

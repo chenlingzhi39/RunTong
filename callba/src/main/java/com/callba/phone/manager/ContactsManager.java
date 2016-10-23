@@ -9,13 +9,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.text.TextUtils;
 import android.util.Log;
 
-import com.callba.R;
 import com.callba.phone.bean.Contact;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 

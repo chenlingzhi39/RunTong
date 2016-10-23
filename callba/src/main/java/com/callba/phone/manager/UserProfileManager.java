@@ -1,15 +1,11 @@
 package com.callba.phone.manager;
 
 import android.content.Context;
-import android.widget.Toast;
 
-import com.callba.R;
-import com.callba.phone.DemoHelper.*;
+import com.callba.phone.DemoHelper.DataSyncListener;
 import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.cfg.Constant;
-import com.callba.phone.cfg.GlobalConfig;
-import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -21,7 +17,6 @@ import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMClient;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
-
 
 import java.util.ArrayList;
 import java.util.List;

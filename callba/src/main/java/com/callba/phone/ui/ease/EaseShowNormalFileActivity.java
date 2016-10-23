@@ -9,7 +9,6 @@ import com.callba.R;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMFileMessageBody;
-
 import com.hyphenate.util.FileUtils;
 
 import java.io.File;

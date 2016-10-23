@@ -10,9 +10,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.callba.R;
 import com.callba.phone.bean.EaseEmojicon;
-import com.callba.phone.bean.EaseEmojicon.*;
+import com.callba.phone.bean.EaseEmojicon.Type;
 import com.callba.phone.util.EaseSmileUtils;
-
 
 import java.util.List;
 

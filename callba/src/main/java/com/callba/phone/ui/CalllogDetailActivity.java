@@ -14,15 +14,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.callba.R;
-import com.callba.phone.bean.ContactMultiNumBean;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.CalllogDetailBean;
+import com.callba.phone.bean.ContactMultiNumBean;
+import com.callba.phone.ui.base.BaseActivity;
 
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by Administrator on 2016/7/10.

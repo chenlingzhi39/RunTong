@@ -16,11 +16,10 @@ import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.MyApplication;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.ActivityUtil;
-
 import com.callba.phone.view.CleanableEditText;
 
 @ActivityFragmentInject(

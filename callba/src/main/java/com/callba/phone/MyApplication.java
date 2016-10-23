@@ -1,8 +1,4 @@
 package com.callba.phone;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -13,7 +9,6 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.CountDownTimer;
 import android.support.multidex.MultiDex;
 
 import com.bumptech.glide.Glide;
@@ -22,13 +17,16 @@ import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.engine.cache.ExternalCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.callba.BuildConfig;
-import com.callba.phone.cfg.*;
-import com.callba.phone.ui.UserActivity;
 import com.callba.phone.ui.WelcomeActivity;
 import com.callba.phone.util.Logger;
-import com.callba.phone.util.SPUtils;
 import com.callba.phone.util.StorageUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
 import de.greenrobot.dao.DaoMaster;
 import de.greenrobot.dao.DaoSession;
 import de.greenrobot.dao.query.QueryBuilder;

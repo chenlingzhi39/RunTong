@@ -1,7 +1,8 @@
 package com.callba.phone.util;
-import java.util.Comparator;
 
 import com.callba.phone.bean.QuickQueryContactBean;
+
+import java.util.Comparator;
 
 /**
  * 将快速查找联系人 按 <通话记录> <通讯录> 排序

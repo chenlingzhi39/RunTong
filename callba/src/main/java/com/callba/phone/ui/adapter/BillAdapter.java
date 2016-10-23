@@ -11,9 +11,7 @@ import android.view.ViewGroup;
 
 import com.callba.R;
 import com.callba.phone.bean.Commodity;
-import com.callba.phone.bean.Flow;
 import com.callba.phone.util.Logger;
-import com.umeng.socom.Log;
 
 import java.util.List;
 

@@ -20,7 +20,6 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ProgressBar;
 
-
 import com.callba.R;
 import com.callba.phone.model.EaseImageCache;
 import com.callba.phone.widget.photoview.EasePhotoView;

@@ -31,12 +31,11 @@ import android.widget.Toast;
 import com.callba.R;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.db.InviteMessage;
-import com.callba.phone.db.InviteMessage.*;
+import com.callba.phone.db.InviteMessage.InviteMesageStatus;
 import com.callba.phone.db.InviteMessgeDao;
 import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Logger;
 import com.hyphenate.chat.EMClient;
-
 
 import java.util.List;
 

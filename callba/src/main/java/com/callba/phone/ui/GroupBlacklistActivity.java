@@ -15,11 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.EaseUserUtils;
 import com.hyphenate.chat.EMClient;
-
 import com.hyphenate.exceptions.HyphenateException;
 
 import java.util.Collections;

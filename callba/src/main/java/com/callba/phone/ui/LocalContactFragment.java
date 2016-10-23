@@ -50,8 +50,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import okhttp3.Call;
 import rx.Observable;
 import rx.Subscriber;

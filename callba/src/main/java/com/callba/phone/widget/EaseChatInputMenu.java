@@ -9,16 +9,16 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-
 import com.callba.R;
 import com.callba.phone.bean.EaseDefaultEmojiconDatas;
 import com.callba.phone.bean.EaseEmojicon;
 import com.callba.phone.bean.EaseEmojiconGroupEntity;
 import com.callba.phone.util.EaseSmileUtils;
+import com.callba.phone.widget.EaseChatExtendMenu.EaseChatExtendMenuItemClickListener;
 import com.callba.phone.widget.emojicon.EaseEmojiconMenu;
 import com.callba.phone.widget.emojicon.EaseEmojiconMenuBase;
-import com.callba.phone.widget.emojicon.EaseEmojiconMenuBase.*;
-import com.callba.phone.widget.EaseChatExtendMenu.*;
+import com.callba.phone.widget.emojicon.EaseEmojiconMenuBase.EaseEmojiconMenuListener;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

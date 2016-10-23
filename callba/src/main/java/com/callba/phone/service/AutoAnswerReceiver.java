@@ -1,7 +1,5 @@
 package com.callba.phone.service;
 
-import java.lang.reflect.Method;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
@@ -10,11 +8,11 @@ import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 
 import com.android.internal.telephony.ITelephony;
-import com.callba.phone.MyApplication;
 import com.callba.phone.cfg.Constant;
-import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.SPUtils;
+
+import java.lang.reflect.Method;
 
 public class AutoAnswerReceiver {
 //	private final static String TAG = AutoAnswerReceiver.class.getCanonicalName();

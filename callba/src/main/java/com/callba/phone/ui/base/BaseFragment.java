@@ -11,9 +11,7 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.cfg.*;
 import com.callba.phone.manager.UserManager;
-import com.callba.phone.util.SPUtils;
 import com.yanzhenjie.permission.AndPermission;
 
 import java.net.UnknownHostException;

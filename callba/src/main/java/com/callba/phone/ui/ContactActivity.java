@@ -17,11 +17,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
@@ -30,10 +28,8 @@ import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.InitiateSearch;
 import com.callba.phone.util.RxBus;
 
-import java.util.Date;
-
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by PC-20160514 on 2016/6/21.

@@ -37,9 +37,8 @@ import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.Constant;
-import com.callba.phone.bean.EaseUser;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.ui.ease.ExitGroupDialog;
 import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.widget.EaseAlertDialog;
@@ -50,12 +49,10 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
 import com.hyphenate.chat.EMConversation.EMConversationType;
 import com.hyphenate.chat.EMGroup;
-
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
 import com.hyphenate.util.NetUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 @ActivityFragmentInject(
 		contentViewId = R.layout.em_activity_group_details,

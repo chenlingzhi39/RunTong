@@ -20,12 +20,11 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 
-
-import butterknife.ButterKnife;
 import butterknife.BindView;
-import rx.Subscription;
+import butterknife.ButterKnife;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;

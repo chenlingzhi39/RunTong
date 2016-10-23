@@ -8,10 +8,10 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 
-
 import com.callba.R;
 import com.callba.phone.bean.EaseEmojicon;
 import com.callba.phone.bean.EaseEmojiconGroupEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 

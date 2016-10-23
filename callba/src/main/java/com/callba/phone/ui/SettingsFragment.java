@@ -8,8 +8,6 @@ import android.preference.PreferenceScreen;
 import com.callba.R;
 import com.callba.phone.DemoHelper;
 import com.callba.phone.DemoModel;
-import com.callba.phone.LogcatHelper;
-import com.callba.phone.MyApplication;
 import com.jenzz.materialpreference.SwitchPreference;
 
 /**

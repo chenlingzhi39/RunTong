@@ -28,14 +28,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
 import com.callba.phone.Constant;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.EaseUserUtils;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;

@@ -13,9 +13,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.Constant;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.BitmapUtil;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -25,8 +25,8 @@ import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.io.File;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;

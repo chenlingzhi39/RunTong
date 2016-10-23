@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -15,8 +14,8 @@ import com.callba.R;
 
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import me.iwf.photopicker.PhotoPickerActivity;
 import me.iwf.photopicker.adapter.PhotoPagerAdapter;
 

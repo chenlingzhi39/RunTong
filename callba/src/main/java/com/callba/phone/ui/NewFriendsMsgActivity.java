@@ -25,12 +25,12 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.Constant;
-import com.callba.phone.ui.adapter.NewFriendsMsgAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.db.InviteMessage;
 import com.callba.phone.db.InviteMessgeDao;
+import com.callba.phone.ui.adapter.NewFriendsMsgAdapter;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.SimpleHandler;
 
 import java.util.List;

@@ -1,7 +1,5 @@
 package com.callba.phone.util;
 
-import android.content.Context;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

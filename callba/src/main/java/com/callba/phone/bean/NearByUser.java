@@ -1,7 +1,5 @@
 package com.callba.phone.bean;
 
-import java.util.Date;
-
 /**
  * Created by Administrator on 2016/5/21.
  */

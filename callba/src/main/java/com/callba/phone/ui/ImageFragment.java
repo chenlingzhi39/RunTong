@@ -1,9 +1,6 @@
 package com.callba.phone.ui;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -11,8 +8,8 @@ import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.ui.base.BaseFragment;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by PC-20160514 on 2016/8/30.

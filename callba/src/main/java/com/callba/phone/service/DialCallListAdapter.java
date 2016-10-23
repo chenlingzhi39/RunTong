@@ -1,7 +1,5 @@
 package com.callba.phone.service;
 
-import java.util.List;
-
 import android.content.Context;
 import android.text.Html;
 import android.view.View;
@@ -12,6 +10,8 @@ import android.widget.TextView;
 import com.callba.R;
 import com.callba.phone.bean.QuickQueryContactBean;
 import com.callba.phone.logic.contact.ContactPersonEntity;
+
+import java.util.List;
 /**
  * 拨号界面 号码比配List Adapter
  * @author Zhang

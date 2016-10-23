@@ -15,11 +15,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.callba.R;
-import com.callba.phone.ui.base.BaseActivity;
-import com.callba.phone.ui.adapter.MealAdapter;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Meal;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.ui.adapter.MealAdapter;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -28,8 +28,8 @@ import com.zhy.http.okhttp.callback.StringCallback;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;

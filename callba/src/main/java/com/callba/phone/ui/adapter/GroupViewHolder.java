@@ -6,7 +6,6 @@ import android.widget.TextView;
 
 import com.callba.R;
 import com.callba.phone.bean.SeparatedEMGroup;
-import com.hyphenate.chat.EMGroup;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

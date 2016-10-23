@@ -1,14 +1,5 @@
 package com.callba.phone.service;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TimeZone;
-
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,7 +9,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.CallLog;
 import android.provider.CallLog.Calls;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 
 import com.callba.phone.bean.CalldaCalllogBean;
@@ -26,6 +16,15 @@ import com.callba.phone.bean.CalllogDetailBean;
 import com.callba.phone.util.DBopenHelper;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.TimeFormatUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TimeZone;
 
 public class CalllogService {
 	private static final int ASYNC_QUERY_COMPLETE = 0x30; // 查询完毕

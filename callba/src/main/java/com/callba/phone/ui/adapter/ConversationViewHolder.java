@@ -21,8 +21,8 @@ import com.hyphenate.util.DateUtils;
 
 import java.util.Date;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**

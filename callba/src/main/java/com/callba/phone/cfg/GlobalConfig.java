@@ -1,19 +1,14 @@
 package com.callba.phone.cfg;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import android.content.Context;
 import android.os.Bundle;
 
-import com.callba.phone.bean.Advertisement;
-import com.callba.phone.bean.Contact;
-import com.callba.phone.bean.DialAd;
-import com.callba.phone.logic.contact.ContactEntity;
 import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.util.AppVersionChecker;
 import com.hyphenate.chat.EMMessage;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /** 
  * 存储程序全局变量

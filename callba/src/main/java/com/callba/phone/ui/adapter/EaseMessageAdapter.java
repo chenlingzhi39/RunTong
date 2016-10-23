@@ -24,8 +24,6 @@ import android.widget.ListView;
 
 import com.callba.phone.EaseConstant;
 import com.callba.phone.util.EaseCommonUtils;
-import com.callba.phone.widget.EaseChatMessageList;
-
 import com.callba.phone.widget.EaseChatMessageList.MessageListItemClickListener;
 import com.callba.phone.widget.chatrow.EaseChatRow;
 import com.callba.phone.widget.chatrow.EaseChatRowBigExpression;

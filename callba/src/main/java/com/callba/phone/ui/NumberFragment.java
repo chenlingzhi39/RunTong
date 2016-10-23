@@ -21,7 +21,6 @@ import android.widget.Toast;
 import com.callba.R;
 import com.callba.phone.MyApplication;
 import com.callba.phone.annotation.ActivityFragmentInject;
-import com.callba.phone.cfg.Constant;
 import com.callba.phone.ui.base.BaseSelectContactFragment;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.RxBus;
@@ -34,8 +33,8 @@ import org.json.JSONObject;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Request;

@@ -1,12 +1,9 @@
 package com.callba.phone.bean;
 
-import android.graphics.Bitmap;
+import com.callba.phone.logic.contact.ContactPersonEntity;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.callba.phone.logic.contact.ContactPersonEntity;
 
 /**
  * 联系人详情中 同一个联系人 允许存在多个电话号码

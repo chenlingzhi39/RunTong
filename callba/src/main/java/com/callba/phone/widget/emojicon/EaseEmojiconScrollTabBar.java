@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-
 import com.callba.R;
 import com.hyphenate.util.DensityUtil;
 

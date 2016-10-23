@@ -19,8 +19,8 @@ import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.net.UnknownHostException;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Request;
 

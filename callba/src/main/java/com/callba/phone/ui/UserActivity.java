@@ -1,6 +1,5 @@
 package com.callba.phone.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -17,30 +16,23 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.callba.BuildConfig;
 import com.callba.R;
-import com.callba.phone.cfg.Constant;
-import com.callba.phone.service.UpdateService;
-import com.callba.phone.ui.base.BaseActivity;
-import com.callba.phone.MyApplication;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.service.UpdateService;
+import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.Interfaces;
-import com.callba.phone.util.SPUtils;
-import com.callba.phone.util.SimpleHandler;
 import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import org.apache.http.conn.ConnectTimeoutException;
-
-import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;

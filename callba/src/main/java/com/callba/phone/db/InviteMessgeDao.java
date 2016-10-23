@@ -15,8 +15,6 @@ package com.callba.phone.db;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.support.v4.content.LocalBroadcastManager;
-
 
 import java.util.List;
 

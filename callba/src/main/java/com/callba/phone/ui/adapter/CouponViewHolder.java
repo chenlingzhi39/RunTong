@@ -10,13 +10,13 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.callba.R;
-import com.callba.phone.ui.FlowActivity;
 import com.callba.phone.bean.Coupon;
+import com.callba.phone.ui.FlowActivity;
 import com.callba.phone.ui.RechargeActivity;
 import com.callba.phone.ui.SelectFriendActivity;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by PC-20160514 on 2016/7/30.
