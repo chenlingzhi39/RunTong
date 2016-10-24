@@ -90,7 +90,7 @@ public class MessageActivity extends BaseActivity {
     CardView cardSearch;
     private ConversationAdapter adapter;
     private int index = -1;
-    private BroadcastReceiver broadcastReceiver, broadcastReceiver1;
+    private BroadcastReceiver broadcastReceiver;
     private LocalBroadcastManager broadcastManager;
     protected InputMethodManager inputMethodManager;
     protected FrameLayout errorItemContainer;
@@ -228,14 +228,8 @@ public class MessageActivity extends BaseActivity {
                 refresh();
             }
         };
-        broadcastReceiver1 = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                refresh();
-            }
-        };
-        broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
-        broadcastManager.registerReceiver(broadcastReceiver1, new IntentFilter(Constant.ACTION_MESSAGE_CHANGED));
+       // broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
+        broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_MESSAGE_CHANGED));
         InitiateSearch();
         HandleSearch();
     }
@@ -332,7 +326,6 @@ public class MessageActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         broadcastManager.unregisterReceiver(broadcastReceiver);
-        broadcastManager.unregisterReceiver(broadcastReceiver1);
         EMClient.getInstance().removeConnectionListener(connectionListener);
         super.onDestroy();
     }

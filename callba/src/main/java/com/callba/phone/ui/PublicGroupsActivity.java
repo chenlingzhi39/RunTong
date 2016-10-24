@@ -78,7 +78,7 @@ public class PublicGroupsActivity extends BaseActivity {
     @BindView(R.id.error)
     TextView error;
     private GroupInfoAdapter groupInfoAdapter;
-    private int pageSize = 5;
+    private int pageSize = 20;
     private int currentSize = 0;
     private String cursor, preCursor = "";
     private boolean first = true;
@@ -117,6 +117,7 @@ public class PublicGroupsActivity extends BaseActivity {
 
             @Override
             public void onRefresh() {
+                first=true;
                 groupInfoAdapter.clear();
                 allGroupInfos.clear();
                 cursor = "";
@@ -127,6 +128,7 @@ public class PublicGroupsActivity extends BaseActivity {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                first=true;
                 groupInfoAdapter.clear();
                 allGroupInfos.clear();
                 cursor = "";
@@ -172,9 +174,12 @@ public class PublicGroupsActivity extends BaseActivity {
             public void call(final List<EMGroupInfo> emGroupInfos) {
                 refreshLayout.setRefreshing(false);
                 if (emGroupInfos == null) {
-                    error.setVisibility(View.VISIBLE);
+                    if(allGroupInfos.size()==0)
+                    {error.setVisibility(View.VISIBLE);
                     return;
-                } else if (emGroupInfos.size() == 0) {
+                    }else
+                     groupInfoAdapter.pauseMore();
+                } else if (emGroupInfos.size() == 0&&allGroupInfos.size()==0) {
                     empty.setVisibility(View.VISIBLE);
                     return;
                 } else {

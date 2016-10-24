@@ -721,12 +721,14 @@ public class DemoHelper {
             //getNotifier().viberateAndPlayTone(msg);
             getNotifier().onNewMsg(msg);
             broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
-            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
+            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED).putExtra("group_id",groupId).putExtra("result",1));
         }
 
         @Override
         public void onApplicationDeclined(String groupId, String groupName, String decliner, String reason) {
             // 加群申请被拒绝，demo未实现
+            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED).putExtra("group_id",groupId).putExtra("result",0));
+            broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
         }
 
         @Override
@@ -749,7 +751,7 @@ public class DemoHelper {
             getNotifier().onNewMsg(msg);
             EMLog.d(TAG, "onAutoAcceptInvitationFromGroup groupId:" + groupId);
             //发送local广播
-            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
+            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED).putExtra("group_id",groupId).putExtra("result",1));
             broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
         }
     }

@@ -16,9 +16,11 @@ package com.callba.phone.ui;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -36,6 +38,7 @@ import com.callba.phone.Constant;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.EaseUserUtils;
+import com.callba.phone.util.Logger;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMGroupInfo;
@@ -60,7 +63,8 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 	private String groupid;
     private String apply;
 	private LinearLayout introduction;
-
+	private BroadcastReceiver broadcastReceiver;
+	private LocalBroadcastManager broadcastManager;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -71,6 +75,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
         tv_id=(TextView) findViewById(R.id.tv_id);
         tv_need_apply=(TextView)findViewById(R.id.tv_need_apply);
 		introduction=(LinearLayout) findViewById(R.id.introduction);
+
 		introduction.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -83,7 +88,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 				alertDialog.show();}
 			}
 		});
-		EMGroupInfo groupInfo = (EMGroupInfo) getIntent().getSerializableExtra("groupinfo");
+		final EMGroupInfo groupInfo = (EMGroupInfo) getIntent().getSerializableExtra("groupinfo");
 		String groupname = null;
 		    groupname = groupInfo.getGroupName();
 		    groupid = groupInfo.getGroupId();
@@ -120,7 +125,20 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 				
 			}
 		}).start();
-		
+		broadcastReceiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				if(intent.getExtras()!=null){
+               if(intent.getStringExtra("group_id").equals(groupInfo.getGroupId())){
+				   if(intent.getIntExtra("result",0)==1)
+					   finish();
+				   else btn_add_group.setEnabled(true);
+
+				}
+			}}
+		};
+		broadcastManager = LocalBroadcastManager.getInstance(this);
+		broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
 	}
 	
 	//加入群聊
@@ -256,5 +274,11 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 
 	public void back(View view){
 		finish();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		broadcastManager.unregisterReceiver(broadcastReceiver);
 	}
 }
