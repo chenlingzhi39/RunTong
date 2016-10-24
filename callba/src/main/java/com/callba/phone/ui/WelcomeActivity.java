@@ -10,6 +10,7 @@ import android.text.TextUtils;
 
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.logic.login.LoginController;
+import com.callba.phone.service.GrayService;
 import com.callba.phone.service.MainService;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.Logger;
@@ -54,6 +55,8 @@ public class WelcomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent grayIntent = new Intent(getApplicationContext(), GrayService.class);
+        startService(grayIntent);
         AndPermission.with(this)
                 .requestCode(100)
                 .permission(Manifest.permission.READ_CONTACTS
