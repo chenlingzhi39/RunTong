@@ -166,7 +166,7 @@ public class PublicGroupsActivity extends BaseActivity {
                 } catch (HyphenateException e) {
                     e.printStackTrace();
                     subscriber.onNext(null);
-                    refreshLayout.setRefreshing(false);
+
                 }
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMGroupInfo>>() {

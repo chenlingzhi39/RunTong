@@ -155,7 +155,6 @@ public class GroupsActivity extends BaseActivity {
                 try {
                     subscriber.onNext(EMClient.getInstance().groupManager().getJoinedGroupsFromServer());
                 } catch (Exception e) {
-                    refreshLayout.setRefreshing(false);
                     subscriber.onNext(null);
                     e.printStackTrace();
                 }
@@ -163,9 +162,11 @@ public class GroupsActivity extends BaseActivity {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<EMGroup>>() {
             @Override
             public void call(final List<EMGroup> emGroups) {
+                refreshLayout.setRefreshing(false);
                 if (first) {
                     if (emGroups == null) {
                         error.setVisibility(View.VISIBLE);
+
                         return;
                     } else if (emGroups.size() == 0) {
                         empty.setVisibility(View.VISIBLE);
@@ -188,7 +189,6 @@ public class GroupsActivity extends BaseActivity {
                     groupAdapter.addAll(separatedEMGroups);
                 } else
                     filter.filter(editTextSearch.getText().toString());
-                refreshLayout.setRefreshing(false);
             }
         });
 

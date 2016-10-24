@@ -38,7 +38,6 @@ import com.callba.phone.Constant;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.EaseUserUtils;
-import com.callba.phone.util.Logger;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
 import com.hyphenate.chat.EMGroupInfo;
