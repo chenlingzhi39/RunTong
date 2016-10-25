@@ -82,6 +82,18 @@
             android:value="576b786be0f55a6321000048" />
 
         <service android:name=".phone.service.UpdateService" />
+        <activity android:name=".phone.ui.GroupMembersActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="stateHidden"
+            />
+        <activity android:name=".phone.ui.GroupDetailActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="stateHidden"
+            />
         <activity android:name=".phone.ui.PublicGroupsActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"

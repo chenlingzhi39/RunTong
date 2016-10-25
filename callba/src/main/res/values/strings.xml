@@ -1000,4 +1000,5 @@
     <string name="skip">跳过</string>
     <string name="group_hint">请输入群名称或群号</string>
     <string name="no_group">你暂未创建或加入群组！</string>
+    <string name="group_member">群成员</string>
 </resources>

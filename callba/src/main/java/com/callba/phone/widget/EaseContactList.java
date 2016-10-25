@@ -110,7 +110,7 @@ public class EaseContactList extends RelativeLayout {
          */
     public void init(List<EaseUser> contactList){
     	this.contactList = contactList;
-        adapter = new EaseContactAdapter(context, 0, new ArrayList<EaseUser>(contactList));
+        adapter = new EaseContactAdapter(context, 0, new ArrayList<>(contactList));
         adapter.setPrimaryColor(primaryColor).setPrimarySize(primarySize).setInitialLetterBg(initialLetterBg)
             .setInitialLetterColor(initialLetterColor);
         listView.setAdapter(adapter);

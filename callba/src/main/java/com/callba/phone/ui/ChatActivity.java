@@ -855,7 +855,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 return;
             }
             startActivityForResult(
-                    (new Intent(this, GroupDetailsActivity.class).putExtra("groupId", toChatUsername)),
+                    (new Intent(this, GroupDetailActivity.class).putExtra("groupId", toChatUsername)),
                     REQUEST_CODE_GROUP_DETAIL);
         } else if (chatType == Constant.CHATTYPE_CHATROOM) {
             //startActivityForResult(new Intent(getActivity(), ChatRoomDetailsActivity.class).putExtra("roomId", toChatUsername), REQUEST_CODE_GROUP_DETAIL);
