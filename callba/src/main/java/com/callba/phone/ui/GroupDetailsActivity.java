@@ -144,7 +144,6 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 		
 		title.setText(group.getGroupName() + "(" + group.getAffiliationsCount() + st);
 
-		
 		adapter = new GridAdapter(this, R.layout.em_grid, group.getMembers());
 		userGridview.setAdapter(adapter);
 		// 保证每次进详情看到的都是最新的group
@@ -870,7 +869,6 @@ public class GroupDetailsActivity extends BaseActivity implements OnClickListene
 		public void onInvitationReceived(String groupId, String groupName,
 										 String inviter, String reason) {
 			// TODO Auto-generated method stub
-			
 		}
 
 		@Override
