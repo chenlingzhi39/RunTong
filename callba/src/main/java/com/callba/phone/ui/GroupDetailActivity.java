@@ -97,6 +97,7 @@ public class GroupDetailActivity extends BaseActivity {
     private static final int REQUEST_CODE_EXIT_DELETE = 2;
     private static final int REQUEST_CODE_EDIT_GROUPNAME = 5;
     private static final int MOVE_TO_BLACKLIST = 6;
+    private static final int GROUP_MEMBER=7;
     @BindView(R.id.title)
     TextView title;
     @BindView(R.id.member_list)
@@ -107,68 +108,68 @@ public class GroupDetailActivity extends BaseActivity {
     private EMGroup group;
     private ProgressDialog progressDialog;
     private MemberAdapter memberAdapter;
+    private EMGroupChangeListener emGroupChangeListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.bind(this);
         groupId = getIntent().getStringExtra("groupId");
-        EMClient.getInstance().groupManager().addGroupChangeListener(new EMGroupChangeListener() {
+        emGroupChangeListener = new EMGroupChangeListener() {
             @Override
             public void onInvitationReceived(String s, String s1, String s2, String s3) {
-                if(s.equals(groupId))
-                    refresh();
+
             }
 
             @Override
             public void onApplicationReceived(String s, String s1, String s2, String s3) {
-                if(s.equals(groupId))
-                    refresh();
+
             }
 
             @Override
             public void onApplicationAccept(String s, String s1, String s2) {
-                if(s.equals(groupId))
-                    refresh();
+
             }
 
             @Override
             public void onApplicationDeclined(String s, String s1, String s2, String s3) {
-                if(s.equals(groupId))
-                    refresh();
+
             }
 
             @Override
             public void onInvitationAccepted(String s, String s1, String s2) {
-                if(s.equals(groupId))
-                    refresh();
+
             }
 
             @Override
             public void onInvitationDeclined(String s, String s1, String s2) {
-                if(s.equals(groupId))
-                    refresh();
+
             }
 
             @Override
             public void onUserRemoved(String s, String s1) {
-                 finish();
+                if (s.equals(groupId))
+                    finish();
             }
 
             @Override
             public void onGroupDestroyed(String s, String s1) {
-                 finish();
+                if (s.equals(groupId))
+                    finish();
             }
 
             @Override
             public void onAutoAcceptInvitationFromGroup(String s, String s1, String s2) {
-                if(s.equals(groupId))
+                if (s.equals(groupId))
                     refresh();
             }
-        });
+        };
+        EMClient.getInstance().groupManager().addGroupChangeListener(emGroupChangeListener);
         refresh();
     }
-    private void refresh(){
+
+    private void refresh() {
         subscription = Observable.create(new rx.Observable.OnSubscribe<EMGroup>() {
             @Override
             public void call(Subscriber<? super EMGroup> subscriber) {
@@ -182,7 +183,7 @@ public class GroupDetailActivity extends BaseActivity {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<EMGroup>() {
             @Override
             public void call(EMGroup emGroup) {
-                group=emGroup;
+                group = emGroup;
                 // we are not supposed to show the group if we don't find the group
                 if (group == null) {
                     finish();
@@ -203,26 +204,35 @@ public class GroupDetailActivity extends BaseActivity {
                 if (EMClient.getInstance().getCurrentUser().equals(group.getOwner())) {
                     exitBtn.setVisibility(View.GONE);
                     deleteBtn.setVisibility(View.VISIBLE);
+                    changeGroupNameLayout.setVisibility(View.VISIBLE);
+                    blacklistLayout.setVisibility(View.VISIBLE);
+                }else{
+                    exitBtn.setVisibility(View.VISIBLE);
+                    deleteBtn.setVisibility(View.GONE);
+                    changeGroupNameLayout.setVisibility(View.GONE);
+                    blacklistLayout.setVisibility(View.GONE);
+
                 }
                 memberAdapter = new MemberAdapter(GroupDetailActivity.this);
-                List<String> groups=new ArrayList<>();
+                List<String> groups = new ArrayList<>();
                 int j;
-                if(EMClient.getInstance().getCurrentUser().equals(group.getOwner())||group.isAllowInvites())
-                    j=4;
+                if (EMClient.getInstance().getCurrentUser().equals(group.getOwner()) || group.isAllowInvites())
+                    j = 4;
                 else
-                    j=5;
-                for(int i=0;i<(group.getAffiliationsCount()>j?j:group.getAffiliationsCount());i++)
-                {
+                    j = 5;
+                for (int i = 0; i < (group.getAffiliationsCount() > j ? j : group.getAffiliationsCount()); i++) {
                     groups.add(group.getMembers().get(i));
                 }
+                if (group.getOwner().equals(EMClient.getInstance().getCurrentUser()))
+                    Collections.reverse(groups);
                 memberAdapter.addAll(groups);
                 memberAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(int position) {
-
+                        startActivityForResult(new Intent(GroupDetailActivity.this, GroupMembersActivity.class).putStringArrayListExtra("members", (ArrayList<String>) group.getMembers()).putExtra("group_owner", group.getOwner()),GROUP_MEMBER);
                     }
                 });
-                if(EMClient.getInstance().getCurrentUser().equals(group.getOwner())||group.isAllowInvites())
+                if (EMClient.getInstance().getCurrentUser().equals(group.getOwner()) || group.isAllowInvites())
                     memberAdapter.addFooter(new RecyclerArrayAdapter.ItemView() {
                         @Override
                         public View onCreateView(ViewGroup parent) {
@@ -247,6 +257,7 @@ public class GroupDetailActivity extends BaseActivity {
             }
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -315,25 +326,10 @@ public class GroupDetailActivity extends BaseActivity {
                     }
                     break;
                 case MOVE_TO_BLACKLIST:
-                    if (resultCode == RESULT_OK) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    EMClient.getInstance().groupManager().getGroupFromServer(groupId);
-                                } catch (HyphenateException e) {
-                                }
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        group = EMClient.getInstance().groupManager().getGroup(groupId);
-
-                                    }
-                                });
-                            }
-                        }).start();
-
-                    }
+                    refresh();
+                    break;
+                case GROUP_MEMBER:
+                    refresh();
                     break;
                 default:
                     break;
@@ -343,8 +339,6 @@ public class GroupDetailActivity extends BaseActivity {
 
     /**
      * 解散群组
-     *
-     * @param groupId
      */
     private void deleteGroup() {
         final String st5 = getResources().getString(R.string.Dissolve_group_chat_tofail);
@@ -539,7 +533,7 @@ public class GroupDetailActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.clear_all_history, R.id.rl_change_group_name, R.id.rl_blacklist, R.id.rl_switch_block_groupmsg, R.id.rl_search, R.id.rl_introduction, R.id.group_layout,R.id.member_list})
+    @OnClick({R.id.clear_all_history, R.id.rl_change_group_name, R.id.rl_blacklist, R.id.rl_switch_block_groupmsg, R.id.rl_search, R.id.rl_introduction, R.id.group_layout, R.id.member_list})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.clear_all_history:
@@ -574,11 +568,15 @@ public class GroupDetailActivity extends BaseActivity {
                 }
                 break;
             case R.id.group_layout:
-                startActivity(new Intent(GroupDetailActivity.this,GroupMembersActivity.class).putStringArrayListExtra("members",(ArrayList<String>) group.getMembers()));
-                break;
-            case R.id.member_list:
-                startActivity(new Intent(GroupDetailActivity.this,GroupMembersActivity.class).putStringArrayListExtra("members",(ArrayList<String>) group.getMembers()));
+                startActivityForResult(new Intent(GroupDetailActivity.this, GroupMembersActivity.class).putStringArrayListExtra("members", (ArrayList<String>) group.getMembers()).putExtra("group_owner", group.getOwner()).putExtra("group_id", group.getGroupId()),GROUP_MEMBER);
                 break;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EMClient.getInstance().groupManager().removeGroupChangeListener(emGroupChangeListener);
+    }
+
 }

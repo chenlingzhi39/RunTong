@@ -3,7 +3,7 @@
     <string name="text_delivered_msg">送达</string>
     <string name="telephone">&#160;&#160;&#160;&#160;&#160;&#160;电话</string>
     <string name="add_contact">新建联系人</string>
-    <string name="send_message">发送短信</string>
+    <string name="send_sms">发送短信</string>
     <string name="save_contact">保存到已有联系人</string>
     <string name="close_ring">关闭铃声</string>
     <string name="open_ring">开启铃声</string>
@@ -1001,4 +1001,11 @@
     <string name="group_hint">请输入群名称或群号</string>
     <string name="no_group">你暂未创建或加入群组！</string>
     <string name="group_member">群成员</string>
+    <string name="me">我</string>
+    <string name="send_message">发消息</string>
+    <string name="add_as_friend">加为好友</string>
+    <string name="phone_number">手机号</string>
+    <string name="group_user_info">成员资料</string>
+    <string name="remove">移除</string>
+    <string name="move_to_black_list">移入黑名单</string>
 </resources>

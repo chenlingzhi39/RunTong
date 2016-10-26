@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.callba.R;
 import com.callba.phone.bean.Member;
 import com.callba.phone.ui.adapter.expandRecyclerviewadapter.StickyRecyclerHeadersAdapter;
+import com.callba.phone.util.Logger;
 
 /**
  * Created by PC-20160514 on 2016/10/25.
@@ -28,6 +29,10 @@ public class GroupMemberAdapter extends RecyclerArrayAdapter<Member> implements 
     public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder, int position) {
         TextView textView = (TextView) holder.itemView;
         String showValue =  String.valueOf(getItem(position).getSortLetters().charAt(0));
+        Logger.i("showValue",showValue);
+        if ("$".equals(showValue))
+            textView.setText("群主");
+        else
         textView.setText(showValue);
     }
 

@@ -19,6 +19,5 @@
 	    android:layout_height="wrap_content"
 	    android:paddingTop="10dp"
 	    android:paddingBottom="10dp"
-	    android:textSize="16sp"
-		android:layout_centerInParent="true"/>
+	    android:textSize="16sp" />
 </LinearLayout>

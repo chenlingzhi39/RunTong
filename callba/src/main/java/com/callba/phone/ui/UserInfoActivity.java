@@ -88,6 +88,7 @@ public class UserInfoActivity extends BaseActivity {
         /*if (getIntent().getBooleanExtra("is_group", false))
             sendMessage.setVisibility(View.VISIBLE);
         else sendMessage.setVisibility(View.GONE);*/
+        gson = new Gson();
         userName = getIntent().getStringExtra("username");
         user = EaseUserUtils.getUserInfo(userName);
         if (userName.length() > 10) {
@@ -112,7 +113,6 @@ public class UserInfoActivity extends BaseActivity {
 
             } else {
                 addFriend.setVisibility(View.VISIBLE);
-                gson = new Gson();
                 OkHttpUtils.post().url(Interfaces.USER_INFO)
                         .addParams("loginName", getUsername())
                         .addParams("loginPwd", getPassword())
@@ -271,6 +271,16 @@ public class UserInfoActivity extends BaseActivity {
                         .build()
                         .execute(new StringCallback() {
                             @Override
+                            public void onBefore(Request request, int id) {
+                              progressDialog=ProgressDialog.show(UserInfoActivity.this,"",getString(R.string.being_added));
+                            }
+
+                            @Override
+                            public void onAfter(int id) {
+                              progressDialog.dismiss();
+                            }
+
+                            @Override
                             public void onError(Call call, Exception e, int id) {
                                 e.printStackTrace();
                                 showException(e);
@@ -286,66 +296,28 @@ public class UserInfoActivity extends BaseActivity {
                                             String s = getResources().getString(R.string.Add_a_friend);
                                             //EMClient.getInstance().contactManager().addContact(toAddUsername+"-callba", s);
                                             sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-                                            OkHttpUtils
-                                                    .post()
-                                                    .url(Interfaces.GET_FRIENDS)
-                                                    .addParams("loginName", getUsername())
-                                                    .addParams("loginPwd",  getPassword())
-                                                    .build().execute(new StringCallback() {
-                                                @Override
-                                                public void onError(Call call, Exception e, int id) {
-                                                    e.printStackTrace();
-                                                }
-
-                                                @Override
-                                                public void onResponse(String response, int id) {
-                                                    try{ Logger.i("get_result",response);
-                                                        String[] result = response.split("\\|");
-                                                        if (result[0].equals("0")) {
-                                                            ArrayList<BaseUser> list;
-                                                            list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
-                                                            }.getType());
-                                                            List<EaseUser> mList = new ArrayList<EaseUser>();
-                                                            for (BaseUser baseUser : list) {
-                                                                EaseUser user = new EaseUser(baseUser.getPhoneNumber()+"-callba");
-                                                                user.setAvatar(baseUser.getUrl_head());
-                                                                user.setNick(baseUser.getNickname());
-                                                                user.setSign(baseUser.getSign());
-                                                                user.setRemark(baseUser.getRemark());
-                                                                EaseCommonUtils.setUserInitialLetter(user);
-                                                                mList.add(user);
-                                                            }
-                                                            DemoHelper.getInstance().updateContactList(mList);
-                                                            LocalBroadcastManager.getInstance(UserInfoActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-
-                                                        }
-                                                    }catch (Exception e){
-                                                        toast(R.string.getserverdata_exception);
-                                                    }
-                                                }
-                                            });
+                                            DemoHelper.getInstance().saveContact(user);
+                                            LocalBroadcastManager.getInstance(UserInfoActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
                                             addFriend.setVisibility(View.GONE);
                                             deleteFriend.setVisibility(View.VISIBLE);
                                             runOnUiThread(new Runnable() {
                                                 public void run() {
-                                                    progressDialog.dismiss();
                                                     String s1 = "添加成功";
-                                                    Toast.makeText(getApplicationContext(), s1, 1).show();
+                                                    Toast.makeText(getApplicationContext(), s1, Toast.LENGTH_SHORT).show();
                                                 }
                                             });
                                         } catch (final Exception e) {
+                                            e.printStackTrace();
                                             runOnUiThread(new Runnable() {
                                                 public void run() {
-                                                    progressDialog.dismiss();
                                                     String s2 = getResources().getString(R.string.Request_add_buddy_failure);
-                                                    Toast.makeText(getApplicationContext(), s2 + e.getMessage(), 1).show();
+                                                    Toast.makeText(getApplicationContext(), s2 + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             });
                                         }
-                                    }else { toast(result[1]);
-                                        progressDialog.dismiss();
-                                    }
+                                    }else  toast(result[1]);
                                 }catch (Exception e){
+                                    e.printStackTrace();
                                     toast(R.string.getserverdata_exception);
                                 }
                             }

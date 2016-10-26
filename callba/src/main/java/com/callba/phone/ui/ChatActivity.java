@@ -696,10 +696,11 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 if (locationAddress != null && !locationAddress.equals("")) {
                     sendLocationMessage(latitude, longitude, locationAddress);
                 } else {
-                    Toast.makeText(this, R.string.unable_to_get_loaction, 0).show();
+                    Toast.makeText(this, R.string.unable_to_get_loaction, Toast.LENGTH_SHORT).show();
                 }
             }else if(requestCode== USER_INFO){
-              finish();
+                setResult(RESULT_OK);
+                finish();
             }
 
         }

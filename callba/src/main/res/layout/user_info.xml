@@ -84,6 +84,7 @@
             android:textSize="18sp"
             android:gravity="left|center"
             android:background="?attr/selectableItemBackground"
+            android:textAllCaps="false"
           />
     </FrameLayout>
 
@@ -107,14 +108,12 @@
         android:id="@+id/add_friend"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="?attr/colorAccent"
+        android:background="@drawable/orange_selector"
         android:text="加为好友"
         android:textColor="@color/white"
-        android:layout_marginTop="10dp"
+        android:layout_margin="20dp"
         android:textSize="18sp"
-        android:visibility="gone"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"/>
+        android:visibility="gone" />
     <Button
         android:id="@+id/send_message"
         android:layout_width="match_parent"
@@ -131,7 +130,7 @@
         android:id="@+id/delete_friend"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_margin="10dp"
+        android:layout_margin="20dp"
         android:background="@drawable/em_btn_style_alert_dialog_special"
         android:text="@string/delete_friend"
         android:textColor="@color/white"

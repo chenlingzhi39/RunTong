@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
     <include layout="@layout/toolbar"/>
 
     <ScrollView
@@ -39,11 +40,10 @@
                         android:layout_alignParentRight="true"/>
                 </RelativeLayout>
                 <android.support.v7.widget.RecyclerView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/member_list"
-                    android:layout_marginTop="5dp"
-                    android:clickable="true"/>
+                    android:layout_marginTop="5dp" />
             </LinearLayout>
 
             <TextView
@@ -188,7 +188,8 @@
                 android:id="@+id/rl_change_group_name"
                 android:layout_width="match_parent"
                 android:layout_height="50dip"
-                android:background="?attr/selectableItemBackground" >
+                android:background="?attr/selectableItemBackground"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -214,7 +215,8 @@
                 android:id="@+id/rl_blacklist"
                 android:layout_width="match_parent"
                 android:layout_height="50dip"
-                android:background="?attr/selectableItemBackground" >
+                android:background="?attr/selectableItemBackground"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -241,7 +243,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dip"
                 android:background="?attr/selectableItemBackground"
-                android:padding="10dip" >
+                android:padding="10dip">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -334,7 +336,8 @@
                 android:paddingTop="7dp"
                 android:text="@string/Exit_the_group_chat"
                 android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/btn_exitdel_grp"
