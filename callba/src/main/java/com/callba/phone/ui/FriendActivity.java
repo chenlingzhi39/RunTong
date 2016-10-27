@@ -44,7 +44,6 @@ import com.callba.phone.widget.EaseAlertDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hyphenate.chat.EMClient;
-import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -86,7 +85,6 @@ public class FriendActivity extends BaseActivity {
     List<NearByUser> list;
     private String[] result;
     private int page = 1;
-    private boolean is_refresh = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,15 +99,13 @@ public class FriendActivity extends BaseActivity {
         nearByUserAdapter.setError(R.layout.view_more_error).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                is_refresh = false;
                 nearByUserAdapter.resumeMore();
             }
         });
         nearByUserAdapter.setMore(R.layout.view_more, new RecyclerArrayAdapter.OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
-                is_refresh = false;
-                getNearBy(true);
+                getNearBy();
             }
         });
         nearByUserAdapter.setNoMore(R.layout.view_nomore);
@@ -120,12 +116,12 @@ public class FriendActivity extends BaseActivity {
 
             @Override
             public void onRefresh() {
-                is_refresh = true;
-                getNearBy(false);
+                nearByUserAdapter.clear();
+                page=1;
+                getNearBy();
             }
         });
-        is_refresh = true;
-        getNearBy(false);
+        getNearBy();
         refreshLayout.setRefreshing(true);
         userList.setAdapter(nearByUserAdapter);
         locationClient = new AMapLocationClient(this);
@@ -303,19 +299,19 @@ public class FriendActivity extends BaseActivity {
         locationClient.startLocation();
     }
 
-    public void getNearBy(final boolean is_next) {
+    public void getNearBy() {
         OkHttpUtils.post().url(Interfaces.GET_NEARBY)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
                 .addParams("latitude", UserManager.getLatitude(this))
                 .addParams("longitude", UserManager.getLongitude(this))
                 .addParams("radius", "1000")
-                .addParams("page", is_next ? page + 1 + "" : page + "")
+                .addParams("page", page+"")
                 .build().execute(new StringCallback() {
                                      @Override
                                      public void onError(Call call, Exception e, int id) {
                                          toast(R.string.network_error);
-                                         if (!is_refresh)
+                                         if (nearByUserAdapter.getCount()>0)
                                              nearByUserAdapter.pauseMore();
                                      }
 
@@ -338,84 +334,81 @@ public class FriendActivity extends BaseActivity {
 
                                                  }
                                                  Logger.i("size", list.size() + "");
-                                                 if (list.size() == 0) {
-                                                 } else {
-                                                     if (is_refresh) {
-                                                         nearByUserAdapter.clear();
-                                                         nearByUserAdapter.addAll(list);
-                                                         page = 1;
-                                                         nearByUserAdapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
+                                                 if (nearByUserAdapter.getCount()==0) {
+                                                     page+=1;
+                                                     nearByUserAdapter.addAll(list);
+                                                     nearByUserAdapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
+                                                         @Override
+                                                         public boolean onItemClick(int position) {
+                                                             showDialog(nearByUserAdapter.getData().get(position - 2));
+                                                             return true;
+                                                         }
+                                                     });
+                                                     if (nearByUserAdapter.getHeaders().size() == 0)
+                                                         nearByUserAdapter.addHeader(new RecyclerArrayAdapter.ItemView() {
                                                              @Override
-                                                             public boolean onItemClick(int position) {
-                                                                 showDialog(nearByUserAdapter.getData().get(position - 2));
-                                                                 return true;
+                                                             public View onCreateView(ViewGroup parent) {
+                                                                 return getLayoutInflater().inflate(R.layout.ad, null);
                                                              }
-                                                         });
-                                                         if (nearByUserAdapter.getHeaders().size() == 0)
-                                                             nearByUserAdapter.addHeader(new RecyclerArrayAdapter.ItemView() {
-                                                                 @Override
-                                                                 public View onCreateView(ViewGroup parent) {
-                                                                     return getLayoutInflater().inflate(R.layout.ad, null);
-                                                                 }
 
-                                                                 @Override
-                                                                 public void onBindView(View headerView) {
-                                                                     final ImageView imageView = (ImageView) headerView.findViewById(R.id.image);
-                                                                     OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT2)
-                                                                             .addParams("loginName", getUsername())
-                                                                             .addParams("loginPwd", getPassword())
-                                                                             .addParams("softType", "android")
-                                                                             .build().execute(new StringCallback() {
-                                                                         @Override
-                                                                         public void onError(Call call, Exception e, int id) {
+                                                             @Override
+                                                             public void onBindView(View headerView) {
+                                                                 final ImageView imageView = (ImageView) headerView.findViewById(R.id.image);
+                                                                 OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT2)
+                                                                         .addParams("loginName", getUsername())
+                                                                         .addParams("loginPwd", getPassword())
+                                                                         .addParams("softType", "android")
+                                                                         .build().execute(new StringCallback() {
+                                                                     @Override
+                                                                     public void onError(Call call, Exception e, int id) {
+                                                                         e.printStackTrace();
+                                                                     }
+
+                                                                     @Override
+                                                                     public void onResponse(String response, int id) {
+                                                                         try {
+                                                                             Logger.i("ad_result", response);
+
+                                                                             String[] result = response.split("\\|");
+                                                                             if (result[0].equals("0")) {
+                                                                                 final ArrayList<Advertisement> list;
+                                                                                 list = gson.fromJson(result[1], new TypeToken<ArrayList<Advertisement>>() {
+                                                                                 }.getType());
+                                                                                 SimpleHandler.getInstance().postDelayed(new Runnable() {
+                                                                                     @Override
+                                                                                     public void run() {
+                                                                                         Glide.with(getApplicationContext()).load(list.get(0).getImage()).into(imageView);
+                                                                                     }
+                                                                                 }, 500);
+                                                                                 imageView.setOnClickListener(new View.OnClickListener() {
+                                                                                     @Override
+                                                                                     public void onClick(View v) {
+                                                                                         Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                                                                                         intent1.setData(Uri.parse(list.get(0).getAdurl()));
+                                                                                         startActivity(intent1);
+                                                                                     }
+                                                                                 });
+                                                                             }
+                                                                         } catch (Exception e) {
                                                                              e.printStackTrace();
                                                                          }
-
-                                                                         @Override
-                                                                         public void onResponse(String response, int id) {
-                                                                             try {
-                                                                                 Logger.i("ad_result", response);
-
-                                                                                 String[] result = response.split("\\|");
-                                                                                 if (result[0].equals("0")) {
-                                                                                     final ArrayList<Advertisement> list;
-                                                                                     list = gson.fromJson(result[1], new TypeToken<ArrayList<Advertisement>>() {
-                                                                                     }.getType());
-                                                                                     SimpleHandler.getInstance().postDelayed(new Runnable() {
-                                                                                         @Override
-                                                                                         public void run() {
-                                                                                             Glide.with(getApplicationContext()).load(list.get(0).getImage()).into(imageView);
-                                                                                         }
-                                                                                     }, 500);
-                                                                                     imageView.setOnClickListener(new View.OnClickListener() {
-                                                                                         @Override
-                                                                                         public void onClick(View v) {
-                                                                                             Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                                                                                             intent1.setData(Uri.parse(list.get(0).getAdurl()));
-                                                                                             startActivity(intent1);
-                                                                                         }
-                                                                                     });
-                                                                                 }
-                                                                             } catch (Exception e) {
-                                                                                 e.printStackTrace();
-                                                                             }
-                                                                         }
-                                                                     });
-                                                                 }
-                                                             });
-                                                     } else {
-                                                         nearByUserAdapter.addAll(list);
-                                                         page += 1;
-                                                     }
+                                                                     }
+                                                                 });
+                                                             }
+                                                         });
+                                                 }else if(list.size()==0){
+                                                     nearByUserAdapter.stopMore();
+                                                 }else {nearByUserAdapter.addAll(list);
+                                                   page+=1;
                                                  }
                                              } else {
                                                  toast(result[1]);
-                                                 if (!is_refresh)
+                                                 if(nearByUserAdapter.getCount()>0)
                                                      nearByUserAdapter.stopMore();
                                              }
                                          } catch (Exception e) {
                                              toast(R.string.getserverdata_exception);
-                                             if (!is_refresh)
+                                             if (nearByUserAdapter.getCount()>0)
                                                  nearByUserAdapter.pauseMore();
                                          }
 
@@ -426,4 +419,12 @@ public class FriendActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        locationClient.stopLocation();
+        locationClient.onDestroy();
+        locationClient = null;
+        locationOption = null;
+    }
 }

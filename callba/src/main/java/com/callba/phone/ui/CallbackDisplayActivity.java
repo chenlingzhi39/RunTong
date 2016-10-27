@@ -41,38 +41,53 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 
 @ActivityFragmentInject(
         contentViewId = R.layout.callback_display)
 public class CallbackDisplayActivity extends BaseActivity {
+    @BindView(R.id.iv_call_bg)
+    ImageView ivCallBg;
+    @BindView(R.id.avatar)
+    CircleImageView avatar;
+    @BindView(R.id.tv_name)
+    TextView tvName;
+    @BindView(R.id.tv_num)
+    TextView tvNum;
+    @BindView(R.id.tv_status)
+    TextView tvStatus;
+    @BindView(R.id.countdown)
+    TextView countdown;
+    @BindView(R.id.voice)
+    FloatingActionButton voice;
+    @BindView(R.id.ring_text)
+    TextView ringText;
+    @BindView(R.id.cancel)
+    FloatingActionButton cancel;
     private String name;
     private String number;
-    private TextView tv_name;
-    private TextView tv_num;
-    private TextView tv_status;
-    private TextView count_down;
     private CalllogService calllogService;
-    private FloatingActionButton cancel, voice;
     private MediaPlayer mp;
     private Gson gson;
     private DialAd dialAd;
-    private ImageView background;
-    private CircleImageView avatar;
     private boolean state = false;
     TimeCount time;
     private int currentCallbackTime = 0;
     private Exception callbackException;
+
     /**
      * 延迟关闭当前页面
+     *
      * @author zhw
      */
     private void delayFinish() {
         //呼叫失败，延迟关闭
         time = new TimeCount(10000, 1000);
         time.start();
-        count_down.setVisibility(View.VISIBLE);
+        countdown.setVisibility(View.VISIBLE);
              /*   SimpleHandler.getInstance().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -80,6 +95,7 @@ public class CallbackDisplayActivity extends BaseActivity {
                     }
                 }, 2000);*/
     }
+
     class TimeCount extends CountDownTimer {
 
         public TimeCount(long millisInFuture, long countDownInterval) {
@@ -94,21 +110,14 @@ public class CallbackDisplayActivity extends BaseActivity {
 
         @Override
         public void onTick(long millisUntilFinished) {// 计时过程
-            count_down.setText(millisUntilFinished / 1000 + "秒后自动关闭");
+            countdown.setText(millisUntilFinished / 1000 + "秒后自动关闭");
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        tv_name = (TextView) findViewById(R.id.tv_name);
-        tv_num = (TextView) findViewById(R.id.tv_num);
-        tv_status = (TextView) findViewById(R.id.tv_status);
-        cancel = (FloatingActionButton) findViewById(R.id.cancel);
-        voice = (FloatingActionButton) findViewById(R.id.voice);
-        background = (ImageView) findViewById(R.id.iv_call_bg);
-        avatar = (CircleImageView) findViewById(R.id.avatar);
-        count_down = (TextView) findViewById(R.id.countdown);
+        ButterKnife.bind(this);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,18 +126,22 @@ public class CallbackDisplayActivity extends BaseActivity {
         });
         if ((boolean) SPUtils.get(CallbackDisplayActivity.this, Constant.SETTINGS, Constant.Callback_Ring, true)) {
             voice.setImageResource(R.drawable.ic_notifications_on_white_24dp);
+            ringText.setText(getString(R.string.close_ring));
         } else {
             voice.setImageResource(R.drawable.ic_notifications_off_white_24dp);
+            ringText.setText(getString(R.string.open_ring));
         }
         voice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if ((boolean) SPUtils.get(CallbackDisplayActivity.this, Constant.SETTINGS, Constant.Callback_Ring, true)) {
                     voice.setImageResource(R.drawable.ic_notifications_off_white_24dp);
+                    ringText.setText(getString(R.string.open_ring));
                     SPUtils.put(CallbackDisplayActivity.this, Constant.SETTINGS, Constant.Callback_Ring, false);
                     if (mp != null) if (mp.isPlaying()) mp.pause();
                 } else {
                     voice.setImageResource(R.drawable.ic_notifications_on_white_24dp);
+                    ringText.setText(getString(R.string.close_ring));
                     SPUtils.put(CallbackDisplayActivity.this, Constant.SETTINGS, Constant.Callback_Ring, true);
                     if (mp != null) mp.start();
                     else if (state) playSound();
@@ -145,10 +158,10 @@ public class CallbackDisplayActivity extends BaseActivity {
                 avatar.setImageBitmap(bitmap);
         }
         if (TextUtils.isEmpty(name))
-            tv_name.setText("未知");
+            tvName.setText("未知");
         else
-            tv_name.setText(name);
-        tv_num.setText(number);
+            tvName.setText(name);
+        tvNum.setText(number);
         // tv_status.setText(number);
         calllogService = new CalllogService(this, null);
         callback();
@@ -190,7 +203,7 @@ public class CallbackDisplayActivity extends BaseActivity {
                         }.getType());
                         if (dialAds.size() > 0) {
                             dialAd = dialAds.get(0);
-                            Glide.with(CallbackDisplayActivity.this).load(dialAd.getImage()).into(background);
+                            Glide.with(CallbackDisplayActivity.this).load(dialAd.getImage()).into(ivCallBg);
                         }
                     }
                 } catch (Exception e) {
@@ -213,8 +226,8 @@ public class CallbackDisplayActivity extends BaseActivity {
         paramsMap.put("errorTime", errorTime);
         paramsMap.put("from", getUsername());
         paramsMap.put("to", number);
-        if(callbackException!=null)
-        paramsMap.put("exception",callbackException.toString());
+        if (callbackException != null)
+            paramsMap.put("exception", callbackException.toString());
         MobclickAgent.onEvent(this, "callback_failed", paramsMap);
     }
 
@@ -229,9 +242,9 @@ public class CallbackDisplayActivity extends BaseActivity {
 
             @Override
             public void onError(Call call, Exception e, int id) {
-                callbackException=e;
+                callbackException = e;
                 if (e instanceof UnknownHostException) {
-                    tv_status.setText(R.string.conn_failed);
+                    tvStatus.setText(R.string.conn_failed);
                     //统计回拨失败数据
                     countCallbackFailedData(getString(R.string.conn_failed));
                     delayFinish();
@@ -243,20 +256,21 @@ public class CallbackDisplayActivity extends BaseActivity {
                         //calllogService.saveBackCallLog(name, number);
                         if ((boolean) SPUtils.get(CallbackDisplayActivity.this, Constant.SETTINGS, Constant.Callback_Ring, true))
                             playSound();
-                        tv_status.setText("请接听Call吧来电");
+                        tvStatus.setText("请接听Call吧来电");
                         MobclickAgent.onEvent(CallbackDisplayActivity.this, "callback_success");
                     } else {
                         if (currentCallbackTime < 3) {
                             callback();
                             currentCallbackTime++;
-                        } else
-                        {  tv_status.setText(R.string.network_error);
+                        } else {
+                            tvStatus.setText(R.string.network_error);
                             //统计回拨失败数据
                             countCallbackFailedData(getString(R.string.callback_timeout));
-                            delayFinish();}
+                            delayFinish();
+                        }
                     }
                 } else {
-                    tv_status.setText(R.string.network_error);
+                    tvStatus.setText(R.string.network_error);
                     //统计回拨失败数据
                     countCallbackFailedData(getString(R.string.network_error));
 
@@ -267,7 +281,7 @@ public class CallbackDisplayActivity extends BaseActivity {
             @Override
             public void onResponse(String response, int id) {
                 try {
-                    String result =  response.replace("\n", "").replace("\r", "");
+                    String result = response.replace("\n", "").replace("\r", "");
                     String[] content = result.split("\\|");
                     if ("0".equals(content[0])) {
                         state = true;
@@ -282,10 +296,10 @@ public class CallbackDisplayActivity extends BaseActivity {
                         countCallbackFailedData(content[1]);
                         delayFinish();
                     }
-                    tv_status.setText(content[1]);
+                    tvStatus.setText(content[1]);
                 } catch (Exception e) {
-                    callbackException=e;
-                    tv_status.setText(R.string.getserverdata_exception);
+                    callbackException = e;
+                   tvStatus.setText(R.string.getserverdata_exception);
                     //统计回拨失败数据
                     countCallbackFailedData(getString(R.string.server_error));
                     delayFinish();

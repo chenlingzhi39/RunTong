@@ -42,7 +42,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="姓名"
                 android:textColor="@color/white"
                 android:textSize="25sp" />
 
@@ -61,19 +60,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="133XXXXXX3 /"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
 
-                <TextView
-                    android:id="@+id/tv_adress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text=" 江苏无锡"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
         </LinearLayout>
@@ -119,43 +108,54 @@
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="0.8"
                 android:gravity="center"
                 android:orientation="horizontal">
-             <!--   <Button
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/bg_cancel"
-                    android:text="@string/cancel"
-                    android:id="@+id/cancel"
-                    android:paddingLeft="30dp"
-                    android:paddingRight="30dp"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
-                    android:textColor="?attr/colorAccent" />-->
+                    android:orientation="vertical"
+                    android:layout_margin="16dp">
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/voice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:backgroundTint="@color/material_green_600"
+                        android:src="@drawable/ic_notifications_on_white_24dp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/ring_text"
+                        android:layout_marginTop="10dp"
+                        android:layout_gravity="center"
+                        android:textColor="@color/material_white"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_margin="16dp">
                 <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/voice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|right"
-                    android:layout_margin="16dp"
-                    app:backgroundTint="@color/material_green_600"
-                    android:src="@drawable/ic_notifications_on_white_24dp"
-                    />
-                <android.support.design.widget.FloatingActionButton
                     android:id="@+id/cancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|right"
-                    android:layout_margin="16dp"
                     app:backgroundTint="@color/material_red_600"
                     android:src="@drawable/ic_close_white_24dp"
                     />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/close"
+                        android:layout_marginTop="10dp"
+                        android:layout_gravity="center"
+                        android:textColor="@color/material_white"
+                        />
             </LinearLayout>
 
             </LinearLayout>
     </LinearLayout>
-
+</LinearLayout>
 </FrameLayout>
