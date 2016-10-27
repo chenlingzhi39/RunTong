@@ -172,7 +172,6 @@ public  class ContactsAccessPublic {
                 Data.RAW_CONTACT_ID+" DESC"); // Sort order.
         Logger.i("count",cursor.getCount()+"");
       try {
-          if (cursor != null) {
               if (cursor.getCount() == 0) {
                   cursor.close();
                   return "0";
@@ -183,7 +182,6 @@ public  class ContactsAccessPublic {
                   cursor.close();
                   return count + "";
               }
-          } else return "0";
       }catch (Exception e){
           e.printStackTrace();
       }

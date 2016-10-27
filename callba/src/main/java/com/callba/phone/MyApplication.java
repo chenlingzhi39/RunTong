@@ -20,6 +20,7 @@ import com.callba.BuildConfig;
 import com.callba.phone.ui.WelcomeActivity;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.StorageUtils;
+import com.squareup.leakcanary.LeakCanary;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.ArrayList;
@@ -91,6 +92,13 @@ public class MyApplication extends Application {
     }
     @Override
     public void onCreate() {
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
+        // Normal app init code...
        // MultiDex.install(this);
         super.onCreate();
        // timeCount=new TimeCount(10000,1000);
@@ -123,6 +131,8 @@ public class MyApplication extends Application {
         String language = Locale.getDefault().getLanguage();
         Logger.i("language",language);
         setupDatabase();
+
+
     }
     private void setupDatabase() {
         // // 官方推荐将获取 DaoMaster 对象的方法放到 Application 层，这样将避免多次创建生成 Session 对象

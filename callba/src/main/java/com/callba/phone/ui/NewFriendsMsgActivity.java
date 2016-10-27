@@ -78,7 +78,7 @@ public class NewFriendsMsgActivity extends BaseActivity {
 
 			}
 		};
-		localBroadcastManager.registerReceiver(broadcastReceiver,new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
+		localBroadcastManager.registerReceiver(broadcastReceiver,new IntentFilter(Constant.ACTION_GROUP_NOTIFY));
 		NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		notificationManager.cancel(0526);
 	}
@@ -102,6 +102,7 @@ public class NewFriendsMsgActivity extends BaseActivity {
 	@Override
 	protected void onDestroy() {
 		localBroadcastManager.unregisterReceiver(broadcastReceiver);
+		localBroadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_NOTIFY));
 		super.onDestroy();
 	}
 }

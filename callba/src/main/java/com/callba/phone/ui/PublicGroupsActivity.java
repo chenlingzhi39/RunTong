@@ -128,12 +128,13 @@ public class PublicGroupsActivity extends BaseActivity {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                first=true;
+                if(intent.getIntExtra("result",1)==1)
+                {first=true;
                 groupInfoAdapter.clear();
                 allGroupInfos.clear();
                 cursor = "";
                 currentSize = 0;
-                refresh();
+                refresh();}
             }
         };
         broadcastManager = LocalBroadcastManager.getInstance(this);
@@ -335,7 +336,7 @@ public class PublicGroupsActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         broadcastManager.unregisterReceiver(broadcastReceiver);
+        super.onDestroy();
     }
 }

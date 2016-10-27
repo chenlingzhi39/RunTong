@@ -201,6 +201,14 @@ abstract public class RecyclerArrayAdapter<T> extends RecyclerView.Adapter<BaseV
         headers.add(view);
     }
 
+    public ArrayList<ItemView> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(ArrayList<ItemView> headers) {
+        this.headers = headers;
+    }
+
     public void addFooter(ItemView view){
         if (view==null)throw new NullPointerException("ItemView can't be null");
         footers.add(view);

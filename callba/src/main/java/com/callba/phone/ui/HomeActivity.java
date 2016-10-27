@@ -22,18 +22,22 @@ import com.callba.phone.MyApplication;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.bean.Advertisement;
 import com.callba.phone.bean.Campaign;
+import com.callba.phone.bean.ContactData;
 import com.callba.phone.bean.HomeItem;
 import com.callba.phone.bean.SystemNumber;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.logic.login.LoginController;
+import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.manager.UserManager;
+import com.callba.phone.service.MainService;
 import com.callba.phone.ui.adapter.CampaignAdapter;
 import com.callba.phone.ui.adapter.HomeAdapter;
 import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
+import com.callba.phone.util.ContactsAccessPublic;
 import com.callba.phone.util.DesUtil;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -318,6 +322,7 @@ public class HomeActivity extends BaseActivity {
                     Logger.i("login_result", response);
                     String[] resultInfo = response.split("\\|");
                     if (resultInfo[0].equals("0")) { //处理登录成功返回信息
+                        getSystemPhoneNumber(ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话"));
                         LoginController.parseLoginSuccessResult(HomeActivity.this, username, password, resultInfo);
                         LoginController.getInstance().setUserLoginState(true);
                         if ((boolean) SPUtils.get(HomeActivity.this, "settings", "sign_key", true)&&!getDate().equals(SPUtils.get(HomeActivity.this, Constant.PACKAGE_NAME, "sign_date", "")))
@@ -595,6 +600,63 @@ public void getKey(){
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+            }
+        });
+    }
+    public void getSystemPhoneNumber(String count) {
+        Logger.i("phoneNumberCount", count);
+        OkHttpUtils.post().url(Interfaces.GET_SYSTEM_PHONE_NUMBER)
+                .addParams("loginName", getUsername())
+                .addParams("loginPwd", getPassword())
+                .addParams("phoneNumberCount", count)
+                .build().execute(new StringCallback() {
+            @Override
+            public void onError(Call call, Exception e, int id) {
+
+            }
+
+            @Override
+            public void onResponse(String response, int id) {
+                try {
+                    Log.i("system_result", response);
+                    result = response.split("\\|");
+                    if (result[0].equals("0")) {
+                        list = new ArrayList<>();
+                        try {
+                            list = gson.fromJson(result[1], new TypeToken<ArrayList<SystemNumber>>() {
+                            }.getType());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        final ArrayList<String> numbers = new ArrayList<>();
+                        final ContactData contactData = new ContactData();
+                        contactData.setContactName("Call吧电话");
+                        for (SystemNumber user : list) {
+                            numbers.add(user.getPhoneNumber());
+                            Logger.i("phonenumber", user.getPhoneNumber());
+                        }
+                        if (ContactsAccessPublic.hasName(HomeActivity.this, "Call吧电话").equals("0"))
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
+                                }
+                            }).start();
+                        else {
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ContactsAccessPublic.deleteContact(HomeActivity.this, new ContactsManager(getContentResolver()).getContactID("Call吧电话"));
+                                    ContactsAccessPublic.insertPhoneContact(HomeActivity.this, contactData, numbers);
+                                }
+                            }).start();
+                        }
+                    } else {
+
+                    }
+                } catch (Exception e) {
+
                 }
             }
         });

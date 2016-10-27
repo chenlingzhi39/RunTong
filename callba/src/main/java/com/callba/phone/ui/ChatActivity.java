@@ -115,21 +115,18 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     protected boolean haveMoreData = true;
     private EaseVoiceRecorderView voiceRecorderView;
     private GroupListener groupListener;
-    public static ChatActivity activityInstance;
     private NotificationManager notificationManager;
     private BroadcastReceiver broadcastReceiver;
     private LocalBroadcastManager broadcastManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activityInstance = this;
         ButterKnife.bind(this);
         init();
     }
 
     protected void init() {
         broadcastManager=LocalBroadcastManager.getInstance(this);
-        Locale.setDefault(new Locale("zh"));
         chatFragmentListener = this;
         chatType = getIntent().getIntExtra("chatType", 1);
         if (chatType != EaseConstant.CHATTYPE_SINGLE)

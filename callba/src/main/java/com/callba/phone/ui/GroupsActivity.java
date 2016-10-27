@@ -140,6 +140,7 @@ public class GroupsActivity extends BaseActivity {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                if(intent.getIntExtra("result",1)==1)
                 refresh();
             }
         };
@@ -148,7 +149,6 @@ public class GroupsActivity extends BaseActivity {
     }
 
     public void refresh() {
-        refreshLayout.setRefreshing(true);
         subscription = Observable.create(new Observable.OnSubscribe<List<EMGroup>>() {
             @Override
             public void call(Subscriber<? super List<EMGroup>> subscriber) {

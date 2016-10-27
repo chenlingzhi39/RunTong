@@ -81,10 +81,6 @@ public class PickContactNoCheckboxActivity extends BaseActivity {
 				if (confirmed) {
 					if (selectUser == null)
 						return;
-					try {
-						ChatActivity.activityInstance.finish();
-					} catch (Exception e) {
-					}
 					Intent intent = new Intent(PickContactNoCheckboxActivity.this, ChatActivity.class);
 					// it is single chat
 					intent.putExtra("userId", selectUser.getUsername());

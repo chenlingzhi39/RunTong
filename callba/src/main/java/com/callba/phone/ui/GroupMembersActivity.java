@@ -17,6 +17,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -32,6 +33,7 @@ import com.callba.phone.bean.GroupMember;
 import com.callba.phone.bean.Member;
 import com.callba.phone.pinyin.CharacterParser;
 import com.callba.phone.ui.adapter.GroupMemberAdapter;
+import com.callba.phone.ui.adapter.MemberAdapter;
 import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
 import com.callba.phone.ui.adapter.expandRecyclerviewadapter.StickyRecyclerHeadersDecoration;
 import com.callba.phone.ui.base.BaseActivity;
@@ -43,6 +45,7 @@ import com.callba.phone.widget.SideBar;
 import com.hyphenate.EMGroupChangeListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMConversation;
+import com.hyphenate.chat.EMGroup;
 import com.hyphenate.exceptions.HyphenateException;
 
 import java.util.ArrayList;
@@ -52,6 +55,12 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by PC-20160514 on 2016/10/25.
@@ -86,6 +95,7 @@ public class GroupMembersActivity extends BaseActivity {
     private ArrayList<Member> members;
     private EMGroupChangeListener emGroupChangeListener;
     private Filter filter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,7 +124,8 @@ public class GroupMembersActivity extends BaseActivity {
 
             @Override
             public void onInvitationAccepted(String s, String s1, String s2) {
-
+                if (s.equals(getIntent().getStringExtra("group_id")))
+                    refresh();
             }
 
             @Override
@@ -136,12 +147,20 @@ public class GroupMembersActivity extends BaseActivity {
 
             @Override
             public void onAutoAcceptInvitationFromGroup(String s, String s1, String s2) {
-                if (s.equals(getIntent().getStringExtra("group_id")))
-                    refresh();
+
             }
         };
         EMClient.getInstance().groupManager().addGroupChangeListener(emGroupChangeListener);
-        refreshLayout.setEnabled(false);
+        refreshLayout.setColorSchemeResources(R.color.holo_blue_bright, R.color.holo_green_light,
+                R.color.holo_orange_light, R.color.holo_red_light);
+        //下拉刷新
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
         sidebar.setTextView(dialog);
         sidebar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
             @Override
@@ -195,44 +214,61 @@ public class GroupMembersActivity extends BaseActivity {
 
     public void refresh() {
         members.clear();
-        for (String s : getIntent().getStringArrayListExtra("members")) {
-            Member member = new Member();
-            member.setName(s);
-            String pinyin = CharacterParser.getInstance().getSelling(EaseUserUtils.getUserNick(s));
-            String sortString = pinyin.substring(0, 1).toUpperCase();
-            Logger.i("sortString", sortString.toUpperCase());
-            if (s.equals(getIntent().getStringExtra("group_owner")))
-                member.setSortLetters("$");
-            else {
-                if (sortString.matches("[A-Z]")) {
-                    member.setSortLetters(sortString.toUpperCase());
-                } else {
-                    member.setSortLetters("#");
+        subscription = Observable.create(new rx.Observable.OnSubscribe<EMGroup>() {
+            @Override
+            public void call(Subscriber<? super EMGroup> subscriber) {
+                try {
+                    subscriber.onNext(EMClient.getInstance().groupManager().getGroupFromServer(getIntent().getStringExtra("group_id")));
+                } catch (HyphenateException e) {
+                    e.printStackTrace();
+                    subscriber.onNext(EMClient.getInstance().groupManager().getGroup(getIntent().getStringExtra("group_id")));
                 }
             }
-            members.add(member);
-        }
-        Collections.sort(members, new Comparator<Member>() {
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<EMGroup>() {
             @Override
-            public int compare(Member member, Member t1) {
-                if (member.getSortLetters().equals("@")
-                        || t1.getSortLetters().equals("#")) {
-                    return -1;
-                } else if (member.getSortLetters().equals("#")
-                        || t1.getSortLetters().equals("@")) {
-                    return 1;
-                } else {
-                    return member.getSortLetters().compareTo(t1.getSortLetters());
+            public void call(EMGroup emGroup) {
+                refreshLayout.setRefreshing(false);
+                for (String s : emGroup.getMembers()) {
+                    Member member = new Member();
+                    member.setName(s);
+                    String pinyin = CharacterParser.getInstance().getSelling(EaseUserUtils.getUserNick(s));
+                    String sortString = pinyin.substring(0, 1).toUpperCase();
+                    Logger.i("sortString", sortString.toUpperCase());
+                    if (s.equals(getIntent().getStringExtra("group_owner")))
+                        member.setSortLetters("$");
+                    else {
+                        if (sortString.matches("[A-Z]")) {
+                            member.setSortLetters(sortString.toUpperCase());
+                        } else {
+                            member.setSortLetters("#");
+                        }
+                    }
+                    members.add(member);
                 }
+                Collections.sort(members, new Comparator<Member>() {
+                    @Override
+                    public int compare(Member member, Member t1) {
+                        if (member.getSortLetters().equals("@")
+                                || t1.getSortLetters().equals("#")) {
+                            return -1;
+                        } else if (member.getSortLetters().equals("#")
+                                || t1.getSortLetters().equals("@")) {
+                            return 1;
+                        } else {
+                            return member.getSortLetters().compareTo(t1.getSortLetters());
+                        }
+                    }
+                });
+                filter = new MyFilter(members);
+                if (TextUtils.isEmpty(editTextSearch.getText().toString())) {
+                    groupMemberAdapter.clear();
+                    groupMemberAdapter.addAll(members);
+                } else
+                    filter.filter(editTextSearch.getText().toString());
             }
         });
-        filter=new MyFilter(members);
-        if(TextUtils.isEmpty(editTextSearch.getText().toString()))
-        {groupMemberAdapter.clear();
-        groupMemberAdapter.addAll(members);}else
-            filter.filter(editTextSearch.getText().toString());
-
     }
+
     private void InitiateSearch() {
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -276,6 +312,7 @@ public class GroupMembersActivity extends BaseActivity {
         });
         editTextSearch.requestFocus();
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -327,7 +364,7 @@ public class GroupMembersActivity extends BaseActivity {
                         public void run() {
                             groupMemberAdapter.remove(member);
                             members.remove(member);
-                            filter=new MyFilter(members);
+                            filter = new MyFilter(members);
                             setResult(RESULT_OK);
                             deleteDialog.dismiss();
                         }
@@ -359,7 +396,7 @@ public class GroupMembersActivity extends BaseActivity {
                             pd.dismiss();
                             groupMemberAdapter.remove(member);
                             members.remove(member);
-                            filter=new MyFilter(members);
+                            filter = new MyFilter(members);
                             setResult(RESULT_OK);
                             Toast.makeText(getApplicationContext(), R.string.Move_into_blacklist_success, Toast.LENGTH_SHORT).show();
                         }
@@ -382,6 +419,7 @@ public class GroupMembersActivity extends BaseActivity {
         if (resultCode == RESULT_OK)
             groupMemberAdapter.notifyDataSetChanged();
     }
+
     public class MyFilter extends Filter {
         List<Member> mOriginalList;
 
@@ -411,29 +449,30 @@ public class GroupMembersActivity extends BaseActivity {
 //                        username = user.getNick();
                     String username = member.getName();
 
-                        EaseUser user = EaseUserUtils.getUserInfo(member.getName());
-                        if (user != null) {
-                            if (!TextUtils.isEmpty(user.getNick()))
-                                username = user.getNick();
-                            if (!TextUtils.isEmpty(user.getRemark()))
-                                username = user.getRemark();
-                        }
-                        if (username.contains(prefixString)) {
-                            newValues.add(member);
-                        }
+                    EaseUser user = EaseUserUtils.getUserInfo(member.getName());
+                    if (user != null) {
+                        if (!TextUtils.isEmpty(user.getNick()))
+                            username = user.getNick();
+                        if (!TextUtils.isEmpty(user.getRemark()))
+                            username = user.getRemark();
                     }
-                    results.values = newValues;
-                    results.count = newValues.size();
+                    if (username.contains(prefixString)) {
+                        newValues.add(member);
+                    }
                 }
-                return results;
+                results.values = newValues;
+                results.count = newValues.size();
             }
-
-            @Override
-            protected void publishResults (CharSequence constraint, FilterResults results){
-                groupMemberAdapter.clear();
-                groupMemberAdapter.addAll((ArrayList<Member>) results.values);
-            }
+            return results;
         }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            groupMemberAdapter.clear();
+            groupMemberAdapter.addAll((ArrayList<Member>) results.values);
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -443,12 +482,13 @@ public class GroupMembersActivity extends BaseActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(cardSearch.getWindowToken(), 0);
-        if(cardSearch.getVisibility()== View.VISIBLE&&TextUtils.isEmpty(editTextSearch.getText().toString()))
+        if (cardSearch.getVisibility() == View.VISIBLE && TextUtils.isEmpty(editTextSearch.getText().toString()))
             InitiateSearch.handleToolBar(GroupMembersActivity.this, cardSearch, editTextSearch, 20);
     }
-    }
+}
 

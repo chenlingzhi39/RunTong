@@ -563,7 +563,7 @@ public class DemoHelper {
             Log.d(TAG, invitee + "同意加入群聊：" + _group == null ? groupId : _group.getGroupName());
             msg.setStatus(InviteMesageStatus.GROUPINVITATION_ACCEPTED);
             notifyNewIviteMessage(msg);
-            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
+            broadcastManager.sendBroadcast(new Intent(Constant.INVATATION_ACCEPTED));
         }
 
         @Override
@@ -641,7 +641,7 @@ public class DemoHelper {
             Log.d(TAG, applyer + " 申请加入群聊：" + groupName);
             msg.setStatus(InviteMesageStatus.BEAPPLYED);
             notifyNewIviteMessage(msg);
-            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
+            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_NOTIFY));
             EaseUser user=getUserInfo(applyer);
             Bitmap bitmap=  BitmapFactory.decodeResource(appContext.getResources(),
                     R.drawable.logo);

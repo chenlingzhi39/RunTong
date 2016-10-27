@@ -40,6 +40,7 @@ import com.callba.phone.widget.ContactItemView;
 import com.callba.phone.widget.EaseContactList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hyphenate.EMGroupChangeListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
@@ -80,7 +81,7 @@ public class WebContactFragment extends BaseFragment {
     private ContactItemView communityItem;
     protected InputMethodManager inputMethodManager;
     private InviteMessgeDao inviteMessgeDao;
-    private BroadcastReceiver broadcastReceiver;
+    private BroadcastReceiver broadcastReceiver,broadcastReceiver1;
     private LocalBroadcastManager broadcastManager;
     private View loadingView;
     private ContactSyncListener contactSyncListener;
@@ -90,10 +91,8 @@ public class WebContactFragment extends BaseFragment {
     protected String toBeProcessUsername;
     private Gson gson;
     private static final String TAG = WebContactFragment.class.getSimpleName();
-    private boolean hidden;
     private Observable<CharSequence> mSearchObservable;
     private CharSequence record;
-
     public static WebContactFragment newInstance() {
         WebContactFragment webContactFragment = new WebContactFragment();
         return webContactFragment;
@@ -392,6 +391,11 @@ public class WebContactFragment extends BaseFragment {
                     startActivity(new Intent(getActivity(), NewFriendsMsgActivity.class));
                     NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
                     notificationManager.cancel(0526);
+                    if (inviteMessgeDao == null) {
+                        inviteMessgeDao = new InviteMessgeDao(getActivity());
+                        inviteMessgeDao.saveUnreadMessageCount(0);
+                    }
+                        applicationItem.hideUnreadMsgView();
                     break;
                 case R.id.black_item:
                     startActivity(new Intent(getActivity(), BlacklistActivity.class));
@@ -452,11 +456,29 @@ public class WebContactFragment extends BaseFragment {
 
             }
         };
+        IntentFilter intentFilter1 = new IntentFilter(Constant.ACTION_GROUP_NOTIFY);
+        broadcastReceiver1 = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (inviteMessgeDao == null) {
+                    inviteMessgeDao = new InviteMessgeDao(getActivity());
+                }
+                if (inviteMessgeDao.getUnreadMessagesCount() > 0) {
+                    applicationItem.showUnreadMsgView();
+                } else {
+                    applicationItem.hideUnreadMsgView();
+                }
+
+            }
+        };
         broadcastManager.registerReceiver(broadcastReceiver, intentFilter);
+        broadcastManager.registerReceiver(broadcastReceiver1, intentFilter1);
     }
 
     private void unregisterBroadcastReceiver() {
         broadcastManager.unregisterReceiver(broadcastReceiver);
+        broadcastManager.unregisterReceiver(broadcastReceiver1);
     }
 
     class ContactSyncListener implements DataSyncListener {
@@ -569,7 +591,6 @@ public class WebContactFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         if (mSearchObservable != null)
             RxBus.get().unregister("search_contact", mSearchObservable);
         unregisterBroadcastReceiver();
@@ -585,5 +606,7 @@ public class WebContactFragment extends BaseFragment {
         if (contactInfoSyncListener != null) {
             DemoHelper.getInstance().getUserProfileManager().removeSyncContactInfoListener(contactInfoSyncListener);
         }
+        super.onDestroy();
     }
+
 }

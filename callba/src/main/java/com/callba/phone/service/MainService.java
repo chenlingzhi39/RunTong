@@ -42,7 +42,6 @@ import okhttp3.Call;
  * @author Zhang
  */
 public class MainService extends Service {
-    private static boolean refresh_contact=true;
     /**
      * 存储任务集合
      */

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -73,34 +74,29 @@ public class FriendActivity extends BaseActivity {
     @BindView(R.id.location)
     AlwaysMarqueeTextView location;
     @BindView(R.id.list)
-    XRecyclerView userList;
+    RecyclerView userList;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout refreshLayout;
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
     private NearByUserAdapter nearByUserAdapter;
     private Gson gson;
     List<NearByUser> list;
     private String[] result;
-    private ImageView imageView;
-    private View footer;
     private int page = 1;
     private boolean is_refresh = false;
-    /*@Inject
-    public ApiService apiService;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        //MyApplication.getApplicationComponent().inject(this);
         gson = new Gson();
+        list = new ArrayList<>();
         location.setTextColor(getResources().getColor(R.color.black_2f));
-        Logger.i("address",UserManager.getAddress(this));
+        Logger.i("address", UserManager.getAddress(this));
         location.setText(UserManager.getAddress(this));
-        userList.setLoadingMoreEnabled(false);
-        final View view1 = getLayoutInflater().inflate(R.layout.ad, null);
-        imageView = (ImageView) view1.findViewById(R.id.image);
         nearByUserAdapter = new NearByUserAdapter(this);
         nearByUserAdapter.setError(R.layout.view_more_error).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,40 +113,21 @@ public class FriendActivity extends BaseActivity {
             }
         });
         nearByUserAdapter.setNoMore(R.layout.view_nomore);
-        userList.addHeaderView(view1);
-        footer = new View(this);
-        userList.addFootView(footer);
-        userList.setLoadingListener(new XRecyclerView.LoadingListener() {
+        refreshLayout.setColorSchemeResources(R.color.holo_blue_bright, R.color.holo_green_light,
+                R.color.holo_orange_light, R.color.holo_red_light);
+        //下拉刷新
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
             @Override
             public void onRefresh() {
-                //refresh data here
                 is_refresh = true;
                 getNearBy(false);
             }
-
-            @Override
-            public void onLoadMore() {
-                // load more data here
-            }
         });
-        userList.setAdapter(new RecyclerView.Adapter() {
-            @Override
-            public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return null;
-            }
-
-            @Override
-            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-            }
-
-            @Override
-            public int getItemCount() {
-                return 0;
-            }
-        });
+        is_refresh = true;
+        getNearBy(false);
+        refreshLayout.setRefreshing(true);
         userList.setAdapter(nearByUserAdapter);
-        userList.setRefreshing(true);
         locationClient = new AMapLocationClient(this);
         locationOption = new AMapLocationClientOption();
         // 设置是否需要显示地址信息
@@ -181,10 +158,10 @@ public class FriendActivity extends BaseActivity {
                     UserManager.putLongitude(FriendActivity.this, aMapLocation.getLongitude() + "");
                     //userDao2.saveLocation(getUsername(), getPassword(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
                     OkHttpUtils.post().url(Interfaces.SAVE_LOCATION)
-                            .addParams("loginName",getUsername())
-                            .addParams("loginPwd",getPassword())
-                            .addParams("latitude",aMapLocation.getLatitude()+"")
-                            .addParams("longitude",aMapLocation.getLongitude()+"")
+                            .addParams("loginName", getUsername())
+                            .addParams("loginPwd", getPassword())
+                            .addParams("latitude", aMapLocation.getLatitude() + "")
+                            .addParams("longitude", aMapLocation.getLongitude() + "")
                             .build().execute(new StringCallback() {
                         @Override
                         public void onError(Call call, Exception e, int id) {
@@ -193,7 +170,7 @@ public class FriendActivity extends BaseActivity {
 
                         @Override
                         public void onResponse(String response, int id) {
-                            Log.i("save_success",response);
+                            Log.i("save_success", response);
                         }
                     });
                     location.setText(aMapLocation.getAddress());
@@ -211,47 +188,8 @@ public class FriendActivity extends BaseActivity {
 
             }
         });
-            //userDao1.getAd(2, getUsername(), getPassword());
-        OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT2)
-                .addParams("loginName", getUsername())
-                .addParams("loginPwd", getPassword())
-                .addParams("softType", "android")
-                .build().execute(new StringCallback() {
-            @Override
-            public void onError(Call call, Exception e, int id) {
-                e.printStackTrace();
-            }
+        //userDao1.getAd(2, getUsername(), getPassword());
 
-            @Override
-            public void onResponse(String response, int id) {
-                try {
-                    Logger.i("ad_result", response);
-
-                    String[] result = response.split("\\|");
-                    if (result[0].equals("0")) {
-                        final ArrayList<Advertisement> list;
-                        list = gson.fromJson(result[1], new TypeToken<ArrayList<Advertisement>>() {
-                        }.getType());
-                        SimpleHandler.getInstance().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                Glide.with(getApplicationContext()).load(list.get(0).getImage()).into(imageView);
-                            }
-                        }, 500);
-                        imageView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent intent1 = new Intent(Intent.ACTION_VIEW);
-                                intent1.setData(Uri.parse(list.get(0).getAdurl()));
-                                startActivity(intent1);
-                            }
-                        });
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     private void showDialog(final NearByUser entity) {
@@ -299,7 +237,7 @@ public class FriendActivity extends BaseActivity {
                                                     public void run() {
                                                         progressDialog.dismiss();
                                                         String s2 = getResources().getString(R.string.Request_add_buddy_failure);
-                                                        Toast.makeText(getApplicationContext(), s2, 1).show();
+                                                        Toast.makeText(getApplicationContext(), s2, Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
                                             }
@@ -326,7 +264,7 @@ public class FriendActivity extends BaseActivity {
                                                                 public void run() {
                                                                     progressDialog.dismiss();
                                                                     String s1 = "添加成功";
-                                                                    Toast.makeText(getApplicationContext(), s1, 1).show();
+                                                                    Toast.makeText(getApplicationContext(), s1, Toast.LENGTH_SHORT).show();
                                                                     LocalBroadcastManager.getInstance(FriendActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
                                                                 }
                                                             });
@@ -335,7 +273,7 @@ public class FriendActivity extends BaseActivity {
                                                                 public void run() {
                                                                     progressDialog.dismiss();
                                                                     String s2 = getResources().getString(R.string.Request_add_buddy_failure);
-                                                                    Toast.makeText(getApplicationContext(), s2 + e.getMessage(), 1).show();
+                                                                    Toast.makeText(getApplicationContext(), s2 + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                                 }
                                                             });
                                                         }
@@ -376,20 +314,23 @@ public class FriendActivity extends BaseActivity {
                 .build().execute(new StringCallback() {
                                      @Override
                                      public void onError(Call call, Exception e, int id) {
-                                         userList.refreshComplete();
                                          toast(R.string.network_error);
                                          if (!is_refresh)
                                              nearByUserAdapter.pauseMore();
                                      }
 
                                      @Override
+                                     public void onAfter(int id) {
+                                         refreshLayout.setRefreshing(false);
+                                     }
+
+                                     @Override
                                      public void onResponse(String response, int id) {
                                          try {
-                                             userList.refreshComplete();
                                              result = response.split("\\|");
                                              Logger.i("friend_result", response);
                                              if (result[0].equals("0")) {
-                                                 list = new ArrayList<>();
+                                                 list.clear();
                                                  try {
                                                      list = gson.fromJson(result[1], new TypeToken<ArrayList<NearByUser>>() {
                                                      }.getType());
@@ -410,6 +351,58 @@ public class FriendActivity extends BaseActivity {
                                                                  return true;
                                                              }
                                                          });
+                                                         if (nearByUserAdapter.getHeaders().size() == 0)
+                                                             nearByUserAdapter.addHeader(new RecyclerArrayAdapter.ItemView() {
+                                                                 @Override
+                                                                 public View onCreateView(ViewGroup parent) {
+                                                                     return getLayoutInflater().inflate(R.layout.ad, null);
+                                                                 }
+
+                                                                 @Override
+                                                                 public void onBindView(View headerView) {
+                                                                     final ImageView imageView = (ImageView) headerView.findViewById(R.id.image);
+                                                                     OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT2)
+                                                                             .addParams("loginName", getUsername())
+                                                                             .addParams("loginPwd", getPassword())
+                                                                             .addParams("softType", "android")
+                                                                             .build().execute(new StringCallback() {
+                                                                         @Override
+                                                                         public void onError(Call call, Exception e, int id) {
+                                                                             e.printStackTrace();
+                                                                         }
+
+                                                                         @Override
+                                                                         public void onResponse(String response, int id) {
+                                                                             try {
+                                                                                 Logger.i("ad_result", response);
+
+                                                                                 String[] result = response.split("\\|");
+                                                                                 if (result[0].equals("0")) {
+                                                                                     final ArrayList<Advertisement> list;
+                                                                                     list = gson.fromJson(result[1], new TypeToken<ArrayList<Advertisement>>() {
+                                                                                     }.getType());
+                                                                                     SimpleHandler.getInstance().postDelayed(new Runnable() {
+                                                                                         @Override
+                                                                                         public void run() {
+                                                                                             Glide.with(getApplicationContext()).load(list.get(0).getImage()).into(imageView);
+                                                                                         }
+                                                                                     }, 500);
+                                                                                     imageView.setOnClickListener(new View.OnClickListener() {
+                                                                                         @Override
+                                                                                         public void onClick(View v) {
+                                                                                             Intent intent1 = new Intent(Intent.ACTION_VIEW);
+                                                                                             intent1.setData(Uri.parse(list.get(0).getAdurl()));
+                                                                                             startActivity(intent1);
+                                                                                         }
+                                                                                     });
+                                                                                 }
+                                                                             } catch (Exception e) {
+                                                                                 e.printStackTrace();
+                                                                             }
+                                                                         }
+                                                                     });
+                                                                 }
+                                                             });
                                                      } else {
                                                          nearByUserAdapter.addAll(list);
                                                          page += 1;
@@ -422,7 +415,6 @@ public class FriendActivity extends BaseActivity {
                                              }
                                          } catch (Exception e) {
                                              toast(R.string.getserverdata_exception);
-                                             userList.refreshComplete();
                                              if (!is_refresh)
                                                  nearByUserAdapter.pauseMore();
                                          }
@@ -430,71 +422,8 @@ public class FriendActivity extends BaseActivity {
                                      }
 
                                  }
-                );
-     /*   subscription = apiService.getNearBy(getUsername(), getPassword(), UserManager.getLatitude(FriendActivity.this), UserManager.getLongitude(FriendActivity.this), "1000", is_next ? page + 1 + "" : page + "")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread()).unsubscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<String>() {
+        );
 
-                    @Override
-                    public void onCompleted() {
-                        userList.refreshComplete();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        userList.refreshComplete();
-                        toast(R.string.network_error);
-                        if (!is_refresh)
-                            nearByUserAdapter.pauseMore();
-                    }
-
-                    @Override
-                    public void onNext(String s) {
-                        try {
-                            result = s.split("\\|");
-                            Logger.i("friend_result", s);
-                            if (result[0].equals("0")) {
-                                list = new ArrayList<>();
-                                try {
-                                    list = gson.fromJson(result[1], new TypeToken<ArrayList<NearByUser>>() {
-                                    }.getType());
-                                } catch (Exception e) {
-
-                                }
-                                Logger.i("size", list.size() + "");
-                                if (list.size() == 0) {
-                                } else {
-                                    if (is_refresh) {
-                                        nearByUserAdapter.clear();
-                                        nearByUserAdapter.addAll(list);
-                                        page = 1;
-                                        nearByUserAdapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
-                                            @Override
-                                            public boolean onItemClick(int position) {
-                                                showDialog(nearByUserAdapter.getData().get(position - 2));
-                                                return true;
-                                            }
-                                        });
-                                    } else {
-                                        nearByUserAdapter.addAll(list);
-                                        page += 1;
-                                    }
-                                }
-                            } else {
-                                toast(result[1]);
-                                if (!is_refresh)
-                                    nearByUserAdapter.stopMore();
-                            }
-                        } catch (Exception e) {
-                            toast(R.string.getserverdata_exception);
-                            userList.refreshComplete();
-                            if (!is_refresh)
-                                nearByUserAdapter.pauseMore();
-                        }
-                    }
-                });*/
     }
 
 }

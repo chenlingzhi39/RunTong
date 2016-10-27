@@ -239,12 +239,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
-            android:name=".phone.ui.GroupDetailsActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="adjustPan" />
-        <activity
             android:name=".phone.ui.GroupSimpleDetailActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

@@ -25,4 +25,6 @@ public class Constant extends EaseConstant{
 	public static final String ACTION_CONTACT_CHANAGED = "action_contact_changed";
 	public static final String ACTION_MESSAGE_CHANGED="action_message_changed";
 	public static final String ACTION_MESSAGR_NUM_CHANGED="action_message_num_changed";
+	public static final String ACTION_GROUP_NOTIFY="action_group_notify";
+	public static final String INVATATION_ACCEPTED="invatation_accepted";
 }

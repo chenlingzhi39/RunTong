@@ -109,7 +109,7 @@ public class GroupDetailActivity extends BaseActivity {
     private ProgressDialog progressDialog;
     private MemberAdapter memberAdapter;
     private EMGroupChangeListener emGroupChangeListener;
-
+    List<String> groups;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -161,11 +161,13 @@ public class GroupDetailActivity extends BaseActivity {
 
             @Override
             public void onAutoAcceptInvitationFromGroup(String s, String s1, String s2) {
-                if (s.equals(groupId))
-                    refresh();
+
             }
         };
         EMClient.getInstance().groupManager().addGroupChangeListener(emGroupChangeListener);
+        memberAdapter = new MemberAdapter(this);
+        groups = new ArrayList<>();
+        memberList.setAdapter(memberAdapter);
         refresh();
     }
 
@@ -213,8 +215,8 @@ public class GroupDetailActivity extends BaseActivity {
                     blacklistLayout.setVisibility(View.GONE);
 
                 }
-                memberAdapter = new MemberAdapter(GroupDetailActivity.this);
-                List<String> groups = new ArrayList<>();
+                memberAdapter.clear();
+                groups.clear();
                 int j;
                 if (EMClient.getInstance().getCurrentUser().equals(group.getOwner()) || group.isAllowInvites())
                     j = 4;
@@ -223,13 +225,16 @@ public class GroupDetailActivity extends BaseActivity {
                 for (int i = 0; i < (group.getAffiliationsCount() > j ? j : group.getAffiliationsCount()); i++) {
                     groups.add(group.getMembers().get(i));
                 }
+                if (EMClient.getInstance().getCurrentUser().equals(group.getOwner()) || group.isAllowInvites())
+                memberList.setLayoutManager(new GridLayoutManager(GroupDetailActivity.this, groups.size()+1));
+                else  memberList.setLayoutManager(new GridLayoutManager(GroupDetailActivity.this, groups.size()));
                 if (group.getOwner().equals(EMClient.getInstance().getCurrentUser()))
                     Collections.reverse(groups);
                 memberAdapter.addAll(groups);
                 memberAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(int position) {
-                        startActivityForResult(new Intent(GroupDetailActivity.this, GroupMembersActivity.class).putStringArrayListExtra("members", (ArrayList<String>) group.getMembers()).putExtra("group_owner", group.getOwner()),GROUP_MEMBER);
+                        startActivityForResult(new Intent(GroupDetailActivity.this, GroupMembersActivity.class).putExtra("group_owner", group.getOwner()).putExtra("group_id", group.getGroupId()),GROUP_MEMBER);
                     }
                 });
                 if (EMClient.getInstance().getCurrentUser().equals(group.getOwner()) || group.isAllowInvites())
@@ -252,8 +257,8 @@ public class GroupDetailActivity extends BaseActivity {
                             });
                         }
                     });
-                memberList.setAdapter(memberAdapter);
-                memberList.setLayoutManager(new GridLayoutManager(GroupDetailActivity.this, 5));
+
+
             }
         });
     }
@@ -351,8 +356,6 @@ public class GroupDetailActivity extends BaseActivity {
                             LocalBroadcastManager.getInstance(GroupDetailActivity.this).sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
                             progressDialog.dismiss();
                             finish();
-                            if (ChatActivity.activityInstance != null)
-                                ChatActivity.activityInstance.finish();
                         }
                     });
                 } catch (final Exception e) {
@@ -419,8 +422,6 @@ public class GroupDetailActivity extends BaseActivity {
                             LocalBroadcastManager.getInstance(GroupDetailActivity.this).sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
                             progressDialog.dismiss();
                             finish();
-                            if (ChatActivity.activityInstance != null)
-                                ChatActivity.activityInstance.finish();
                         }
                     });
                 } catch (final Exception e) {
@@ -568,7 +569,7 @@ public class GroupDetailActivity extends BaseActivity {
                 }
                 break;
             case R.id.group_layout:
-                startActivityForResult(new Intent(GroupDetailActivity.this, GroupMembersActivity.class).putStringArrayListExtra("members", (ArrayList<String>) group.getMembers()).putExtra("group_owner", group.getOwner()).putExtra("group_id", group.getGroupId()),GROUP_MEMBER);
+                startActivityForResult(new Intent(GroupDetailActivity.this, GroupMembersActivity.class).putExtra("group_owner", group.getOwner()).putExtra("group_id", group.getGroupId()),GROUP_MEMBER);
                 break;
         }
     }

@@ -155,7 +155,7 @@ public class MessageActivity extends BaseActivity {
         inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         String language = Locale.getDefault().getLanguage();
         Logger.i("language", language);
-        Locale.setDefault(new Locale("zh"));
+        //Locale.setDefault(new Locale("zh"));
         Logger.i("language", Locale.getDefault().getLanguage());
         conversationListview.addItemDecoration(new DividerItemDecoration(
                 this, DividerItemDecoration.VERTICAL_LIST));

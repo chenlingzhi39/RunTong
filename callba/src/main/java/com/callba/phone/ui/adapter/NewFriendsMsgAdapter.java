@@ -166,14 +166,14 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 				holder.type.setText("入群申请");
 			} else if(msg.getStatus() == InviteMesageStatus.GROUPINVITATION_ACCEPTED){
 				EaseUser user=EaseUserUtils.getUserInfo(msg.getGroupInviter());
-			    String str = (user!=null?user.getNick():msg.getGroupInviter()) + str9 + msg.getGroupName();
+			    String str = (user!=null?user.getNick():msg.getGroupInviter().substring(0,11)) + str9 + msg.getGroupName();
                 holder.status.setVisibility(View.GONE);
                 holder.reason.setText(str);
 				holder.result.setVisibility(View.GONE);
 				holder.type.setText("加群邀请");
             } else if(msg.getStatus() == InviteMesageStatus.GROUPINVITATION_DECLINED){
 				EaseUser user=EaseUserUtils.getUserInfo(msg.getGroupInviter());
-				String str = (user!=null?user.getNick():msg.getGroupInviter()) + str9 + msg.getGroupName();
+				String str = (user!=null?user.getNick():msg.getGroupInviter().substring(0,11)) + str9 + msg.getGroupName();
 				holder.status.setVisibility(View.GONE);
 				holder.reason.setText(str);
 				holder.result.setVisibility(View.GONE);
