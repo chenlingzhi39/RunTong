@@ -23,7 +23,6 @@ import com.callba.phone.bean.EaseUser;
 import com.callba.phone.db.InviteMessgeDao;
 import com.callba.phone.db.UserDao;
 import com.callba.phone.ui.base.BaseActivity;
-import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -33,9 +32,6 @@ import com.google.gson.reflect.TypeToken;
 import com.hyphenate.chat.EMClient;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

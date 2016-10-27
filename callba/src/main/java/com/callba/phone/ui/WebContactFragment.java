@@ -40,7 +40,6 @@ import com.callba.phone.widget.ContactItemView;
 import com.callba.phone.widget.EaseContactList;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.hyphenate.EMGroupChangeListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;

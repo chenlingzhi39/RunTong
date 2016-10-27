@@ -30,7 +30,6 @@ import com.callba.phone.cfg.GlobalConfig;
 import com.callba.phone.logic.login.LoginController;
 import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.manager.UserManager;
-import com.callba.phone.service.MainService;
 import com.callba.phone.ui.adapter.CampaignAdapter;
 import com.callba.phone.ui.adapter.HomeAdapter;
 import com.callba.phone.ui.adapter.RecyclerArrayAdapter;
