@@ -282,7 +282,7 @@ public class LocalContactFragment extends BaseFragment {
             }
             personEntities.get(personEntities.size() - 1).setContactPhones(contactPhones);
         }
-        if (friends.size() > 0)
+        if (friends.size() > 0&&getActivity()!=null)
             OkHttpUtils
                     .post()
                     .url(Interfaces.ADD_FRIENDS)

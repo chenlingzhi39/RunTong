@@ -20,6 +20,7 @@ import com.hyphenate.chat.EMMessage;
 import com.hyphenate.util.DateUtils;
 
 import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -81,8 +82,8 @@ public class ConversationViewHolder extends BaseViewHolder<EMConversation> {
             EMMessage lastMessage = conversation.getLastMessage();
             message.setText(EaseSmileUtils.getSmiledText(getContext(), EaseCommonUtils.getMessageDigest(lastMessage, (this.getContext()))),
                     TextView.BufferType.SPANNABLE);
-
-           time.setText(DateUtils.getTimestampString(new Date(lastMessage.getMsgTime())));
+            Locale.setDefault(new Locale("zh"));
+            time.setText(DateUtils.getTimestampString(new Date(lastMessage.getMsgTime())));
             if (lastMessage.direct() == EMMessage.Direct.SEND && lastMessage.status() == EMMessage.Status.FAIL) {
                 msgState.setVisibility(View.VISIBLE);
             } else {

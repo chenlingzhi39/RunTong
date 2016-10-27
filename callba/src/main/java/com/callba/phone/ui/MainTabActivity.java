@@ -293,6 +293,7 @@ public class MainTabActivity extends TabActivity {
         if (mNotificationManager != null)
             mNotificationManager.cancel(10);
         unregisterReceiver(tabReceiver);
+        broadcastManager.unregisterReceiver(broadcastReceiver);
         super.onDestroy();
     }
 

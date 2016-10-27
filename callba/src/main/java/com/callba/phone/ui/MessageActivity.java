@@ -376,7 +376,6 @@ public class MessageActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Locale.setDefault(new Locale("zh"));
     }
 
     /**

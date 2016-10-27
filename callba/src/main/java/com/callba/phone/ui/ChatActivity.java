@@ -259,7 +259,6 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     protected void onResume() {
         super.onResume();
         if (isMessageListInited) {
-            Locale.setDefault(new Locale("zh"));
             messageList.refreshSelectLast();
             DemoHelper.getInstance().pushActivity(this);
             if (chatType == EaseConstant.CHATTYPE_SINGLE) { // 单聊
