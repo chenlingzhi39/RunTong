@@ -44,9 +44,9 @@
             android:layout_marginLeft="10dp"
             android:id="@+id/location"
             android:focusableInTouchMode="true"
-            android:maxLines="1"
             android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"/>
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"/>
             <ProgressBar
                 android:layout_width="20dp"
                 android:layout_height="20dp"

@@ -93,6 +93,7 @@ public class FriendActivity extends BaseActivity {
         gson = new Gson();
         list = new ArrayList<>();
         location.setTextColor(getResources().getColor(R.color.black_2f));
+        location.setSelected(true);
         Logger.i("address", UserManager.getAddress(this));
         location.setText(UserManager.getAddress(this));
         nearByUserAdapter = new NearByUserAdapter(this);
