@@ -61,7 +61,7 @@ public class ContactActivity extends BaseActivity {
         ButterKnife.bind(this);
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
         layoutTab.setupWithViewPager(viewpager);
-        viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+      /*  viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 index = position;
@@ -80,7 +80,7 @@ public class ContactActivity extends BaseActivity {
             public void onPageScrollStateChanged(int state) {
 
             }
-        });
+        });*/
         InitiateSearch();
         HandleSearch();
     }
@@ -110,7 +110,7 @@ public class ContactActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 editTextSearch.setText("");
-                ((InputMethodManager) ContactActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
             }
         });
 
@@ -165,18 +165,6 @@ public class ContactActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            Log.i(this.getClass().getName(), "light");
-            if (Build.MANUFACTURER.equals("Xiaomi"))
-                ActivityUtil.MIUISetStatusBarLightMode(getWindow(), true);
-            if (Build.MANUFACTURER.equals("Meizu"))
-                ActivityUtil.FlymeSetStatusBarLightMode(getWindow(), true);
-        }
-        super.onResume();
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -203,10 +191,6 @@ public class ContactActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 
     /**
      * 重写onkeyDown 捕捉返回键
