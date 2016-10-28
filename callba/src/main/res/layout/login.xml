@@ -101,7 +101,7 @@
             android:layout_height="50dp"
             android:text="@string/login"
             android:textColor="@color/white"
-            android:background="?attr/colorAccent"
+            android:background="@drawable/orange_selector"
             android:textSize="18sp"/>
         <Button
             android:id="@+id/bn_login_retrievePass"

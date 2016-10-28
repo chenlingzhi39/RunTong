@@ -228,7 +228,6 @@ public class MessageActivity extends BaseActivity {
                 refresh();
             }
         };
-       // broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_GROUP_CHANAGED));
         broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_MESSAGE_CHANGED));
         InitiateSearch();
         HandleSearch();
@@ -286,7 +285,6 @@ public class MessageActivity extends BaseActivity {
     /**
      * 获取会话列表
      *
-     * @param context
      * @return +
      */
     protected List<EMConversation> loadConversationList() {

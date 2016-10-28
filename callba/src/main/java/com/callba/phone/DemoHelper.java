@@ -603,6 +603,7 @@ public class DemoHelper {
             EMClient.getInstance().chatManager().deleteConversation(groupName,true);
             broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
+            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
             SimpleHandler.getInstance().post(new Runnable() {
                 @Override
                 public void run() {
@@ -619,6 +620,7 @@ public class DemoHelper {
             EMClient.getInstance().chatManager().deleteConversation(groupName,true);
             broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
+            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
             SimpleHandler.getInstance().post(new Runnable() {
                 @Override
                 public void run() {

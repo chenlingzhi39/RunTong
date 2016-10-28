@@ -120,7 +120,7 @@
                             android:text="@string/send_yzm"
                             android:textColor="@color/white"
                             android:textSize="16sp"
-                            android:background="@drawable/bg_yue"
+                            android:background="@drawable/orange_selector"
 
                             />
                     </LinearLayout>
@@ -184,7 +184,7 @@
                     android:id="@+id/bn_mre_register"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:background="?attr/colorAccent"
+                    android:background="@drawable/orange_selector"
                     android:text="@string/login_register"
                     android:textColor="@color/white"
                     android:textSize="18sp"

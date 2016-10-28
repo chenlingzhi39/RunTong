@@ -61,14 +61,19 @@ public class CustomTutorialSupportFragment extends TutorialSupportFragment
                 case 1: {
                     pageLayoutResId = R.layout.fragment_page_second;
                     tutorialItems = new TransformItem[]{
-                            TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 0.2f),
+                            TransformItem.create(R.id.ivFirstImage, Direction.LEFT_TO_RIGHT, 0.50f),
+                            TransformItem.create(R.id.ivSecondImage, Direction.LEFT_TO_RIGHT, 0.50f)
                     };
                     break;
                 }
                 case 2: {
                     pageLayoutResId = R.layout.fragment_page_third;
                     tutorialItems = new TransformItem[]{
-                            TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 0.2f),
+                            TransformItem.create(R.id.ivFirstImage, Direction.RIGHT_TO_LEFT, 0.03f),
+                            TransformItem.create(R.id.ivSecondImage, Direction.RIGHT_TO_LEFT, 0.03f),
+                            TransformItem.create(R.id.ivThirdImage, Direction.RIGHT_TO_LEFT, 0.03f),
+                            TransformItem.create(R.id.ivFourthImage, Direction.LEFT_TO_RIGHT, 0.50f),
+                            TransformItem.create(R.id.ivFifthImage, Direction.LEFT_TO_RIGHT, 0.50f)
                     };
                     break;
                 }
@@ -89,11 +94,11 @@ public class CustomTutorialSupportFragment extends TutorialSupportFragment
         if (pagesColors == null) {
             pagesColors = new int[]{
                     ContextCompat.getColor(getContext(), android.R.color.holo_blue_dark),
-                    ContextCompat.getColor(getContext(), android.R.color.holo_orange_dark),
+                    ContextCompat.getColor(getContext(), android.R.color.darker_gray),
                     ContextCompat.getColor(getContext(), android.R.color.holo_green_dark),
+                    ContextCompat.getColor(getContext(), android.R.color.holo_orange_dark),
                     ContextCompat.getColor(getContext(), android.R.color.holo_red_dark),
                     ContextCompat.getColor(getContext(), android.R.color.holo_purple),
-                    ContextCompat.getColor(getContext(), android.R.color.darker_gray)
             };
         }
         addOnTutorialPageChangeListener(this);

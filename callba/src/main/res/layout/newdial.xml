@@ -354,7 +354,7 @@
             android:layout_gravity="center"
             android:layout_weight="4"
             android:clickable="true"
-            android:background="@drawable/bg_yue"
+            android:background="@drawable/orange_selector"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
             android:elevation="1dip"

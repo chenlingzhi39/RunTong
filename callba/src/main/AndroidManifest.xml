@@ -110,7 +110,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateHidden"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             />
         <activity android:name=".phone.ui.PickContactNoCheckboxActivity"
             android:launchMode="singleTask"
@@ -434,11 +434,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
-        <activity
-            android:name=".phone.ui.FunIntroduceActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/LauncherAppTheme" />
         <activity
             android:name=".phone.ui.GuideActivity"
             android:launchMode="singleTop"

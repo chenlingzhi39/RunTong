@@ -63,7 +63,6 @@ import com.hyphenate.util.PathUtil;
 
 import java.io.File;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -421,7 +420,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         if (chatType == EaseConstant.CHATTYPE_GROUP) {
             EMGroup group = EMClient.getInstance().groupManager().getGroup(toChatUsername);
             if (group == null) {
-                Toast.makeText(this, R.string.gorup_not_found, 0).show();
+                Toast.makeText(this, R.string.gorup_not_found, Toast.LENGTH_SHORT).show();
                 return;
             }
             if (chatFragmentListener != null) {
@@ -585,12 +584,12 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         }
         File file = new File(filePath);
         if (file == null || !file.exists()) {
-            Toast.makeText(this, R.string.File_does_not_exist, 0).show();
+            Toast.makeText(this, R.string.File_does_not_exist, Toast.LENGTH_SHORT).show();
             return;
         }
         //大于10M不让发送
         if (file.length() > 10 * 1024 * 1024) {
-            Toast.makeText(this, R.string.The_file_is_not_greater_than_10_m, 0).show();
+            Toast.makeText(this, R.string.The_file_is_not_greater_than_10_m, Toast.LENGTH_SHORT).show();
             return;
         }
         sendFileMessage(filePath);
@@ -643,7 +642,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
      */
     protected void selectPicFromCamera() {
         if (!EaseCommonUtils.isExitsSdcard()) {
-            Toast.makeText(this, R.string.sd_card_does_not_exist, 0).show();
+            Toast.makeText(this, R.string.sd_card_does_not_exist, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -733,9 +732,9 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
             public void onResult(boolean confirmed, Bundle bundle) {
                 if (confirmed) {
                     // 清空会话
-
                     EMClient.getInstance().chatManager().deleteConversation(toChatUsername, true);
                     messageList.refresh();
+                    LocalBroadcastManager.getInstance(ChatActivity.this).sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
                 }
             }
         }, true).show();
@@ -783,7 +782,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 startActivity(intent1);}else toast("不支持的用户类型");
                 break;
             case R.id.clear:
-                         emptyHistory();
+                emptyHistory();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -848,7 +847,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         if (chatType == Constant.CHATTYPE_GROUP) {
             EMGroup group = EMClient.getInstance().groupManager().getGroup(toChatUsername);
             if (group == null) {
-                Toast.makeText(this, R.string.gorup_not_found, 0).show();
+                Toast.makeText(this, R.string.gorup_not_found, Toast.LENGTH_SHORT).show();
                 return;
             }
             startActivityForResult(

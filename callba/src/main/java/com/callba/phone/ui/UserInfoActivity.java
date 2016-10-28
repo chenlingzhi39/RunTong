@@ -194,7 +194,7 @@ public class UserInfoActivity extends BaseActivity {
                     public void onResult(boolean confirmed, Bundle bundle) {
                         if (confirmed) {
                             EMClient.getInstance().chatManager().deleteConversation(userName, true);
-
+                            LocalBroadcastManager.getInstance(UserInfoActivity.this).sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
                         }
                     }
                 }, true).show();

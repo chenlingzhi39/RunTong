@@ -55,7 +55,7 @@ import okhttp3.Request;
         contentViewId = R.layout.manual_register,
         toolbarTitle = R.string.register,
         menuId = R.menu.menu_register,
-        navigationId = R.drawable.press_cancel
+        navigationId = R.drawable.ic_close_grey_600_24dp
 )
 public class RegisterActivity extends BaseActivity implements OnClickListener {
     private Button bn_register;
@@ -218,7 +218,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 
         @Override
         public void onFinish() {// 计时完毕
-            send_yzm.setBackgroundColor(getResources().getColor(R.color.orange));
+            send_yzm.setBackgroundResource(R.drawable.orange_selector);
             send_yzm.setText(getString(R.string.send_yzm));
             send_yzm.setClickable(true);
         }

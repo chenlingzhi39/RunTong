@@ -86,7 +86,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="20dp"
-                android:background="?attr/colorAccent"
+                android:background="@drawable/orange_selector"
                 android:text="@string/recharge2"
                 android:textColor="@color/white"
                 android:textSize="18sp" />

@@ -482,11 +482,14 @@ public class GroupDetailActivity extends BaseActivity {
                                 progressDialog.dismiss();
                             }
                         });
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         e.printStackTrace();
                         runOnUiThread(new Runnable() {
                             public void run() {
                                 progressDialog.dismiss();
+                                if(e instanceof HyphenateException)
+                                    Toast.makeText(getApplicationContext(), R.string.group_owner_cannot, Toast.LENGTH_SHORT).show();
+                                else
                                 Toast.makeText(getApplicationContext(), st9, Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -505,6 +508,7 @@ public class GroupDetailActivity extends BaseActivity {
         EMConversation conversation = EMClient.getInstance().chatManager().getConversation(group.getGroupId(), EMConversation.EMConversationType.GroupChat);
         if (conversation != null) {
             conversation.clearAllMessages();
+            LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
         }
         Toast.makeText(this, R.string.messages_are_empty, Toast.LENGTH_SHORT).show();
     }

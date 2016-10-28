@@ -24,6 +24,7 @@ import com.hyphenate.chat.EMMessage.Direct;
 import com.hyphenate.util.DateUtils;
 
 import java.util.Date;
+import java.util.Locale;
 
 public abstract class EaseChatRow extends LinearLayout {
     protected static final String TAG = EaseChatRow.class.getSimpleName();
@@ -99,6 +100,7 @@ public abstract class EaseChatRow extends LinearLayout {
     private void setUpBaseView() {
         // 设置用户昵称头像，bubble背景等
         TextView timestamp = (TextView) findViewById(R.id.timestamp);
+        Locale.setDefault(new Locale("zh"));
         if (timestamp != null) {
             if (position == 0) {
                 timestamp.setText(DateUtils.getTimestampString(new Date(message.getMsgTime())));

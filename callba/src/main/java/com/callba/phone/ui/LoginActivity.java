@@ -26,7 +26,7 @@ import com.callba.phone.view.CleanableEditText;
         contentViewId = R.layout.login,
         toolbarTitle = R.string.login,
         menuId = R.menu.menu_login,
-        navigationId = R.drawable.press_cancel
+        navigationId = R.drawable.ic_close_grey_600_24dp
 )
 public class LoginActivity extends BaseActivity implements OnClickListener {
     private Button bn_login, bn_retrievePass;

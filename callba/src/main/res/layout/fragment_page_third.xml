@@ -8,15 +8,49 @@
     android:layout_height="match_parent"
     tools:ignore="ContentDescription"
     tools:background="@android:color/holo_blue_dark">
+
     <ImageView
         android:id="@+id/ivFirstImage"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:src="@drawable/s_2_0"
+        app:layout_marginLeftPercent="10%"
+        app:layout_marginTopPercent="15%"
 
-        android:src="@drawable/logo"
+        />
+    <ImageView
+        android:id="@+id/ivSecondImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/s_2_1"
+        android:layout_centerHorizontal="true"
+        app:layout_marginTopPercent="10%"
 
-        app:layout_heightPercent="35%"
-        app:layout_widthPercent="50%"/>
+        />
+    <ImageView
+        android:id="@+id/ivThirdImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/s_2_2"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentRight="true"
+        app:layout_marginRightPercent="10%"
+        app:layout_marginTopPercent="15%"
+        />
+    <ImageView
+        android:id="@+id/ivFourthImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/s_2_3"
+        app:layout_marginTopPercent="30%"
+        />
+    <ImageView
+        android:id="@+id/ivFifthImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/s_2_4"
+        app:layout_marginTopPercent="65%"
+        />
 </android.support.percent.PercentRelativeLayout>

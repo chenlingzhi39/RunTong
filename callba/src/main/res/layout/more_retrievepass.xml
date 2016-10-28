@@ -28,7 +28,7 @@
 		android:layout_marginLeft="20dp"
 		android:layout_marginRight="20dp"
 		android:layout_marginTop="60dp"
-		android:background="?attr/colorAccent"
+		android:background="@drawable/orange_selector"
 		android:text="@string/find_password"
 		android:textColor="@color/white"
 		android:textSize="18sp"

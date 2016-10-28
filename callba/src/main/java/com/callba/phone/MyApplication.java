@@ -20,7 +20,6 @@ import com.callba.BuildConfig;
 import com.callba.phone.ui.WelcomeActivity;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.StorageUtils;
-import com.squareup.leakcanary.LeakCanary;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.ArrayList;
@@ -92,12 +91,12 @@ public class MyApplication extends Application {
     }
     @Override
     public void onCreate() {
-        if (LeakCanary.isInAnalyzerProcess(this)) {
+       /* if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
             return;
         }
-        LeakCanary.install(this);
+        LeakCanary.install(this);*/
         // Normal app init code...
        // MultiDex.install(this);
         super.onCreate();
