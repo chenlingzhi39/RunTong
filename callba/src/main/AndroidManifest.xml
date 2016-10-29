@@ -118,7 +118,7 @@
             android:theme="@style/BaseAppTheme.AppTheme"
             />
         <activity android:name=".phone.ui.ContextMenuActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/MyDialogStyleBottom"
             />
@@ -142,14 +142,15 @@
             android:theme="@style/MyDialogStyleBottom" />
         <activity
             android:name=".phone.ui.UserInfoActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.RemarkActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="stateVisible"
             />
         <activity
             android:name=".phone.ui.SelectDialPopupWindow"
@@ -159,73 +160,74 @@
             android:theme="@style/MyDialogStyleBottom" />
         <activity
             android:name=".phone.ui.OpinionActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".phone.ui.SelectFriendActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.CouponActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.TXActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.ImageQRActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.ProfitActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.TXRecordActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.ATypeActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.TeamActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.FamilyActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.OrderActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.CalllogDetailActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.ContactDetailActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/DetailTheme.AppTheme" />
+            android:theme="@style/DetailTheme.AppTheme"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
         <activity
             android:name=".phone.ui.EditActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
@@ -235,54 +237,54 @@
             android:windowSoftInputMode="adjustPan"></activity>
         <activity
             android:name=".phone.ui.GroupBlacklistActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.GroupSimpleDetailActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".phone.ui.GroupPickContactsActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.NewGroupActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.SettingsActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.GoldActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.BalanceActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.GeocoderActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.BlacklistActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".phone.ui.SignInActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
@@ -293,13 +295,13 @@
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".phone.ui.AddContactActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
         <activity
             android:name=".phone.ui.ChatActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="adjustResize" />
@@ -324,7 +326,7 @@
            />
         <activity
             android:name=".phone.ui.ClauseActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
@@ -338,12 +340,12 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".phone.ui.HelpActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.AboutActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity" />
@@ -374,53 +376,54 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".phone.ui.AccountActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.PostActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.CommunityActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/DetailTheme.AppTheme" />
         <activity
             android:name=".phone.ui.ChangePasswordActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".phone.ui.FriendActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/BaseAppTheme.AppTheme" />
+            android:theme="@style/BaseAppTheme.AppTheme"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
         <!-- <activity android:name=".phone.activity.SignInActivity"
-             android:launchMode="singleTop"
+             android:launchMode="singleTask"
              android:screenOrientation="portrait"
              android:theme="@style/BaseAppTheme.AppTheme"
              />-->
         <activity
             android:name=".phone.ui.ChangeInfoActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.FlowActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.RechargeActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.HomeActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
@@ -431,12 +434,12 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
         <activity
             android:name=".phone.ui.UserActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
         <activity
             android:name=".phone.ui.GuideActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/LauncherAppTheme" />
         <activity
@@ -460,21 +463,21 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
         <activity
             android:name=".phone.ui.MainCallActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
 
 
         <!-- <activity
              android:name=".phone.activity.more.CallSettingActivity"
-             android:launchMode="singleTop"
+             android:launchMode="singleTask"
              android:screenOrientation="portrait"
              android:theme="@android:style/Theme.Black.NoTitleBar" />-->
 
 
         <activity
             android:name=".phone.ui.QueryCalllogActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme" />
 
@@ -488,7 +491,7 @@
         <!--
         <activity
             android:name=".activity.SendCallActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
             <intent-filter>
@@ -519,7 +522,7 @@
 
         <activity
             android:name=".phone.ui.CallbackDisplayActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:theme="@style/BaseAppTheme.AppTheme" />
 
         <!-- <receiver android:name="com.callba.phone.ui.CallChooserBroadCast">
