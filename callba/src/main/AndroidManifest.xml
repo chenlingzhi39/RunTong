@@ -298,7 +298,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/BaseAppTheme.AppTheme"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+            android:windowSoftInputMode="stateVisible"/>
         <activity
             android:name=".phone.ui.ChatActivity"
             android:launchMode="singleTask"

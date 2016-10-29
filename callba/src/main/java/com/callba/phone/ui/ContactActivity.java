@@ -52,7 +52,7 @@ public class ContactActivity extends BaseActivity {
     @BindView(R.id.card_search)
     CardView cardSearch;
     private int index;
-
+    private ViewPager.OnPageChangeListener pageChangeListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,14 +60,14 @@ public class ContactActivity extends BaseActivity {
         ButterKnife.bind(this);
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
         layoutTab.setupWithViewPager(viewpager);
-      /*  viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        pageChangeListener= new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 index = position;
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+              /*  InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 Log.i("active", imm.isActive() + "");
                 if (imm.isActive())
-                    imm.hideSoftInputFromWindow(viewpager.getWindowToken(), 0);
+                    imm.hideSoftInputFromWindow(viewpager.getWindowToken(), 0);*/
             }
 
             @Override
@@ -79,7 +79,8 @@ public class ContactActivity extends BaseActivity {
             public void onPageScrollStateChanged(int state) {
 
             }
-        });*/
+        };
+        viewpager.addOnPageChangeListener(pageChangeListener);
         InitiateSearch();
         HandleSearch();
     }
@@ -209,5 +210,11 @@ public class ContactActivity extends BaseActivity {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(cardSearch.getWindowToken(), 0);
         if(cardSearch.getVisibility()==View.VISIBLE&&TextUtils.isEmpty(editTextSearch.getText().toString()))
             InitiateSearch.handleToolBar(ContactActivity.this, cardSearch, editTextSearch, 56);
+    }
+
+    @Override
+    protected void onDestroy() {
+        viewpager.removeOnPageChangeListener(pageChangeListener);
+        super.onDestroy();
     }
 }
