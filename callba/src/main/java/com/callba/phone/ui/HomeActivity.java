@@ -123,7 +123,7 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onBindView(View headerView) {
-
+              banner=(BannerLayout) headerView.findViewById(R.id.banner);
             }
         });
         homeAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
