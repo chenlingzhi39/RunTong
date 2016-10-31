@@ -7,6 +7,8 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.util.Log;
 
+import com.callba.BuildConfig;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -25,13 +27,13 @@ public class Logger {
 	private static final String LOG_FILENAME = "callba";
 
 //	private static final boolean DEBUG = true;
-	 private static final boolean DEBUG = false;
+	 private static final boolean DEBUG = true;
 
 	// private static final boolean LOG2FILE = true;
 	private static final boolean LOG2FILE = false;
 
 	public static void i(String tag, String msg) {
-		if (DEBUG) {
+		if (DEBUG&& BuildConfig.DEBUG) {
 			Log.i(tag, msg);
 		}
 		if (LOG2FILE) {

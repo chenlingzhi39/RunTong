@@ -247,8 +247,12 @@ public class WebContactFragment extends BaseFragment {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+
         if (item.getItemId() == R.id.delete_contact) {
-            OkHttpUtils
+            deleteContact(toBeProcessUser);
+            InviteMessgeDao dao = new InviteMessgeDao(getActivity());
+            dao.deleteMessage(toBeProcessUser.getUsername());
+         /*   OkHttpUtils
                     .post()
                     .url(Interfaces.DELETE_FRIENDS)
                     .addParams("loginName", getUsername())
@@ -278,7 +282,7 @@ public class WebContactFragment extends BaseFragment {
                         toast(R.string.getserverdata_exception);
                     }
                 }
-            });
+            });*/
 
 
             return true;
@@ -573,6 +577,7 @@ public class WebContactFragment extends BaseFragment {
                         }
                     });
                 } catch (final Exception e) {
+                    e.printStackTrace();
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
                             pd.dismiss();

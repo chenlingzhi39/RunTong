@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +13,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -36,6 +39,7 @@ import com.callba.phone.receiver.CallReceiver;
 import com.callba.phone.ui.ChatActivity;
 import com.callba.phone.ui.MainTabActivity;
 import com.callba.phone.ui.NewFriendsMsgActivity;
+import com.callba.phone.ui.UserInfoActivity;
 import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
@@ -63,13 +67,16 @@ import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+import com.zhy.http.okhttp.utils.Exceptions;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import okhttp3.Call;
+import okhttp3.Request;
 
 public class DemoHelper {
     /**
@@ -189,7 +196,7 @@ public class DemoHelper {
         // 获取到EMChatOptions对象
         EMOptions options = new EMOptions();
         // 默认添加好友时，是不需要验证的，改成需要验证
-        options.setAcceptInvitationAlways(true);
+        options.setAcceptInvitationAlways(false);
         // 设置是否需要已读回执
         options.setRequireAck(true);
         // 设置是否需要已送达回执
@@ -303,7 +310,7 @@ public class DemoHelper {
             @Override
             public int getSmallIcon(EMMessage message) {
               //设置小图标，这里为默认
-                return R.drawable.logo_notification;
+                return R.drawable.ease_default_avatar;
             }
 
             @Override
@@ -327,7 +334,7 @@ public class DemoHelper {
                     return BitmapFactory.decodeResource(appContext.getResources(),
                             R.drawable.system_message);
                 return BitmapFactory.decodeResource(appContext.getResources(),
-                        R.drawable.logo);
+                        R.drawable.ease_default_avatar);
             }
 
             @Override
@@ -646,7 +653,7 @@ public class DemoHelper {
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_NOTIFY));
             EaseUser user=getUserInfo(applyer);
             Bitmap bitmap=  BitmapFactory.decodeResource(appContext.getResources(),
-                    R.drawable.logo);
+                    R.drawable.ease_default_avatar);
             if(user!=null){
                 if(!user.getAvatar().equals(""))
                     try {
@@ -765,7 +772,7 @@ public class DemoHelper {
     public class MyContactListener implements EMContactListener {
 
         @Override
-        public void onContactAdded(String username) {
+        public void onContactAdded(final String username) {
             /*// 保存增加的联系人
             Map<String, EaseUser> localUsers = getContactList();
             Map<String, EaseUser> toAddUsers = new HashMap<String, EaseUser>();
@@ -778,79 +785,118 @@ public class DemoHelper {
             localUsers.putAll(toAddUsers);*/
             OkHttpUtils
                     .post()
-                    .url(Interfaces.GET_FRIENDS)
+                    .url(Interfaces.ADD_FRIEND)
                     .addParams("loginName", UserManager.getUsername(appContext))
-                    .addParams("loginPwd",  UserManager.getPassword(appContext))
-                    .build().execute(new StringCallback() {
-                @Override
-                public void onError(Call call, Exception e, int id) {
-                 e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(String response, int id) {
-                    try{ Logger.i("get_result",response);
-                    String[] result = response.split("\\|");
-                    if (result[0].equals("0")) {
-                        ArrayList<BaseUser> list;
-                        list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
-                        }.getType());
-                        List<EaseUser> mList = new ArrayList<EaseUser>();
-                        for (BaseUser baseUser : list) {
-                            EaseUser user = new EaseUser(baseUser.getPhoneNumber()+"-callba");
-                            user.setAvatar(baseUser.getUrl_head());
-                            user.setNick(baseUser.getNickname());
-                            user.setSign(baseUser.getSign());
-                            user.setRemark(baseUser.getRemark());
-                            EaseCommonUtils.setUserInitialLetter(user);
-                            mList.add(user);
+                    .addParams("loginPwd", UserManager.getPassword(appContext))
+                    .addParams("phoneNumber",username.substring(0,11))
+                    .build()
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onError(Call call, Exception e, int id) {
+                            e.printStackTrace();
                         }
-                        updateContactList(mList);
-                        broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
 
-                    }
-                    }catch(Exception e){
-                        e.printStackTrace();
-                       Toast.makeText(appContext,R.string.getserverdata_exception,Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-           //发送好友变动广播
+                        @Override
+                        public void onResponse(String response, int id) {
+                            try { Logger.i("add_result",response);
+                                String[] result=response.split("\\|");
+                                if(result[0].equals("0")){
+                                    try {
+                                        OkHttpUtils.post().url(Interfaces.USER_INFO)
+                                                .addParams("loginName", UserManager.getUsername(appContext))
+                                                .addParams("loginPwd", UserManager.getPassword(appContext))
+                                                .addParams("phoneNumber", username.substring(0, 11))
+                                                .build()
+                                                .execute(new StringCallback() {
+                                                    @Override
+                                                    public void onAfter(int id) {
 
-          /*  RequestParams params = new RequestParams();
-            params.addBodyParameter("loginName", GlobalConfig.getInstance().getUsername());
-            params.addBodyParameter("loginPwd", GlobalConfig.getInstance().getPassword());
-            params.addBodyParameter("phoneNumber",username.substring(0,11));
-            Logger.i("add_url",Interfaces.ADD_FRIEND+"?loginName="+GlobalConfig.getInstance().getUsername()+"&loginPwd="+GlobalConfig.getInstance().getPassword()+"&phoneNumber="+username.substring(0,11));
-            httpUtils.send(HttpRequest.HttpMethod.POST, Interfaces.ADD_FRIEND, params, new RequestCallBack<String>(){
-                @Override
-                public void onFailure(HttpException error, String msg) {
-                    Logger.i("add_fail",msg);
-                }
+                                                    }
 
-                @Override
-                public void onSuccess(ResponseInfo<String> responseInfo) {
-                    Logger.i("add_result",responseInfo.result);
-                    asyncFetchContactsFromServer(null);
-                }
-            });*/
+                                                    @Override
+                                                    public void onBefore(Request request, int id) {
 
+                                                    }
+
+                                                    @Override
+                                                    public void onError(Call call, Exception e, int id) {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onResponse(String response, int id) {
+                                                        try {
+                                                            String[] result = response.split("\\|");
+                                                            if (result[0].equals("0")) {
+                                                                BaseUser baseUser = gson.fromJson(result[1], new TypeToken<BaseUser>() {
+                                                                }.getType());
+                                                                EaseUser user = new EaseUser(username);
+                                                                user.setNick(baseUser.getNickname());
+                                                                user.setRemark(baseUser.getRemark());
+                                                                user.setSign(baseUser.getSign());
+                                                                user.setAvatar(baseUser.getUrl_head());
+                                                                saveContact(user);
+                                                                broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+                                                                }
+                                                             else toast(result[1]);
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                            toast(R.string.getserverdata_exception);
+                                                        }
+                                                    }
+                                                });}catch (Exception e){
+                                    e.printStackTrace();}
+                                }else toast(result[1]);}catch (Exception e){
+                            e.printStackTrace();}}
+                        });
         }
 
         @Override
-        public void onContactDeleted(String username) {
+        public void onContactDeleted(final String username) {
             // 被删除
             Map<String, EaseUser> localUsers = DemoHelper.getInstance().getContactList();
             localUsers.remove(username);
             userDao.deleteContact(username);
+            getContactList();
             inviteMessgeDao.deleteMessage(username);
             EMClient.getInstance().chatManager().deleteConversation(username,true);
-            broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
-            Intent intent=new Intent(Constant.ACTION_CONTACT_CHANAGED);
-            intent.putExtra("username",username);
-            //发送好友变动广播
-            broadcastManager.sendBroadcast(intent);
-            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
+            OkHttpUtils
+                    .post()
+                    .url(Interfaces.DELETE_FRIENDS)
+                    .addParams("loginName",  UserManager.getUsername(appContext))
+                    .addParams("loginPwd", UserManager.getPassword(appContext))
+                    .addParams("phoneNumber",username.substring(0, 11))
+                    .build().execute(new StringCallback() {
+                @Override
+                public void onError(Call call, Exception e, int id) {
+                    e.printStackTrace();
+                    toast("删除失败");
+                }
+
+                @Override
+                public void onResponse(String response, int id) {
+                    try {
+                        String[] result = response.split("\\|");
+                        Logger.i("delete_result", response);
+                        if (result[0].equals("0")) {
+                            // 删除此联系人
+                            broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
+                            Intent intent=new Intent(Constant.ACTION_CONTACT_CHANAGED);
+                            intent.putExtra("username",username);
+                            //发送好友变动广播
+                            broadcastManager.sendBroadcast(intent);
+                            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
+                            // 删除相关的邀请消息
+                            InviteMessgeDao dao = new InviteMessgeDao(appContext);
+                            dao.deleteMessage(username);
+                        } else {
+                            toast(result[1]);
+                        }
+                    } catch (Exception e) {
+                        toast(R.string.getserverdata_exception);
+                    }
+                }
+            });
         }
 
         @Override
@@ -872,11 +918,69 @@ public class DemoHelper {
             // 设置相应status
             msg.setStatus(InviteMesageStatus.BEINVITEED);
             notifyNewIviteMessage(msg);
-            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_NOTIFY));
+            EaseUser user=getUserInfo(username);
+            Bitmap bitmap=  BitmapFactory.decodeResource(appContext.getResources(),
+                    R.drawable.ease_default_avatar);
+            if(user!=null){
+                if(!user.getAvatar().equals(""))
+                    try {
+                        bitmap = Glide.
+                                with(appContext).
+                                load(user.getAvatar()).
+                                asBitmap().
+                                into(100, 100). // Width and height
+                                get();
+                    }catch (Exception e){
+
+                    }
+            }
+
+            if ((MyApplication.activities.get(MyApplication.activities.size()-1).getClass()!= NewFriendsMsgActivity.class)&&demoModel.getSettingMsgNotification())
+            {
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+                        appContext)
+                        .setSmallIcon(R.drawable.logo_notification)
+                        .setLargeIcon(
+                                bitmap)
+                        .setContentTitle("好友申请")
+                        .setContentText((user!=null?user.getNick():msg.getFrom().substring(0,11))+"申请加为好友");
+                Intent notificationIntent = new Intent(appContext, NewFriendsMsgActivity.class);
+                notificationIntent.putExtra("username", username);
+                // TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                // stackBuilder.addParentStack(clazz);
+                // stackBuilder.addNextIntent(notificationIntent);
+                // PendingIntent resultPendingIntent =
+                // stackBuilder.getPendingIntent(
+                // 0,
+                // PendingIntent.FLAG_UPDATE_CURRENT
+                // );
+                PendingIntent contentIntent = PendingIntent.getActivity(
+                        appContext, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                //mBuilder.setFullScreenIntent(contentIntent, false);
+                mBuilder.setAutoCancel(true);
+                mBuilder.setContentIntent(contentIntent);
+                mBuilder.setPriority(Notification.PRIORITY_HIGH);
+      /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            mBuilder.setFullScreenIntent(contentIntent, true);*/
+                mBuilder.setTicker((user!=null?user.getNick():msg.getFrom().substring(0,11))+"申请加为好友");
+                Notification notification = mBuilder.build();
+                notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
+                //notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                final NotificationManager mNotificationManager = (NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                mNotificationManager.notify(0526, notification);
+             /*   Timer timer=new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                       mNotificationManager.cancel(0526);
+                    }
+                },5000);*/
+            }
         }
 
         @Override
-        public void onContactAgreed(String username) {
+        public void onContactAgreed(final String username) {
             List<InviteMessage> msgs = inviteMessgeDao.getMessagesList();
             for (InviteMessage inviteMessage : msgs) {
                 if (inviteMessage.getFrom().equals(username)) {
@@ -890,8 +994,6 @@ public class DemoHelper {
             Log.d(TAG, username + "同意了你的好友请求");
             msg.setStatus(InviteMesageStatus.BEAGREED);
             notifyNewIviteMessage(msg);
-            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-
         }
 
         @Override
@@ -1107,7 +1209,9 @@ public class DemoHelper {
      * 保存单个user 
      */
     public void saveContact(EaseUser user){
-    	contactList.put(user.getUsername(), user);
+      /*  if(contactList==null)
+        contactList=getContactList();
+    	contactList.put(user.getUsername(), user);*/
     	demoModel.saveContact(user);
     }
     
@@ -1499,4 +1603,11 @@ public class DemoHelper {
         easeUI.popActivity(activity);
     }
 
+    public void toast(String msg) {
+        Toast.makeText(appContext, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    public void toast(int id) {
+        Toast.makeText(appContext, appContext.getString(id), Toast.LENGTH_SHORT).show();
+    }
 }

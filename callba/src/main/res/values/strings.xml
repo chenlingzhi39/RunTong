@@ -630,7 +630,7 @@
     <string name="ylist_djck">点击查看</string>
 
     <string name="get_ersion_fail">获取版本失败</string>
-    <string name="send_successful">短信发送成功</string>
+    <string name="send_successful">请求发送成功</string>
     <string name="send_successful_access">对方接收成功</string>
     <string name="contacts">通讯录</string>
     <string name="dialpad">拨号键盘</string>

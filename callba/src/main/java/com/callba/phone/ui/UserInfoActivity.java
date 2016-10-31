@@ -1,13 +1,19 @@
 package com.callba.phone.ui;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,6 +38,9 @@ import com.google.gson.reflect.TypeToken;
 import com.hyphenate.chat.EMClient;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -205,7 +214,12 @@ public class UserInfoActivity extends BaseActivity {
                     @Override
                     public void onResult(boolean confirmed, Bundle bundle) {
                         if (confirmed) {
-                            OkHttpUtils
+                            InviteMessgeDao dao = new InviteMessgeDao(UserInfoActivity.this);
+                            dao.deleteMessage(user.getUsername());
+                            // 删除此联系人
+                            deleteContact(user);
+                            setResult(RESULT_OK);
+                        /*    OkHttpUtils
                                     .post()
                                     .url(Interfaces.DELETE_FRIENDS)
                                     .addParams("loginName", getUsername())
@@ -236,7 +250,7 @@ public class UserInfoActivity extends BaseActivity {
                                         toast(R.string.getserverdata_exception);
                                     }
                                 }
-                            });
+                            });*/
 
                         }
                     }
@@ -258,70 +272,159 @@ public class UserInfoActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case R.id.add_friend:
-                OkHttpUtils
-                        .post()
-                        .url(Interfaces.ADD_FRIEND)
-                        .addParams("loginName", getUsername())
-                        .addParams("loginPwd",  getPassword())
-                        .addParams("phoneNumber",userName.substring(0, 11))
-                        .build()
-                        .execute(new StringCallback() {
-                            @Override
-                            public void onBefore(Request request, int id) {
-                              progressDialog=ProgressDialog.show(UserInfoActivity.this,"",getString(R.string.being_added));
-                            }
+                if(EMClient.getInstance().getCurrentUser().equals(userName)){
+                    new EaseAlertDialog(this, R.string.not_add_myself).show();
+                    return;
+                }
 
-                            @Override
-                            public void onAfter(int id) {
-                              progressDialog.dismiss();
-                            }
+                if(DemoHelper.getInstance().getContactList().containsKey(userName)){
+                    //提示已在好友列表中(在黑名单列表里)，无需添加
+                    if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(userName)){
+                        new EaseAlertDialog(this, R.string.user_already_in_contactlist).show();
+                        return;
+                    }
+                    new EaseAlertDialog(this, R.string.This_user_is_already_your_friend).show();
+                    return;
+                }
 
-                            @Override
-                            public void onError(Call call, Exception e, int id) {
-                                e.printStackTrace();
-                                showException(e);
-                            }
+                progressDialog = new ProgressDialog(this);
+                String stri = getResources().getString(R.string.Is_sending_a_request);
+                progressDialog.setMessage(stri);
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.show();
 
-                            @Override
-                            public void onResponse(String response, int id) {
-                                try { Logger.i("add_result",response);
-                                    String[] result=response.split("\\|");
-                                    if(result[0].equals("0")){
-                                        try {
-                                            //demo写死了个reason，实际应该让用户手动填入
-                                            String s = getResources().getString(R.string.Add_a_friend);
-                                            //EMClient.getInstance().contactManager().addContact(toAddUsername+"-callba", s);
-                                            sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-                                            DemoHelper.getInstance().saveContact(user);
-                                            LocalBroadcastManager.getInstance(UserInfoActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-                                            addFriend.setVisibility(View.GONE);
-                                            deleteFriend.setVisibility(View.VISIBLE);
-                                            runOnUiThread(new Runnable() {
-                                                public void run() {
-                                                    String s1 = "添加成功";
-                                                    Toast.makeText(getApplicationContext(), s1, Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                        } catch (final Exception e) {
-                                            e.printStackTrace();
-                                            runOnUiThread(new Runnable() {
-                                                public void run() {
-                                                    String s2 = getResources().getString(R.string.Request_add_buddy_failure);
-                                                    Toast.makeText(getApplicationContext(), s2 + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                        }
-                                    }else  toast(result[1]);
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                    toast(R.string.getserverdata_exception);
+                new Thread(new Runnable() {
+                    public void run() {
+
+                        try {
+                            //demo写死了个reason，实际应该让用户手动填入
+                            String s = getResources().getString(R.string.Add_a_friend);
+                            EMClient.getInstance().contactManager().addContact(userName, s);
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    progressDialog.dismiss();
+                                    String s1 = getResources().getString(R.string.send_successful);
+                                    Toast.makeText(getApplicationContext(), s1, Toast.LENGTH_SHORT).show();
                                 }
-                            }
-                        });
+                            });
+                        } catch (final Exception e) {
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    progressDialog.dismiss();
+                                    String s2 = getResources().getString(R.string.Request_add_buddy_failure);
+                                    Toast.makeText(getApplicationContext(), s2 + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                }).start();
                 break;
         }
     }
+    public class DialogHelper implements DialogInterface.OnDismissListener {
+        private Dialog mDialog;
+        private View mView;
+        private EditText change;
 
+        public DialogHelper() {
+            mView = getLayoutInflater().inflate(R.layout.dialog_change_number, null);
+            change = (EditText) mView.findViewById(R.id.et_change);
+            change.setInputType(InputType.TYPE_CLASS_TEXT);
+            change.requestFocus();
+            Timer timer = new Timer(); //设置定时器
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() { //弹出软键盘的代码
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInputFromWindow(change.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }, 300); //设置300毫秒的时长
+        }
+
+        private String getNumber() {
+            return change.getText().toString();
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialogInterface) {
+            mDialog = null;
+        }
+
+        public void setDialog(Dialog mDialog) {
+            this.mDialog = mDialog;
+        }
+
+        public View getView() {
+            return mView;
+        }
+    }
+
+    public void showDialog() {
+        final DialogHelper helper = new DialogHelper();
+        Dialog dialog = new android.support.v7.app.AlertDialog.Builder(this)
+                .setView(helper.getView())
+                .setTitle("请输入验证信息")
+                .setOnDismissListener(helper)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(EMClient.getInstance().getCurrentUser().equals(userName)){
+                            new EaseAlertDialog(UserInfoActivity.this, R.string.not_add_myself).show();
+                            return;
+                        }
+
+                        if(DemoHelper.getInstance().getContactList().containsKey(userName)){
+                            //提示已在好友列表中(在黑名单列表里)，无需添加
+                            if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(userName)){
+                                new EaseAlertDialog(UserInfoActivity.this, R.string.user_already_in_contactlist).show();
+                                return;
+                            }
+                            new EaseAlertDialog(UserInfoActivity.this, R.string.This_user_is_already_your_friend).show();
+                            return;
+                        }
+
+                        progressDialog = new ProgressDialog(UserInfoActivity.this);
+                        String stri = getResources().getString(R.string.Is_sending_a_request);
+                        progressDialog.setMessage(stri);
+                        progressDialog.setCanceledOnTouchOutside(false);
+                        progressDialog.show();
+
+                        new Thread(new Runnable() {
+                            public void run() {
+                                try {
+                                    //demo写死了个reason，实际应该让用户手动填入
+                                    String s = helper.getNumber();
+                                    EMClient.getInstance().contactManager().addContact(userName, s);
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            progressDialog.dismiss();
+                                            String s1 = getResources().getString(R.string.send_successful);
+                                            Toast.makeText(getApplicationContext(), s1, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } catch (final Exception e) {
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            progressDialog.dismiss();
+                                            String s2 = getResources().getString(R.string.Request_add_buddy_failure);
+                                            Toast.makeText(getApplicationContext(), s2 + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }).start();
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+
+        helper.setDialog(dialog);
+        dialog.show();
+    }
     /**
      * 删除联系人
      *

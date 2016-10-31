@@ -17,6 +17,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,15 +31,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
+import com.callba.phone.Constant;
+import com.callba.phone.DemoHelper;
+import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.db.InviteMessage;
 import com.callba.phone.db.InviteMessage.InviteMesageStatus;
 import com.callba.phone.db.InviteMessgeDao;
+import com.callba.phone.manager.UserManager;
 import com.callba.phone.util.EaseUserUtils;
+import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.hyphenate.chat.EMClient;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Request;
 
 public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 
@@ -91,7 +105,7 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 		    
 			if(msg.getGroupId() != null){ // 显示群聊提示
 				holder.groupContainer.setVisibility(View.VISIBLE);
-				holder.groupname.setText(msg.getGroupName());
+				holder.groupname.setText("群聊:"+msg.getGroupName());
 			} else{
 				holder.groupContainer.setVisibility(View.GONE);
 			}
@@ -114,12 +128,16 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 				holder.status.setEnabled(true);
 				holder.status.setBackgroundResource(android.R.drawable.btn_default);
 				holder.status.setText(str7);
-
+				holder.type.setText("好友申请");
 				if(msg.getStatus() == InviteMesageStatus.BEINVITEED){
-					if (msg.getReason() == null) {
+					if (TextUtils.isEmpty(msg.getReason())) {
 						// 如果没写理由
 						holder.reason.setText(str3);
 					}
+					holder.type.setText("好友申请");
+				}else if(msg.getStatus() == InviteMesageStatus.BEAGREED){
+					holder.type.setText("好友申请");
+
 				}else if (msg.getStatus() == InviteMesageStatus.BEAPPLYED) { //入群申请
 					if (TextUtils.isEmpty(msg.getReason())) {
 						holder.reason.setText(str4 + msg.getGroupName());
@@ -155,7 +173,6 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 				if (TextUtils.isEmpty(msg.getReason())) {
 					holder.reason.setText(str4 + msg.getGroupName());
 				}
-				holder.type.setText("入群申请");
 			} else if(msg.getStatus() == InviteMesageStatus.REFUSED){
 				holder.status.setVisibility(View.GONE);
 				holder.result.setVisibility(View.VISIBLE);
@@ -163,7 +180,6 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 				if (TextUtils.isEmpty(msg.getReason())) {
 					holder.reason.setText(str4 + msg.getGroupName());
 				}
-				holder.type.setText("入群申请");
 			} else if(msg.getStatus() == InviteMesageStatus.GROUPINVITATION_ACCEPTED){
 				EaseUser user=EaseUserUtils.getUserInfo(msg.getGroupInviter());
 			    String str = (user!=null?user.getNick():msg.getGroupInviter().substring(0,11)) + str9 + msg.getGroupName();
@@ -212,7 +228,7 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 					} else if (msg.getStatus() == InviteMesageStatus.GROUPINVITATION) {
 					    EMClient.getInstance().groupManager().acceptInvitation(msg.getGroupId(), msg.getGroupInviter());
 					}
-                    msg.setStatus(InviteMesageStatus.AGREED);
+					msg.setStatus(InviteMesageStatus.AGREED);
                     // 更新db
                     ContentValues values = new ContentValues();
                     values.put(InviteMessgeDao.COLUMN_NAME_STATUS, msg.getStatus().ordinal());
@@ -239,7 +255,7 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 						@Override
 						public void run() {
 							pd.dismiss();
-							Toast.makeText(context, str3 + e.getMessage(), 1).show();
+							Toast.makeText(context, str3 + e.getMessage(), Toast.LENGTH_SHORT).show();
 						}
 					});
 
@@ -274,7 +290,7 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
                     } else if (msg.getStatus() == InviteMesageStatus.GROUPINVITATION) {
                         EMClient.getInstance().groupManager().declineInvitation(msg.getGroupId(), msg.getGroupInviter(), "");
                     }
-                    msg.setStatus(InviteMesageStatus.REFUSED);
+					msg.setStatus(InviteMesageStatus.REFUSED);
                     // 更新db
                     ContentValues values = new ContentValues();
                     values.put(InviteMessgeDao.COLUMN_NAME_STATUS, msg.getStatus().ordinal());
@@ -322,5 +338,10 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 		TextView type;
 		// TextView time;
 	}
-
+	public void toast(String msg) {
+		Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+	}
+	public void toast(int id) {
+		Toast.makeText(getContext(), getContext().getString(id), Toast.LENGTH_SHORT).show();
+	}
 }

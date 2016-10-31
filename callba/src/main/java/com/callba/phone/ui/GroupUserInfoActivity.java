@@ -1,12 +1,19 @@
 package com.callba.phone.ui;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +30,7 @@ import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
+import com.callba.phone.widget.EaseAlertDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hyphenate.EMGroupChangeListener;
@@ -32,6 +40,8 @@ import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -171,6 +181,7 @@ public class GroupUserInfoActivity extends BaseActivity {
                                     user.setRemark(baseUser.getRemark());
                                     user.setSign(baseUser.getSign());
                                     user.setAvatar(baseUser.getUrl_head());
+                                    user.setNick(baseUser.getNickname());
                                     if (!TextUtils.isEmpty(baseUser.getUrl_head()))
                                         Glide.with(GroupUserInfoActivity.this).load(baseUser.getUrl_head()).into(avatar);
                                     if (!TextUtils.isEmpty(baseUser.getNickname()))
@@ -192,103 +203,118 @@ public class GroupUserInfoActivity extends BaseActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.add_friend:
-                OkHttpUtils
-                        .post()
-                        .url(Interfaces.ADD_FRIEND)
-                        .addParams("loginName", getUsername())
-                        .addParams("loginPwd", getPassword())
-                        .addParams("phoneNumber", username.substring(0, 11))
-                        .build()
-                        .execute(new StringCallback() {
-                            @Override
-                            public void onError(Call call, Exception e, int id) {
-                                e.printStackTrace();
-                                showException(e);
-                            }
-
-                            @Override
-                            public void onResponse(String response, int id) {
-                                try {
-                                    Logger.i("add_result", response);
-                                    String[] result = response.split("\\|");
-                                    if (result[0].equals("0")) {
-                                        try {
-                                            //demo写死了个reason，实际应该让用户手动填入
-                                            String s = getResources().getString(R.string.Add_a_friend);
-                                            //EMClient.getInstance().contactManager().addContact(toAddUsername+"-callba", s);
-                                            sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-                                            OkHttpUtils
-                                                    .post()
-                                                    .url(Interfaces.GET_FRIENDS)
-                                                    .addParams("loginName", getUsername())
-                                                    .addParams("loginPwd", getPassword())
-                                                    .build().execute(new StringCallback() {
-                                                @Override
-                                                public void onError(Call call, Exception e, int id) {
-                                                    e.printStackTrace();
-                                                }
-
-                                                @Override
-                                                public void onResponse(String response, int id) {
-                                                    try {
-                                                        Logger.i("get_result", response);
-                                                        String[] result = response.split("\\|");
-                                                        if (result[0].equals("0")) {
-                                                            ArrayList<BaseUser> list;
-                                                            list = gson.fromJson(result[1], new TypeToken<ArrayList<BaseUser>>() {
-                                                            }.getType());
-                                                            List<EaseUser> mList = new ArrayList<EaseUser>();
-                                                            for (BaseUser baseUser : list) {
-                                                                EaseUser user = new EaseUser(baseUser.getPhoneNumber() + "-callba");
-                                                                user.setAvatar(baseUser.getUrl_head());
-                                                                user.setNick(baseUser.getNickname());
-                                                                user.setSign(baseUser.getSign());
-                                                                user.setRemark(baseUser.getRemark());
-                                                                EaseCommonUtils.setUserInitialLetter(user);
-                                                                mList.add(user);
-                                                            }
-                                                            DemoHelper.getInstance().updateContactList(mList);
-                                                            LocalBroadcastManager.getInstance(GroupUserInfoActivity.this).sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
-                                                            setResult(RESULT_OK);
-                                                        }
-                                                    } catch (Exception e) {
-                                                        toast(R.string.getserverdata_exception);
-                                                    }
-                                                }
-                                            });
-                                            addFriend.setVisibility(View.GONE);
-                                            runOnUiThread(new Runnable() {
-                                                public void run() {
-                                                    progressDialog.dismiss();
-                                                    String s1 = "添加成功";
-                                                    Toast.makeText(getApplicationContext(), s1, Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                        } catch (final Exception e) {
-                                            runOnUiThread(new Runnable() {
-                                                public void run() {
-                                                    progressDialog.dismiss();
-                                                    String s2 = getResources().getString(R.string.Request_add_buddy_failure);
-                                                    Toast.makeText(getApplicationContext(), s2 + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                        }
-                                    } else {
-                                        toast(result[1]);
-                                        progressDialog.dismiss();
-                                    }
-                                } catch (Exception e) {
-                                    toast(R.string.getserverdata_exception);
-                                }
-                            }
-                        });
+                showDialog();
                 break;
             case R.id.send_message:
                 startActivityForResult(new Intent(this, ChatActivity.class).putExtra(Constant.EXTRA_USER_ID, getIntent().getStringExtra("username")),0);
                 break;
         }
     }
+    public class DialogHelper implements DialogInterface.OnDismissListener {
+        private Dialog mDialog;
+        private View mView;
+        private EditText change;
 
+        public DialogHelper() {
+            mView = getLayoutInflater().inflate(R.layout.dialog_change_number, null);
+            change = (EditText) mView.findViewById(R.id.et_change);
+            change.setInputType(InputType.TYPE_CLASS_TEXT);
+            change.requestFocus();
+            Timer timer = new Timer(); //设置定时器
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() { //弹出软键盘的代码
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInputFromWindow(change.getWindowToken(), 0, InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }, 300); //设置300毫秒的时长
+        }
+
+        private String getNumber() {
+            return change.getText().toString();
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialogInterface) {
+            mDialog = null;
+        }
+
+        public void setDialog(Dialog mDialog) {
+            this.mDialog = mDialog;
+        }
+
+        public View getView() {
+            return mView;
+        }
+    }
+
+    public void showDialog() {
+        final DialogHelper helper = new DialogHelper();
+        Dialog dialog = new AlertDialog.Builder(this)
+                .setView(helper.getView())
+                .setTitle("请输入验证信息")
+                .setOnDismissListener(helper)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(EMClient.getInstance().getCurrentUser().equals(username)){
+                            new EaseAlertDialog(GroupUserInfoActivity.this, R.string.not_add_myself).show();
+                            return;
+                        }
+
+                        if(DemoHelper.getInstance().getContactList().containsKey(username)){
+                            //提示已在好友列表中(在黑名单列表里)，无需添加
+                            if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(username)){
+                                new EaseAlertDialog(GroupUserInfoActivity.this, R.string.user_already_in_contactlist).show();
+                                return;
+                            }
+                            new EaseAlertDialog(GroupUserInfoActivity.this, R.string.This_user_is_already_your_friend).show();
+                            return;
+                        }
+
+                        progressDialog = new ProgressDialog(GroupUserInfoActivity.this);
+                        String stri = getResources().getString(R.string.Is_sending_a_request);
+                        progressDialog.setMessage(stri);
+                        progressDialog.setCanceledOnTouchOutside(false);
+                        progressDialog.show();
+
+                        new Thread(new Runnable() {
+                            public void run() {
+
+                                try {
+                                    //demo写死了个reason，实际应该让用户手动填入
+                                    String s = helper.getNumber();
+                                    EMClient.getInstance().contactManager().addContact(username, s);
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            progressDialog.dismiss();
+                                            String s1 = getResources().getString(R.string.send_successful);
+                                            Toast.makeText(getApplicationContext(), s1, Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                } catch (final Exception e) {
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            progressDialog.dismiss();
+                                            String s2 = getResources().getString(R.string.Request_add_buddy_failure);
+                                            Toast.makeText(getApplicationContext(), s2 + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }
+                        }).start();
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+
+        helper.setDialog(dialog);
+        dialog.show();
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

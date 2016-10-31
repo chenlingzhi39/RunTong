@@ -106,6 +106,7 @@ public class GroupDetailActivity extends BaseActivity {
     private MemberAdapter memberAdapter;
     private EMGroupChangeListener emGroupChangeListener;
     List<String> groups;
+    private boolean is_first=true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -234,7 +235,8 @@ public class GroupDetailActivity extends BaseActivity {
                     }
                 });
                 if (EMClient.getInstance().getCurrentUser().equals(group.getOwner()) || group.isAllowInvites())
-                    memberAdapter.addFooter(new RecyclerArrayAdapter.ItemView() {
+                    if(is_first)
+                    { memberAdapter.addFooter(new RecyclerArrayAdapter.ItemView() {
                         @Override
                         public View onCreateView(ViewGroup parent) {
                             return getLayoutInflater().inflate(R.layout.item_member, null);
@@ -253,6 +255,8 @@ public class GroupDetailActivity extends BaseActivity {
                             });
                         }
                     });
+                    is_first=false;
+                    }
 
 
             }
