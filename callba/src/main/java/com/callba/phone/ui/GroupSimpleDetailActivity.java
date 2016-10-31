@@ -278,6 +278,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		if(broadcastReceiver!=null)
 		broadcastManager.unregisterReceiver(broadcastReceiver);
 	}
 }

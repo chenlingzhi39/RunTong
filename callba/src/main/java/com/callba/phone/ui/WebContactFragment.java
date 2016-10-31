@@ -480,7 +480,9 @@ public class WebContactFragment extends BaseFragment {
     }
 
     private void unregisterBroadcastReceiver() {
+        if(broadcastReceiver!=null)
         broadcastManager.unregisterReceiver(broadcastReceiver);
+        if(broadcastReceiver1!=null)
         broadcastManager.unregisterReceiver(broadcastReceiver1);
     }
 

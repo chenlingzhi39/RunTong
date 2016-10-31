@@ -836,7 +836,7 @@ public class DemoHelper {
                                                                 user.setSign(baseUser.getSign());
                                                                 user.setAvatar(baseUser.getUrl_head());
                                                                 saveContact(user);
-                                                                broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
+                                                                broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED).putExtra("mode",1).putExtra("name",username));
                                                                 }
                                                              else toast(result[1]);
                                                         } catch (Exception e) {
@@ -885,7 +885,7 @@ public class DemoHelper {
                             intent.putExtra("username",username);
                             //发送好友变动广播
                             broadcastManager.sendBroadcast(intent);
-                            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
+                            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED).putExtra("mode",0).putExtra("name",username));
                             // 删除相关的邀请消息
                             InviteMessgeDao dao = new InviteMessgeDao(appContext);
                             dao.deleteMessage(username);

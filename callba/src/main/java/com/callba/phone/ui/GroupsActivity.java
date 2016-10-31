@@ -296,6 +296,7 @@ public class GroupsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(broadcastReceiver!=null)
         broadcastManager.unregisterReceiver(broadcastReceiver);
     }
 

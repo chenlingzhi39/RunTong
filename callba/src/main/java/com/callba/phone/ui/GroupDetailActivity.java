@@ -355,6 +355,7 @@ public class GroupDetailActivity extends BaseActivity {
                         public void run() {
                             LocalBroadcastManager.getInstance(GroupDetailActivity.this).sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
                             progressDialog.dismiss();
+                            setResult(RESULT_OK);
                             finish();
                         }
                     });
@@ -421,6 +422,7 @@ public class GroupDetailActivity extends BaseActivity {
                         public void run() {
                             LocalBroadcastManager.getInstance(GroupDetailActivity.this).sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
                             progressDialog.dismiss();
+                            setResult(RESULT_OK);
                             finish();
                         }
                     });

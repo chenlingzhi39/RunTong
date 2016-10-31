@@ -2,9 +2,11 @@ package com.callba.phone.ui;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
@@ -76,6 +78,7 @@ public class GroupUserInfoActivity extends BaseActivity {
     Gson gson;
     ProgressDialog progressDialog;
     private EMGroupChangeListener emGroupChangeListener;
+    private BroadcastReceiver broadcastReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,6 +200,22 @@ public class GroupUserInfoActivity extends BaseActivity {
                         }
                     });
         }
+        IntentFilter intentFilter=new IntentFilter(Constant.ACTION_CONTACT_CHANAGED);
+        broadcastReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(intent.getExtras()!=null){
+                    if(intent.getStringExtra("name").equals(username)){
+                        if(intent.getIntExtra("mode",0)==0){
+                            addFriend.setVisibility(View.VISIBLE);
+                        }else{
+                            addFriend.setVisibility(View.GONE);
+                        }
+                    }
+                }
+            }
+        };
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,intentFilter);
     }
 
     @OnClick({R.id.add_friend, R.id.send_message})
@@ -318,7 +337,10 @@ public class GroupUserInfoActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(emGroupChangeListener!=null)
         EMClient.getInstance().groupManager().removeGroupChangeListener(emGroupChangeListener);
+        if(broadcastReceiver!=null)
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

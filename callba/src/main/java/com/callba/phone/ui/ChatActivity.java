@@ -281,6 +281,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     protected void onDestroy() {
         if (groupListener != null)
             EMClient.getInstance().groupManager().removeGroupChangeListener(groupListener);
+        if(broadcastReceiver!=null)
         broadcastManager.unregisterReceiver(broadcastReceiver);
         super.onDestroy();
     }
@@ -696,7 +697,8 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
             }else if(requestCode== USER_INFO){
                 setResult(RESULT_OK);
                 finish();
-            }
+            }else if(requestCode==REQUEST_CODE_GROUP_DETAIL)
+                finish();
 
         }
         if (resultCode == 5) title.setText(data.getStringExtra("data"));

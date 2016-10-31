@@ -3,9 +3,11 @@ package com.callba.phone.ui;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputType;
@@ -85,7 +87,7 @@ public class UserInfoActivity extends BaseActivity {
     FrameLayout frame1;
     @BindView(R.id.add_friend)
     Button addFriend;
-
+    BroadcastReceiver broadcastReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,6 +171,24 @@ public class UserInfoActivity extends BaseActivity {
         } else {
             tv_remark.setText(userName);
         }
+        IntentFilter intentFilter=new IntentFilter(Constant.ACTION_CONTACT_CHANAGED);
+        broadcastReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(intent.getExtras()!=null){
+                    if(intent.getStringExtra("name").equals(userName)){
+                        if(intent.getIntExtra("mode",0)==0){
+                            addFriend.setVisibility(View.VISIBLE);
+                            deleteFriend.setVisibility(View.GONE);
+                        }else{
+                            addFriend.setVisibility(View.GONE);
+                            deleteFriend.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+            }
+        };
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,intentFilter);
     }
 
 
@@ -452,18 +472,24 @@ public class UserInfoActivity extends BaseActivity {
                         }
                     });
 
-                }finally {
+                }/*finally {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             addFriend.setVisibility(View.VISIBLE);
                             deleteFriend.setVisibility(View.GONE);
                             pd.dismiss();}
                     });
-                }
+                }*/
 
             }
         }).start();
 
     }
 
+    @Override
+    protected void onDestroy() {
+        if(broadcastReceiver!=null)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+        super.onDestroy();
+    }
 }

@@ -311,6 +311,7 @@ public class GroupMembersActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(emGroupChangeListener!=null)
         EMClient.getInstance().groupManager().removeGroupChangeListener(emGroupChangeListener);
     }
 
