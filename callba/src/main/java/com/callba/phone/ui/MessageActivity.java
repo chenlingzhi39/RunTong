@@ -185,7 +185,7 @@ public class MessageActivity extends BaseActivity {
                     }
                     // it's single chat
                     intent.putExtra(Constant.EXTRA_USER_ID, username);
-                    startActivity(intent);
+                    startActivityForResult(intent,0);
                 }
             }
         });
@@ -498,5 +498,12 @@ public class MessageActivity extends BaseActivity {
         ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(cardSearch.getWindowToken(), 0);
         if(cardSearch.getVisibility()==View.VISIBLE&&TextUtils.isEmpty(editTextSearch.getText().toString()))
             InitiateSearch.handleToolBar(MessageActivity.this, cardSearch, editTextSearch, 20);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK)
+         refresh();
     }
 }

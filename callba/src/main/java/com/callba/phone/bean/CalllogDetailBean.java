@@ -1,11 +1,12 @@
 package com.callba.phone.bean;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
 import java.util.List;
 
-public class CalllogDetailBean implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class CalllogDetailBean implements Parcelable{
 	public static final int INCOMING_CALL = 0x10; // 来电
 	public static final int OUTGOING_CALL = 0x11; // 去电
 	public static final int MISSED_CALL = 0x12; // 未接
@@ -76,4 +77,44 @@ public class CalllogDetailBean implements Serializable {
 				+ callLogTime + ",date=" + date + ",occurrenceNumber="
 				+ occurrenceNumber + ",calllogBean" + calllogBean + "]";
 	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(this.callLogNumber);
+		dest.writeLong(this.callLogTime);
+		dest.writeString(this.date);
+		dest.writeInt(this.callLogType);
+		dest.writeInt(this.occurrenceNumber);
+		dest.writeList(this.calllogBean);
+	}
+
+	public CalllogDetailBean() {
+	}
+
+	protected CalllogDetailBean(Parcel in) {
+		this.callLogNumber = in.readString();
+		this.callLogTime = in.readLong();
+		this.date = in.readString();
+		this.callLogType = in.readInt();
+		this.occurrenceNumber = in.readInt();
+		this.calllogBean = new ArrayList<CalldaCalllogBean>();
+		in.readList(this.calllogBean, CalldaCalllogBean.class.getClassLoader());
+	}
+
+	public static final Creator<CalllogDetailBean> CREATOR = new Creator<CalllogDetailBean>() {
+		@Override
+		public CalllogDetailBean createFromParcel(Parcel source) {
+			return new CalllogDetailBean(source);
+		}
+
+		@Override
+		public CalllogDetailBean[] newArray(int size) {
+			return new CalllogDetailBean[size];
+		}
+	};
 }

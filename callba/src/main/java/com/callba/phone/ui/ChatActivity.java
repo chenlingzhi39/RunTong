@@ -91,7 +91,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     protected static final int REQUEST_CODE_MAP = 1;
     protected static final int REQUEST_CODE_CAMERA = 2;
     protected static final int REQUEST_CODE_LOCAL = 3;
-    protected static final int USER_INFO=4;
+    protected static final int USER_INFO = 4;
     private static final int REQUEST_CODE_SELECT_VIDEO = 11;
     private static final int REQUEST_CODE_SELECT_FILE = 12;
     private static final int REQUEST_CODE_GROUP_DETAIL = 13;
@@ -117,6 +117,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     private NotificationManager notificationManager;
     private BroadcastReceiver broadcastReceiver;
     private LocalBroadcastManager broadcastManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,7 +126,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     }
 
     protected void init() {
-        broadcastManager=LocalBroadcastManager.getInstance(this);
+        broadcastManager = LocalBroadcastManager.getInstance(this);
         chatFragmentListener = this;
         chatType = getIntent().getIntExtra("chatType", 1);
         if (chatType != EaseConstant.CHATTYPE_SINGLE)
@@ -134,15 +135,16 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         listView = messageList.getListView();
         userName = getIntent().getStringExtra(Constant.EXTRA_USER_ID);
         toChatUsername = userName;
-        Logger.i("userName",userName);
+        Logger.i("userName", userName);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (chatType == EaseConstant.CHATTYPE_SINGLE) { // 单聊
             // 设置标题
-                EaseUserUtils.setUserNick(toChatUsername, title);
+            EaseUserUtils.setUserNick(toChatUsername, title);
             //titleBar.setRightImageResource(R.drawable.ease_mm_title_remove);
-            if(GlobalConfig.getInstance().getMessage()!=null){
-                Logger.i("username",GlobalConfig.getInstance().getMessage().getFrom());
-                if(GlobalConfig.getInstance().getMessage().getFrom().equals(toChatUsername)&&GlobalConfig.getInstance().getMessage().getChatType()==  EMMessage.ChatType.Chat);
+            if (GlobalConfig.getInstance().getMessage() != null) {
+                Logger.i("username", GlobalConfig.getInstance().getMessage().getFrom());
+                if (GlobalConfig.getInstance().getMessage().getFrom().equals(toChatUsername) && GlobalConfig.getInstance().getMessage().getChatType() == EMMessage.ChatType.Chat)
+                    ;
                 notificationManager.cancel(0525);
             }
         } else {
@@ -155,8 +157,9 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 // 监听当前会话的群聊解散被T事件
                 groupListener = new GroupListener();
                 EMClient.getInstance().groupManager().addGroupChangeListener(groupListener);
-                if(GlobalConfig.getInstance().getMessage()!=null){
-                    if(GlobalConfig.getInstance().getMessage().getTo().equals(toChatUsername)&&GlobalConfig.getInstance().getMessage().getChatType()==  EMMessage.ChatType.GroupChat);
+                if (GlobalConfig.getInstance().getMessage() != null) {
+                    if (GlobalConfig.getInstance().getMessage().getTo().equals(toChatUsername) && GlobalConfig.getInstance().getMessage().getChatType() == EMMessage.ChatType.GroupChat)
+                        ;
                     notificationManager.cancel(0525);
                 }
             } else {
@@ -213,7 +216,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
             }
         }
 
-        broadcastReceiver=new BroadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 //messages = (ArrayList<EMMessage>) EMClient.getInstance().chatManager().getConversation(userName).getAllMessages();
@@ -221,34 +224,36 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 chatAdapter.addAll(messages);
                 list.scrollToPosition(messages.size() - 1);*/
                 Logger.i("chatActivity", "receive");
-                if(intent.getExtras()!=null){
-                EMMessage message = (EMMessage) intent.getExtras().get("message");
-                if(message!=null){
-                String username = null;
-                // 群组消息
-                if (message.getChatType() == EMMessage.ChatType.GroupChat || message.getChatType() == EMMessage.ChatType.ChatRoom) {
-                    username = message.getTo();
-                } else {
-                    // 单聊消息
-                    username = message.getFrom();
-                }
+                if (intent.getExtras() != null) {
+                    EMMessage message = (EMMessage) intent.getExtras().get("message");
+                    if (message != null) {
+                        String username = null;
+                        // 群组消息
+                        if (message.getChatType() == EMMessage.ChatType.GroupChat || message.getChatType() == EMMessage.ChatType.ChatRoom) {
+                            username = message.getTo();
+                        } else {
+                            // 单聊消息
+                            username = message.getFrom();
+                        }
 
-                // 如果是当前会话的消息，刷新聊天页面
-                if (username.equals(toChatUsername)) {
-                    messageList.refreshSelectLast();
-                    // 声音和震动提示有新消息
-                    EaseUI.getInstance().getNotifier().viberateAndPlayTone(message);
-                } else {
-                    // 如果消息不是和当前聊天ID的消息
-                    EaseUI.getInstance().getNotifier().onNewMsg(message);
-                }
-                SimpleHandler.getInstance().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
+                        // 如果是当前会话的消息，刷新聊天页面
+                        if (username.equals(toChatUsername)) {
+                            messageList.refreshSelectLast();
+                            // 声音和震动提示有新消息
+                            EaseUI.getInstance().getNotifier().viberateAndPlayTone(message);
+                        } else {
+                            // 如果消息不是和当前聊天ID的消息
+                            EaseUI.getInstance().getNotifier().onNewMsg(message);
+                        }
+                        SimpleHandler.getInstance().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
+                            }
+                        }, 100);
                     }
-                }, 100);
-            }}}
+                }
+            }
         };
         broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
         broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constant.ACTION_MESSAGE_CHANGED));
@@ -262,7 +267,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
             DemoHelper.getInstance().pushActivity(this);
             if (chatType == EaseConstant.CHATTYPE_SINGLE) { // 单聊
                 // 设置标题
-                    EaseUserUtils.setUserNick(toChatUsername, title);
+                EaseUserUtils.setUserNick(toChatUsername, title);
                 //titleBar.setRightImageResource(R.drawable.ease_mm_title_remove);
             }
         }
@@ -281,8 +286,8 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     protected void onDestroy() {
         if (groupListener != null)
             EMClient.getInstance().groupManager().removeGroupChangeListener(groupListener);
-        if(broadcastReceiver!=null)
-        broadcastManager.unregisterReceiver(broadcastReceiver);
+        if (broadcastReceiver != null)
+            broadcastManager.unregisterReceiver(broadcastReceiver);
         super.onDestroy();
     }
 
@@ -399,7 +404,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 if (chatFragmentListener != null) {
                     chatFragmentListener.onMessageBubbleLongClick(message);
                 }
-                startActivityForResult((new Intent(ChatActivity.this, ContextMenuActivity.class)).putExtra("message",message)
+                startActivityForResult((new Intent(ChatActivity.this, ContextMenuActivity.class)).putExtra("message", message)
                                 .putExtra("ischatroom", chatType == EaseConstant.CHATTYPE_CHATROOM),
                         REQUEST_CODE_CONTEXT_MENU);
             }
@@ -694,11 +699,12 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 } else {
                     Toast.makeText(this, R.string.unable_to_get_loaction, Toast.LENGTH_SHORT).show();
                 }
-            }else if(requestCode== USER_INFO){
+            } else if (requestCode == USER_INFO) {
                 setResult(RESULT_OK);
                 finish();
-            }else if(requestCode==REQUEST_CODE_GROUP_DETAIL)
-                finish();
+            } else if (requestCode == REQUEST_CODE_GROUP_DETAIL)
+            {  setResult(RESULT_OK);
+                finish();}
 
         }
         if (resultCode == 5) title.setText(data.getStringExtra("data"));
@@ -722,7 +728,8 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
 
                 default:
                     break;
-            }}
+            }
+        }
 
     }
 
@@ -745,9 +752,9 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (chatType == EaseConstant.CHATTYPE_SINGLE&&toChatUsername.length()>=11)
+        if (chatType == EaseConstant.CHATTYPE_SINGLE && toChatUsername.length() >= 11)
             getMenuInflater().inflate(R.menu.menu_chat, menu);
-        else if(chatType == EaseConstant.CHATTYPE_SINGLE&&toChatUsername.length()<11){
+        else if (chatType == EaseConstant.CHATTYPE_SINGLE && toChatUsername.length() < 11) {
             getMenuInflater().inflate(R.menu.clear, menu);
         }
         if (chatType == EaseConstant.CHATTYPE_GROUP)
@@ -764,24 +771,25 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
             case R.id.person:
                 Intent intent = new Intent(this, UserInfoActivity.class);
                 intent.putExtra("username", userName);
-                startActivityForResult(intent,USER_INFO);
+                startActivityForResult(intent, USER_INFO);
                 break;
             case R.id.callback:
                 String name;
-                if(toChatUsername.length()>10){
-                EaseUser user=EaseUserUtils.getUserInfo(toChatUsername);
-                name=toChatUsername;
-                if (user != null) {
-                    if(!TextUtils.isEmpty(user.getNick()))
-                    name=user.getNick();
-                    if(!TextUtils.isEmpty(user.getRemark()))
-                        name=user.getRemark();
-                }
-                Intent intent1 = new Intent(this, SelectDialPopupWindow.class);
-                intent1.putExtra("name",name);
-                intent1.putExtra("number", toChatUsername.substring(0,11));
+                if (toChatUsername.length() > 10) {
+                    EaseUser user = EaseUserUtils.getUserInfo(toChatUsername);
+                    name = toChatUsername;
+                    if (user != null) {
+                        if (!TextUtils.isEmpty(user.getNick()))
+                            name = user.getNick();
+                        if (!TextUtils.isEmpty(user.getRemark()))
+                            name = user.getRemark();
+                    }
+                    Intent intent1 = new Intent(this, SelectDialPopupWindow.class);
+                    intent1.putExtra("name", name);
+                    intent1.putExtra("number", toChatUsername.substring(0, 11));
 
-                startActivity(intent1);}else toast("不支持的用户类型");
+                    startActivity(intent1);
+                } else toast("不支持的用户类型");
                 break;
             case R.id.clear:
                 emptyHistory();
@@ -833,10 +841,15 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
 
     @Override
     public void onAvatarClick(String username) {
-        if(!username.equals(EMClient.getInstance().getCurrentUser())||!username.equals("admin"))
-        {Intent intent = new Intent(this, UserInfoActivity.class);
-        intent.putExtra("username", username);
-        startActivity(intent);}
+        if (!username.equals(EMClient.getInstance().getCurrentUser()) || !username.equals("admin")) {
+            if (chatType == Constant.CHATTYPE_GROUP) {
+                startActivity(new Intent(ChatActivity.this, GroupUserInfoActivity.class).putExtra("username", username).putExtra("group_id", toChatUsername));
+            } else {
+                Intent intent = new Intent(this, UserInfoActivity.class);
+                intent.putExtra("username", username);
+                startActivity(intent);
+            }
+        }
     }
 
     @Override
@@ -879,15 +892,16 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
     public EaseCustomChatRowProvider onSetCustomChatRowProvider() {
         return null;
     }
+
     protected void forwardMessage(String forward_msg_id) {
         final EMMessage forward_msg = EMClient.getInstance().chatManager().getMessage(forward_msg_id);
         EMMessage.Type type = forward_msg.getType();
         switch (type) {
             case TXT:
-                if(forward_msg.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)){
+                if (forward_msg.getBooleanAttribute(EaseConstant.MESSAGE_ATTR_IS_BIG_EXPRESSION, false)) {
                     sendBigExpressionMessage(((EMTextMessageBody) forward_msg.getBody()).getMessage(),
                             forward_msg.getStringAttribute(EaseConstant.MESSAGE_ATTR_EXPRESSION_ID, null));
-                }else{
+                } else {
                     // get the content and send it
                     String content = ((EMTextMessageBody) forward_msg.getBody()).getMessage();
                     sendTextMessage(content);
@@ -909,7 +923,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 break;
         }
 
-        if(forward_msg.getChatType() == EMMessage.ChatType.ChatRoom){
+        if (forward_msg.getChatType() == EMMessage.ChatType.ChatRoom) {
             EMClient.getInstance().chatroomManager().leaveChatRoom(forward_msg.getTo());
         }
     }

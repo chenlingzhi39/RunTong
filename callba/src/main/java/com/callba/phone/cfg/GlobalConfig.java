@@ -6,7 +6,6 @@ import com.callba.phone.logic.contact.ContactPersonEntity;
 import com.callba.phone.util.AppVersionChecker;
 import com.hyphenate.chat.EMMessage;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +15,7 @@ import java.util.List;
  * @Version V1.0  
  * @Createtime：2014年5月10日 下午5:19:25 
  */
-public class GlobalConfig implements Serializable{
+public class GlobalConfig{
 	private static GlobalConfig globalConfig;
 	private GlobalConfig(){}
 
@@ -90,7 +89,7 @@ public class GlobalConfig implements Serializable{
 	@SuppressWarnings("unchecked")
 	public void saveGlobalCfg(Bundle outState) {
 	    outState.putParcelable("message",message);
-	    outState.putSerializable("appVersion",appVersionBean);
+	    outState.putParcelable("appVersion",appVersionBean);
 	/*	ArrayList list = new ArrayList();
 		list.add(contactBeans);
 		outState.putParcelableArrayList("contact", list);*/
@@ -103,7 +102,7 @@ public class GlobalConfig implements Serializable{
 	@SuppressWarnings("unchecked")
 	public void restoreGlobalCfg(Bundle savedInstanceState) {
          message=savedInstanceState.getParcelable("message");
-		appVersionBean=(AppVersionChecker.AppVersionBean) savedInstanceState.getSerializable("appVersion");
+		appVersionBean= savedInstanceState.getParcelable("appVersion");
 		//contactBeans = (ArrayList<ContactPersonEntity>) savedInstanceState.getParcelableArrayList("contact").get(0);
 
 	}

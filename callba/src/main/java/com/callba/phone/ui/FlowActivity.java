@@ -37,7 +37,7 @@ public class FlowActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        coupon=(Coupon) getIntent().getSerializableExtra("coupon");
+        coupon= getIntent().getParcelableExtra("coupon");
         viewpager.setAdapter(new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this));
         layoutTab.setupWithViewPager(viewpager);
         viewpager.setCurrentItem(getIntent().getIntExtra("index",0));

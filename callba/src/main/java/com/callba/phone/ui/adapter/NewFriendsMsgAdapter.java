@@ -18,7 +18,6 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,27 +30,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.callba.R;
-import com.callba.phone.Constant;
-import com.callba.phone.DemoHelper;
-import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.db.InviteMessage;
 import com.callba.phone.db.InviteMessage.InviteMesageStatus;
 import com.callba.phone.db.InviteMessgeDao;
-import com.callba.phone.manager.UserManager;
+import com.callba.phone.ui.UserInfoActivity;
 import com.callba.phone.util.EaseUserUtils;
-import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.hyphenate.chat.EMClient;
-import com.zhy.http.okhttp.OkHttpUtils;
-import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Request;
 
 public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 
@@ -97,9 +85,17 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 		String str8 = context.getResources().getString(R.string.invite_join_group);
         String str9 = context.getResources().getString(R.string.accept_join_group);
 		String str10 = context.getResources().getString(R.string.refuse_join_group);
-		
 		final InviteMessage msg = getItem(position);
+
 		if (msg != null) {
+			holder.avator .setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					Intent intent = new Intent(getContext(), UserInfoActivity.class);
+					intent.putExtra("username", msg.getFrom());
+					getContext().startActivity(intent);
+				}
+			});
 			Logger.i("state",msg.getStatus()+"");
 		    holder.agree.setVisibility(View.INVISIBLE);
 		    
@@ -111,12 +107,14 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 			}
 			holder.reason.setText(msg.getReason());
 			EaseUserUtils.setUserNick(msg.getFrom(),holder.name);
+			EaseUserUtils.setUserAvatar(getContext(),msg.getFrom(),holder.avator);
 			// holder.time.setText(DateUtils.getTimestampString(new
 			// Date(msg.getTime())));
 			if (msg.getStatus() == InviteMesageStatus.BEAGREED) {
 				holder.status.setVisibility(View.INVISIBLE);
 				holder.reason.setText(str1);
 				holder.result.setVisibility(View.GONE);
+				holder.type.setText("好友申请");
 			} else if (msg.getStatus() == InviteMesageStatus.BEINVITEED || msg.getStatus() == InviteMesageStatus.BEAPPLYED ||
 			        msg.getStatus() == InviteMesageStatus.GROUPINVITATION) {
 			    holder.agree.setVisibility(View.VISIBLE);
@@ -170,15 +168,24 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 				holder.status.setVisibility(View.GONE);
 				holder.result.setVisibility(View.VISIBLE);
 				holder.result.setText(str5);
-				if (TextUtils.isEmpty(msg.getReason())) {
+				if (TextUtils.isEmpty(msg.getReason())&&!TextUtils.isEmpty(msg.getGroupName())) {
 					holder.reason.setText(str4 + msg.getGroupName());
+					holder.type.setText("入群申请");
+				}
+				if(TextUtils.isEmpty(msg.getGroupName())){
+					holder.reason.setText(TextUtils.isEmpty(msg.getReason())?str3:msg.getReason());
+					holder.type.setText("好友申请");
 				}
 			} else if(msg.getStatus() == InviteMesageStatus.REFUSED){
 				holder.status.setVisibility(View.GONE);
 				holder.result.setVisibility(View.VISIBLE);
 				holder.result.setText(str6);
-				if (TextUtils.isEmpty(msg.getReason())) {
+				if (TextUtils.isEmpty(msg.getReason())&&!TextUtils.isEmpty(msg.getGroupName())) {
 					holder.reason.setText(str4 + msg.getGroupName());
+				}
+				if(TextUtils.isEmpty(msg.getGroupName())){
+					holder.reason.setText(TextUtils.isEmpty(msg.getReason())?str3:msg.getReason());
+					holder.type.setText("好友申请");
 				}
 			} else if(msg.getStatus() == InviteMesageStatus.GROUPINVITATION_ACCEPTED){
 				EaseUser user=EaseUserUtils.getUserInfo(msg.getGroupInviter());
@@ -204,9 +211,7 @@ public class NewFriendsMsgAdapter extends ArrayAdapter<InviteMessage> {
 
 	/**
 	 * 同意好友请求或者群申请
-	 * 
-	 * @param button
-	 * @param username
+	 *
 	 */
 	private void acceptInvitation(final Button buttonAgree, final Button buttonRefuse,final TextView result, final InviteMessage msg) {
 		final ProgressDialog pd = new ProgressDialog(context);

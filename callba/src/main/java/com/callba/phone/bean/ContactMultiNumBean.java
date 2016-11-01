@@ -1,5 +1,8 @@
 package com.callba.phone.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.callba.phone.logic.contact.ContactPersonEntity;
 
 import java.util.ArrayList;
@@ -10,8 +13,7 @@ import java.util.List;
  * 
  * @author Administrator
  */
-public class ContactMultiNumBean extends ContactPersonEntity{
-	private static final long serialVersionUID = 1L;
+public class ContactMultiNumBean extends ContactPersonEntity implements Parcelable{
 
 	private List<String> contactPhones;
 	
@@ -42,4 +44,32 @@ public class ContactMultiNumBean extends ContactPersonEntity{
 		this.contactPhones = contactPhones;
 	}
 
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		super.writeToParcel(dest, flags);
+		dest.writeStringList(this.contactPhones);
+	}
+
+	protected ContactMultiNumBean(Parcel in) {
+		super(in);
+		this.contactPhones = in.createStringArrayList();
+	}
+
+	public static final Creator<ContactMultiNumBean> CREATOR = new Creator<ContactMultiNumBean>() {
+		@Override
+		public ContactMultiNumBean createFromParcel(Parcel source) {
+			return new ContactMultiNumBean(source);
+		}
+
+		@Override
+		public ContactMultiNumBean[] newArray(int size) {
+			return new ContactMultiNumBean[size];
+		}
+	};
 }

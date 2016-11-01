@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,9 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -39,8 +36,8 @@ import com.callba.phone.receiver.CallReceiver;
 import com.callba.phone.ui.ChatActivity;
 import com.callba.phone.ui.MainTabActivity;
 import com.callba.phone.ui.NewFriendsMsgActivity;
-import com.callba.phone.ui.UserInfoActivity;
 import com.callba.phone.util.EaseCommonUtils;
+import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
 import com.callba.phone.util.PreferenceManager;
@@ -67,9 +64,7 @@ import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
-import com.zhy.http.okhttp.utils.Exceptions;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -531,7 +526,7 @@ public class DemoHelper {
             
             // 用户申请加入群聊
             InviteMessage msg = new InviteMessage();
-            msg.setFrom(groupId);
+            msg.setFrom(inviter);
             msg.setTime(System.currentTimeMillis());
             msg.setGroupId(groupId);
             msg.setGroupName(groupName);
@@ -561,7 +556,7 @@ public class DemoHelper {
                 return;
 
             InviteMessage msg = new InviteMessage();
-            msg.setFrom(groupId);
+            msg.setFrom(invitee);
             msg.setTime(System.currentTimeMillis());
             msg.setGroupId(groupId);
             msg.setGroupName(_group == null ? groupId : _group.getGroupName());
@@ -592,7 +587,7 @@ public class DemoHelper {
                 return;
             
             InviteMessage msg = new InviteMessage();
-            msg.setFrom(groupId);
+            msg.setFrom(invitee);
             msg.setTime(System.currentTimeMillis());
             msg.setGroupId(groupId);
             msg.setGroupName(group == null ? groupId : group.getGroupName());
@@ -676,7 +671,7 @@ public class DemoHelper {
                         .setLargeIcon(
                                bitmap)
                         .setContentTitle("群信息")
-                        .setContentText((user!=null?user.getNick():msg.getFrom().substring(0,11))+"申请加入群"+"\""+msg.getGroupName()+"\"");
+                        .setContentText((EaseUserUtils.getUserNick(applyer)+"申请加入群"+"\""+msg.getGroupName()+"\""));
                 Intent notificationIntent = new Intent(appContext, NewFriendsMsgActivity.class);
                 notificationIntent.putExtra("username", username);
                 // TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -695,7 +690,7 @@ public class DemoHelper {
                 mBuilder.setPriority(Notification.PRIORITY_HIGH);
       /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             mBuilder.setFullScreenIntent(contentIntent, true);*/
-                mBuilder.setTicker((user!=null?user.getNick():msg.getFrom().substring(0,11))+"申请加入群"+"\""+msg.getGroupName()+"\"");
+                mBuilder.setTicker((EaseUserUtils.getUserNick(applyer)+"申请加入群"+"\""+msg.getGroupName()+"\""));
                 Notification notification = mBuilder.build();
                 notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
                 //notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -730,6 +725,7 @@ public class DemoHelper {
             //getNotifier().viberateAndPlayTone(msg);
             getNotifier().onNewMsg(msg);
             broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
+            broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGE_CHANGED)));
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED).putExtra("group_id",groupId).putExtra("result",1));
         }
 
@@ -836,7 +832,7 @@ public class DemoHelper {
                                                                 user.setSign(baseUser.getSign());
                                                                 user.setAvatar(baseUser.getUrl_head());
                                                                 saveContact(user);
-                                                                broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED).putExtra("mode",1).putExtra("name",username));
+                                                                broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED).putExtra("mode",1).putExtra("username",username));
                                                                 }
                                                              else toast(result[1]);
                                                         } catch (Exception e) {
@@ -881,11 +877,9 @@ public class DemoHelper {
                         if (result[0].equals("0")) {
                             // 删除此联系人
                             broadcastManager.sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
-                            Intent intent=new Intent(Constant.ACTION_CONTACT_CHANAGED);
-                            intent.putExtra("username",username);
                             //发送好友变动广播
-                            broadcastManager.sendBroadcast(intent);
-                            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED).putExtra("mode",0).putExtra("name",username));
+                            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED).putExtra("mode",0).putExtra("username",username));
+                            broadcastManager.sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
                             // 删除相关的邀请消息
                             InviteMessgeDao dao = new InviteMessgeDao(appContext);
                             dao.deleteMessage(username);
@@ -944,7 +938,7 @@ public class DemoHelper {
                         .setLargeIcon(
                                 bitmap)
                         .setContentTitle("好友申请")
-                        .setContentText((user!=null?user.getNick():msg.getFrom().substring(0,11))+"申请加为好友");
+                        .setContentText(EaseUserUtils.getUserNick(username)+"申请加为好友");
                 Intent notificationIntent = new Intent(appContext, NewFriendsMsgActivity.class);
                 notificationIntent.putExtra("username", username);
                 // TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -963,7 +957,7 @@ public class DemoHelper {
                 mBuilder.setPriority(Notification.PRIORITY_HIGH);
       /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             mBuilder.setFullScreenIntent(contentIntent, true);*/
-                mBuilder.setTicker((user!=null?user.getNick():msg.getFrom().substring(0,11))+"申请加为好友");
+                mBuilder.setTicker(EaseUserUtils.getUserNick(username)+"申请加为好友");
                 Notification notification = mBuilder.build();
                 notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
                 //notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

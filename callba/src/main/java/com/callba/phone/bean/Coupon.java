@@ -1,11 +1,12 @@
 package com.callba.phone.bean;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by PC-20160514 on 2016/7/30.
  */
-public class Coupon implements Serializable{
+public class Coupon implements Parcelable{
     String title;
     String imgUrl;
     String inTime;
@@ -100,4 +101,49 @@ public class Coupon implements Serializable{
     public void setIid2(String iid2) {
         this.iid2 = iid2;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.title);
+        dest.writeString(this.imgUrl);
+        dest.writeString(this.inTime);
+        dest.writeString(this.state);
+        dest.writeString(this.content);
+        dest.writeString(this.iid);
+        dest.writeString(this.iid2);
+        dest.writeString(this.price);
+        dest.writeString(this.type);
+        dest.writeString(this.cid);
+    }
+
+    protected Coupon(Parcel in) {
+        this.title = in.readString();
+        this.imgUrl = in.readString();
+        this.inTime = in.readString();
+        this.state = in.readString();
+        this.content = in.readString();
+        this.iid = in.readString();
+        this.iid2 = in.readString();
+        this.price = in.readString();
+        this.type = in.readString();
+        this.cid = in.readString();
+    }
+
+    public static final Creator<Coupon> CREATOR = new Creator<Coupon>() {
+        @Override
+        public Coupon createFromParcel(Parcel source) {
+            return new Coupon(source);
+        }
+
+        @Override
+        public Coupon[] newArray(int size) {
+            return new Coupon[size];
+        }
+    };
 }

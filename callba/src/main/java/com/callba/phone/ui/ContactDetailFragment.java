@@ -65,6 +65,7 @@ public class ContactDetailFragment extends BaseFragment {
     @Override
     protected void initView(View fragmentRootView) {
         ButterKnife.bind(this, fragmentRootView);
+        if(Build.VERSION.SDK_INT<21||getActivity().getClass()==ContactDetailActivity.class)
         if(Build.VERSION.SDK_INT>=16)
         shadow.setBackground(
                 ScrimUtil.makeCubicGradientScrimDrawable(

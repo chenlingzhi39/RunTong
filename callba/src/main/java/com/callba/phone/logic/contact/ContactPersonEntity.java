@@ -1,9 +1,10 @@
 package com.callba.phone.logic.contact;
 
 
-import com.callba.phone.bean.SearchSortKeyBean;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import java.io.Serializable;
+import com.callba.phone.bean.SearchSortKeyBean;
 
 /**
  * 联系人
@@ -12,8 +13,7 @@ import java.io.Serializable;
  * @Version V1.0
  * @Createtime：2014年5月23日 下午12:07:10
  */
-public class ContactPersonEntity extends ContactEntity implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class ContactPersonEntity extends ContactEntity implements Parcelable{
 
 	private String _id; // 本地系统中数联系人 lookup_key （编辑联系人）
 	private String displayName; // 名字
@@ -111,4 +111,47 @@ public class ContactPersonEntity extends ContactEntity implements Serializable {
 				+ showSortPinYin + ", showPhoneNumber=" + showPhoneNumber
 				+ ", showDisplayName=" + showDisplayName + "]";
 	}
+
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(this._id);
+		dest.writeString(this.displayName);
+		dest.writeString(this.phoneNumber);
+		dest.writeString(this.location);
+		dest.writeString(this.typeName);
+		dest.writeParcelable(this.searchSortKeyBean, flags);
+		dest.writeString(this.showSortPinYin);
+		dest.writeString(this.showPhoneNumber);
+		dest.writeString(this.showDisplayName);
+	}
+
+	protected ContactPersonEntity(Parcel in) {
+		this._id = in.readString();
+		this.displayName = in.readString();
+		this.phoneNumber = in.readString();
+		this.location = in.readString();
+		this.typeName = in.readString();
+		this.searchSortKeyBean = in.readParcelable(SearchSortKeyBean.class.getClassLoader());
+		this.showSortPinYin = in.readString();
+		this.showPhoneNumber = in.readString();
+		this.showDisplayName = in.readString();
+	}
+
+	public static final Creator<ContactPersonEntity> CREATOR = new Creator<ContactPersonEntity>() {
+		@Override
+		public ContactPersonEntity createFromParcel(Parcel source) {
+			return new ContactPersonEntity(source);
+		}
+
+		@Override
+		public ContactPersonEntity[] newArray(int size) {
+			return new ContactPersonEntity[size];
+		}
+	};
 }

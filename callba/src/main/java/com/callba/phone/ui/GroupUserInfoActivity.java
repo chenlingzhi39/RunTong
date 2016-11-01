@@ -28,10 +28,8 @@ import com.callba.phone.bean.BaseUser;
 import com.callba.phone.bean.EaseUser;
 import com.callba.phone.manager.UserManager;
 import com.callba.phone.ui.base.BaseActivity;
-import com.callba.phone.util.EaseCommonUtils;
 import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Interfaces;
-import com.callba.phone.util.Logger;
 import com.callba.phone.widget.EaseAlertDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -40,8 +38,6 @@ import com.hyphenate.chat.EMClient;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -205,7 +201,7 @@ public class GroupUserInfoActivity extends BaseActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if(intent.getExtras()!=null){
-                    if(intent.getStringExtra("name").equals(username)){
+                    if(intent.getStringExtra("username").equals(username)){
                         if(intent.getIntExtra("mode",0)==0){
                             addFriend.setVisibility(View.VISIBLE);
                         }else{

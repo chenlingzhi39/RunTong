@@ -145,8 +145,8 @@ public class ContactDetailActivity extends BaseActivity {
         image_max_height = width;
         toolbarHeight=Utils.getToolbarHeight(this);
         statusbarHeight=Utils.getStatusBarHeight(this);
-        bean = (ContactMultiNumBean) getIntent()
-                .getSerializableExtra("contact");
+        bean = getIntent()
+                .getParcelableExtra("contact");
         initToolbar();
         simpleFragmentPagerAdapter=new SimpleFragmentPagerAdapter(getSupportFragmentManager(),this);
         viewpager.setAdapter(simpleFragmentPagerAdapter);
@@ -442,12 +442,12 @@ public class ContactDetailActivity extends BaseActivity {
 
                 case 0:
                     CalllogFragment calllogFragment = new CalllogFragment();
-                    bundle.putSerializable("contact", bean);
+                    bundle.putParcelable("contact", bean);
                     calllogFragment.setArguments(bundle);
                     return calllogFragment;
                 case 1:
                     ContactDetailFragment contactDetailFragment = new ContactDetailFragment();
-                    bundle.putSerializable("contact", bean);
+                    bundle.putParcelable("contact", bean);
                     contactDetailFragment.setArguments(bundle);
                     return contactDetailFragment;
                 default:

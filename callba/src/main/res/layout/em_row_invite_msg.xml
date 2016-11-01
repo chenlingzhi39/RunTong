@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:clickable="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -55,7 +56,8 @@
                 android:layout_height="@dimen/height_row_weixin"
                 android:layout_marginLeft="10dp"
                 android:padding="5dp"
-                android:src="@drawable/em_default_avatar" />
+                android:src="@drawable/em_default_avatar"
+                android:clickable="true"/>
         </RelativeLayout>
 
         <TextView

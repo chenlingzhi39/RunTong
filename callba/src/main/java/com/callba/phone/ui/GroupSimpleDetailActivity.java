@@ -87,7 +87,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 				alertDialog.show();}
 			}
 		});
-		final EMGroupInfo groupInfo = (EMGroupInfo) getIntent().getSerializableExtra("groupinfo");
+		final EMGroupInfo groupInfo = (EMGroupInfo) getIntent().getParcelableExtra("groupinfo");
 		String groupname = null;
 		    groupname = groupInfo.getGroupName();
 		    groupid = groupInfo.getGroupId();

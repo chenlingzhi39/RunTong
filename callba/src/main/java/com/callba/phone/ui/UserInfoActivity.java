@@ -33,7 +33,6 @@ import com.callba.phone.db.UserDao;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.EaseUserUtils;
 import com.callba.phone.util.Interfaces;
-import com.callba.phone.util.Logger;
 import com.callba.phone.widget.EaseAlertDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -176,7 +175,7 @@ public class UserInfoActivity extends BaseActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if(intent.getExtras()!=null){
-                    if(intent.getStringExtra("name").equals(userName)){
+                    if(intent.getStringExtra("username").equals(userName)){
                         if(intent.getIntExtra("mode",0)==0){
                             addFriend.setVisibility(View.VISIBLE);
                             deleteFriend.setVisibility(View.GONE);
@@ -292,52 +291,7 @@ public class UserInfoActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case R.id.add_friend:
-                if(EMClient.getInstance().getCurrentUser().equals(userName)){
-                    new EaseAlertDialog(this, R.string.not_add_myself).show();
-                    return;
-                }
-
-                if(DemoHelper.getInstance().getContactList().containsKey(userName)){
-                    //提示已在好友列表中(在黑名单列表里)，无需添加
-                    if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(userName)){
-                        new EaseAlertDialog(this, R.string.user_already_in_contactlist).show();
-                        return;
-                    }
-                    new EaseAlertDialog(this, R.string.This_user_is_already_your_friend).show();
-                    return;
-                }
-
-                progressDialog = new ProgressDialog(this);
-                String stri = getResources().getString(R.string.Is_sending_a_request);
-                progressDialog.setMessage(stri);
-                progressDialog.setCanceledOnTouchOutside(false);
-                progressDialog.show();
-
-                new Thread(new Runnable() {
-                    public void run() {
-
-                        try {
-                            //demo写死了个reason，实际应该让用户手动填入
-                            String s = getResources().getString(R.string.Add_a_friend);
-                            EMClient.getInstance().contactManager().addContact(userName, s);
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    progressDialog.dismiss();
-                                    String s1 = getResources().getString(R.string.send_successful);
-                                    Toast.makeText(getApplicationContext(), s1, Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        } catch (final Exception e) {
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    progressDialog.dismiss();
-                                    String s2 = getResources().getString(R.string.Request_add_buddy_failure);
-                                    Toast.makeText(getApplicationContext(), s2 + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    }
-                }).start();
+                showDialog();
                 break;
         }
     }
@@ -472,14 +426,14 @@ public class UserInfoActivity extends BaseActivity {
                         }
                     });
 
-                }/*finally {
+                }finally {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            addFriend.setVisibility(View.VISIBLE);
-                            deleteFriend.setVisibility(View.GONE);
+                           /* addFriend.setVisibility(View.VISIBLE);
+                            deleteFriend.setVisibility(View.GONE);*/
                             pd.dismiss();}
                     });
-                }*/
+                }
 
             }
         }).start();

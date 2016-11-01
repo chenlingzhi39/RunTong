@@ -61,7 +61,7 @@ public class SelectFriendActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-        coupon = (Coupon) getIntent().getSerializableExtra("coupon");
+        coupon = getIntent().getParcelableExtra("coupon");
         final List<EaseUser> alluserList = new ArrayList<>();
         for (EaseUser user : DemoHelper.getInstance().getContactList().values()) {
             alluserList.add(user);
@@ -92,7 +92,7 @@ public class SelectFriendActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
            /*   Intent intent=new Intent(SelectFriendActivity.this, FlowActivity.class);
                 intent.putExtra("index",getIntent().getIntExtra("index",0));
-                intent.putExtra("coupon",getIntent().getSerializableExtra("coupon"));
+                intent.putExtra("coupon",getIntent().getParcelableExtra("coupon"));
                 intent.putExtra("number",alluserList.get(position).getUsername().substring(0,11));
                 startActivity(intent);
                 finish();*/

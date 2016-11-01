@@ -1,16 +1,16 @@
 package com.callba.phone.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 /**
  * 拼音/号码检索key
  * @author zhw
  */
-public class SearchSortKeyBean implements Serializable {
-	private static final long serialVersionUID = 2L;
+public class SearchSortKeyBean implements Parcelable {
 
 	// 检索到的文字高亮显示的颜色
 	private static final String HIGH_LIGHT_COLOR = "#fa4407";
@@ -235,4 +235,37 @@ public class SearchSortKeyBean implements Serializable {
 		 
 		 return builder.toString();
 	 }
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(this.chineseNameString);
+		dest.writeStringList(this.shortPinYinArray);
+		dest.writeStringList(this.fullPinYinArray);
+	}
+
+	public SearchSortKeyBean() {
+	}
+
+	protected SearchSortKeyBean(Parcel in) {
+		this.chineseNameString = in.readString();
+		this.shortPinYinArray = in.createStringArrayList();
+		this.fullPinYinArray = in.createStringArrayList();
+	}
+
+	public static final Creator<SearchSortKeyBean> CREATOR = new Creator<SearchSortKeyBean>() {
+		@Override
+		public SearchSortKeyBean createFromParcel(Parcel source) {
+			return new SearchSortKeyBean(source);
+		}
+
+		@Override
+		public SearchSortKeyBean[] newArray(int size) {
+			return new SearchSortKeyBean[size];
+		}
+	};
 }

@@ -74,7 +74,7 @@ public class CalllogDetailActivity extends BaseActivity {
                     CalllogFragment calllogFragment = new CalllogFragment();
                     numbers.add(calllogBean.getCallLogNumber());
                     bean.setContactPhones(numbers);
-                    bundle.putSerializable("contact", bean);
+                    bundle.putParcelable("contact", bean);
                     calllogFragment.setArguments(bundle);
                     return calllogFragment;
                 case 1:
@@ -82,7 +82,7 @@ public class CalllogDetailActivity extends BaseActivity {
                     numbers.add(calllogBean.getCallLogNumber());
                     bean.setContactPhones(numbers);
                     bean.setDisplayName(calllogBean.getCallLogNumber());
-                    bundle.putSerializable("contact", bean);
+                    bundle.putParcelable("contact", bean);
                     contactDetailFragment.setArguments(bundle);
                     return contactDetailFragment;
                 default:

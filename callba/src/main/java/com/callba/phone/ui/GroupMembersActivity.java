@@ -413,7 +413,9 @@ public class GroupMembersActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK)
-            groupMemberAdapter.notifyDataSetChanged();
+        { groupMemberAdapter.notifyDataSetChanged();
+         setResult(RESULT_OK);
+        }
     }
 
     public class MyFilter extends Filter {

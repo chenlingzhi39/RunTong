@@ -6,11 +6,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.Message;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
-
 import com.callba.phone.bean.Task;
-
-import java.io.Serializable;
 
 /**
  * 版本更新检测器
@@ -179,7 +178,7 @@ public class AppVersionChecker {
 	 * 封装解析的版本信息
 	 * @author zhw
 	 */
-	public static class AppVersionBean implements Serializable{
+	public static class AppVersionBean implements Parcelable{
 		private String serverVersionCode;//新版本版本号
 		private String localVersionCode;//本地版本号
 		private String downloadUrl;		//新版本下载地址
@@ -243,5 +242,44 @@ public class AppVersionChecker {
 					+ ", forceUpgrade=" + forceUpgrade + ", hasNewVersion="
 					+ hasNewVersion + "]";
 		}
+
+		@Override
+		public int describeContents() {
+			return 0;
+		}
+
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			dest.writeString(this.serverVersionCode);
+			dest.writeString(this.localVersionCode);
+			dest.writeString(this.downloadUrl);
+			dest.writeString(this.secretKey);
+			dest.writeByte(this.forceUpgrade ? (byte) 1 : (byte) 0);
+			dest.writeByte(this.hasNewVersion ? (byte) 1 : (byte) 0);
+		}
+
+		public AppVersionBean() {
+		}
+
+		protected AppVersionBean(Parcel in) {
+			this.serverVersionCode = in.readString();
+			this.localVersionCode = in.readString();
+			this.downloadUrl = in.readString();
+			this.secretKey = in.readString();
+			this.forceUpgrade = in.readByte() != 0;
+			this.hasNewVersion = in.readByte() != 0;
+		}
+
+		public static final Creator<AppVersionBean> CREATOR = new Creator<AppVersionBean>() {
+			@Override
+			public AppVersionBean createFromParcel(Parcel source) {
+				return new AppVersionBean(source);
+			}
+
+			@Override
+			public AppVersionBean[] newArray(int size) {
+				return new AppVersionBean[size];
+			}
+		};
 	}
 }
