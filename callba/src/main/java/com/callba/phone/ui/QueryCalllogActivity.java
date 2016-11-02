@@ -172,7 +172,7 @@ public class QueryCalllogActivity extends BaseActivity implements
 			ll_loading.setVisibility(View.VISIBLE);
 			/queryCalllog("currentCallogType", currentPage + "");
 			// } else {
-			// Toast.makeText(QueryCalllogActivity.this, "没有更多的数据！", 0).show();
+			// Toast.makeText(QueryCalllogActivity.this, "没有更多的数据！", Toast.LENGTH_SHORT).show();
 			// }
 		}
 	}*/

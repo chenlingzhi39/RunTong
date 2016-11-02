@@ -609,7 +609,7 @@ public class DemoHelper {
             SimpleHandler.getInstance().post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(appContext, "你已被群\""+groupName+"\"移除", 1).show();
+                    Toast.makeText(appContext, "你已被群\""+groupName+"\"移除", Toast.LENGTH_SHORT).show();
                 }
             });
             Logger.i("demohelper","用户被T了");
@@ -626,7 +626,7 @@ public class DemoHelper {
             SimpleHandler.getInstance().post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(appContext, "群\""+groupName+"\"已被解散", 1).show();
+                    Toast.makeText(appContext, "群\""+groupName+"\"已被解散", Toast.LENGTH_SHORT).show();
                 }
             });
             Logger.i("demohelper","群被解散");

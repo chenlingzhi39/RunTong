@@ -107,7 +107,7 @@ public class BlacklistActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             pd.dismiss();
-                            Toast.makeText(getApplicationContext(), R.string.Removed_from_the_failure, 0).show();
+                            Toast.makeText(getApplicationContext(), R.string.Removed_from_the_failure, Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

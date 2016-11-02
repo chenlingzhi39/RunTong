@@ -103,7 +103,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                                         public void run() {
                                             progressDialog.dismiss();
                                             String s2 = context.getResources().getString(R.string.Request_add_buddy_failure);
-                                            Toast.makeText(context, s2, 1).show();
+                                            Toast.makeText(context, s2, Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
@@ -162,7 +162,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                                                     public void run() {
                                                         progressDialog.dismiss();
                                                         String s1 = "添加成功";
-                                                        Toast.makeText(context, s1, 1).show();
+                                                        Toast.makeText(context, s1, Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
                                             } catch (final Exception e) {
@@ -170,7 +170,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                                                     public void run() {
                                                         progressDialog.dismiss();
                                                         String s2 = context.getResources().getString(R.string.Request_add_buddy_failure);
-                                                        Toast.makeText(context, s2 + e.getMessage(), 1).show();
+                                                        Toast.makeText(context, s2 + e.getMessage(), Toast.LENGTH_SHORT).show();
                                                     }
                                                 });
                                             }

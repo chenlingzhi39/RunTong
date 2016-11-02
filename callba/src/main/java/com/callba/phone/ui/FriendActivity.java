@@ -202,6 +202,20 @@ public class FriendActivity extends BaseActivity {
                         dialog.dismiss();
                         switch (which) {
                             case 0:
+                                if(EMClient.getInstance().getCurrentUser().equals(entity.getPhoneNumber()+"-callba")){
+                                    new EaseAlertDialog(FriendActivity.this, R.string.not_add_myself).show();
+                                    return;
+                                }
+
+                                if(DemoHelper.getInstance().getContactList().containsKey(entity.getPhoneNumber()+"-callba")){
+                                    //提示已在好友列表中(在黑名单列表里)，无需添加
+                                    if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(entity.getPhoneNumber()+"-callba")){
+                                        new EaseAlertDialog(FriendActivity.this, R.string.user_already_in_contactlist).show();
+                                        return;
+                                    }
+                                    new EaseAlertDialog(FriendActivity.this, R.string.This_user_is_already_your_friend).show();
+                                    return;
+                                }
                              showDialog(entity.getPhoneNumber()+"-callba");
                                 break;
                             default:
@@ -258,20 +272,7 @@ public class FriendActivity extends BaseActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(EMClient.getInstance().getCurrentUser().equals(username)){
-                            new EaseAlertDialog(FriendActivity.this, R.string.not_add_myself).show();
-                            return;
-                        }
 
-                        if(DemoHelper.getInstance().getContactList().containsKey(username)){
-                            //提示已在好友列表中(在黑名单列表里)，无需添加
-                            if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(username)){
-                                new EaseAlertDialog(FriendActivity.this, R.string.user_already_in_contactlist).show();
-                                return;
-                            }
-                            new EaseAlertDialog(FriendActivity.this, R.string.This_user_is_already_your_friend).show();
-                            return;
-                        }
 
                         progressDialog = new ProgressDialog(FriendActivity.this);
                         String stri = getResources().getString(R.string.Is_sending_a_request);
@@ -361,10 +362,16 @@ public class FriendActivity extends BaseActivity {
                                                  if (nearByUserAdapter.getCount()==0) {
                                                      page+=1;
                                                      nearByUserAdapter.addAll(list);
+                                                     nearByUserAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
+                                                         @Override
+                                                         public void onItemClick(int position) {
+                                                             startActivity(new Intent(FriendActivity.this,UserInfoActivity.class).putExtra("username",nearByUserAdapter.getItem(position).getPhoneNumber()+"-callba"));
+                                                         }
+                                                     });
                                                      nearByUserAdapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
                                                          @Override
                                                          public boolean onItemClick(int position) {
-                                                             showDialog(nearByUserAdapter.getData().get(position - 2));
+                                                             showDialog(nearByUserAdapter.getItem(position));
                                                              return true;
                                                          }
                                                      });

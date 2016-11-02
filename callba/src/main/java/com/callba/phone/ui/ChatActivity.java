@@ -815,8 +815,8 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
 
                 public void run() {
                     if (toChatUsername.equals(groupId)) {
-                        // Toast.makeText(ChatActivity.this, R.string.you_are_group, 1).show();
-                        // Toast.makeText(ChatActivity.this, "你已被群\""+groupName+"\"移除", 1).show();
+                        // Toast.makeText(ChatActivity.this, R.string.you_are_group, Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(ChatActivity.this, "你已被群\""+groupName+"\"移除", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 }
@@ -829,8 +829,8 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
             runOnUiThread(new Runnable() {
                 public void run() {
                     if (toChatUsername.equals(groupId)) {
-                        // Toast.makeText(ChatActivity.this, R.string.the_current_group, 1).show();
-                        //Toast.makeText(ChatActivity.this, "群\""+groupName+"\"已被解散", 1).show();
+                        // Toast.makeText(ChatActivity.this, R.string.the_current_group, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ChatActivity.this, "群\""+groupName+"\"已被解散", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 }

@@ -47,7 +47,6 @@ public class MyApplication extends Application {
     //实现ConnectionListener接口
     private DaoSession mDaoSession;
     private SQLiteDatabase db;
-    private  ApplicationComponent applicationComponent;
     ConnectivityManager manager;
    /* TimeCount timeCount;
     private boolean aBoolean=true;
@@ -104,15 +103,6 @@ public class MyApplication extends Application {
         manager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         myApplication = this;
         //CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/STXIHEI.TTF").setFontAttrId(R.attr.fontPath).build());
-       /* EMOptions options = new EMOptions();
-       // 默认添加好友时，是不需要验证的，改成需要验证
-        options.setAcceptInvitationAlways(false);
-        options.setAutoLogin(false);
-        EaseUI.getInstance().init(this,options);*/
-        //CrashHandler crashHandler = CrashHandler.getInstance();
-       //crashHandler.init(this);
-       /* if((boolean)SPUtils.get(this, Constant.SETTINGS,Constant.LOG_KEY,false))
-        LogcatHelper.getInstance(this).start();*/
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(6000, TimeUnit.MILLISECONDS)
                 .readTimeout(20000, TimeUnit.MILLISECONDS)
@@ -191,9 +181,7 @@ public class MyApplication extends Application {
         MobclickAgent.setSessionContinueMillis(5 * 60 * 1000);*/
     }
 
-    public static ApplicationComponent getApplicationComponent() {
-        return ((MyApplication)myApplication.getApplicationContext()).applicationComponent;
-    }
+
     public boolean detect(){
 
         if(manager == null){

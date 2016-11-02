@@ -553,7 +553,7 @@ public class WebContactFragment extends BaseFragment {
     /**
      * 删除联系人
      *
-     * @param toDeleteUser
+     * @param tobeDeleteUser
      */
     public void deleteContact(final EaseUser tobeDeleteUser) {
         String st1 = getResources().getString(R.string.deleting);
@@ -583,7 +583,7 @@ public class WebContactFragment extends BaseFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         public void run() {
                             pd.dismiss();
-                            Toast.makeText(getActivity(), st2 + e.getMessage(), 1).show();
+                            Toast.makeText(getActivity(), st2 + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
 

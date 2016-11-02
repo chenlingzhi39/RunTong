@@ -214,9 +214,15 @@ public class GroupUserInfoActivity extends BaseActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,intentFilter);
     }
 
-    @OnClick({R.id.add_friend, R.id.send_message})
+    @OnClick({R.id.avatar,R.id.add_friend, R.id.send_message})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.avatar:
+                if(user!=null){
+                    if(!TextUtils.isEmpty(user.getAvatar()))
+                        startActivity(new Intent(GroupUserInfoActivity.this,AvatarActivity.class).putExtra("path",user.getAvatar()));
+                }
+                break;
             case R.id.add_friend:
                 showDialog();
                 break;

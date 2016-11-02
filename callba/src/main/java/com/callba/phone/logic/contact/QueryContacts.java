@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-
 import com.callba.phone.bean.SearchSortKeyBean;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;
@@ -36,7 +35,8 @@ public class QueryContacts {
 		final Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI; // 联系人的Uri
 		final String[] projection = { ContactsContract.CommonDataKinds.Phone._ID,
 				ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-				ContactsContract.CommonDataKinds.Phone.DATA1, "sort_key",
+				ContactsContract.CommonDataKinds.Phone.DATA1,
+				ContactsContract.Contacts.SORT_KEY_PRIMARY,
 				ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
 				ContactsContract.CommonDataKinds.Phone.PHOTO_ID,
 				ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY }; // 查询的列
@@ -45,8 +45,11 @@ public class QueryContacts {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
+				if(android.os.Build.VERSION.SDK_INT>=19){
+					projection[3]="phonebook_label";
+				}
 				asyncQuery.startQuery(0, null, uri, projection, null, null,
-						"_id COLLATE LOCALIZED asc"); // 按照sort_key升序查询
+						"sort_key COLLATE LOCALIZED asc"); // 按照sort_key升序查询
 			}
 		}).start();
 
@@ -69,7 +72,7 @@ public class QueryContacts {
 		 */
 		@Override
 		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
-			contactLists = new ArrayList<ContactPersonEntity>();
+			contactLists = new ArrayList<>();
 			if (cursor != null && cursor.getCount() > 0) {
 				cursor.moveToFirst();
 				for (int i = 0; i < cursor.getCount(); i++) {
@@ -78,7 +81,7 @@ public class QueryContacts {
   			    //	String _id = cursor.getString(0);
 					String name = cursor.getString(1);
 					String number = cursor.getString(2);
-//					String sortKey = cursor.getString(3);
+				//	String sortKey = cursor.getString(3);
  				    int contactId = cursor.getInt(4);
 // 					Long photoId = cursor.getLong(5);
 //					String lookUpKey = cursor.getString(6);
@@ -96,8 +99,7 @@ public class QueryContacts {
 					if (number.startsWith("+86")) {// 去除多余的中国地区号码标志，对这个程序没有影响。
 						cb.setPhoneNumber(number.substring(3));
 					} else {
-						cb.setPhoneNumber(number.replace(" ", "").replace("-",
-								""));
+						cb.setPhoneNumber(number.replace(" ", "").replace("-",""));
 					}
 					if(number==null)
 						cb.setPhoneNumber("");

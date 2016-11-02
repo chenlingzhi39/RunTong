@@ -87,10 +87,9 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 				alertDialog.show();}
 			}
 		});
-		final EMGroupInfo groupInfo = (EMGroupInfo) getIntent().getParcelableExtra("groupinfo");
-		String groupname = null;
-		    groupname = groupInfo.getGroupName();
-		    groupid = groupInfo.getGroupId();
+		final EMGroupInfo groupInfo = (EMGroupInfo) getIntent().getSerializableExtra("groupinfo");
+		String groupname = groupInfo.getGroupName();
+		groupid = groupInfo.getGroupId();
 		tv_name.setText(groupname);
 		tv_id.setText(groupid);
 		if(group != null){
@@ -116,7 +115,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 					runOnUiThread(new Runnable() {
 						public void run() {
 							//progressBar.setVisibility(View.INVISIBLE);
-							Toast.makeText(GroupSimpleDetailActivity.this, st1+e.getMessage(), 1).show();
+							Toast.makeText(GroupSimpleDetailActivity.this, st1+e.getMessage(),Toast.LENGTH_SHORT ).show();
 
 						}
 					});
@@ -170,9 +169,10 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 					runOnUiThread(new Runnable() {
 						public void run() {
 							pd.dismiss();
-							if(!group.isMembersOnly())
-								Toast.makeText(GroupSimpleDetailActivity.this, st4, 0).show();
 							btn_add_group.setEnabled(false);
+							if(!group.isMembersOnly())
+							{Toast.makeText(GroupSimpleDetailActivity.this, st4, Toast.LENGTH_SHORT).show();
+							finish();}
 						}
 					});
 				} catch (final HyphenateException e) {
@@ -180,7 +180,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 					runOnUiThread(new Runnable() {
 						public void run() {
 							pd.dismiss();
-							Toast.makeText(GroupSimpleDetailActivity.this, st5+e.getMessage(), 0).show();
+							Toast.makeText(GroupSimpleDetailActivity.this, st5+e.getMessage(), Toast.LENGTH_SHORT).show();
 							btn_add_group.setEnabled(true);
 						}
 					});
@@ -256,7 +256,7 @@ public class GroupSimpleDetailActivity extends BaseActivity {
 
 									}}
 							}).start();
-						Toast.makeText(GroupSimpleDetailActivity.this, getResources().getString(R.string.send_the_request_is), 0).show();
+						Toast.makeText(GroupSimpleDetailActivity.this, getResources().getString(R.string.send_the_request_is), Toast.LENGTH_SHORT).show();
 					}
 				}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
 					@Override

@@ -95,8 +95,8 @@ boolean isCrop;
         intent.putExtra("aspectY", 1);
         // outputX outputY 是裁剪图片宽高
 
-        intent.putExtra("outputX", 150);
-        intent.putExtra("outputY", 150);
+        intent.putExtra("outputX", 700);
+        intent.putExtra("outputY", 700);
         intent.putExtra("return-data", true);
         intent.putExtra("noFaceDetection", true);
         startActivityForResult(intent, 3);

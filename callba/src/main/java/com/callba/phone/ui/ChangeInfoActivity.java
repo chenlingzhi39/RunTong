@@ -350,8 +350,8 @@ public class ChangeInfoActivity extends BaseActivity{
         intent.putExtra("crop", "true");
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX",150);
-        intent.putExtra("outputY",150);
+        intent.putExtra("outputX",700);
+        intent.putExtra("outputY",700);
         intent.putExtra("return-data", false);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageCropUri);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());

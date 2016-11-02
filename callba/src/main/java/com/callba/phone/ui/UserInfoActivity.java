@@ -97,6 +97,7 @@ public class UserInfoActivity extends BaseActivity {
         gson = new Gson();
         userName = getIntent().getStringExtra("username");
         user = EaseUserUtils.getUserInfo(userName);
+
         if (userName.length() > 10) {
             number.setHint("手机号:" + userName.substring(0, 11));
             if (user != null) {
@@ -207,9 +208,15 @@ public class UserInfoActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.set_remark, R.id.clear_chat, R.id.delete_friend, R.id.signature, R.id.send_message,R.id.add_friend})
+    @OnClick({R.id.avatar,R.id.set_remark, R.id.clear_chat, R.id.delete_friend, R.id.signature, R.id.send_message,R.id.add_friend})
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.avatar:
+                if(user!=null){
+                    if(!TextUtils.isEmpty(user.getAvatar()))
+                        startActivity(new Intent(UserInfoActivity.this,AvatarActivity.class).putExtra("path",user.getAvatar()));
+                }
+                break;
             case R.id.set_remark:
                 Intent intent = new Intent(UserInfoActivity.this, RemarkActivity.class);
                 intent.putExtra("username", userName);
@@ -422,7 +429,7 @@ public class UserInfoActivity extends BaseActivity {
                 } catch (final Exception e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(UserInfoActivity.this, st2 + e.getMessage(), 1).show();
+                            Toast.makeText(UserInfoActivity.this, st2 + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
 

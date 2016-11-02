@@ -91,7 +91,7 @@ public class NumberFragment2 extends BaseSelectContactFragment {
 
             @Override
             public void onError(Call call, Exception e, int id) {
-                Toast.makeText(getActivity(), "查询归属地失败", 1).show();
+                Toast.makeText(getActivity(), "查询归属地失败", Toast.LENGTH_SHORT).show();
                 tv_address.setHint("");
             }
 
@@ -107,7 +107,7 @@ public class NumberFragment2 extends BaseSelectContactFragment {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Toast.makeText(getActivity(), "查询归属地失败", 1).show();
+                    Toast.makeText(getActivity(), "查询归属地失败", Toast.LENGTH_SHORT).show();
                     tv_address.setHint("");
 
                 }
@@ -137,7 +137,7 @@ public class NumberFragment2 extends BaseSelectContactFragment {
                   getActivity().runOnUiThread(new Runnable() {
                       @Override
                       public void run() {
-                          Toast.makeText(getActivity(),"查询归属地失败", 1).show();
+                          Toast.makeText(getActivity(),"查询归属地失败", Toast.LENGTH_SHORT).show();
                           tv_address.setHint("");
                           progressDialog.dismiss();
                       }
