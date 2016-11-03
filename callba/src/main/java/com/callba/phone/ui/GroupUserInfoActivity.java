@@ -143,7 +143,7 @@ public class GroupUserInfoActivity extends BaseActivity {
             if(!TextUtils.isEmpty(user.getAvatar()))
             Glide.with(this).load(user.getAvatar()).into(avatar);
             phoneNumber.setText(username.substring(0, 11));
-            name.setText(user.getNick());
+            EaseUserUtils.setUserNick(username,name);
             sign.setText(user.getSign());
         } else {
             phoneNumber.setText(username.substring(0,11));
