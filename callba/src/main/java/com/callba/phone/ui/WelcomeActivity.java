@@ -169,15 +169,8 @@ public class WelcomeActivity extends BaseActivity {
             // 自动登陆
             Intent intent = new Intent(WelcomeActivity.this,
                     MainTabActivity.class);
-            //intent.putExtra("frompage", "WelcomeActivity");
             startActivity(intent);
-            //OkHttpUtils.getInstance().cancelTag(this);
-        } /*else {
-            // 手动登陆
-            Intent intent = new Intent(WelcomeActivity.this,
-                    LoginActivity.class);
-            WelcomeActivity.this.startActivity(intent);
-        }*/
+        }
         finish();
     }
 

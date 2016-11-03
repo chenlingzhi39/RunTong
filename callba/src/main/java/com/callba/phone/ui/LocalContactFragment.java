@@ -283,13 +283,13 @@ public class LocalContactFragment extends BaseFragment {
             personEntities.get(personEntities.size() - 1).setContactPhones(contactPhones);
         }
         if (friends.size() > 0&&getActivity()!=null)
-            OkHttpUtils
+            addRequestCall(OkHttpUtils
                     .post()
                     .url(Interfaces.ADD_FRIENDS)
                     .addParams("loginName", UserManager.getUsername(getActivity()))
                     .addParams("loginPwd", UserManager.getPassword(getActivity()))
                     .addParams("phoneNumbers", gson.toJson(friends))
-                    .build().execute(new StringCallback() {
+                    .build()).execute(new StringCallback() {
                 @Override
                 public void onError(Call call, Exception e, int id) {
                     e.printStackTrace();

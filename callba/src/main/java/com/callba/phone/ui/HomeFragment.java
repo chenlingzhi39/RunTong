@@ -126,11 +126,11 @@ public class HomeFragment extends BaseFragment {
         list.setAdapter(homeAdapter);
     }
     public void getAd(){
-        OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT1)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT1)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
                 .addParams("softType", "android")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
                 e.printStackTrace();

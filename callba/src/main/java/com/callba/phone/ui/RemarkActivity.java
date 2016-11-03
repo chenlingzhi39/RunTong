@@ -55,12 +55,12 @@ public class RemarkActivity extends BaseActivity {
                    if(user.getRemark()!=null)
                        if(user.getRemark().equals(remark.getText().toString()))
                            break;
-                    OkHttpUtils.post().url(Interfaces.UPDATE_REMARK)
+                    addRequestCall(OkHttpUtils.post().url(Interfaces.UPDATE_REMARK)
                             .addParams("loginName",getUsername())
                             .addParams("loginPwd",getPassword())
                             .addParams("phoneNumber",user.getUsername().substring(0,11))
                             .addParams("remark",remark.getText().toString())
-                            .build()
+                            .build())
                             .execute(new StringCallback() {
                                 @Override
                                 public void onBefore(Request request, int id) {

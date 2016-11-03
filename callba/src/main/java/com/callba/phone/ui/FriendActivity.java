@@ -47,6 +47,7 @@ import com.google.gson.reflect.TypeToken;
 import com.hyphenate.chat.EMClient;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+import com.zhy.http.okhttp.request.RequestCall;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -325,17 +326,17 @@ public class FriendActivity extends BaseActivity {
     }
 
     public void getNearBy() {
-        OkHttpUtils.post().url(Interfaces.GET_NEARBY)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.GET_NEARBY)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
                 .addParams("latitude", UserManager.getLatitude(this))
                 .addParams("longitude", UserManager.getLongitude(this))
                 .addParams("radius", "1000")
                 .addParams("page", page+"")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
                                      @Override
                                      public void onError(Call call, Exception e, int id) {
-                                         toast(R.string.network_error);
+                                         showException(e);
                                          if (nearByUserAdapter.getCount()>0)
                                              nearByUserAdapter.pauseMore();
                                      }
@@ -447,7 +448,6 @@ public class FriendActivity extends BaseActivity {
 
                                  }
         );
-
     }
 
     @Override

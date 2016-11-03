@@ -173,13 +173,12 @@ public class WebContactFragment extends BaseFragment {
         refresh();
     }
     public void refreshByWeb(){
-
-                OkHttpUtils
+                addRequestCall(OkHttpUtils
                         .post()
                         .url(Interfaces.GET_FRIENDS)
                         .addParams("loginName", getUsername())
                         .addParams("loginPwd", getPassword())
-                        .build().execute(new StringCallback() {
+                        .build()).execute(new StringCallback() {
                     @Override
                     public void onAfter(int id) {
                         contactListLayout.setRefreshing(false);
@@ -252,39 +251,6 @@ public class WebContactFragment extends BaseFragment {
             deleteContact(toBeProcessUser);
             InviteMessgeDao dao = new InviteMessgeDao(getActivity());
             dao.deleteMessage(toBeProcessUser.getUsername());
-         /*   OkHttpUtils
-                    .post()
-                    .url(Interfaces.DELETE_FRIENDS)
-                    .addParams("loginName", getUsername())
-                    .addParams("loginPwd", getPassword())
-                    .addParams("phoneNumber", toBeProcessUser.getUsername().substring(0, 11))
-                    .build().execute(new StringCallback() {
-                @Override
-                public void onError(Call call, Exception e, int id) {
-                    toast("删除失败");
-                }
-
-                @Override
-                public void onResponse(String response, int id) {
-                    try {
-                        String[] result = response.split("\\|");
-                        Logger.i("delete_result", response);
-                        if (result[0].equals("0")) {
-                            // 删除此联系人
-                            deleteContact(toBeProcessUser);
-                            // 删除相关的邀请消息
-                            InviteMessgeDao dao = new InviteMessgeDao(getActivity());
-                            dao.deleteMessage(toBeProcessUser.getUsername());
-                        } else {
-                            toast("删除失败");
-                        }
-                    } catch (Exception e) {
-                        toast(R.string.getserverdata_exception);
-                    }
-                }
-            });*/
-
-
             return true;
         } else if (item.getItemId() == R.id.add_to_blacklist) {
             moveToBlacklist(toBeProcessUsername);

@@ -42,9 +42,12 @@ import com.callba.phone.util.ActivityUtil;
 import com.callba.phone.util.AppVersionChecker;
 import com.callba.phone.util.RxBus;
 import com.umeng.analytics.MobclickAgent;
+import com.zhy.http.okhttp.request.RequestCall;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
@@ -87,6 +90,7 @@ public class BaseActivity extends AppCompatActivity {
     public Subscription subscription;
     public AlertDialog dialog;
     private Observable<Boolean> networkObservable;
+    public ArrayList<RequestCall> requestCalls;
     @SuppressLint("InlinedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,31 +119,7 @@ public class BaseActivity extends AppCompatActivity {
             if (mToolbarTitle != -1)
                 setToolbarTitle(mToolbarTitle);
         }
-
         MyApplication.activities.add(this);
-
-	/*	if (this.getClass() != MainCallActivity.class
-                && this.getClass() != WelcomeActivity.class
-				&& this.getClass() != FunIntroduceActivity.class
-				&& this.getClass() != GuideActivity.class
-				&& this.getClass() != LoginActivity.class
-				&& this.getClass() != RegisterActivity.class
-				&& this.getClass() != OnekeyRegisterAcitvity.class
-				&& this.getClass() != RetrievePasswordActivity.class) {
-			// 检查内存数据是否正常
-			String username = GlobalConfig.getInstance().getUsername();
-			String password = GlobalConfig.getInstance().getPassword();
-			if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
-				// 重新打开
-				Intent intent = new Intent();
-				intent.setClass(this, WelcomeActivity.class);
-				startActivity(intent);
-
-				// 关闭主tab页面
-				finish();
-				ActivityUtil.finishMainTabPages();
-			}
-		}*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (this.getClass() != UserActivity.class && this.getClass() != ContactDetailActivity.class) {
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
@@ -164,14 +144,16 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
         Log.i("manufacturer", Build.MANUFACTURER);
-
-
+        requestCalls=new ArrayList<>();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         RxBus.get().unregister("has_network", networkObservable);
+        for(RequestCall requestCall:requestCalls){
+            requestCall.cancel();
+        }
         if (subscription != null) subscription.unsubscribe();
         MyApplication.activities.remove(this);
 
@@ -496,15 +478,21 @@ public class BaseActivity extends AppCompatActivity {
     public void showActivity() {
 
     }
-    public void showException(Exception e){
+    public void showException(Exception e) {
         e.printStackTrace();
         if (e instanceof UnknownHostException) {
             toast(R.string.conn_failed);
-        } else {
+        } else if (e instanceof IOException) {
+
+        }else{
             toast(R.string.network_error);
         }
     }
     public void onNetworkChanged(boolean isAvailable){
 
+    }
+    public RequestCall addRequestCall(RequestCall requestCall){
+        requestCalls.add(requestCall);
+        return requestCall;
     }
 }

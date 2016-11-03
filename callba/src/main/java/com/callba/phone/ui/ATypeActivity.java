@@ -62,10 +62,10 @@ public class ATypeActivity extends BaseActivity {
     }
 
     public void getATypes() {
-        OkHttpUtils.post().url(Interfaces.A_TYPE)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.A_TYPE)
                 .addParams("loginPwd", getPassword())
                 .addParams("loginName", getUsername())
-                .build()
+                .build())
                 .execute(new StringCallback() {
                     @Override
                     public void onAfter(int id) {

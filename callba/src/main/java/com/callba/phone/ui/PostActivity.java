@@ -138,7 +138,7 @@ public class PostActivity extends BaseActivity{
                 {   File file=new File(path);
                     postFormBuilder.addFile("file",file.getName(),file);
                 }
-                postFormBuilder.build().execute(new StringCallback() {
+                addRequestCall(postFormBuilder.build()).execute(new StringCallback() {
                     @Override
                     public void onAfter(int id) {
                         dialog.dismiss();

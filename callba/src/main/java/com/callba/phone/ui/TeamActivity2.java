@@ -63,11 +63,11 @@ public class TeamActivity2 extends BaseActivity {
     public void getTeams() {
         title.setText(getIntent().getStringExtra("number")+"的团队");
         teams = new ArrayList<>();
-        OkHttpUtils.post().url(Interfaces.GET_TEAM2)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.GET_TEAM2)
                 .addParams("loginPwd", getPassword())
                 .addParams("loginName", getUsername())
                 .addParams("phoneNumber", getIntent().getStringExtra("number"))
-                .build()
+                .build())
                 .execute(new StringCallback() {
                     @Override
                     public void onAfter(int id) {

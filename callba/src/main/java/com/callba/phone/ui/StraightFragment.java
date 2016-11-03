@@ -168,11 +168,11 @@ public class StraightFragment extends BaseSelectContactFragment {
                         paramsMap.put("tradeNo", outTradeNo);
                         paramsMap.put("price", price);
                         MobclickAgent.onEvent(getActivity(), "pay_success", paramsMap);
-                        OkHttpUtils.post().url(Interfaces.PAY_SUCCESS).addParams("loginName", getUsername())
+                        addRequestCall(OkHttpUtils.post().url(Interfaces.PAY_SUCCESS).addParams("loginName", getUsername())
                                 .addParams("loginPwd", getPassword())
                                 .addParams("orderNumber", outTradeNo)
                                 .addParams("payResult", "success")
-                                .build()
+                                .build())
                                 .execute(new StringCallback() {
                                     @Override
                                     public void onAfter(int id) {
@@ -307,9 +307,9 @@ public class StraightFragment extends BaseSelectContactFragment {
                     if (coupon.getCid() != null) {
                         params.put("cid", coupon.getCid());
                     }
-                OkHttpUtils.post().url(Interfaces.PAY_ORDER)
+                addRequestCall(OkHttpUtils.post().url(Interfaces.PAY_ORDER)
                         .params(params)
-                        .build()
+                        .build())
                         .execute(new StringCallback() {
                             @Override
                             public void onAfter(int id) {
@@ -566,10 +566,10 @@ public class StraightFragment extends BaseSelectContactFragment {
 
     public void query(final String number) {
         if(MyApplication.getInstance().detect())
-        OkHttpUtils.get().url("http://apis.juhe.cn/mobile/get")
+        addRequestCall(OkHttpUtils.get().url("http://apis.juhe.cn/mobile/get")
                 .addParams("phone", number)
                 .addParams("key", "1dfd68c50bbf3f58755f1d537fe817a4")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onBefore(Request request, int id) {
                 progressDialog = ProgressDialog.show(getActivity(), "", "正在查询归属地");
@@ -608,11 +608,11 @@ public class StraightFragment extends BaseSelectContactFragment {
 
     public void getBills() {
         try {
-            OkHttpUtils.post().url(Interfaces.COMMODITY_INFO)
+            addRequestCall(OkHttpUtils.post().url(Interfaces.COMMODITY_INFO)
                     .addParams("loginName", getUsername())
                     .addParams("loginPwd", getPassword())
                     .addParams("itemType", "0")
-                    .build().execute(new StringCallback() {
+                    .build()).execute(new StringCallback() {
                 @Override
                 public void onAfter(int id) {
                     progressBar.setVisibility(View.GONE);

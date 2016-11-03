@@ -42,11 +42,11 @@ public class BalanceActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         // TODO: add setContentView(...) invocation
         ButterKnife.bind(this);
-        OkHttpUtils.post().url(Interfaces.Query_Balance)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.Query_Balance)
                 .addParams("loginName",getUsername())
                 .addParams("loginPwd",getPassword())
                 .addParams("softType","android")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onAfter(int id) {
                 progressDialog.dismiss();

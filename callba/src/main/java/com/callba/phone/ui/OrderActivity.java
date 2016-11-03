@@ -63,10 +63,10 @@ public class OrderActivity extends BaseActivity {
     }
 
     public void getOrders() {
-        OkHttpUtils.post().url(Interfaces.ORDER)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.ORDER)
                 .addParams("loginPwd", getPassword())
                 .addParams("loginName", getUsername())
-                .build()
+                .build())
                 .execute(new StringCallback() {
                     @Override
                     public void onBefore(Request request, int id) {

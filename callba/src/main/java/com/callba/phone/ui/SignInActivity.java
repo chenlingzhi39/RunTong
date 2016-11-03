@@ -573,10 +573,10 @@ public class SignInActivity extends BaseActivity{
                /* Toast.makeText(SignInActivity.this, platform + " code = " + eCode, 0)
                         .show();*/
                 if(eCode==200){
-                    OkHttpUtils.post().url(Interfaces.GET_GOLD_FROM_SHARE)
+                    addRequestCall(OkHttpUtils.post().url(Interfaces.GET_GOLD_FROM_SHARE)
                             .addParams("loginName",getUsername())
                             .addParams("loginPwd",getPassword())
-                            .build().execute(new StringCallback() {
+                            .build()).execute(new StringCallback() {
 
                         @Override
                         public void onAfter(int id) {
@@ -618,11 +618,11 @@ public class SignInActivity extends BaseActivity{
 
     }
     public void getMarks(String date){
-        OkHttpUtils.post().url(Interfaces.GET_MARKS)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.GET_MARKS)
                 .addParams("loginName",getUsername())
                 .addParams("loginPwd",getPassword())
                 .addParams("date",date)
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onAfter(int id) {
                 progressDialog.dismiss();
@@ -711,11 +711,11 @@ public class SignInActivity extends BaseActivity{
         });
     }
     public void getSign(){
-        OkHttpUtils.post().url(Interfaces.Sign)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.Sign)
                 .addParams("loginName",getUsername())
                 .addParams("loginPwd",getPassword())
                 .addParams("softType", "android")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void inProgress(float progress, long total, int id) {
 

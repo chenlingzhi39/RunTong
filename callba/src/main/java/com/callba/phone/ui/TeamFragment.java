@@ -70,7 +70,7 @@ public class TeamFragment extends BaseFragment {
         teamAdapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-
+                startActivity(new Intent(getActivity(),UserInfoActivity.class).putExtra("username",teams.get(position).getPhoneNumber()+"-callba"));
             }
         });
     }
@@ -108,13 +108,13 @@ public class TeamFragment extends BaseFragment {
                                 progressDialog.setMessage(stri);
                                 progressDialog.setCanceledOnTouchOutside(false);
                                 progressDialog.show();
-                                OkHttpUtils
+                                addRequestCall(OkHttpUtils
                                         .post()
                                         .url(Interfaces.ADD_FRIEND)
                                         .addParams("loginName", getUsername())
                                         .addParams("loginPwd",  getPassword())
                                         .addParams("phoneNumber",entity.getPhoneNumber())
-                                        .build()
+                                        .build())
                                         .execute(new StringCallback() {
                                             @Override
                                             public void onError(Call call, Exception e, int id) {

@@ -59,10 +59,10 @@ public class ProfitActivity extends BaseActivity {
         getProfits();
     }
 public void getProfits(){
-    OkHttpUtils.post().url(Interfaces.PROFIT)
+    addRequestCall(OkHttpUtils.post().url(Interfaces.PROFIT)
             .addParams("loginPwd", getPassword())
             .addParams("loginName", getUsername())
-            .build()
+            .build())
             .execute(new StringCallback() {
                 @Override
                 public void onBefore(Request request, int id) {

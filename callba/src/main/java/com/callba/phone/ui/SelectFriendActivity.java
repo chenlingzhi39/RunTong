@@ -103,12 +103,12 @@ public class SelectFriendActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                OkHttpUtils.post().url(Interfaces.GIVE_COUPON)
+                                addRequestCall(OkHttpUtils.post().url(Interfaces.GIVE_COUPON)
                                         .addParams("loginName", getUsername())
                                         .addParams("loginPwd", getPassword())
                                         .addParams("cid", coupon.getCid())
                                         .addParams("phoneNumber", alluserList.get(position).getUsername().substring(0, 11))
-                                        .build().execute(new StringCallback() {
+                                        .build()).execute(new StringCallback() {
                                     @Override
                                     public void onAfter(int id) {
                                         progressDialog.dismiss();

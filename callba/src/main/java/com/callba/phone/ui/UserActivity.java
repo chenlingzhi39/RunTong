@@ -186,9 +186,9 @@ public class UserActivity extends BaseActivity {
      * @author zhw
      */
     private void sendGetVersionTask() {
-            OkHttpUtils.post().url(Interfaces.Version)
+            addRequestCall(OkHttpUtils.post().url(Interfaces.Version)
                 .addParams("softType","android")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onBefore(Request request, int id) {
                progressDialog.show();

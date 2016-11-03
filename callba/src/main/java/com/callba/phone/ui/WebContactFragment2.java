@@ -276,13 +276,13 @@ public class WebContactFragment2 extends BaseFragment {
                         dialog.dismiss();
                         switch (which) {
                             case 0:
-                                OkHttpUtils
+                                addRequestCall(OkHttpUtils
                                         .post()
                                         .url(Interfaces.DELETE_FRIENDS)
                                         .addParams("loginName", getUsername())
                                         .addParams("loginPwd", getPassword())
                                         .addParams("phoneNumber", easeUser.getUsername().substring(0, 11))
-                                        .build().execute(new StringCallback() {
+                                        .build()).execute(new StringCallback() {
                                     @Override
                                     public void onError(Call call, Exception e, int id) {
                                         toast("删除失败");

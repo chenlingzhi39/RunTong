@@ -31,6 +31,7 @@ import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+import com.zhy.http.okhttp.request.RequestCall;
 
 import java.util.List;
 
@@ -48,6 +49,7 @@ public class MainService extends Service {
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
      LocationReceiver receiver;
+    private RequestCall requestCall;
     //监听联系人数据的监听对象
     private ContentObserver mObserver = new ContentObserver(
             new Handler()) {
@@ -92,6 +94,8 @@ public class MainService extends Service {
     @Override
     public void onDestroy() {
         getContentResolver().unregisterContentObserver(mObserver);
+        if(requestCall!=null)
+            requestCall.cancel();
         unregisterReceiver(receiver);
         if (null != locationClient) {
             /**
@@ -227,12 +231,13 @@ public class MainService extends Service {
                 UserManager.putLatitude(MainService.this,aMapLocation.getLatitude()+"");
                 UserManager.putLongitude(MainService.this,aMapLocation.getLongitude()+"");
                 //userDao.saveLocation(UserManager.getUsername(MainService.this), UserManager.getPassword(MainService.this), aMapLocation.getLatitude(), aMapLocation.getLongitude());
-                OkHttpUtils.post().url(Interfaces.SAVE_LOCATION)
+                requestCall=OkHttpUtils.post().url(Interfaces.SAVE_LOCATION)
                         .addParams("loginName",UserManager.getUsername(MainService.this))
                         .addParams("loginPwd",UserManager.getPassword(MainService.this))
                         .addParams("latitude",aMapLocation.getLatitude()+"")
                         .addParams("longitude",aMapLocation.getLongitude()+"")
-                        .build().execute(new StringCallback() {
+                        .build();
+                requestCall.execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
 

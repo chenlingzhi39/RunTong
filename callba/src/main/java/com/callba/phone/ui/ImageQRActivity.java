@@ -59,10 +59,10 @@ public class ImageQRActivity extends BaseActivity {
     }
 
     public void getImage() {
-        OkHttpUtils.post().url(Interfaces.IMAGE_QR)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.IMAGE_QR)
                 .addParams("loginPwd", getPassword())
                 .addParams("loginName",getUsername())
-                .build()
+                .build())
                 .execute(new StringCallback() {
                     @Override
                     public void onBefore(Request request, int id) {

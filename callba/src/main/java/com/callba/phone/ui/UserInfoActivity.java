@@ -120,11 +120,11 @@ public class UserInfoActivity extends BaseActivity {
 
             } else {
                 addFriend.setVisibility(View.VISIBLE);
-                OkHttpUtils.post().url(Interfaces.USER_INFO)
+                addRequestCall(OkHttpUtils.post().url(Interfaces.USER_INFO)
                         .addParams("loginName", getUsername())
                         .addParams("loginPwd", getPassword())
                         .addParams("phoneNumber", userName.substring(0, 11))
-                        .build()
+                        .build())
                         .execute(new StringCallback() {
                             @Override
                             public void onAfter(int id) {
@@ -245,39 +245,6 @@ public class UserInfoActivity extends BaseActivity {
                             // 删除此联系人
                             deleteContact(user);
                             setResult(RESULT_OK);
-                        /*    OkHttpUtils
-                                    .post()
-                                    .url(Interfaces.DELETE_FRIENDS)
-                                    .addParams("loginName", getUsername())
-                                    .addParams("loginPwd", getPassword())
-                                    .addParams("phoneNumber", userName.substring(0, 11))
-                                    .build().execute(new StringCallback() {
-                                @Override
-                                public void onError(Call call, Exception e, int id) {
-                                    toast("删除失败");
-                                }
-
-                                @Override
-                                public void onResponse(String response, int id) {
-                                    try {
-                                        String[] result = response.split("\\|");
-                                        Logger.i("delete_result", response);
-                                        if (result[0].equals("0")) {
-                                            // 删除相关的邀请消息
-                                            InviteMessgeDao dao = new InviteMessgeDao(UserInfoActivity.this);
-                                            dao.deleteMessage(user.getUsername());
-                                            // 删除此联系人
-                                            deleteContact(user);
-                                            setResult(RESULT_OK);
-                                        } else {
-                                            toast("删除失败");
-                                        }
-                                    } catch (Exception e) {
-                                        toast(R.string.getserverdata_exception);
-                                    }
-                                }
-                            });*/
-
                         }
                     }
                 }, true).show();
@@ -409,7 +376,7 @@ public class UserInfoActivity extends BaseActivity {
     /**
      * 删除联系人
      *
-     * @param toDeleteUser
+     * @param tobeDeleteUser
      */
     public void deleteContact(final EaseUser tobeDeleteUser) {
         String st1 = getResources().getString(R.string.deleting);

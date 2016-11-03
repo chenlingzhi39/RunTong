@@ -75,10 +75,10 @@ public class NumberFragment2 extends BaseSelectContactFragment {
     }
 
     public void query(final String number) {
-        OkHttpUtils.get().url("http://apis.juhe.cn/mobile/get")
+        addRequestCall(OkHttpUtils.get().url("http://apis.juhe.cn/mobile/get")
                 .addParams("phone", number)
                 .addParams("key", "1dfd68c50bbf3f58755f1d537fe817a4")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onBefore(Request request, int id) {
                 progressDialog = ProgressDialog.show(getActivity(), "", "正在查询归属地");
@@ -162,13 +162,13 @@ public class NumberFragment2 extends BaseSelectContactFragment {
                 showDialog();
                 break;
             case R.id.recharge:
-                OkHttpUtils.post()
+                addRequestCall(OkHttpUtils.post()
                         .url(Interfaces.FLOW_CARD)
                         .addParams("loginName", getUsername())
                         .addParams("loginPwd", getPassword())
                         .addParams("cardNumber", card.getText().toString())
                         .addParams("phoneNumber",number.getText().toString())
-                        .build().execute(new StringCallback() {
+                        .build()).execute(new StringCallback() {
                     @Override
                     public void onAfter(int id) {
                         progressDialog.dismiss();

@@ -83,12 +83,12 @@ public class NumberFragment extends BaseSelectContactFragment {
         if (card.getText().toString().equals(("")))
             toast(getString(R.string.input_card));
         else
-        OkHttpUtils.post().url(Interfaces.CALLDA_PAY)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.CALLDA_PAY)
                 .addParams("phoneNumber", number.getText().toString())
                 .addParams("cardNumber", card.getText().toString())
                 .addParams("fromtel",getUsername())
                 .addParams("softType", "android")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onBefore(Request request, int id) {
                 progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.on_recharge));
@@ -190,10 +190,10 @@ public class NumberFragment extends BaseSelectContactFragment {
     }
     public void query(final String number) {
 
-        OkHttpUtils.get().url("http://apis.juhe.cn/mobile/get")
+        addRequestCall(OkHttpUtils.get().url("http://apis.juhe.cn/mobile/get")
                 .addParams("phone", number)
                 .addParams("key", "1dfd68c50bbf3f58755f1d537fe817a4")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onBefore(Request request, int id) {
                 progressDialog = ProgressDialog.show(getActivity(), "", "正在查询归属地");

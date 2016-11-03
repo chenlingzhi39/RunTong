@@ -169,10 +169,10 @@ public class MainActivity extends BaseActivity {
 
     }
     public void getKey(){
-        OkHttpUtils.post().url(Interfaces.Version)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.Version)
                 .tag(this)
                 .addParams("softType", "android")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onBefore(Request request, int id) {
                 progressDialog = ProgressDialog.show(MainActivity.this, null,
@@ -242,12 +242,12 @@ public class MainActivity extends BaseActivity {
             switchManualLogin();
             return;
         }
-        OkHttpUtils.post().url(Interfaces.Login)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.Login)
                 .addParams("loginSign", sign)
                 .addParams("loginType", "1")
                 .addParams("softType", "android")
                 .addParams("callType", "all")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onAfter(int id) {
                 progressDialog.dismiss();
@@ -295,11 +295,11 @@ public class MainActivity extends BaseActivity {
     }
     public void getSystemPhoneNumber(String count) {
         Logger.i("phoneNumberCount", count);
-        OkHttpUtils.post().url(Interfaces.GET_SYSTEM_PHONE_NUMBER)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.GET_SYSTEM_PHONE_NUMBER)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
                 .addParams("phoneNumberCount", count)
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
 
@@ -377,10 +377,10 @@ public class MainActivity extends BaseActivity {
         getActivity();
     }
     public void getActivity() {
-        OkHttpUtils.post().url(Interfaces.ACTIVITY_INFO)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.ACTIVITY_INFO)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
 
             @Override
             public void onError(Call call, Exception e, int id) {
@@ -422,11 +422,11 @@ public class MainActivity extends BaseActivity {
     }
 
     public void signIn() {
-        OkHttpUtils.post().url(Interfaces.Sign)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.Sign)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
                 .addParams("softType", "android")
-                .build()
+                .build())
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {

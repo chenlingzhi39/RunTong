@@ -1169,11 +1169,11 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
         return super.onOptionsItemSelected(item);
     }
     public void getAd(){
-        OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT3)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT3)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
                 .addParams("softType", "android")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
                 e.printStackTrace();

@@ -67,8 +67,8 @@ public class CouponActivity extends BaseActivity implements SwipeRefreshLayout.O
     }
 
     public void getCoupon() {
-        OkHttpUtils.post().url(Interfaces.COUPON).addParams("loginName", getUsername()).addParams("loginPwd", getPassword())
-                .build().execute(new StringCallback() {
+        addRequestCall(OkHttpUtils.post().url(Interfaces.COUPON).addParams("loginName", getUsername()).addParams("loginPwd", getPassword())
+                .build()).execute(new StringCallback() {
             @Override
             public void onAfter(int id) {
                 refresh.setRefreshing(false);}

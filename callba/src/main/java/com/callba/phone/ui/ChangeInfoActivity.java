@@ -401,9 +401,9 @@ public class ChangeInfoActivity extends BaseActivity{
         if (sign != null)
             params.put("sign", sign);
         if (nick != null || sign != null)
-            OkHttpUtils.post().url(Interfaces.CHANGE_INFO)
+            addRequestCall(OkHttpUtils.post().url(Interfaces.CHANGE_INFO)
             .params(params)
-            .build().execute(new StringCallback() {
+            .build()).execute(new StringCallback() {
                 @Override
                 public void onError(Call call, Exception e, int id) {
                     showException(e);
@@ -426,11 +426,11 @@ public class ChangeInfoActivity extends BaseActivity{
             });
     }
     public void changeHead(File file){
-        OkHttpUtils.post().url(Interfaces.CHANGE_HEAD)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.CHANGE_HEAD)
                 .addParams("loginName",getUsername())
                 .addParams("loginPwd",getPassword())
                 .addFile("file",file.getName(),file)
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onAfter(int id) {
                 dialog.dismiss();

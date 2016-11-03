@@ -61,10 +61,10 @@ public class TeamActivity extends BaseActivity {
     }
 
     public void getTeams() {
-        OkHttpUtils.post().url(Interfaces.TEAM)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.TEAM)
                 .addParams("loginPwd", getPassword())
                 .addParams("loginName", getUsername())
-                .build()
+                .build())
                 .execute(new StringCallback() {
                     @Override
                     public void onAfter(int id) {

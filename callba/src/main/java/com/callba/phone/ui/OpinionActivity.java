@@ -59,12 +59,12 @@ public class OpinionActivity extends BaseActivity {
                {toast("内容不能为空!");
                 break;}
                 else
-                   OkHttpUtils.post().url(Interfaces.OPINION)
+                   addRequestCall(OkHttpUtils.post().url(Interfaces.OPINION)
                    .addParams("loginName",getUsername())
                    .addParams("loginPwd",getPassword())
                    .addParams("softType","android")
                    .addParams("content",opinion.getText().toString())
-                   .build().execute(new StringCallback() {
+                   .build()).execute(new StringCallback() {
                        @Override
                        public void onAfter(int id) {
                            progressDialog.dismiss();

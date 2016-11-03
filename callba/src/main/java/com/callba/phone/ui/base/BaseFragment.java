@@ -18,8 +18,10 @@ import com.callba.R;
 import com.callba.phone.annotation.ActivityFragmentInject;
 import com.callba.phone.manager.UserManager;
 import com.yanzhenjie.permission.AndPermission;
+import com.zhy.http.okhttp.request.RequestCall;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import rx.Subscription;
 
@@ -35,9 +37,11 @@ public abstract class BaseFragment extends Fragment {
     public Subscription subscription;
     public Toolbar toolbar;
     private int mMenuId;
+    public ArrayList<RequestCall> requestCalls;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
+        requestCalls=new ArrayList<>();
         if (null == fragmentRootView) {
             if (getClass().isAnnotationPresent(ActivityFragmentInject.class)) {
                 ActivityFragmentInject annotation = getClass()
@@ -119,6 +123,9 @@ public abstract class BaseFragment extends Fragment {
     public void onDestroy() {
         if(subscription!=null)
             subscription.unsubscribe();
+        for(RequestCall requestCall:requestCalls){
+            requestCall.cancel();
+        }
         super.onDestroy();
     }
 
@@ -143,5 +150,9 @@ public abstract class BaseFragment extends Fragment {
         // super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         AndPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+    public RequestCall addRequestCall(RequestCall requestCall){
+        requestCalls.add(requestCall);
+        return requestCall;
     }
 }

@@ -56,7 +56,6 @@ public class CommunityActivity extends AppCompatActivity implements  RefreshLayo
     @BindView(R.id.toolbar_background)
     AlphaView toolbarBackground;
     private ArrayList<Mood> moods;
-    private Gson gson;
     private String[] result;
     private MoodAdapter moodAdapter;
     private View headerView;
@@ -143,7 +142,6 @@ public class CommunityActivity extends AppCompatActivity implements  RefreshLayo
         moodList.addItemDecoration(new DividerItemDecoration(
                 this, DividerItemDecoration.VERTICAL_LIST));
         moodList.setFooterEnabled(false);
-        gson = new Gson();
         moodAdapter = new MoodAdapter(this);
         headerView = getLayoutInflater().inflate(R.layout.header, null);
         moodAdapter.addHeader(new RecyclerArrayAdapter.ItemView() {

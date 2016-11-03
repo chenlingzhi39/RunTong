@@ -101,13 +101,13 @@ public class ChangePasswordActivity extends BaseActivity {
             return;
         }
         //userDao.changePassword(getUsername(), getPassword(),old_password,new_password);
-        OkHttpUtils.post().url(Interfaces.Change_Pass)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.Change_Pass)
                 .addParams("loginName",getUsername())
                 .addParams("loginPwd",getPassword())
                 .addParams("oldPwd", old_password)
                 .addParams("newPwd", new_password)
                 .addParams("softType", "android")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
                 e.printStackTrace();

@@ -63,13 +63,13 @@ public class TXActivity extends BaseActivity {
          return;
         }
         Logger.i("tx_url",Interfaces.TX+"?loginPwd="+getPassword()+"&loginName="+getUsername()+"&money="+commission.getText().toString()+"&payAccount="+account.getText().toString()+"&realName="+name.getText().toString());
-        OkHttpUtils.post().url(Interfaces.TX)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.TX)
                 .addParams("loginPwd", getPassword())
                 .addParams("loginName", getUsername())
                 .addParams("money",commission.getText().toString())
                 .addParams("payAccount",account.getText().toString())
                 .addParams("realName",name.getText().toString())
-                .build()
+                .build())
                 .execute(new StringCallback() {
                     @Override
                     public void onAfter(int id) {

@@ -59,10 +59,10 @@ public class TXRecordActivity extends BaseActivity {
     }
 
     public void getTXRecords() {
-        OkHttpUtils.post().url(Interfaces.TXRECORD)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.TXRECORD)
                 .addParams("loginPwd", getPassword())
                 .addParams("loginName", getUsername())
-                .build()
+                .build())
                 .execute(new StringCallback() {
                     @Override
                     public void onBefore(Request request, int id) {

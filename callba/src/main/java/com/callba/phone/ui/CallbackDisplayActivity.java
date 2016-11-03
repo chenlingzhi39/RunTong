@@ -232,13 +232,13 @@ public class CallbackDisplayActivity extends BaseActivity {
     }
 
     private void callback() {
-        OkHttpUtils.post().url(Interfaces.DIAL_CALLBACK)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.DIAL_CALLBACK)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
                 .addParams("softType", "android")
                 .addParams("caller", getUsername())
                 .addParams("callee", number)
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
 
             @Override
             public void onError(Call call, Exception e, int id) {

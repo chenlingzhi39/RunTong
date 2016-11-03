@@ -105,13 +105,13 @@ public class ContactDetailFragment extends BaseFragment {
                         progressDialog.setMessage(stri);
                         progressDialog.setCanceledOnTouchOutside(false);
                         if (bean.getContactPhones().size() == 1) {
-                            OkHttpUtils
+                          addRequestCall(OkHttpUtils
                                     .post()
                                     .url(Interfaces.ADD_FRIEND)
                                     .addParams("loginName", getUsername())
                                     .addParams("loginPwd", getPassword())
                                     .addParams("phoneNumber", bean.getContactPhones().get(0))
-                                    .build()
+                                    .build())
                                     .execute(new StringCallback() {
                                         @Override
                                         public void onAfter(int id) {
@@ -140,12 +140,12 @@ public class ContactDetailFragment extends BaseFragment {
                                                     //demo写死了个reason，实际应该让用户手动填入
                                                     String s = getResources().getString(R.string.Add_a_friend);
                                                     //EMClient.getInstance().contactManager().addContact(toAddUsername+"-callba", s);
-                                                    OkHttpUtils
+                                                    addRequestCall(OkHttpUtils
                                                             .post()
                                                             .url(Interfaces.GET_FRIENDS)
                                                             .addParams("loginName", getUsername())
                                                             .addParams("loginPwd", getPassword())
-                                                            .build().execute(new StringCallback() {
+                                                            .build()).execute(new StringCallback() {
                                                         @Override
                                                         public void onError(Call call, Exception e, int id) {
                                                             e.printStackTrace();
@@ -188,13 +188,13 @@ public class ContactDetailFragment extends BaseFragment {
                                         }
                                     });
                         } else {
-                            OkHttpUtils
+                            addRequestCall(OkHttpUtils
                                     .post()
                                     .url(Interfaces.ADD_FRIENDS)
                                     .addParams("loginName", getUsername())
                                     .addParams("loginPwd", getPassword())
                                     .addParams("phoneNumbers", getPhoneNumbers())
-                                    .build().execute(new StringCallback() {
+                                    .build()).execute(new StringCallback() {
                                 @Override
                                 public void onAfter(int id) {
                                     progressDialog.dismiss();

@@ -64,11 +64,11 @@ public class FamilyActivity extends BaseActivity {
             Glide.with(this).load(UserManager.getUserAvatar(this)).into(avatar);
         name.setText(getUsername());
         myCommission.setText(UserManager.getCommission(this));
-        OkHttpUtils.post().url(Interfaces.USER_INFO)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.USER_INFO)
                 .addParams("loginName",getUsername())
                 .addParams("loginPwd",getPassword())
                 .addParams("phoneNumber",getUsername())
-                .build()
+                .build())
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {

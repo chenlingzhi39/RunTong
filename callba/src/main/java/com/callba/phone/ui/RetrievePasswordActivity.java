@@ -191,10 +191,10 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
     }
 
     public void findKey(final String num) {
-        OkHttpUtils.post().url(Interfaces.Send_SMS)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.Send_SMS)
                 .addParams("phoneNumber", num)
                 .addParams("softType", "android")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onAfter(int id) {
                 super.onAfter(id);
@@ -241,11 +241,11 @@ public class RetrievePasswordActivity extends BaseActivity implements OnClickLis
     }
 
     public void retrievePassword(String phoneNumber, String sign) {
-        OkHttpUtils.post().url(Interfaces.Retrieve_Pass)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.Retrieve_Pass)
                 .addParams("phoneNumber", phoneNumber)
                 .addParams("sign", sign)
                 .addParams("softType", "android")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onBefore(Request request, int id) {
                 Log.i("url", Interfaces.Retrieve_Pass);

@@ -397,17 +397,17 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
      *
      * @param username
      * @param password
-     * @param verifiCode
+     * @param code
      */
     private void sendRegisterRequest(final String username, final String password,
                                      String code) {
-        OkHttpUtils.post().url(Interfaces.Register)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.Register)
                 .addParams("phoneNumber", username)
                 .addParams("password", password)
                 .addParams("code", code)
                 .addParams("softType", "android")
                 .addParams("countryCode", "86")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onAfter(int id) {
                 progressDialog.dismiss();
@@ -480,10 +480,10 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     }
 
     public void getRegisterKey(final String num) {
-        OkHttpUtils.post().url(Interfaces.Send_SMS)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.Send_SMS)
                 .addParams("phoneNumber", num)
                 .addParams("softType", "android")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
 
             @Override
             public void onBefore(Request request, int id) {
@@ -528,11 +528,11 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
     }
 
     public void getCode(String phoneNumber, String sign) {
-        OkHttpUtils.post().url(Interfaces.Verification_Code)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.Verification_Code)
                 .addParams("phoneNumber", phoneNumber)
                 .addParams("sign", sign)
                 .addParams("softType", "android")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onBefore(Request request, int id) {
                 Log.i("url", Interfaces.Retrieve_Pass);

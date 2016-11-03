@@ -148,11 +148,11 @@ public class GroupUserInfoActivity extends BaseActivity {
         } else {
             phoneNumber.setText(username.substring(0,11));
             gson = new Gson();
-            OkHttpUtils.post().url(Interfaces.USER_INFO)
+            addRequestCall(OkHttpUtils.post().url(Interfaces.USER_INFO)
                     .addParams("loginName", getUsername())
                     .addParams("loginPwd", getPassword())
                     .addParams("phoneNumber", username.substring(0, 11))
-                    .build()
+                    .build())
                     .execute(new StringCallback() {
                         @Override
                         public void onAfter(int id) {

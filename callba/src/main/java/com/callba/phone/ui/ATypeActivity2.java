@@ -65,11 +65,11 @@ public class ATypeActivity2 extends BaseActivity {
     public void getATypes() {
         title.setText(getIntent().getStringExtra("number") + "的A类客户");
         teams = new ArrayList<>();
-        OkHttpUtils.post().url(Interfaces.GET_ATYPE2)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.GET_ATYPE2)
                 .addParams("loginPwd", getPassword())
                 .addParams("loginName", getUsername())
                 .addParams("phoneNumber", getIntent().getStringExtra("number"))
-                .build()
+                .build())
                 .execute(new StringCallback() {
                     @Override
                     public void onAfter(int id) {
