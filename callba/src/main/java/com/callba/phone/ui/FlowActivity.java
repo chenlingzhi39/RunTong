@@ -68,7 +68,7 @@ public class FlowActivity extends BaseActivity {
     public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
         final int PAGE_COUNT = 2;
-        private String tabTitles[] = new String[]{"卡号充值", "流量套餐"};
+        private String tabTitles[] = new String[]{"充值卡充值", "购买套餐"};
         private Context context;
 
         public SimpleFragmentPagerAdapter(FragmentManager fm, Context context) {

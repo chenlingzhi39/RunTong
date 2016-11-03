@@ -30,7 +30,7 @@ public class RechargeActivity extends BaseActivity{
     TabLayout layoutTab;
     @BindView(R.id.viewpager)
     ViewPager viewpager;
-    private String tabTitles[] = new String[]{"卡号充值", "畅聊套餐"};
+    private String tabTitles[] = new String[]{"充值卡充值", "购买套餐"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
