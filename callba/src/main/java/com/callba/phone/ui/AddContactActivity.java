@@ -86,11 +86,11 @@ public class AddContactActivity extends BaseActivity {
             }
 
             // TODO 从服务器获取此contact,如果不存在提示不存在此用户
-        OkHttpUtils.post().url(Interfaces.USER_INFO)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.USER_INFO)
                 .addParams("loginName",getUsername())
                 .addParams("loginPwd",getPassword())
                 .addParams("phoneNumber",name)
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onAfter(int id) {
              progressDialog.dismiss();

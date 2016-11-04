@@ -31,7 +31,6 @@ import com.callba.phone.widget.AlphaView;
 import com.callba.phone.widget.DividerItemDecoration;
 import com.callba.phone.widget.refreshlayout.EasyRecyclerView;
 import com.callba.phone.widget.refreshlayout.RefreshLayout;
-import com.google.gson.Gson;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 

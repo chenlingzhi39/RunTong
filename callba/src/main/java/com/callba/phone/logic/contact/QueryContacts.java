@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+
 import com.callba.phone.bean.SearchSortKeyBean;
 import com.callba.phone.cfg.Constant;
 import com.callba.phone.cfg.GlobalConfig;

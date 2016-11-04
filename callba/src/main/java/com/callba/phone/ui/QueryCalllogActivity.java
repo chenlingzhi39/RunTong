@@ -197,12 +197,12 @@ public class QueryCalllogActivity extends BaseActivity implements
 				progressBar.setVisibility(View.VISIBLE);
 				first = false;
 			} else refreshLayout.setRefreshing(true);
-			OkHttpUtils.post().url(Interfaces.QUERY_CALLLOG)
+			addRequestCall(OkHttpUtils.post().url(Interfaces.QUERY_CALLLOG)
 					.addParams("loginName", getUsername())
 					.addParams("loginPwd", getPassword())
 					.addParams("year", dates[0])
 					.addParams("month", dates[1])
-					.build().execute(new StringCallback() {
+					.build()).execute(new StringCallback() {
 				@Override
 				public void onAfter(int id) {
 					progressBar.setVisibility(View.GONE);

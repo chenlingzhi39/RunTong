@@ -104,11 +104,11 @@ public class GoldActivity extends BaseActivity {
                         if(!helper.getNumber().equals(""))
                         {
                             ex_gold = Integer.parseInt(helper.getNumber()) * UserManager.getProportion(GoldActivity.this);
-                        OkHttpUtils.post().url(Interfaces.EXCHANGE_BALANCE)
+                        addRequestCall(OkHttpUtils.post().url(Interfaces.EXCHANGE_BALANCE)
                                 .addParams("loginName", getUsername())
                                 .addParams("loginPwd", getPassword())
                                 .addParams("gold", ex_gold + "")
-                                .build().execute(new StringCallback() {
+                                .build()).execute(new StringCallback() {
                             @Override
                             public void onError(Call call, Exception e, int id) {
                                 toast(R.string.network_error);

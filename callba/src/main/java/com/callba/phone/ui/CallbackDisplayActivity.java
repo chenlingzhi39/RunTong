@@ -182,11 +182,11 @@ public class CallbackDisplayActivity extends BaseActivity {
             window.setStatusBarColor(Color.TRANSPARENT);
         }
         gson = new Gson();
-        OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT4)
+        addRequestCall(OkHttpUtils.post().url(Interfaces.GET_ADVERTICEMENT4)
                 .addParams("loginName", getUsername())
                 .addParams("loginPwd", getPassword())
                 .addParams("softType", "android")
-                .build().execute(new StringCallback() {
+                .build()).execute(new StringCallback() {
             @Override
             public void onError(Call call, Exception e, int id) {
                 e.printStackTrace();
