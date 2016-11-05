@@ -507,7 +507,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
         if (isMessageListInited) {
             messageList.refreshSelectLast();
         }
-
+       LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
         //刷新ui
       /*  if(isMessageListInited) {
             messageList.refreshSelectLast();
@@ -777,7 +777,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 String name;
                 if (toChatUsername.length() > 10) {
                     EaseUser user = EaseUserUtils.getUserInfo(toChatUsername);
-                    name = toChatUsername;
+                    name = toChatUsername.substring(0,11);
                     if (user != null) {
                         if (!TextUtils.isEmpty(user.getNick()))
                             name = user.getNick();

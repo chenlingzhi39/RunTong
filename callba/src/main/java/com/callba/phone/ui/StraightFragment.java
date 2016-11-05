@@ -217,8 +217,6 @@ public class StraightFragment extends BaseSelectContactFragment {
                     break;
             }
         }
-
-        ;
     };
 
     public static StraightFragment newInstance() {

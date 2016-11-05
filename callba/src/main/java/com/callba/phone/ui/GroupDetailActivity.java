@@ -421,6 +421,8 @@ public class GroupDetailActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             LocalBroadcastManager.getInstance(GroupDetailActivity.this).sendBroadcast(new Intent(Constant.ACTION_GROUP_CHANAGED));
+                            LocalBroadcastManager.getInstance(GroupDetailActivity.this).sendBroadcast(new Intent((Constant.ACTION_MESSAGR_NUM_CHANGED)));
+                            LocalBroadcastManager.getInstance(GroupDetailActivity.this).sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
                             progressDialog.dismiss();
                             setResult(RESULT_OK);
                             finish();
