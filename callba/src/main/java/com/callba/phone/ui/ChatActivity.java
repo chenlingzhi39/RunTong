@@ -841,7 +841,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
 
     @Override
     public void onAvatarClick(String username) {
-        if (!username.equals(EMClient.getInstance().getCurrentUser()) || !username.equals("admin")) {
+        if (!username.equals(EMClient.getInstance().getCurrentUser()) && !username.equals("admin")) {
             if (chatType == Constant.CHATTYPE_GROUP) {
                 startActivity(new Intent(ChatActivity.this, GroupUserInfoActivity.class).putExtra("username", username).putExtra("group_id", toChatUsername));
             } else {
