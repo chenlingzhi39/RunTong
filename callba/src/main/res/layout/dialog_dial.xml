@@ -2,33 +2,82 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_centerHorizontal="true"
-    android:id="@+id/root"
-    android:clickable="true">
+    android:id="@+id/root">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_weight="0.8"
+        android:gravity="center"
+        android:orientation="horizontal"
         android:layout_alignParentBottom="true">
-        <Button
-            android:id="@+id/dial"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/em_btn_green_selector"
-            android:text="回拨电话"
-            android:textColor="@color/white"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:textSize="18sp"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="16dp"
+            android:gravity="center">
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/normal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:backgroundTint="@color/material_blue_600"
+                android:src="@drawable/ic_call_white_24dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/normal_dial"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:textColor="@color/material_white"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="16dp"
+            android:gravity="center">
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/dial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:backgroundTint="@color/material_green_600"
+                android:src="@drawable/ic_dialer_sip_white_24dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/call_back_dial"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:textColor="@color/material_white"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="16dp"
+            android:gravity="center">
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:backgroundTint="@color/material_red_600"
+                android:src="@drawable/ic_close_white_24dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:textColor="@color/material_white"
+                />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/cancel"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/em_btn_style_alert_dialog_special"
-            android:layout_margin="10dp"
-            android:textColor="@color/white"
-            android:text="取消"
-            android:textSize="18sp"/>
     </LinearLayout>
 </RelativeLayout>

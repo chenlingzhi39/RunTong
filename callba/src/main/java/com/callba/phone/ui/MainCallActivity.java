@@ -446,8 +446,9 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
             case R.id.dialcall:
                 // dialCallback();
                 callNum = et_number.getText().toString().trim();
-                et_number.setText("");
-                callUtils.judgeCallMode(this, callNum);
+                //et_number.setText("");
+                //callUtils.judgeCallMode(this, callNum);
+                startActivityForResult(new Intent(MainCallActivity.this,SelectDialPopupWindow.class).putExtra("number",callNum),0);
                 break;
 
             case R.id.bn_textoperate_1:
@@ -1207,5 +1208,13 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode==RESULT_OK){
+            et_number.setText("");
+        }
     }
 }

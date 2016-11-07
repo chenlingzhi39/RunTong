@@ -1010,4 +1010,6 @@
     <string name="move_to_black_list">移入黑名单</string>
     <string name="group_owner_cannot">群主不能屏蔽群消息！</string>
     <string name="tel">电话</string>
+    <string name="call_back_dial">回拨电话</string>
+    <string name="normal_dial">普通电话</string>
 </resources>
