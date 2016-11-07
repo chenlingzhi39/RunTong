@@ -5,6 +5,6 @@
         android:id="@+id/ring"
         android:title="@string/open_ring"
         app:showAsAction="always"
-        android:icon="@drawable/close_ring"
+        android:icon="@drawable/ic_volume_off_orange_24dp"
         />
 </menu>

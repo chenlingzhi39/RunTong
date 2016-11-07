@@ -17,7 +17,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_margin="16dp"
-            android:gravity="center">
+            android:gravity="center"
+            android:id="@+id/normal_layout"
+            android:visibility="gone">
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/normal"
                 android:layout_width="wrap_content"
@@ -39,7 +41,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_margin="16dp"
-            android:gravity="center">
+            android:gravity="center"
+            android:id="@+id/dial_layout"
+            android:visibility="gone">
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/dial"
                 android:layout_width="wrap_content"

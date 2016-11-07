@@ -21,6 +21,15 @@
         <item>11月</item>
         <item>12月</item>
     </string-array>
-    
+    <string-array name="call_mode">
+        <item>总是询问</item>
+        <item>回拨电话</item>
+        <item>普通电话</item>
+    </string-array>
+    <string-array name="call_mode_values">
+        <item>always</item>
+        <item>callback</item>
+        <item>normal</item>
+    </string-array>
 </resources>
  <!--  <item>短信</item> -->

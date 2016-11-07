@@ -110,6 +110,7 @@
     <string name="logout">退出登录</string>
     <string name="update">版本更新</string>
     <string name="callback_settings">回拨设置</string>
+    <string name="dial_settings">拨打设置</string>
     <string name="log_settings">log设置</string>
     <string name="add">添加</string>
     <string name="register">注册</string>
@@ -1012,4 +1013,5 @@
     <string name="tel">电话</string>
     <string name="call_back_dial">回拨电话</string>
     <string name="normal_dial">普通电话</string>
+    <string name="dial">拨打电话</string>
 </resources>

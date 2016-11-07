@@ -1159,10 +1159,10 @@ public class MainCallActivity extends BaseActivity implements OnClickListener,
                 SharedPreferenceUtil.getInstance(this).putBoolean(
                         Constant.KeyboardSetting, !isKeyboardToneOn, true);
                 if ((boolean)SPUtils.get(this, Constant.PACKAGE_NAME,Constant.KeyboardSetting,true)) {
-                    item.setIcon(R.drawable.open_ring);
+                    item.setIcon(R.drawable.ic_volume_up_orange_24dp);
                     item.setTitle(R.string.close_ring);
                 } else {
-                    item.setIcon(R.drawable.close_ring);
+                    item.setIcon(R.drawable.ic_volume_off_orange_24dp);
                     item.setTitle(R.string.open_ring);
                 }
                 break;

@@ -31,6 +31,16 @@
             android:title="登录自动提醒"
             />
     </com.jenzz.materialpreference.PreferenceCategory>
+    <com.jenzz.materialpreference.PreferenceCategory android:title="@string/dial_settings">
+        <ListPreference
+            android:key="call_mode"
+            android:title="拨号方式"
+            android:entries="@array/call_mode"
+            android:entryValues="@array/call_mode_values"
+            android:dialogTitle="拨号方式"
+            android:defaultValue="always"
+            />
+    </com.jenzz.materialpreference.PreferenceCategory>
     <com.jenzz.materialpreference.PreferenceCategory android:title="@string/callback_settings">
         <com.jenzz.materialpreference.SwitchPreference
             android:key="BackCall_AutoAnswer"
