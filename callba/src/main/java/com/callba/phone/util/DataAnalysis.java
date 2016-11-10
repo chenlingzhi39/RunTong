@@ -21,8 +21,6 @@ import java.util.Map;
 
 public class DataAnalysis {
 	private TimeFormatUtil timeFormatUtil;
-	public List<CalldaCalllogBean> allcalllists;
-	private CalllogService calllogService;
 
 	public List<? extends Map<String, ?>> getData(Context context,
 			List<CalldaCalllogBean> allcalllists) {
@@ -110,72 +108,5 @@ public class DataAnalysis {
 			data.add(map);
 		}
 		return data;
-	}
-
-	/**
-	 * 通话记录查询监听器
-	 * 
-	 * @author Administrator
-	 */
-	class Listenrer implements CalldaCalllogListener {
-
-		@Override
-		public void onQueryCompleted(List<CalldaCalllogBean> calldaCalllogBeans) {
-			allcalllists.clear();
-			if (0 < calldaCalllogBeans.size()) {
-				for (CalldaCalllogBean bean : calldaCalllogBeans) {
-					if (TextUtils.isEmpty(bean.getDisplayName())) {
-						String tempPhoneNumber = bean.getCallLogNumber();
-						if (!"".equals(tempPhoneNumber)
-								&& tempPhoneNumber.length() >= 11
-								&& tempPhoneNumber.startsWith("86")) {
-							tempPhoneNumber = tempPhoneNumber.substring(2);
-						}
-						// bean.setDisplayName("未知");
-						bean.setDisplayName(tempPhoneNumber);
-						if (GlobalConfig.getInstance().getContactBeans() != null) {
-							for (ContactPersonEntity contactBean : GlobalConfig
-									.getInstance().getContactBeans()) {
-								if (contactBean.getPhoneNumber().equals(
-										tempPhoneNumber)) {
-									// 通讯录中存在该记录
-									bean.setDisplayName(contactBean
-											.getDisplayName());
-
-									bean.setSearchSortKeyBean(contactBean
-											.getSearchSortKeyBean());
-									break;
-								}
-							}
-						}
-					}
-
-					if (bean.getSearchSortKeyBean() == null) {
-						if (GlobalConfig.getInstance().getContactBeans() != null) {
-							for (ContactPersonEntity contactBean : GlobalConfig
-									.getInstance().getContactBeans()) {
-								if (contactBean.getPhoneNumber().equals(
-										bean.getCallLogNumber())) {
-
-									bean.setSearchSortKeyBean(contactBean
-											.getSearchSortKeyBean());
-									break;
-								}
-							}
-						}
-					}
-					// 如果非联系人 以上均过滤不到 则设个默认值
-					if (bean.getSearchSortKeyBean() == null) {
-						bean.setSearchSortKeyBean(new SearchSortKeyBean());
-					}
-				}
-				allcalllists.addAll(calldaCalllogBeans);
-			}
-		}
-
-		@Override
-		public void onDeleteCompleted() {
-			calllogService.startQueryCallLog(false);
-		}
 	}
 }

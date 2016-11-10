@@ -31,6 +31,8 @@ import com.callba.phone.manager.UserManager;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.Interfaces;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SDCardListener;
+import com.callba.phone.util.StorageUtils;
 import com.callba.phone.util.Utils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -88,10 +90,13 @@ public class ChangeInfoActivity extends BaseActivity{
         }
         nickName.setHint(UserManager.getNickname(this));
         signature.setHint(UserManager.getSignature(this));
-        String path = getSDCardPath();
+        String path;
+        if (SDCardListener.isSDCardAvailable()) {
+            path = StorageUtils.getFilesDirectory(this).getAbsolutePath();}else
+            path=getFilesDir().getAbsolutePath();
         File file = new File(path + "/temp.jpg");
         imageUri = Uri.fromFile(file);
-        File cropFile = new File(getSDCardPath() + "/temp_crop.jpg");
+        File cropFile = new File(path + "/temp_crop.jpg");
         imageCropUri = Uri.fromFile(cropFile);
     }
 

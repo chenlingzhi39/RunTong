@@ -114,21 +114,6 @@
                 android:focusable="true"
                 android:scrollbars="none"
                 android:visibility="gone" />
-
-            <ListView
-                android:id="@+id/diallistphonenumyouhui"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:background="@color/white_f9"
-                android:divider="@null"
-                android:dividerHeight="1.0px"
-                android:fadingEdge="none"
-                android:fastScrollEnabled="false"
-                android:focusable="true"
-                android:listSelector="@android:color/transparent"
-                android:scrollbars="none"
-                android:visibility="gone" />
-
             <ListView
                 android:id="@id/dialoldcalllist"
                 android:layout_width="fill_parent"
@@ -170,14 +155,12 @@
                 android:visibility="gone">
 
                 <ProgressBar
-                    android:id="@+id/pb_searchcontact"
                     style="?android:attr/progressBarStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:indeterminateDrawable="@drawable/star_progressbar" />
+                    />
 
                 <TextView
-                    android:id="@+id/tv_searchcontact"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"

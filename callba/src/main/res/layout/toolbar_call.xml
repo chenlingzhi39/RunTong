@@ -64,52 +64,6 @@
             android:textSize="14sp"
             android:layout_weight="1"/>
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/ll_textoperate"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
-        <Button
-            android:id="@+id/bn_textoperate_1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#862498C4"
-            android:minHeight="40dp"
-            android:textColor="@color/black_3f" />
-
-        <View
-            android:layout_width="1px"
-            android:layout_height="fill_parent"
-            android:background="@android:color/white" />
-
-        <Button
-            android:id="@+id/bn_textoperate_2"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#862498C4"
-            android:minHeight="40dp"
-            android:textColor="@color/black_3f" />
-
-        <View
-            android:layout_width="1px"
-            android:layout_height="fill_parent"
-            android:background="@android:color/white" />
-
-        <Button
-            android:id="@+id/bn_textoperate_3"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#862498C4"
-            android:minHeight="40dp"
-            android:textColor="@color/black_3f"
-            android:visibility="gone" />
-    </LinearLayout>
     </RelativeLayout>
 </android.support.v7.widget.Toolbar>
 

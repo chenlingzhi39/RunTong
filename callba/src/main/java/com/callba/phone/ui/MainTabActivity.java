@@ -65,8 +65,6 @@ public class MainTabActivity extends TabActivity {
             R.drawable.menu2_selector, R.drawable.menu3_selector,
             R.drawable.menu4_selector, R.drawable.menu5_selector};
     NotificationManager mNotificationManager;
-    private static final int FLING_MIN_DISTANCE = 100;
-    private static final int FLING_MIN_VELOCITY = 0;
     BroadcastReceiver tabReceiver;
     private BadgeView badgeView;
     private LocalBroadcastManager broadcastManager;
@@ -107,14 +105,6 @@ public class MainTabActivity extends TabActivity {
         mTabhost = this.getTabHost();
 
         mTabTextArray = getResources().getStringArray(R.array.maintab_texts);
-       /* try
-        {
-            Field current = mTabhost.getClass().getDeclaredField("mCurrentTab");
-            current.setAccessible(true);
-            current.setInt(mTabhost, 2);
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
         //放入底部状态栏数据
         for (int i = 0; i < mTabClassArray.length; i++) {
             TabSpec tabSpec = mTabhost.newTabSpec(mTabTextArray[i])
@@ -123,14 +113,6 @@ public class MainTabActivity extends TabActivity {
             mTabhost.addTab(tabSpec);
             mTabhost.getTabWidget().getChildAt(i);
         }
-      /*  try
-        {
-            Field current = mTabhost.getClass().getDeclaredField("mCurrentTab");
-            current.setAccessible(true);
-            current.set(mTabhost, -1);
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
         mTabhost.setCurrentTab(2);
         //获取第一个tabwidget
         final View view = mTabhost.getTabWidget().getChildAt(0);
@@ -185,18 +167,6 @@ public class MainTabActivity extends TabActivity {
                 }
             }
         });
-
-        //异常启动，跳转到第一个页签
-       /* if (savedInstanceState != null) {
-            try {
-                String frompage = getIntent().getStringExtra("frompage");
-                if (!TextUtils.isEmpty(frompage)
-                        && frompage.equals("WelcomeActivity")) {
-                    savedInstanceState.remove("currentTab");
-                }
-            } catch (Exception e) {
-            }
-        }*/
 
         if (getIntent().getBooleanExtra(Constant.ACCOUNT_CONFLICT, false) && !isConflictDialogShow) {
             showConflictDialog();
@@ -275,16 +245,6 @@ public class MainTabActivity extends TabActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i("maintab", "onresume");
-        //延迟发送广播（让新来电更新数据库）
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent();
-                intent.setAction(com.callba.phone.cfg.Constant.ACTION_TAB_ONRESUME);
-                sendBroadcast(intent);
-            }
-        }, 300);
     }
 
     @Override
@@ -295,38 +255,6 @@ public class MainTabActivity extends TabActivity {
         unregisterReceiver(tabReceiver);
         broadcastManager.unregisterReceiver(broadcastReceiver);
         super.onDestroy();
-    }
-
-    private void sendNotification1(Class<?> clazz, String title, String content, String username) {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-                getApplicationContext())
-                .setSmallIcon(R.drawable.logo_notification)
-                .setLargeIcon(
-                        BitmapFactory.decodeResource(getResources(),
-                                R.drawable.logo))
-                .setContentTitle(title)
-                .setContentText(content);
-        Intent notificationIntent = new Intent(getApplicationContext(), clazz);
-        notificationIntent.putExtra("username", username);
-        // TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        // stackBuilder.addParentStack(clazz);
-        // stackBuilder.addNextIntent(notificationIntent);
-        // PendingIntent resultPendingIntent =
-        // stackBuilder.getPendingIntent(
-        // 0,
-        // PendingIntent.FLAG_UPDATE_CURRENT
-        // );
-        PendingIntent contentIntent = PendingIntent.getActivity(
-                getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(contentIntent);
-      /*  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            mBuilder.setFullScreenIntent(contentIntent, true);*/
-        mBuilder.setTicker(content);
-        Notification notification = mBuilder.build();
-        notification.flags = Notification.FLAG_AUTO_CANCEL | Notification.FLAG_SHOW_LIGHTS;
-        //notification.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(10, notification);
     }
 
     /**

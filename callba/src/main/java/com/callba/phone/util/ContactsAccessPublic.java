@@ -221,8 +221,7 @@ public  class ContactsAccessPublic {
         //首先向RawContacts.CONTENT_URI执行一个空值插入，目的是获取系统返回的rawContactId
        /* values.put(RawContacts.ACCOUNT_NAME, "null");
         values.put(RawContacts.ACCOUNT_TYPE, "null");*/
-        Uri rawContactUri = context.getContentResolver().insert(RawContacts.CONTENT_URI, values);
-        final long rawContactId = ContentUris.parseId(rawContactUri);
+        final long rawContactId = ContentUris.parseId(context.getContentResolver().insert(RawContacts.CONTENT_URI, values));
         contact.setId(rawContactId + "");
 
         //往data表入姓名数据

@@ -47,7 +47,9 @@ import com.callba.phone.bean.ContactMultiNumBean;
 import com.callba.phone.manager.ContactsManager;
 import com.callba.phone.ui.base.BaseActivity;
 import com.callba.phone.util.Logger;
+import com.callba.phone.util.SDCardListener;
 import com.callba.phone.util.ScrimUtil;
+import com.callba.phone.util.StorageUtils;
 import com.callba.phone.util.Utils;
 
 import java.io.BufferedInputStream;
@@ -219,10 +221,13 @@ public class ContactDetailActivity extends BaseActivity {
            }
        });
         //image.setImageBitmap(resource);
-        String path = getSDCardPath();
+            String path;
+        if (SDCardListener.isSDCardAvailable()) {
+        path = StorageUtils.getFilesDirectory(this).getAbsolutePath();}else
+        path=getFilesDir().getAbsolutePath();
         File file = new File(path + "/temp.jpg");
         imageUri = Uri.fromFile(file);
-        File cropFile = new File(getSDCardPath() + "/temp_crop.jpg");
+        File cropFile = new File(path + "/temp_crop.jpg");
         imageCropUri = Uri.fromFile(cropFile);
     }
 
