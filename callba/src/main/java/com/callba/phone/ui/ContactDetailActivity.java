@@ -222,9 +222,7 @@ public class ContactDetailActivity extends BaseActivity {
        });
         //image.setImageBitmap(resource);
             String path;
-        if (SDCardListener.isSDCardAvailable()) {
-        path = StorageUtils.getFilesDirectory(this).getAbsolutePath();}else
-        path=getFilesDir().getAbsolutePath();
+        path = StorageUtils.getFilesDirectory(this).getAbsolutePath();
         File file = new File(path + "/temp.jpg");
         imageUri = Uri.fromFile(file);
         File cropFile = new File(path + "/temp_crop.jpg");

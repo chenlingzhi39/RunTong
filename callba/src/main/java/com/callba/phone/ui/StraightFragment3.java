@@ -104,6 +104,8 @@ public class StraightFragment3 extends BaseSelectContactFragment {
     TextView empty;
     @BindView(R.id.error)
     TextView error;
+    @BindView(R.id.description)
+    TextView description;
     private String subject, body, price;
     private String outTradeNo;
     private ArrayList<Flow> flows, seperateFlows;
@@ -674,7 +676,8 @@ public class StraightFragment3 extends BaseSelectContactFragment {
                                     coupon = coupons.get(coupon_pos);
                                 } else btCoupon.setVisibility(View.GONE);
                                 nowPriceNation.setText(flow.getPrice() + "元");
-                                pastPriceNation.setText(flow.getOldPrice() + "元");
+                                pastPriceNation.setHint(flow.getOldPrice() + "元");
+                                description.setHint(flow.getMemo());
                                 flowAdapter = new FlowAdapter(getActivity(), seperateFlows);
                                 flowAdapter.setmSelectedItem(flow_pos);
                                 list.setLayoutManager(new GridLayoutManager(getActivity(), 3));
@@ -698,7 +701,8 @@ public class StraightFragment3 extends BaseSelectContactFragment {
                                             coupon = null;
                                         }
                                         nowPriceNation.setText(flow.getPrice() + "元");
-                                        pastPriceNation.setText(flow.getOldPrice() + "元");
+                                        pastPriceNation.setHint(flow.getOldPrice() + "元");
+                                        description.setHint(flow.getMemo());
                                     }
                                 });
                                 linear.setVisibility(View.VISIBLE);

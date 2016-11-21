@@ -25,13 +25,8 @@ public class ZipUtil {
 	 */
 	public static void copyBigDataBase(Context context) throws IOException {
 		InputStream myInput;
-		if (SDCardListener.isSDCardAvailable()) {
 			Constant.ZIP_PATH = StorageUtils.getFilesDirectory(context).getAbsolutePath();
 			Logger.v("SD卡DB_PATH", Constant.ZIP_PATH);
-		}else{
-			Constant.ZIP_PATH=context.getFilesDir()+ Constant.DBFILE_NAME;
-			Logger.v("内存DB_PATH", Constant.ZIP_PATH);
-		}
 		File dir = new File(Constant.ZIP_PATH);
 		if (!dir.exists()) {
 			dir.mkdirs();

@@ -508,15 +508,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
             messageList.refreshSelectLast();
         }
        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
-        //刷新ui
-      /*  if(isMessageListInited) {
-            messageList.refreshSelectLast();
-        }*/
-
-
-    /*    chatAdapter.addAll(message);
-        chatAdapter.notifyItemChanged(chatAdapter.getCount() - 1);
-        list.scrollToPosition(chatAdapter.getCount() - 1);*/
+       setResult(RESULT_OK);
     }
 
 
@@ -717,6 +709,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                 case ContextMenuActivity.RESULT_CODE_DELETE: // delete
                     conversation.removeMessage(contextMenuMessage.getMsgId());
                     messageList.refresh();
+                    setResult(RESULT_OK);
                     break;
 
                 case ContextMenuActivity.RESULT_CODE_FORWARD: // forward
@@ -743,7 +736,7 @@ public class ChatActivity extends BaseActivity implements EaseChatFragmentListen
                     // 清空会话
                     EMClient.getInstance().chatManager().deleteConversation(toChatUsername, true);
                     messageList.refresh();
-                    LocalBroadcastManager.getInstance(ChatActivity.this).sendBroadcast(new Intent(Constant.ACTION_MESSAGE_CHANGED));
+                    setResult(RESULT_OK);
                 }
             }
         }, true).show();

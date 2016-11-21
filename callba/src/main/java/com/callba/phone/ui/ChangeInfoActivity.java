@@ -90,10 +90,7 @@ public class ChangeInfoActivity extends BaseActivity{
         }
         nickName.setHint(UserManager.getNickname(this));
         signature.setHint(UserManager.getSignature(this));
-        String path;
-        if (SDCardListener.isSDCardAvailable()) {
-            path = StorageUtils.getFilesDirectory(this).getAbsolutePath();}else
-            path=getFilesDir().getAbsolutePath();
+        String path = StorageUtils.getFilesDirectory(this).getAbsolutePath();
         File file = new File(path + "/temp.jpg");
         imageUri = Uri.fromFile(file);
         File cropFile = new File(path + "/temp_crop.jpg");

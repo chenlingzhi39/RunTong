@@ -331,7 +331,6 @@ public class MessageActivity extends BaseActivity {
     /**
      * 根据最后一条消息的时间排序
      *
-     * @param usernames
      */
     private void sortConversationByLastChatTime(List<Pair<Long, EMConversation>> conversationList) {
         Collections.sort(conversationList, new Comparator<Pair<Long, EMConversation>>() {
@@ -504,6 +503,6 @@ public class MessageActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK)
-         refresh();
+            refresh();
     }
 }
